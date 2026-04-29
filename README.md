@@ -78,7 +78,7 @@ uni-textbook-marketplace/
 
 ```bash
 # Clone the repository
-git clone https://github.com/[your-org]/uni-textbook-marketplace.git
+git clone https://github.com/COS301-SE-2026/uni-textbook-marketplace.git
 cd uni-textbook-marketplace
  
 # Install backend dependencies
