@@ -1,0 +1,28 @@
+{
+  "name": "uni-textbook-marketplace",
+  "version": "1.0.0",
+  "description": "NexusDev - Uni Textbook Marketplace - COS301 Capstone 2026",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "frontend": "npm run dev --workspace=frontend",
+    "backend": "npm run start:dev --workspace=backend",
+    "test:frontend": "npm run test --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:all": "npm run test:frontend && npm run test:backend",
+    "lint:all": "npm run lint --workspace=frontend && npm run lint --workspace=backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues"
+  },
+  "homepage": "https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace#readme",
+  "author": "NexusDev",
+  "license": "ISC"
+}
