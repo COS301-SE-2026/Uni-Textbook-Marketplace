@@ -107,3 +107,28 @@ CREATE TABLE audit_log (
 );
 
 
+-- indexes
+
+
+-- listings indexes for filtering + sorting use-cases
+CREATE INDEX idx_listings_module_price 
+ON listings(module_id, price);
+
+CREATE INDEX idx_listings_condition 
+ON listings(condition);
+
+CREATE INDEX idx_listings_annotation 
+ON listings(annotation_level);
+
+-- books indexes for search/filter use-cases
+CREATE INDEX idx_books_isbn 
+ON books(isbn);
+
+CREATE INDEX idx_books_edition 
+ON books(edition);
+
+-- audit log lookup
+CREATE INDEX idx_audit_entity 
+ON audit_log(entity_type, entity_id);
+
+
