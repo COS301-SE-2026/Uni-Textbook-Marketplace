@@ -197,3 +197,5 @@ Avoid gradients, drop shadows, or decorative patterns.
 - Minimum tap target size: 44x44px on mobile
 
 ---
+
+*Source: https://www2.agilebridge.co.za*
