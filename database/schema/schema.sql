@@ -63,4 +63,47 @@ CREATE TABLE books (
 
 
 
+-- listings
+
+CREATE TABLE listings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    seller_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+    module_id UUID REFERENCES modules(id) ON DELETE SET NULL,
+
+    condition VARCHAR(10)
+        CHECK (condition IN ('new','good','fair','poor')),
+
+    annotation_level VARCHAR(10)
+        CHECK (annotation_level IN ('none','light','heavy')),
+
+    price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+
+    status VARCHAR(15) DEFAULT 'PENDING'
+        CHECK (status IN ('PENDING','APPROVED','REJECTED','SOFT_DELETED')),
+
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+
+    -- Soft delete (IMPORTANT)
+    deleted_at TIMESTAMPTZ
+);
+
+
+-- audit log
+
+CREATE TABLE audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    entity_type VARCHAR NOT NULL,  
+    entity_id UUID NOT NULL,
+
+    action VARCHAR NOT NULL,       
+
+    performed_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    performed_at TIMESTAMPTZ DEFAULT NOW(),
+
+    notes TEXT
+);
+
 
