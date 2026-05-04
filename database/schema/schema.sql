@@ -147,4 +147,15 @@ ON books(edition);
 CREATE INDEX idx_audit_entity 
 ON audit_log(entity_type, entity_id);
 
+CREATE INDEX idx_listing_status
+ON listings(status);
+
+CREATE INDEX idx_listing_seller
+ON listings(seller_id);
+
+CREATE INDEX idx_listing_reviewed_by
+ON listings(reviewed_by);
+
+
+
 
