@@ -1,5 +1,5 @@
 
-
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- create universities table
 
 CREATE TABLE universities (
@@ -15,6 +15,12 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR NOT NULL,
+
+    first_name VARCHAR NOT NULL,
+    last_name VARCHAR NOT NULL,
+
+    university_id UUID REFERENCES universities(id) ON DELETE CASCADE,
+    faculty VARCHAR(100) NULL,
     is_verified BOOLEAN DEFAULT FALSE,
 
     role VARCHAR(10) DEFAULT 'student'
@@ -54,7 +60,7 @@ CREATE TABLE modules (
 
 CREATE TABLE books (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    isbn VARCHAR(13),
+    isbn VARCHAR(13) UNIQUE,
     title VARCHAR NOT NULL,
     author VARCHAR,
     edition SMALLINT,
@@ -80,10 +86,16 @@ CREATE TABLE listings (
 
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
 
+    reviewed_by UUID REFERENCES users(id) ON DELETE SET NULL,
+
+    reviewed_at TIMESTAMPTZ,
+
     status VARCHAR(15) DEFAULT 'PENDING'
         CHECK (status IN ('PENDING','APPROVED','REJECTED','SOFT_DELETED')),
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
+
+    updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)
     deleted_at TIMESTAMPTZ
