@@ -19,7 +19,7 @@ CREATE TABLE users (
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
 
-    university_id UUID REFERENCES universities(id) ON DELETE CASCADE,
+    university_id UUID REFERENCES universities(id) ON DELETE SET NULL,
     faculty VARCHAR(100) NULL,
     is_verified BOOLEAN DEFAULT FALSE,
 
@@ -99,6 +99,7 @@ CREATE TABLE listings (
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
+
     updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)
@@ -156,6 +157,8 @@ ON listings(seller_id);
 CREATE INDEX idx_listing_reviewed_by
 ON listings(reviewed_by);
 
+CREATE INDEX idx_books_title 
+ON books(title);
 
 
 
