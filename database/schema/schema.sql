@@ -74,6 +74,8 @@ CREATE TABLE books (
 CREATE TABLE listings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
+    title VARCHAR(200),
+
     seller_id UUID REFERENCES users(id) ON DELETE CASCADE,
     book_id UUID REFERENCES books(id) ON DELETE CASCADE,
     module_id UUID REFERENCES modules(id) ON DELETE SET NULL,
@@ -89,6 +91,8 @@ CREATE TABLE listings (
     reviewed_by UUID REFERENCES users(id) ON DELETE SET NULL,
 
     reviewed_at TIMESTAMPTZ,
+
+    photo_urls TEXT[] DEFAULT '{}', 
 
     status VARCHAR(15) DEFAULT 'PENDING'
         CHECK (status IN ('PENDING','APPROVED','REJECTED','SOFT_DELETED')),
