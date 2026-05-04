@@ -100,6 +100,8 @@ CREATE TABLE listings (
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
 
+    has_notes BOOLEAN DEFAULT FALSE,
+
     updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)
