@@ -6,7 +6,29 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "jest --coverage --passWithNoTests"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "passWithNoTests": true,
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": [
+        "babel-jest",
+        {
+          "presets": [
+            "next/babel"
+          ]
+        }
+      ]
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ]
   },
   "dependencies": {
     "next": "16.2.4",
@@ -15,12 +37,19 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-jest": "30.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "jest": "30.3.0",
+    "jest-environment-jsdom": "30.3.0",
     "tailwindcss": "^4",
+    "ts-node": "10.9.2",
     "typescript": "^5"
   }
 }
