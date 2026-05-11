@@ -1,4 +1,3 @@
-import Link from 'next/link'
 
 export default function LoginPage() {
   return (
@@ -11,8 +10,11 @@ export default function LoginPage() {
 
         <form className="flex flex-col gap-4">
           <div>
-            <label className="form-label">University email</label>
+            <label htmlFor="email" className="form-label">
+              University email
+            </label>
             <input
+              id="email"
               type="email"
               placeholder="student@tuks.co.za"
               className="px-4 py-3"
@@ -20,8 +22,11 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="form-label">Password</label>
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
             <input
+              id="password"
               type="password"
               placeholder="Enter your password"
               className="px-4 py-3"
@@ -35,9 +40,9 @@ export default function LoginPage() {
 
         <p className="text-sm text-center text-[#4B4F58] mt-6">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-[#006D8A] font-medium">
+          <a href="/auth/register" className="text-[#006D8A] font-medium">
             Register here
-          </Link>
+          </a>
         </p>
       </div>
     </div>
