@@ -38,4 +38,42 @@ export class ListingsController {
     createListing() {
         return this.listingsService.createListing();
     }
+
+    //Get listings
+    //getAll:
+    @Get()
+    @ApiOperation({
+        summary: 'Return all the listings',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns all listings',
+    })
+    getAllListings(){
+        return this.listingsService.getAllListings();
+    }
+
+    @Get()
+    @ApiOperation({
+        summary: 'Returns the listings this user has made',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns the listings this user has made',
+    })
+    getMyListings(){
+        return this.listingsService.getMyListings();
+    }
+
+    @Get(':id')
+    @ApiOperation({
+        summary: 'Returns all listings that match the inputted id',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns all listings that match the inputted',
+    })
+    getListingsById(@Param('id') id: string){
+        return this.listingsService.getListingById(id);
+    }
 }
