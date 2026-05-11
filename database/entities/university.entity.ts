@@ -25,7 +25,8 @@ export class University {
   /*
     One university can have many users
   */
-  @OneToMany(() => User, user => user.university)
+  @OneToMany(() => User,   (user : User) => user.university)
+
   users!: User[];
 
   /*

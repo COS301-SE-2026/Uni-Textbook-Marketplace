@@ -37,5 +37,5 @@ export class Module {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'university_id' })
-  university: University;
+  university!: University;
 }
