@@ -1,0 +1,18 @@
+FROM node:20-alpine.22
+
+WORKDIR /app
+
+RUN apk update && apk upgrade --no-cache
+
+COPY package*.json ./
+RUN npm install --ignore-workspace
+#safe root, ownership changes to node user
+
+RUN chown -R node:node /usr/src/app
+USER node
+
+COPY src/ ./src/
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]
