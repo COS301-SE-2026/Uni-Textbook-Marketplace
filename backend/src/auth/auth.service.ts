@@ -10,7 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 import { OtpService } from './otp.service';
-import { IEmailService } from './email/email.interface';
+import { IEmailService } from '../email/email.interface';
 
 import { User } from "./entities/user.entity";
 import { University } from "./entities/university.entity";
@@ -35,7 +35,7 @@ export class AuthService{
 
         private readonly configService: ConfigService,
 
-        private readonly emailService: EmailService,
+        private readonly emailService: IEmailService,
     ) {}
 
     async register(dto: RegisterDto){
@@ -60,5 +60,24 @@ export class AuthService{
         if (emailDomain !== uniResult.email_domain.toLocaleLowerCase()){
             throw new BadRequestException(`Your email must be a ${uniResult.email_domain} address for this university`);
         }
+
+        const password_hash = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
+
+        const user = this.userRepository.create({
+            email: dto.email,
+            password_hash,
+            first_name: dto.first_name,
+            last_name: dto.last_name,
+            university_id: dto.university_id,
+            faculty: dto.faculty ?? null,
+        });
+        await this.userRepository.save(user)
+
+        const otp = await this.otpService.createOtp(dto.email);
+        await this.emailService.sendOtp(dto.email, otp);
+
+        return {
+            message: 'Registration successful. Check your university email for verification code'
+        };
     }
 }
