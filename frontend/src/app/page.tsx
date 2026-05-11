@@ -1,4 +1,3 @@
-import NavBar from '@/components/NavBar'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 
