@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 export class ListingsService{
     //mock listings:
     //id, title, isbn, edition, condition, annotationLevel, moduleCode, price, status, sellerId.
-    private Listings =[
+    private listings =[
         {
             id: "1",
             title: "title1",
@@ -15,7 +15,8 @@ export class ListingsService{
             moduleCode: "cos110",
             price: "100",
             status: "status1",
-            sellerID: "ID-1"
+            sellerId: "ID-1",
+            //do we want a message in each listing? the Post uses one
         },
         {
             id: "2",
@@ -27,7 +28,7 @@ export class ListingsService{
             moduleCode: "cos220",
             price: "200",
             status: "status2",
-            sellerID: "ID-2"
+            sellerId: "ID-2"
         },
         {
             id: "3",
@@ -39,8 +40,35 @@ export class ListingsService{
             moduleCode: "cos330",
             price: "300",
             status: "status3",
-            sellerID: "ID-3"
+            sellerId: "ID-3"
         },
-        
-    ]
+    ];
+
+    //Post /listings:
+    createListing() {
+        return {
+        id: 'mock-uuid',
+        status: 'PENDING',
+        message: 'Listing submitted for review',
+        };
+    };
+
+    //GET /listings
+    getAllListings(){
+        return this.listings;
+    }
+
+    //GET /myListings
+    getMyListings(){
+        return this.listings.filter(
+            listing => listing.sellerId === "ID-1",
+        );
+    }
+
+    //GET ListingById
+    getListingById(id : string){
+        const listing = this.listings.find(
+            listing => listing.id === id,
+        );
+    }
 }
