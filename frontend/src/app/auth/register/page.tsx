@@ -1,10 +1,10 @@
-import Link from 'next/link'
-
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center px-4">
       <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-[#000f2b] mb-1">Create your account</h1>
+        <h1 className="text-2xl font-bold text-[#000f2b] mb-1">
+          Create your account
+        </h1>
         <p className="text-sm text-[#4B4F58] mb-6">
           Must be a university student to register
         </p>
@@ -12,16 +12,22 @@ export default function RegisterPage() {
         <form className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="form-label">First name</label>
+              <label htmlFor="firstName" className="form-label">
+                First name
+              </label>
               <input
+                id="firstName"
                 type="text"
                 placeholder="Tiego"
                 className="px-4 py-3"
               />
             </div>
             <div>
-              <label className="form-label">Last name</label>
+              <label htmlFor="lastName" className="form-label">
+                Last name
+              </label>
               <input
+                id="lastName"
                 type="text"
                 placeholder="Mokwena"
                 className="px-4 py-3"
@@ -30,8 +36,11 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="form-label">University email</label>
+            <label htmlFor="email" className="form-label">
+              University email
+            </label>
             <input
+              id="email"
               type="email"
               placeholder="student@tuks.co.za"
               className="px-4 py-3"
@@ -42,8 +51,11 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="form-label">Password</label>
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
             <input
+              id="password"
               type="password"
               placeholder="Create a password"
               className="px-4 py-3"
@@ -51,8 +63,11 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="form-label">Confirm password</label>
+            <label htmlFor="confirmPassword" className="form-label">
+              Confirm password
+            </label>
             <input
+              id="confirmPassword"
               type="password"
               placeholder="Confirm your password"
               className="px-4 py-3"
@@ -66,9 +81,9 @@ export default function RegisterPage() {
 
         <p className="text-sm text-center text-[#4B4F58] mt-6">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-[#006D8A] font-medium">
+          <a href="/auth/login" className="text-[#006D8A] font-medium">
             Sign in
-          </Link>
+          </a>
         </p>
       </div>
     </div>
