@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
 
-// Replace this with real auth context in Sprint 2
+// I'll replace this with real auth context in Sprint 2
 // For now I'll simulate auth state with a prop for testing
 interface NavBarProps {
   isAuthenticated?: boolean
@@ -28,11 +28,18 @@ const authNavLinks = [
   { label: 'Favourites', href: '/favourites' },
 ]
 
+interface NavBarProps {
+  isAuthenticated?: boolean
+  user?: {
+    firstName: string
+    lastName: string
+  }
+}
 
 export default function NavBar({
   isAuthenticated = false,
   user = { firstName: 'Tiego', lastName: 'Mokwena' },
-}: NavBarProps) {
+}: Readonly <NavBarProps>) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
