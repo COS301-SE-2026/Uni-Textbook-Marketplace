@@ -17,31 +17,31 @@ import { Listing } from './listing.entity';
 export class User {
 
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password_hash: string;
+  password_hash!: string;
 
   @Column()
-  first_name: string;
+  first_name!: string;
 
   @Column()
-  last_name: string;
+  last_name!: string;
 
   @Column({ nullable: true })
-  faculty: string;
+  faculty!: string;
 
   @Column({ default: false })
-  is_verified: boolean;
+  is_verified!: boolean;
 
   @Column({
     type: 'varchar',
     default: 'student'
   })
-  role: string;
+  role!: string;
 
   /*
     university_id UUID REFERENCES universities(id)
@@ -56,23 +56,23 @@ export class User {
   /*
     listings sold by this user
   */
-  @OneToMany(() => Listing, listing => listing.seller)
-  listings: Listing[];
+  @OneToMany(() => Listing, (listing: Listing)  => listing.seller)
+  listings!: Listing[];
 
   @CreateDateColumn({
     type: 'timestamptz'
   })
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
     nullable: true
   })
-  updated_at: Date;
+  updated_at!: Date;
 
   @DeleteDateColumn({
     type: 'timestamptz',
     nullable: true
   })
-  deleted_at: Date;
+  deleted_at!: Date;
 }
