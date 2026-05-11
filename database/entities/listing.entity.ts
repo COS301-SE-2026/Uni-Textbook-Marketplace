@@ -24,10 +24,10 @@ export enum ListingStatus {
 export class Listing {
 
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ length: 200, nullable: true })
-  title: string;
+  title!: string;
 
   @ManyToOne(() => User, {
     onDelete: 'CASCADE'
@@ -52,13 +52,13 @@ export class Listing {
   type: 'enum',
   enum: ['new', 'good', 'fair', 'poor']
 })
-condition: string;
+condition!: string;
 
 @Column({
   type: 'enum',
   enum: ['none','light','heavy']
 })
-annotation_level: string;
+annotation_level!: string;
 
 
 
@@ -67,7 +67,7 @@ annotation_level: string;
     precision: 10,
     scale: 2
   })
-  price: number;
+  price!: number;
 
   @ManyToOne(() => User, {
     nullable: true,
@@ -80,40 +80,40 @@ annotation_level: string;
     type: 'timestamptz',
     nullable: true
   })
-  reviewed_at: Date;
+  reviewed_at!: Date;
 
   @Column('text', {
     array: true,
     default: []
   })
-  photo_urls: string[];
+  photo_urls!: string[];
 
   @Column({
     type: 'enum',
     enum: ListingStatus,
     default: ListingStatus.PENDING
   })
-  status: ListingStatus;
+  status!: ListingStatus;
 
   @Column({
     default: false
   })
-  has_notes: boolean;
+  has_notes!: boolean;
 
   @CreateDateColumn({
     type: 'timestamptz'
   })
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
     nullable: true
   })
-  updated_at: Date;
+  updated_at!: Date;
 
   @DeleteDateColumn({
     type: 'timestamptz',
     nullable: true
   })
-  deleted_at: Date;
+  deleted_at!: Date;
 }
