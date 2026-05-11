@@ -16,7 +16,7 @@ interface NavBarProps {
 
 // HELPER — get initials from name
 function getInitials(firstName: string, lastName: string): string {
-  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
 }
 
 // NAV LINKS — authenticated users will see these
