@@ -32,4 +32,7 @@ export class OTP {
     type: 'timestamptz',
   })
   created_at!: Date;
+
+  @Column({ type: 'int', default: 0 })
+  attempts!: number;
 }
