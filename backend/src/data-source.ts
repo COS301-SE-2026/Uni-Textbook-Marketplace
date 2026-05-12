@@ -1,25 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import * as dotenv from 'dotenv';
 
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
-import process from 'process';
+import { Book } from './database/entities/book.entity';
+import { Module } from './database/entities/module.entity';
+import { University } from './database/entities/university.entity';
+import { OTP } from './database/entities/otps.entity';
+import { AuditLog } from './database/entities/audit_log.entity';
+
+dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: 5432,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+
+  url: 'postgres://nexusdev:nexusdev_local@localhost:5432/textbook_marketplace',
 
   synchronize: false,
-
   logging: true,
 
-  entities: [User, Listing],
+  entities: [User, Listing, Book, Module, University, OTP, AuditLog],
 
   migrations: ['src/database/migrations/*.ts'],
 });

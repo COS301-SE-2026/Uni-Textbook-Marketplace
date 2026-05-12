@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "commonjs",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": false,
@@ -23,6 +22,7 @@
     "types": ["node"]
     
   },
+  
   "include": 
    ["src/**/*.ts"]
 
