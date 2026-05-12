@@ -1,19 +1,14 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('books')
 export class Book {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column({
     length: 13,
     unique: true,
-    nullable: true
+    nullable: true,
   })
   isbn!: string;
 
@@ -21,17 +16,17 @@ export class Book {
   title!: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   author!: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   edition!: number;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   publisher!: string;
 }

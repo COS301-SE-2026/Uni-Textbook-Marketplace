@@ -1,16 +1,10 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
-import { User } from './user.entity';
+import { User } from './users.entity';
 import { Module } from './module.entity';
 
 @Entity('universities')
 export class University {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -18,21 +12,19 @@ export class University {
   name!: string;
 
   @Column({
-    unique: true
+    unique: true,
   })
   email_domain!: string;
 
   /*
     One university can have many users
   */
-  @OneToMany(() => User,   (user : User) => user.university)
-
+  @OneToMany(() => User, (user: User) => user.university)
   users!: User[];
 
   /*
     One university can offer many modules
   */
-  @OneToMany(() => Module, (module : Module) => module.university)
+  @OneToMany(() => Module, (module: Module) => module.university)
   modules!: Module[];
 }
-

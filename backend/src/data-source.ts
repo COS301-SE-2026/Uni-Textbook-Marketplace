@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
-import { User } from './database/entities/user.entity';
+import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
+import process from 'process';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -16,12 +19,7 @@ export const AppDataSource = new DataSource({
 
   logging: true,
 
-  entities: [
-    User,
-    Listing
-  ],
+  entities: [User, Listing],
 
-  migrations: [
-    'src/database/migrations/*.ts'
-  ]
+  migrations: ['src/database/migrations/*.ts'],
 });

@@ -4,14 +4,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn
+  CreateDateColumn,
 } from 'typeorm';
 
-import { User } from './user.entity';
+import { User } from './users.entity';
 
 @Entity('audit_log')
 export class AuditLog {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -26,19 +25,19 @@ export class AuditLog {
 
   @ManyToOne(() => User, {
     nullable: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'performed_by' })
   performedBy: User;
 
   @CreateDateColumn({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   performed_at!: Date;
 
   @Column({
     type: 'text',
-    nullable: true
+    nullable: true,
   })
   notes!: string;
 }

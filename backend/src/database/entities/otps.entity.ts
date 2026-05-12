@@ -2,12 +2,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity('otps')
 export class OTP {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -15,22 +14,22 @@ export class OTP {
   email!: string;
 
   @Column({
-    length: 6
+    length: 6,
   })
   code!: string;
 
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   expires_at!: Date;
 
   @Column({
-    default: false
+    default: false,
   })
   used!: boolean;
 
   @CreateDateColumn({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   created_at!: Date;
 }

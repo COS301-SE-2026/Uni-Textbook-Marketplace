@@ -3,20 +3,19 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
 
 import { University } from './university.entity';
 
 @Entity('modules')
 export class Module {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column({
     unique: true,
-    length: 20
+    length: 20,
   })
   code!: string;
 
@@ -24,17 +23,17 @@ export class Module {
   name!: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   faculty!: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   semester!: number;
 
   @ManyToOne(() => University, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'university_id' })
   university!: University;

@@ -7,7 +7,7 @@ import {
   DeleteDateColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
 
 import { University } from './university.entity';
@@ -15,7 +15,6 @@ import { Listing } from './listing.entity';
 
 @Entity('users')
 export class User {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -39,7 +38,7 @@ export class User {
 
   @Column({
     type: 'varchar',
-    default: 'student'
+    default: 'student',
   })
   role!: string;
 
@@ -48,10 +47,10 @@ export class User {
   */
   @ManyToOne(() => University, {
     nullable: true,
-    onDelete: 'SET NULL'
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'university_id' })
-  university: University;
+  university!: University;
 
   /*
     listings sold by this user
@@ -60,19 +59,19 @@ export class User {
   listings!: Listing[];
 
   @CreateDateColumn({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   created_at!: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
-    nullable: true
+    nullable: true,
   })
   updated_at!: Date;
 
   @DeleteDateColumn({
     type: 'timestamptz',
-    nullable: true
+    nullable: true,
   })
   deleted_at!: Date;
 }

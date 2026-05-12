@@ -24,5 +24,15 @@
   },
   "homepage": "https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace#readme",
   "author": "NexusDev",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.20.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.29"
+  },
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
 }
