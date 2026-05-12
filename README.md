@@ -5,7 +5,8 @@
 
 ---
 
-## Presented by NexusDev
+## Presented by 
+# NexusDev
 
 ---
 
@@ -63,30 +64,22 @@ Uni-Textbook-Marketplace/
 │
 ├── backend/                              # NestJS modular monolith API
 │   ├── src/
-│   │   ├── auth/                         # AuthService - registration, JWT, OTP
-│   │   │   ├── auth.module.ts
-│   │   │   ├── auth.controller.ts
-│   │   │   └── auth.service.ts
-│   │   ├── listings/                     # ListingService - create, read, manage
-│   │   │   ├── listings.module.ts
-│   │   │   ├── listings.controller.ts
-│   │   │   └── listings.service.ts
-│   │   ├── moderation/                   # ModerationService - admin review
-│   │   │   ├── moderation.module.ts
-│   │   │   ├── moderation.controller.ts
-│   │   │   └── moderation.service.ts
-│   │   ├── modules/                      # ModulesService - module code lookup
-│   │   │   ├── modules.module.ts
-│   │   │   ├── modules.controller.ts
-│   │   │   └── modules.service.ts
+│   │   ├── app.controller.spec.ts              
+│   │   ├── app.controller.ts                 
 │   │   ├── app.module.ts
+│   │   ├── app.service.ts
 │   │   └── main.ts
-│   ├── test/                             # NestJS end-to-end tests
-│   ├── .env.example                      # Environment variable template
+│   ├── test/   
+|   ├── .dockerignore              
+│   ├── .gitignore                
+│   ├── .prettierrc   
+|   ├── Dockerfile.dev                   # Docker file setup for containerization
+│   ├── eslint.config.mjs                  
 │   ├── nest-cli.json
-│   ├── tsconfig.json
+|   ├── package-lock.json
+│   ├── package.json
 │   ├── tsconfig.build.json
-│   └── package.json
+│   └── tscofig.json
 │
 ├── frontend/                             # Next.js (React) web application
 │   ├── src/
@@ -108,8 +101,12 @@ Uni-Textbook-Marketplace/
 │   │       └── ui/                       # Reusable UI component library
 │   ├── public/                           # Static assets
 │   ├── .env.example                      # Environment variable template
+|   ├── .gitignore                    
+|   ├── .dockerignore
+|   ├── Dockerfile.dev                    # Docker file setup for containerization
 │   ├── jest.config.js                    # Jest configuration
 │   ├── jest.setup.ts                     # Jest setup
+│   ├── eslint.config.mjs 
 │   ├── next.config.ts
 │   ├── tailwind.config.ts                # Brand colours and tokens
 │   ├── tsconfig.json
@@ -236,12 +233,12 @@ npm run test:all
 
 The system follows a **modular monolith** architecture for core features with an **external messaging microservice**:
 
-- **Frontend** — Next.js (React) responsive web app
-- **Backend** — NestJS modular monolith (Auth, Listings, Moderation, Modules)
-- **Database** — Azure Database for PostgreSQL
-- **Messaging** — Firebase Firestore real-time chat (external microservice)
-- **Hosting** — Azure Static Web Apps + Azure App Service
-- **CI/CD** — GitHub Actions
+- **Frontend** : Next.js (React) responsive web app
+- **Backend** : NestJS modular monolith (Auth, Listings, Moderation, Modules)
+- **Database** : Azure Database for PostgreSQL
+- **Messaging** : Firebase Firestore real-time chat (external microservice)
+- **Hosting** : Azure Static Web Apps + Azure App Service
+- **CI/CD** : GitHub Actions
 
 > Full architecture diagram available in the [SRS document](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md).
 
