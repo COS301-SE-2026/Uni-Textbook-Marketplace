@@ -17,7 +17,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specification (SRS) | *Coming soon — Sprint 1* |
+|  Software Requirements Specification (SRS) | https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md |
 |  Architecture Overview | *Coming soon - Sprint 1* |
 |  User Guide | *Coming soon* |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
@@ -199,7 +199,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ## The Team
 
-### Tiego Mokwena — Project Manager & UI Engineer 1 & DevOps
+### Tiego Mokwena - Project Manager & UI Engineer 1 & DevOps
 > Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy.
 
 [![GitHub](https://img.shields.io/badge/GitHub-tl21thebe-181717?logo=github)](https://github.com/tl21thebe)
@@ -207,7 +207,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Josh Kretschmer — Services Engineer 1 & Integration Engineer 1
+### Josh Kretschmer - Services Engineer 1 & Integration Engineer 1
 > Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup.
 
 [![GitHub](https://img.shields.io/badge/GitHub-JoshKretschmer-181717?logo=github)](https://github.com/JoshKretschmer)
@@ -215,7 +215,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Gift Mohuba — Services Engineer 2 & Integration Engineer 2
+### Gift Mohuba - Services Engineer 2 & Integration Engineer 2
 > Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend.
 
 [![GitHub](https://img.shields.io/badge/GitHub-GiftMHB-181717?logo=github)](https://github.com/GiftMHB)
@@ -223,7 +223,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Neo Bosoga — Data Engineer & Backend Tester
+### Neo Bosoga - Data Engineer & Backend Tester
 > PostgreSQL database design and management, complex queries, database indexing, seed data, backend unit tests, and integration tests.
 
 [![GitHub](https://img.shields.io/badge/GitHub-u23591732-181717?logo=github)](https://github.com/u23591732)
@@ -231,7 +231,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Omphemetse Mokgothadi — UI Engineer 2 & Frontend Tester
+### Omphemetse Mokgothadi - UI Engineer 2 & Frontend Tester
 > Frontend UI components (Next.js/React), responsive design, filter UI, messaging UI (Socket.io client), frontend unit tests, and end-to-end tests (Cypress).
 
 [![GitHub](https://img.shields.io/badge/GitHub-nalediO-181717?logo=github)](https://github.com/nalediO)
@@ -245,7 +245,7 @@ The system follows a **modular monolith** architecture for core features with an
 |---|---|
 | Team email | nexusdev.cos301@gmail.com |
 | Client | Agile Bridge |
-| University | University of Pretoria — COS 301 Software Engineering 2026 |
+| University | University of Pretoria - COS 301 Software Engineering 2026 |
 
 ---
 
