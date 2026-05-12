@@ -1,26 +1,321 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+   NexusDev - Uni Textbook Marketplace
+   Global Styles - Agile Bridge Brand Guidelines
+   Primary colour: #00B4D8 (Cyan) — used as accent/background only
+   Button text uses dark navy #000f2b on cyan for WCAG AA compliance
+   Font: Montserrat
+*/
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Selection
+     Fix: use dark navy text on cyan background
+     Contrast: #000f2b on #00B4D8 = ~8.2:1 WCAG AA */
+  ::selection {
+    background-color: #00B4D8;
+    color: #000f2b;
+  }
+
+  /* Base */
+  body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6em;
+    color: #3a3a3a;
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings */
+  h1 {
+    font-size: 3.125rem;
+    font-weight: 700;
+    line-height: 1.2em;
+    color: #000f2b;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.3em;
+    text-transform: uppercase;
+    color: #000f2b;
+  }
+
+  h3 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.3em;
+    color: #000f2b;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3em;
+    color: #000f2b;
+  }
+
+  h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4em;
+    color: #000f2b;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4em;
+    color: #000f2b;
+  }
+
+  /* Links 
+     Fix: use darker cyan #006D8A for text on white
+     Contrast: #006D8A on #ffffff = ~5.1:1 WCAG AA*/
+  a {
+    color: #006D8A;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover,
+  a:focus {
+    color: #004F66;
+  }
+
+  /* Inputs */
+  input,
+  textarea,
+  select {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #3a3a3a;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #00B4D8;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #4B4F58;
+    opacity: 1;
+  }
+
+  /* Mobile typography  */
+  @media (max-width: 921px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.125rem; }
+    h5 { font-size: 1rem; }
+    h6 { font-size: 0.875rem; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+
+  /*  Primary Button
+     Fix: dark navy text on cyan background
+     Contrast: #000f2b on #00B4D8 = ~8.2:1 WCAG AA
+     This matches the Agile Bridge "Let's Connect" button visually
+     while meeting accessibility requirements. */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #00B4D8;
+    color: #000f2b;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1em;
+    padding: 14px 28px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: #0096B4;
+    color: #000f2b;
+  }
+
+  .btn-primary:disabled {
+    background-color: #E5E5E5;
+    color: #4B4F58;
+    cursor: not-allowed;
+  }
+
+  /* Secondary / Outline Button
+     Fix: use darker cyan #006D8A for text on white/transparent
+     Contrast: #006D8A on #ffffff = ~5.1:1 WCAG AA */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #006D8A;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1em;
+    padding: 12px 26px;
+    border-radius: 4px;
+    border: 2px solid #00B4D8;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus {
+    background-color: #00B4D8;
+    color: #000f2b;
+  }
+
+  .btn-secondary:disabled {
+    border-color: #E5E5E5;
+    color: #4B4F58;
+    cursor: not-allowed;
+  }
+
+  /* Danger Button
+     #ffffff on #dc2626 = ~4.6:1 WCAG AA */
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dc2626;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 14px 28px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-danger:hover,
+  .btn-danger:focus {
+    background-color: #b91c1c;
+    color: #ffffff;
+  }
+
+  /* Card  */
+  .card {
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    padding: 1.5rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Container */
+  .container-content {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  @media (max-width: 921px) {
+    .container-content {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  /* Accent text 
+     Note: .text-accent is for decorative use only (large headings,
+     icons). */
+  .text-accent {
+    color: #00B4D8;
+  }
+
+  /* Badges 
+     Fix: use solid opaque backgrounds + darker text colours
+     to ensure WCAG AA compliance on badge text.
+     pending:  #004F66 on #D0F0F7 = ~7.1:1
+     approved: #155E2E on #D0F0DC = ~7.4:1
+     rejected: #7F1D1D on #FDE8E8 = ~8.1:1 */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .badge-pending {
+    background-color: #D0F0F7;
+    color: #004F66;
+  }
+
+  .badge-approved {
+    background-color: #D0F0DC;
+    color: #155E2E;
+  }
+
+  .badge-rejected {
+    background-color: #FDE8E8;
+    color: #7F1D1D;
+  }
+
+  /* Form label */
+  .form-label {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #3a3a3a;
+    margin-bottom: 6px;
+  }
+
+  /* Form error */
+  .form-error {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #b91c1c;
+    margin-top: 4px;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid #dddddd;
+    margin: 1.5rem 0;
+  }
 }
