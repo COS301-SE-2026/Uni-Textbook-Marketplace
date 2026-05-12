@@ -1,20 +1,20 @@
-import { Injectable,BadRequestException, UnauthorizedException, ConflictException } from "@nestjs/common";
+import { Injectable,BadRequestException, UnauthorizedException, Inject} from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import {ConfigService} from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 import { OtpService } from './otp.service';
-import { IEmailService } from '../email/email.interface';
+import type { IEmailService } from '../email/email.interface';
+import { EMAIL_SERVICE } from '../email/email.interface';
 
 import { User } from "./entities/user.entity";
 import { University } from "./entities/university.entity";
-import { sign } from "crypto";
 
 @Injectable()
 export class AuthService{
@@ -36,6 +36,7 @@ export class AuthService{
 
         private readonly configService: ConfigService,
 
+        @Inject(EMAIL_SERVICE)
         private readonly emailService: IEmailService,
     ) {}
 
@@ -114,6 +115,50 @@ export class AuthService{
         const user = userResult;
 
         return this.issueTokens(user);
+    }
+
+    async login(dto: LoginDto) {
+      
+        const user = await this.userRepository.findOne({
+            select: {
+                id: true,
+                email: true,
+                password_hash: true,
+                role: true,
+                is_verified: true,
+            },
+            where: {
+                email: dto.email,
+                deleted_at: IsNull(),
+            },
+        });
+
+        if (!user) {
+            throw new UnauthorizedException('Invalid email or password.');
+        }
+
+        const passwordValid = await bcrypt.compare(
+            dto.password,
+            user.password_hash,
+        );
+
+        if (!passwordValid) {
+            throw new UnauthorizedException('Invalid email or password.');
+        }
+
+        if (!user.is_verified) {
+
+            const otp = await this.otpService.createOtp(dto.email);
+            await this.emailService.sendOtp(dto.email, otp);
+
+            throw new UnauthorizedException('Email not verified. A new verification code has been sent.',);
+        }
+
+        return this.issueTokens({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        });
     }
 
     private issueTokens(user: { id: string; email: string; role: string}){
