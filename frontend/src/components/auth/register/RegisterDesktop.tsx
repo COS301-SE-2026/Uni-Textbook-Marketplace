@@ -2,16 +2,9 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input } from "@/components/ui";
+import { Button, Input,Card } from "@/components/ui";
+import { Check, Eye, EyeOff } from "lucide-react";
 
-import {
-    Check,
-    Eye,
-    EyeOff,
-    Mail,
-    GraduationCap,
-    User,
-} from "lucide-react"
 
 
 const STEPS = [
@@ -23,7 +16,7 @@ const STEPS = [
 
 function Stepper({ current }: { current: number }) {
     return (
-        <div className="flex items-start justify-between mb-8 w-full max-w-[420px]">
+        <div className="flex items-start justify-between mb-6 w-full max-w-[420px]">
             {STEPS.map((label, i) => {
                 const stepNum = i + 1;
                 const done = stepNum < current;
@@ -34,41 +27,26 @@ function Stepper({ current }: { current: number }) {
                         <div className="flex flex-col items-center min-w-[60px]">
                             <div
                                 className={`
-                  w-10 h-10 rounded-full border-2 flex items-center justify-center
-                  text-sm font-semibold transition-all
-
-                  ${done
-                                        ? "bg-primary border-primary text-white"
+                                    w-10 h-10 rounded-full border-2 flex items-center justify-center
+                                    text-sm font-semibold transition-all
+                                    ${done
+                                        ? "bg-[#00B4D8] border-[#00B4D8] text-white"
                                         : active
-                                            ? "border-primary text-primary bg-white"
-                                            : "border-gray-400 text-gray-500 bg-white"
+                                            ? "border-[#00B4D8] text-[#00B4D8] bg-white"
+                                            : "border-gray-300 text-gray-400 bg-white"
                                     }
-                `}
+                                `}
                             >
-                                {done ? (
-                                    <Check className="w-5 h-5" />
-                                ) : (
-                                    stepNum
-                                )}
+                                {done ? <Check className="w-5 h-5" /> : stepNum}
                             </div>
-
                             <span
-                                className={`
-                  text-[10px] text-center leading-tight mt-2 whitespace-pre-line
-                  ${active ? "text-primary font-semibold" : "text-text-subtle"}
-                `}
+                                className={`text-[10px] text-center leading-tight mt-2 whitespace-pre-line ${active ? "text-[#00B4D8] font-semibold" : "text-gray-400"}`}
                             >
                                 {label}
                             </span>
                         </div>
-
                         {i < STEPS.length - 1 && (
-                            <div
-                                className={`
-                  flex-1 h-[2px] mt-5 mx-2
-                  ${done ? "bg-primary" : "bg-gray-300"}
-                `}
-                            />
+                            <div className={`flex-1 h-[2px] mt-5 mx-2 ${done ? "bg-[#00B4D8]" : "bg-gray-200"}`} />
                         )}
                     </React.Fragment>
                 );
@@ -77,106 +55,167 @@ function Stepper({ current }: { current: number }) {
     );
 }
 
-
 function LeftPanel() {
     return (
-        <div className="w-[240px] shrink-0 border-r border-border bg-cyan-50 p-8 flex flex-col items-center justify-center">
-            <Logo className="w-24 h-28 mb-6 pr-10" />
-            <h3 className="text-center font-semibold text-navy">Join our student community</h3>
+        <div className="w-[320px] shrink-0 border-r border-border bg-cyan-50 px-14 py-30 flex flex-col items-center justify-center gap-5">
+            <Logo className="w-20 h-28" />
+
+            <h3 className="text-center font-semibold text-navy leading-snug text-lg">
+                Join our student community
+            </h3>
+        </div>
+    );
+}
+function FormWrapper({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="flex-1 px-16 py-12 flex flex-col justify-center">
+            <div className="w-full max-w-[440px] mx-auto">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function StepNav({
+    current,
+    total = 4,
+    onJump,
+    nextLabel = "Next",
+    onNext,
+}: {
+    current: number;
+    total?: number;
+    onJump?: (n: number) => void;
+    nextLabel?: string;
+    onNext?: () => void;
+}) {
+    return (
+        <div className="flex items-center gap-2 mt-6">
+            {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
+                <button
+                    key={n}
+                    onClick={() => onJump?.(n)}
+                    className={`w-8 h-8 rounded-full text-sm font-semibold border-2 transition-all
+                        ${n === current
+                            ? "bg-[#00B4D8] border-[#00B4D8] text-white"
+                            : "border-gray-300 text-gray-400 bg-white"
+                        }`}
+                >
+                    {n}
+                </button>
+            ))}
+            <Button
+                onClick={onNext}
+                className="btn-primary h-8 px-5 text-sm rounded-full ml-1"
+            >
+                {nextLabel}
+            </Button>
         </div>
     );
 }
 
 
-function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string }) => void }) {
+
+function Step1({ onNext }: { onNext: (data: any) => void }) {
     const [firstName, setFirstName] = useState("");
     const [surname, setSurname] = useState("");
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {
-        const e: Record<string, string> = {};
-        if (!firstName.trim()) e.firstName = "Full name is required";
-        if (!surname.trim()) e.surname = "Surname is required";
-        setErrors(e);
-        return Object.keys(e).length === 0;
+        const newErrors: Record<string, string> = {};
+        if (!firstName.trim()) newErrors.firstName = "Full name is required";
+        if (!surname.trim()) newErrors.surname = "Surname is required";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     return (
-        <div className="flex-1 p-8 flex flex-col justify-center">
-            <h2 className="text-navy">Create an account</h2>
-            <p className="text-text-subtle text-sm mt-1 mb-6">Fill in your details to get started</p>
+        <FormWrapper>
+            <h2 className="text-[#000f2b] text-2xl font-bold mb-6">Create an account</h2>
+            <p className="text-gray-500 text-sm mb-6">Fill in your details to get started</p>
             <Stepper current={1} />
-            <div className="space-y-4">
+            <div className="space-y-5">
                 <div>
-                    <Input label="Full Name(s)" type="text" placeholder="Enter your full name(s)" value={firstName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)} />
-                    {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                    <Input
+                        label="Full Name(s)"
+                        placeholder="Enter your full name(s)"
+                        value={firstName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
+                    />
+                    {errors.firstName && <p className="text-red-600 text-xs mt-1 font-medium">{errors.firstName}</p>}
                 </div>
                 <div>
-                    <Input label="Surname" type="text" placeholder="Enter your surname" value={surname}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)} />
-                    {errors.surname && <p className="text-red-500 text-xs mt-1">{errors.surname}</p>}
+                    <Input
+                        label="Surname"
+                        placeholder="Enter your surname"
+                        value={surname}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)}
+                    />
+                    {errors.surname && <p className="text-red-600 text-xs mt-1 font-medium">{errors.surname}</p>}
                 </div>
             </div>
-            <div className="flex justify-end mt-6">
-                <Button onClick={() => { if (validate()) onNext({ firstName, surname }); }}>Next</Button>
-            </div>
-        </div>
+            <StepNav
+                current={1}
+                onNext={() => { if (validate()) onNext({ firstName, surname }); }}
+            />
+        </FormWrapper>
     );
 }
 
-
-function Step2({ onNext, onBack }: { onNext: (data: { institution: string; email: string }) => void; onBack: () => void }) {
-    const [institution, setInstitution] = useState("");
+function Step2({ onNext, onBack }: { onNext: (data: any) => void; onBack: () => void }) {
+    const [university, setUniversity] = useState("");
     const [email, setEmail] = useState("");
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {
-        const e: Record<string, string> = {};
-        if (!institution.trim()) e.institution = "Institution name is required";
-        if (!email.trim()) e.email = "University email is required";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Invalid email format";
-        setErrors(e);
-        return Object.keys(e).length === 0;
+        const newErrors: Record<string, string> = {};
+        if (!university.trim()) newErrors.university = "University is required";
+        if (!email.trim()) newErrors.email = "University email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = "Invalid email format";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     return (
-        <div className="flex-1 p-8 flex flex-col justify-center">
-            <h2 className="text-navy">Enter university details</h2>
-            <p className="text-text-subtle text-sm mt-1 mb-6">Fill in your details to get started</p>
+        <FormWrapper>
+            <h2 className="text-[#000f2b] text-2xl font-bold">University details</h2>
+            <p className="text-gray-500 text-sm mt-1 mb-8">Tell us where you study</p>
             <Stepper current={2} />
-            <div className="space-y-4">
+            <div className="space-y-5">
                 <div>
-                    <Input label="Name of University/Institution" type="text" placeholder="Enter the name of the University/Institution"
-                        value={institution} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInstitution(e.target.value)} />
-                    {errors.institution && <p className="text-red-500 text-xs mt-1">{errors.institution}</p>}
+                    <Input
+                        label="University"
+                        placeholder="Search institution..."
+                        value={university}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUniversity(e.target.value)}
+                    />
+                    {errors.university && <p className="text-red-600 text-xs mt-1 font-medium">{errors.university}</p>}
                 </div>
                 <div>
-                    <Input label="University Email" type="email" placeholder="you@university.ac.za / you@university.co.za"
-                        value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} />
-                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                    <Input
+                        label="University Email"
+                        placeholder="you@university.ac.za"
+                        value={email}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    />
+                    {errors.email && <p className="text-red-600 text-xs mt-1 font-medium">{errors.email}</p>}
                 </div>
             </div>
-            <div className="flex justify-between mt-6">
-                <Button onClick={onBack} className="bg-white border border-border text-text-dark hover:bg-gray-50">Back</Button>
-                <Button onClick={() => { if (validate()) onNext({ institution, email }); }}>Next</Button>
+            <div className="flex items-center justify-between mt-8">
+                <Button onClick={onBack} className="btn-secondary px-6 text-sm">Back</Button>
+                <StepNav
+                    current={2}
+                    onNext={() => { if (validate()) onNext({ university, email }); }}
+                />
             </div>
-        </div>
+        </FormWrapper>
     );
 }
-
 
 function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [error, setError] = useState("");
-    const [seconds, setSeconds] = useState(90);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-    useEffect(() => {
-        if (seconds <= 0) return;
-        const t = setTimeout(() => setSeconds(s => s - 1), 1000);
-        return () => clearTimeout(t);
-    }, [seconds]);
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d?$/.test(value)) return;
@@ -187,151 +226,197 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
     };
 
     const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-        if (e.key === "Backspace" && !otp[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
-
-    const handlePaste = (e: React.ClipboardEvent) => {
-        const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-        if (pasted.length === 6) {
-            setOtp(pasted.split(""));
-            inputRefs.current[5]?.focus();
-        }
+        if (e.key === "Backspace" && !otp[index] && index > 0) inputRefs.current[index - 1]?.focus();
     };
 
     const validate = () => {
-        if (otp.some(d => d === "")) { setError("Please enter all 6 digits"); return false; }
+        if (otp.some((digit) => digit === "")) {
+            setError("Please enter all 6 digits");
+            return false;
+        }
         setError("");
         return true;
     };
 
-    const fmt = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-
     return (
-        <div className="flex-1 p-8 flex flex-col justify-center">
-            <h2 className="text-navy">OTP Verification</h2>
-            <p className="text-text-subtle text-sm mt-1 mb-6">Fill in your details to get started</p>
+        <FormWrapper>
+            <h2 className="text-[#000f2b] text-2xl font-bold">OTP Verification</h2>
+            <p className="text-gray-500 text-sm mt-1 mb-8">Enter the code sent to your email</p>
             <Stepper current={3} />
-            <p className="text-sm text-text-dark mb-4">
-                Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
+
+            <p className="text-sm text-gray-600 mb-5 leading-relaxed">
+                Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification.
             </p>
-            <div className="flex gap-2 mb-2" onPaste={handlePaste}>
+
+            
+            <div className="flex gap-3 mb-4">
                 {otp.map((digit, i) => (
-                    <input key={i} ref={el => { inputRefs.current[i] = el; }}
-                        type="text" inputMode="numeric" maxLength={1} value={digit}
-                        onChange={e => handleChange(i, e.target.value)}
-                        onKeyDown={e => handleKeyDown(i, e)}
-                        className={`w-10 h-12 text-center text-lg font-semibold border-2 rounded focus:outline-none focus:border-primary transition-colors
-                            ${digit ? "border-primary" : "border-border"}`} />
+                    <input
+                        key={i}
+                        ref={(el) => { inputRefs.current[i] = el; }}
+                        value={digit}
+                        onChange={(e) => handleChange(i, e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(i, e)}
+                        className={`w-11 h-13 border-2 rounded-lg text-center text-xl font-bold focus:outline-none transition-all
+                            ${digit ? "border-[#00B4D8] bg-[#e8f8fc]" : "border-[#dddddd] bg-white"}
+                            focus:border-[#00B4D8]`}
+                        style={{ height: "52px" }}
+                        maxLength={1}
+                        inputMode="numeric"
+                    />
                 ))}
             </div>
-            <div className="flex justify-between items-center text-xs text-text-subtle mb-2">
-                <span>Remaining time: <span className={`font-semibold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span></span>
-                <button onClick={() => setSeconds(90)} className="text-primary hover:underline">Resend OTP code</button>
+
+            <div className="flex items-center justify-between text-xs mb-2">
+                <span className="text-gray-500">
+                    Remaining time: <span className="text-[#00B4D8] font-bold">90:00</span>
+                </span>
+                <button className="text-[#006D8A] font-semibold hover:underline">Resend OTP code</button>
             </div>
-            {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
-            <div className="flex justify-between mt-4">
-                <Button onClick={onBack} className="bg-white border border-border text-text-dark hover:bg-gray-50">Back</Button>
-                <Button onClick={() => { if (validate()) onNext(); }}>Verify</Button>
+
+            {error && <p className="text-red-500 text-xs mb-2 font-medium">{error}</p>}
+
+            <div className="mt-4">
+                <Button
+                    onClick={() => { if (validate()) onNext(); }}
+                    className="btn-primary w-full rounded-full text-base font-bold py-3"
+                >
+                    Verify
+                </Button>
             </div>
-        </div>
+
+            <StepNav
+                current={3}
+                nextLabel="Next"
+                onNext={() => { if (validate()) onNext(); }}
+                onJump={() => { }}
+            />
+        </FormWrapper>
     );
 }
 
-
 function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void }) {
     const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [agreed, setAgreed] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
     const [showPw, setShowPw] = useState(false);
     const [showCf, setShowCf] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {
-        const e: Record<string, string> = {};
-        if (!password) e.password = "Password is required";
-        else if (password.length < 8) e.password = "Password must be at least 8 characters";
-        if (!confirm) e.confirm = "Please confirm your password";
-        else if (confirm !== password) e.confirm = "Passwords do not match";
-        if (!agreed) e.agreed = "You must agree to the Terms of Service and Privacy Policy";
-        setErrors(e);
-        return Object.keys(e).length === 0;
+        const newErrors: Record<string, string> = {};
+        if (!password) newErrors.password = "Password is required";
+        else if (password.length < 8) newErrors.password = "Password must be at least 8 characters";
+        if (!confirmPassword) newErrors.confirmPassword = "Please confirm your password";
+        else if (confirmPassword !== password) newErrors.confirmPassword = "Passwords do not match";
+        if (!agreed) newErrors.agreed = "You must agree to the Terms of Service and Privacy Policy";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     return (
-        <div className="flex-1 p-8 flex flex-col justify-center">
-            <h2 className="text-navy">Password</h2>
-            <p className="text-text-subtle text-sm mt-1 mb-6">Create your password</p>
+        <FormWrapper>
+            <h2 className="text-[#000f2b] text-2xl font-bold">Set Password</h2>
+            <p className="text-gray-500 text-sm mt-1 mb-8">Secure your new account</p>
             <Stepper current={4} />
-            <div className="space-y-4">
+
+            <div className="flex flex-col gap-6 mb-6">
+                
                 <div>
-                    <label className="text-sm font-medium text-text-dark block mb-1">Password</label>
+                    <label className="form-label">Password</label>
                     <div className="relative">
-                        <input type={showPw ? "text" : "password"} placeholder="Create your password" value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="w-full border border-border rounded px-3 py-2 pr-10 text-sm focus:outline-none focus:border-primary bg-background-input" />
-                        <button type="button" onClick={() => setShowPw(p => !p)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-subtle hover:text-text-dark">
-                            {showPw ? (
-                                <EyeOff className="w-4 h-4" />
-                            ) : (
-                                <Eye className="w-4 h-4" />
-                            )}
+                        <input
+                            type={showPw ? "text" : "password"}
+                            placeholder="Create your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPw((p) => !p)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
                 </div>
+
+            
                 <div>
-                    <label className="text-sm font-medium text-text-dark block mb-1">Confirm Password</label>
+                    <label className="form-label">Confirm Password</label>
                     <div className="relative">
-                        <input type={showCf ? "text" : "password"} placeholder="Confirm your password" value={confirm}
-                            onChange={e => setConfirm(e.target.value)}
-                            className="w-full border border-border rounded px-3 py-2 pr-10 text-sm focus:outline-none focus:border-primary bg-background-input" />
-                        <button type="button" onClick={() => setShowCf(p => !p)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-subtle hover:text-text-dark">
-                            {showCf ? (
-                                <EyeOff className="w-4 h-4" />
-                            ) : (
-                                <Eye className="w-4 h-4" />
-                            )}
+                        <input
+                            type={showCf ? "text" : "password"}
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowCf((p) => !p)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            {showCf ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-                    {errors.confirm && <p className="text-red-500 text-xs mt-1">{errors.confirm}</p>}
+                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
-                <div>
-                    <label className="flex items-start gap-2 cursor-pointer">
-                        <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
-                            className="mt-0.5 accent-primary" />
-                        <span className="text-sm text-text-subtle">
-                            I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+
+                
+                <div className="pt-1">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={agreed}
+                            onChange={(e) => setAgreed(e.target.checked)}
+                            className="mt-0.5 w-4 h-4 accent-[#00B4D8]"
+                        />
+                        <span className="text-xs text-gray-500 leading-relaxed">
+                            I agree to the{" "}
+                            <a href="#" className="text-[#006D8A] font-semibold hover:underline">Terms of Service</a>
+                            {" "}and{" "}
+                            <a href="#" className="text-[#006D8A] font-semibold hover:underline">Privacy Policy</a>
                         </span>
                     </label>
-                    {errors.agreed && <p className="text-red-500 text-xs mt-1">{errors.agreed}</p>}
+                    {errors.agreed && <p className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</p>}
                 </div>
             </div>
-            <div className="flex justify-between mt-6">
-                <Button onClick={onBack} className="bg-white border border-border text-text-dark hover:bg-gray-50">Back</Button>
-                <Button onClick={() => { if (validate()) onSubmit(); }}>Register</Button>
+
+    
+            <div className="mt-8">
+                <button
+                    onClick={() => { if (validate()) onSubmit(); }}
+                    className="btn-primary w-full rounded-full text-base font-bold py-3 tracking-wide uppercase"
+                >
+                    Register
+                </button>
             </div>
-        </div>
+
+            <StepNav
+                current={4}
+                nextLabel="Register"
+                onNext={() => { if (validate()) onSubmit(); }}
+            />
+        </FormWrapper>
     );
 }
 
 
 export default function RegisterDesktop() {
     const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState<Record<string, string>>({});
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-background-light px-4">
-            <div className="card w-full max-w-[800px] min-h-[500px] flex overflow-hidden">
+        <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+            <Card className="w-full max-w-[900px] min-h-[580px] flex overflow-hidden border border-[#dddddd] shadow-sm bg-white">
                 <LeftPanel />
-                {step === 1 && <Step1 onNext={data => { setFormData(f => ({ ...f, ...data })); setStep(2); }} />}
-                {step === 2 && <Step2 onBack={() => setStep(1)} onNext={data => { setFormData(f => ({ ...f, ...data })); setStep(3); }} />}
+                {step === 1 && <Step1 onNext={() => setStep(2)} />}
+                {step === 2 && <Step2 onBack={() => setStep(1)} onNext={() => setStep(3)} />}
                 {step === 3 && <Step3 onBack={() => setStep(2)} onNext={() => setStep(4)} />}
-                {step === 4 && <Step4 onBack={() => setStep(3)} onSubmit={() => { console.log("Submit", formData); }} />}
-            </div>
+                {step === 4 && <Step4 onBack={() => setStep(3)} onSubmit={() => console.log("Registered!")} />}
+            </Card>
         </main>
     );
 }
