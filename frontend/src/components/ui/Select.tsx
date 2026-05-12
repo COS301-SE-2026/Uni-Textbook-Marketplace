@@ -3,13 +3,13 @@ type Option = {
     label: string;
     value: string;
 }
+
 type SeletProps = {
     label?: string,
     options: Option[];
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
-
 
 export default function Select({
     label,
@@ -39,5 +39,5 @@ export default function Select({
 
             </select>
         </div>
-    )
+    );
 }
