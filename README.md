@@ -1,7 +1,11 @@
-# NexusDev - Uni Textbook Marketplace
+# Uni Textbook Marketplace
 
 > **A marketplace for students, by students.**
 > A verified, module-aware platform where university students can buy, sell, and swap textbooks. Safely, affordably, and without the chaos of WhatsApp groups.
+
+---
+
+## Presented by NexusDev
 
 ---
 
@@ -17,8 +21,9 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specification (SRS) | https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md |
-|  Architecture Overview | *Coming soon - Sprint 1* |
+|  Software Requirements Specification (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md) |
+|  Architecture Overview | *Coming soon — Sprint 2* |
+|  Brand Style Guide | [View Brand Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/brand-style-guide.md) |
 |  User Guide | *Coming soon* |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
@@ -35,15 +40,15 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ## Build & Quality Badges
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-0%25-red)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-blue)
+[![NexusDev CI](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace/branch/main/graph/badge.svg)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2026_Uni-Textbook-Marketplace&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2026_Uni-Textbook-Marketplace)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2026_Uni-Textbook-Marketplace&metric=coverage)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2026_Uni-Textbook-Marketplace)
+[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-blue)](https://nodejs.org)
 ![NestJS](https://img.shields.io/badge/backend-NestJS-red)
 ![NextJS](https://img.shields.io/badge/frontend-NextJS-black)
 ![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-336791)
-![License](https://img.shields.io/badge/license-MIT-green)
-
->  Live badges (Codecov, GitHub Actions) will be configured in Sprint 1 once the CI pipeline is active.
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
 ---
 
@@ -54,51 +59,85 @@ Uni-Textbook-Marketplace/
 │
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  # GitHub Actions CI/CD pipeline
+│       └── ci.yml                        # GitHub Actions CI/CD pipeline
 │
-├── backend/                        # NestJS modular monolith API
+├── backend/                              # NestJS modular monolith API
 │   ├── src/
-│   │   ├── auth/                   # AuthService — registration, JWT, email verification
-│   │   ├── listings/               # ListingService — create, read, manage listings
-│   │   ├── moderation/             # ModerationService — admin review, soft delete
-│   │   └── modules/                # ModulesService — module code lookup, search-as-you-type
-│   ├── test/                       # NestJS end-to-end tests
+│   │   ├── auth/                         # AuthService - registration, JWT, OTP
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   └── auth.service.ts
+│   │   ├── listings/                     # ListingService - create, read, manage
+│   │   │   ├── listings.module.ts
+│   │   │   ├── listings.controller.ts
+│   │   │   └── listings.service.ts
+│   │   ├── moderation/                   # ModerationService - admin review
+│   │   │   ├── moderation.module.ts
+│   │   │   ├── moderation.controller.ts
+│   │   │   └── moderation.service.ts
+│   │   ├── modules/                      # ModulesService - module code lookup
+│   │   │   ├── modules.module.ts
+│   │   │   ├── modules.controller.ts
+│   │   │   └── modules.service.ts
+│   │   ├── app.module.ts
+│   │   └── main.ts
+│   ├── test/                             # NestJS end-to-end tests
+│   ├── .env.example                      # Environment variable template
 │   ├── nest-cli.json
 │   ├── tsconfig.json
 │   ├── tsconfig.build.json
 │   └── package.json
 │
-├── frontend/                       # Next.js (React) web application
+├── frontend/                             # Next.js (React) web application
 │   ├── src/
-│   │   └── app/                    # Next.js App Router pages and layouts
-│   ├── public/                     # Static assets
+│   │   ├── app/                          # Next.js App Router
+│   │   │   ├── auth/
+│   │   │   │   ├── login/
+│   │   │   │   │   └── page.tsx          # /auth/login
+│   │   │   │   └── register/
+│   │   │   │       └── page.tsx          # /auth/register
+│   │   │   ├── listings/
+│   │   │   │   └── page.tsx              # /listings
+│   │   │   ├── admin/
+│   │   │   │   └── page.tsx              # /admin
+│   │   │   ├── layout.tsx                # Root layout with NavBar
+│   │   │   ├── page.tsx                  # Landing page /
+│   │   │   └── globals.css              # Global styles + brand tokens
+│   │   └── components/
+│   │       ├── NavBar.tsx                # Navigation bar (auth-aware)
+│   │       └── ui/                       # Reusable UI component library
+│   ├── public/                           # Static assets
+│   ├── .env.example                      # Environment variable template
+│   ├── jest.config.js                    # Jest configuration
+│   ├── jest.setup.ts                     # Jest setup
 │   ├── next.config.ts
-│   ├── tailwind.config.ts
+│   ├── tailwind.config.ts                # Brand colours and tokens
 │   ├── tsconfig.json
 │   └── package.json
 │
-├── messaging/                      # External Firebase messaging microservice
-│   └── .gitkeep                    # Populated in Sprint 2
+├── messaging/                            # External Firebase microservice
+│   └── .gitkeep                          # Populated in Sprint 2
 │
 ├── database/
-│   ├── migrations/                 # TypeORM migration files
-│   ├── schema/                     # PostgreSQL schema SQL files
-│   └── seeds/                      # Demo seed data
+│   ├── migrations/                       # TypeORM migration files
+│   ├── schema/
+│   │   └── schema.sql                    # Full PostgreSQL schema
+│   └── seeds/                            # Demo seed data
 │
 ├── docs/
-│   ├── architecture/               # Architecture diagrams
-│   ├── wireframes/                 # UI wireframes
-│   ├── brand-style-guide.md        # Agile Bridge brand guidelines
-│   └── srs.md                      # Software Requirements Specification
+│   ├── architecture/                     # Architecture diagrams
+│   ├── wireframes/                       # UI wireframes
+│   ├── brand-style-guide.md              # Agile Bridge brand guidelines
+│   └── srs.md                            # Software Requirements Specification
 │
 ├── .gitignore
 ├── .npmrc
-├── CONTRIBUTING.md                 # Branching strategy and commit conventions
-├── docker-compose.yml              # Local PostgreSQL development database
-├── package.json                    # Root npm workspace coordinator
+├── CONTRIBUTING.md                       # Branching strategy and commit conventions
+├── docker-compose.yml                    # Local PostgreSQL development database
+├── package.json                          # Root npm workspace coordinator
 ├── package-lock.json
 ├── README.md
-└── tsconfig.json                   # Shared TypeScript base config
+└── tsconfig.json                         # Shared TypeScript base config
 ```
 
 ---
@@ -136,7 +175,16 @@ npm run backend
 npm run frontend
 ```
 
-> Full environment setup guide will be added to `/docs/setup.md` in Sprint 1.
+### Environment variables
+
+Copy the example env files and fill in the values:
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
+```
+
+> Full environment setup guide will be added to `/docs/setup.md` in Sprint 2.
 
 ---
 
@@ -154,6 +202,8 @@ We follow **GitHub Flow**:
 | `test/[name]` | Test additions (e.g. `test/auth-unit-tests`) |
 
 All changes go through a **Pull Request** with at least one review before merging into `develop`. Only sprint-complete code merges into `main`.
+
+> See [CONTRIBUTING.md](./CONTRIBUTING.md) for full branching rules and commit conventions.
 
 ---
 
@@ -186,14 +236,14 @@ npm run test:all
 
 The system follows a **modular monolith** architecture for core features with an **external messaging microservice**:
 
-- **Frontend** - Next.js (React) responsive web app
-- **Backend** - NestJS modular monolith (Auth, Listings, Moderation, Modules)
-- **Database** - Azure Database for PostgreSQL
-- **Messaging** - Firebase Firestore real-time chat (external microservice)
-- **Hosting** - Azure Static Web Apps + Azure App Service
-- **CI/CD** - GitHub Actions
+- **Frontend** — Next.js (React) responsive web app
+- **Backend** — NestJS modular monolith (Auth, Listings, Moderation, Modules)
+- **Database** — Azure Database for PostgreSQL
+- **Messaging** — Firebase Firestore real-time chat (external microservice)
+- **Hosting** — Azure Static Web Apps + Azure App Service
+- **CI/CD** — GitHub Actions
 
-> Full architecture diagram available in the [SRS document](#documentation).
+> Full architecture diagram available in the [SRS document](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md).
 
 ---
 
