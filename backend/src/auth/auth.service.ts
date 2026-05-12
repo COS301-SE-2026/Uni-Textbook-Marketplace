@@ -14,6 +14,7 @@ import { IEmailService } from '../email/email.interface';
 
 import { User } from "./entities/user.entity";
 import { University } from "./entities/university.entity";
+import { sign } from "crypto";
 
 @Injectable()
 export class AuthService{
@@ -79,5 +80,68 @@ export class AuthService{
         return {
             message: 'Registration successful. Check your university email for verification code'
         };
+    }
+
+    async verifyEmail(email: string, code: string) {
+
+        await this.otpService.verifyOtp(email,code);
+
+        await this.userRepository.update(
+            {
+                email
+            },
+            {
+                is_verified: true,
+                updated_at: new Date(),
+            },
+        );
+
+        const userResult = await this.userRepository.findOne({
+            select : {
+                id: true,
+                email: true,
+                role: true,
+            },
+            where : {
+                email: email,
+            },
+        });
+
+        if (!userResult) {
+            throw new UnauthorizedException('User not found');
+        }
+
+        const user = userResult;
+
+        return this.issueTokens(user);
+    }
+
+    private issueTokens(user: { id: string; email: string; role: string}){
+      
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            role: user.role
+        };
+
+        const accessToken = this.jwtService.sign(
+            
+            payload, {
+                secret: this.configService.get('JWT_ACCESS_SECRET'),
+                expiresIn: '15m',
+            }
+            
+        );
+
+        const refreshToken = this.jwtService.sign(
+            
+            payload, {
+                secret: this.configService.get('JWT_REFRESH_SECRET'),
+                expiresIn: '7d',
+            }
+            
+        );
+
+        return { accessToken, refreshToken };
     }
 }
