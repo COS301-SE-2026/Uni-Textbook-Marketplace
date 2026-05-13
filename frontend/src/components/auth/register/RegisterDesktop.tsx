@@ -227,7 +227,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification.
             </p>
 
-            <div className="flex " style={{ marginBottom: "30px" }} >
+            <div className="flex " style={{ gap:"10px", marginBottom: "30px" }} >
                 {otp.map((digit, i) => (
                     <input
                         key={i}
