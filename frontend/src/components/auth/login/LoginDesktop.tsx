@@ -108,13 +108,14 @@ export default function LoginDesktop() {
                                         placeholder="Enter your password"
                                         value={password}
                                         style={{
-                                            width: "85%",
+                                            width: "87%",
                                             paddingRight: "2.75rem",
                                         }}
                                         onChange={(e) => {
                                             setPassword(e.target.value);
                                             if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
                                         }}
+                                        className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                                     />
                                     <button
                                         type="button"
@@ -136,12 +137,12 @@ export default function LoginDesktop() {
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
-                                    {errors.password && (
-                                        <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
-                                            {errors.password}
-                                        </p>
-                                    )}
                                 </div>
+                                {errors.password && (
+                                    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+                                        {errors.password}
+                                    </p>
+                                )}
                             </div>
 
                             {serverError && (
@@ -151,12 +152,12 @@ export default function LoginDesktop() {
                             )}
 
                             <div className="flex justify-end">
-                                <a href="#" className="text-sm text-primary">
+                                <a href="#" className="text-sm text-primary" style={{margin:"15px"}}>
                                     Forgot Password?
                                 </a>
                             </div>
 
-                            <Button className="w-full">
+                            <Button className="w-full ">
                                 Login
                             </Button>
 
