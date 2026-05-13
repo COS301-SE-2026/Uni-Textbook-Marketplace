@@ -6,8 +6,6 @@ import { Button, Input, Card, Stepper } from "@/components/ui";
 import { Check, Eye, EyeOff } from "lucide-react";
 
 
-
-
 function LeftPanel() {
     return (
         <div className="w-[320px] shrink-0 border-r border-border bg-cyan-50 px-14 py-30 flex flex-col items-center justify-center gap-5">
@@ -19,6 +17,7 @@ function LeftPanel() {
         </div>
     );
 }
+
 function FormWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex-1 px-16 py-12 flex flex-col justify-center">
@@ -43,31 +42,30 @@ function StepNav({
     onNext?: () => void;
 }) {
     return (
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex items-center mt-6" style={{ gap: '1rem', margin:'20px'}}>
             {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
                 <button
                     key={n}
                     onClick={() => onJump?.(n)}
-                    className={`w-8 h-8 rounded-full text-sm font-semibold border-2 transition-all
-                        ${n === current
+                    className={`w-8 h-8 rounded-full text-sm font-semibold border transition-all 
+                    ${n === current
                             ? "bg-[#00B4D8] border-[#00B4D8] text-white"
-                            : "border-gray-300 text-gray-400 bg-white"
+                            : "border-gray-300 text-gray-400 bg-white hover:border-[#00B4D8] hover:text-[#00B4D8]"
                         }`}
                 >
                     {n}
                 </button>
             ))}
+
             <Button
                 onClick={onNext}
-                className="btn-primary h-8 px-5 text-sm rounded-full ml-1"
+                className="btn-primary h-8 px-5 text-sm"
             >
                 {nextLabel}
             </Button>
         </div>
     );
 }
-
-
 
 function Step1({ onNext }: { onNext: (data: any) => void }) {
     const [firstName, setFirstName] = useState("");
@@ -86,12 +84,15 @@ function Step1({ onNext }: { onNext: (data: any) => void }) {
         <FormWrapper>
             <h2 className="text-[#000f2b] text-2xl font-bold mb-6">Create an account</h2>
             <p className="text-gray-500 text-sm mb-6">Fill in your details to get started</p>
+
             <Stepper current={1} />
+
             <div className="space-y-5">
                 <div>
                     <Input
                         label="Full Name(s)"
                         placeholder="Enter your full name(s)"
+                        type="text"
                         value={firstName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                     />
@@ -201,7 +202,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification.
             </p>
 
-            
+
             <div className="flex gap-3 mb-4">
                 {otp.map((digit, i) => (
                     <input
@@ -274,7 +275,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
             <Stepper current={4} />
 
             <div className="flex flex-col gap-6 mb-6">
-                
+
                 <div>
                     <label className="form-label">Password</label>
                     <div className="relative">
@@ -296,7 +297,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                     {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
                 </div>
 
-            
+
                 <div>
                     <label className="form-label">Confirm Password</label>
                     <div className="relative">
@@ -318,7 +319,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                     {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
 
-                
+
                 <div className="pt-1">
                     <label className="flex items-start gap-3 cursor-pointer">
                         <input
@@ -338,7 +339,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                 </div>
             </div>
 
-    
+
             <div className="mt-8">
                 <button
                     onClick={() => { if (validate()) onSubmit(); }}

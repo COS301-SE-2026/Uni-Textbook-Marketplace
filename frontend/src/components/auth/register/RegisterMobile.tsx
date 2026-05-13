@@ -6,7 +6,6 @@ import { Button, Input, Stepper } from "@/components/ui";
 import { Eye, EyeOff, Check } from "lucide-react";
 
 
-
 function TopPanel() {
     return (
         <div className="w-full border-b border-border bg-cyan-50 px-8 py-10 flex flex-col items-center justify-center">
@@ -20,7 +19,6 @@ function TopPanel() {
         </div>
     );
 }
-
 
 function StepWrapper({ children }: { children: React.ReactNode }) {
     return <div className="flex-1 px-8 py-10 flex flex-col">{children}</div>;
@@ -45,16 +43,26 @@ function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string
         <StepWrapper>
             <h2 className="text-navy text-xl font-bold">Create an account</h2>
             <p className="text-text-subtle text-sm mt-1 mb-8">Fill in your details to get started</p>
+
             <Stepper current={1} />
+
             <div className="space-y-5">
                 <div>
-                    <Input label="Full Name(s)" type="text" placeholder="Enter your full name(s)" value={firstName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)} />
+                    <Input
+                        label="Full Name(s)"
+                        type="text" placeholder="Enter your full name(s)"
+                        value={firstName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
+                    />
                     {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                 </div>
                 <div>
-                    <Input label="Surname" type="text" placeholder="Enter your surname" value={surname}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)} />
+                    <Input label="Surname"
+                        type="text"
+                        placeholder="Enter your surname"
+                        value={surname}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)}
+                    />
                     {errors.surname && <p className="text-red-500 text-xs mt-1">{errors.surname}</p>}
                 </div>
             </div>
@@ -97,7 +105,7 @@ function Step2({ onNext, onBack }: { onNext: (data: { institution: string; email
                 </div>
             </div>
             <div className="flex gap-4 mt-10">
-                <Button variant="primary" className="flex-1" onClick={onBack}>Back</Button>
+                <Button variant="secondary" className="flex-1" onClick={onBack}>Back</Button>
                 <Button className="flex-1" onClick={() => { if (validate()) onNext({ institution, email }); }}>Next</Button>
             </div>
         </StepWrapper>
