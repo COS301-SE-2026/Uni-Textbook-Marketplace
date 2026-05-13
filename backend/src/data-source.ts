@@ -15,7 +15,9 @@ dotenv.config();
 export const AppDataSource = new DataSource({
   type: 'postgres',
 
-  url: 'postgres://nexusdev:nexusdev_local@localhost:5432/textbook_marketplace',
+  url: process.env.DATABASE_URL,
+
+  //process.env.DATABASE_URL,
 
   synchronize: false,
   logging: true,

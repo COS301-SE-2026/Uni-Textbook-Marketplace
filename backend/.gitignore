@@ -2,6 +2,9 @@
 /dist
 /node_modules
 /build
+dist/
+*.js
+*.js.map
 
 # Logs
 logs

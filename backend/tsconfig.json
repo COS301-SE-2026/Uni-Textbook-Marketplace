@@ -18,6 +18,7 @@
     "strictBindCallApply": false,
      "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false,
+    "outDir": "./dist"
     
     
   },
