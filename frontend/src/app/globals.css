@@ -103,6 +103,7 @@
     border: 1px solid #dddddd;
     border-radius: 4px;
     outline: none;
+    width: 100%;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -317,4 +318,4 @@
     border-top: 1px solid #dddddd;
     margin: 1.5rem 0;
   }
-}
+} 

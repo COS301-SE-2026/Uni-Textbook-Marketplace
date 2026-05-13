@@ -37,30 +37,31 @@ function StepNav({
 }: {
     current: number;
     total?: number;
-    onJump?: (n: number) => void;
     nextLabel?: string;
+    onJump?: (n: number) => void;
     onNext?: () => void;
 }) {
     return (
-        <div className="flex items-center mt-6" style={{ gap: '1rem', margin: '20px' }}>
+        <div className="flex items-center" style={{ gap: "0.75rem", marginTop: "2rem" }}>
             {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
-                <button
+                <div
                     key={n}
                     onClick={() => onJump?.(n)}
-                    className={`w-8 h-8 rounded-full text-sm font-semibold border transition-all 
-                    ${n === current
-                            ? "bg-[#00B4D8] border-[#00B4D8] text-white"
-                            : "border-gray-300 text-gray-400 bg-white hover:border-[#00B4D8] hover:text-[#00B4D8]"
-                        }`}
+                    className="flex items-center justify-center text-sm font-semibold"
+                    style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: "50%",
+                        border: n === current ? "2px solid #00B4D8" : "2px solid #d1d5db",
+                        backgroundColor: n === current ? "#00B4D8" : "#ffffff",
+                        color: n === current ? "#ffffff" : "#9ca3af",
+                        flexShrink: 0,
+                    }}
                 >
                     {n}
-                </button>
+                </div>
             ))}
-
-            <Button
-                onClick={onNext}
-                className="btn-primary h-8 px-5 text-sm"
-            >
+            <Button className="btn-primary" onClick={onNext}>
                 {nextLabel}
             </Button>
         </div>
@@ -156,7 +157,7 @@ function Step2({ onNext, onBack }: { onNext: (data: any) => void; onBack: () => 
                 </div>
             </div>
             <div className="flex items-center justify-between mt-8">
-                <Button onClick={onBack} className="btn-secondary px-6 text-sm">Back</Button>
+                <button onClick={onBack} className="btn-secondary px-6 text-sm " style={{ marginTop: '38px' }}>Back</button>
                 <StepNav
                     current={2}
                     onNext={() => { if (validate()) onNext({ university, email }); }}
@@ -274,47 +275,83 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
             <p className="text-gray-500 text-sm mt-1 mb-8">Secure your new account</p>
             <Stepper current={4} />
 
-            <div className="flex flex-col mb-6" style={{gap:"20px", marginBottom:"20px"}}>
-                
+            <div className="flex flex-col mb-6" style={{ gap: "20px", marginBottom: "20px" }}>
+
                 <div>
                     <label className="form-label">Password</label>
-                    <div className="relative">
+                    <div style={{ position: "relative", width: "100%" }}>
                         <input
                             type={showPw ? "text" : "password"}
                             placeholder="Create your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
+                            style={{
+                                width: "100%",
+                                paddingRight: "2.75rem",
+                            }}
+                            className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPw((p) => !p)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: "2.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                color: "#9ca3af",
+                            }}
                         >
-                            {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
+                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
 
 
                 <div>
                     <label className="form-label">Confirm Password</label>
-                    <div className="relative">
+                   <div style={{ position: "relative", width: "100%" }}>
+
                         <input
                             type={showCf ? "text" : "password"}
                             placeholder="Confirm your password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
+                            style={{
+                                width: "100%",
+                                paddingRight: "2.75rem",
+                            }}
+                            className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                         />
                         <button
                             type="button"
                             onClick={() => setShowCf((p) => !p)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: "2.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                color: "#9ca3af",
+                            }}
                         >
-                            {showCf ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showCf ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
+
                     </div>
                     {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
