@@ -53,7 +53,7 @@ export class ListingsController {
         return this.listingsService.getAllListings();
     }
 
-    @Get()
+    @Get('mine')
     @ApiOperation({
         summary: 'Returns the listings this user has made',
     })

@@ -14,7 +14,7 @@ export class ListingsService{
             annotationLevel: "annot1",
             moduleCode: "cos110",
             price: "100",
-            status: "status1",
+            status: "PENDING",
             sellerId: "ID-1",
             //do we want a message in each listing? the Post uses one
         },
@@ -27,7 +27,7 @@ export class ListingsService{
             annotationLevel: "annot2",
             moduleCode: "cos220",
             price: "200",
-            status: "status2",
+            status: "APPROVED",
             sellerId: "ID-2"
         },
         {
@@ -39,7 +39,7 @@ export class ListingsService{
             annotationLevel: "annot3",
             moduleCode: "cos330",
             price: "300",
-            status: "status3",
+            status: "REJECTED",
             sellerId: "ID-3"
         },
     ];
@@ -66,9 +66,15 @@ export class ListingsService{
     }
 
     //GET ListingById
-    getListingById(id : string){
+    getListingById(id: string) {
         const listing = this.listings.find(
             listing => listing.id === id,
         );
+
+        if (!listing) {
+            throw new NotFoundException('Listing not found');
+        }
+
+        return listing;
     }
 }
