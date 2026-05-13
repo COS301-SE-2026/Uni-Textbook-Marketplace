@@ -19,6 +19,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    env_file:
+      - .env.local
 
   backend:
     image: node:20
