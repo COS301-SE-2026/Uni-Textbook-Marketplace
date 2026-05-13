@@ -318,7 +318,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
 
                 <div>
                     <label className="form-label">Confirm Password</label>
-                   <div style={{ position: "relative", width: "100%" }}>
+                    <div style={{ position: "relative", width: "100%" }}>
 
                         <input
                             type={showCf ? "text" : "password"}
@@ -357,33 +357,24 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                 </div>
 
 
-                <div className="pt-1">
-                    <label className="flex items-start gap-3 cursor-pointer">
+                <div style={{ paddingTop: "0.25rem" }}>
+                    <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
                         <input
                             type="checkbox"
                             checked={agreed}
                             onChange={(e) => setAgreed(e.target.checked)}
-                            className="mt-0.5 w-4 h-4 accent-[#00B4D8]"
+                            style={{ marginTop: 2, width: 16, height: 16, flexShrink: 0, accentColor: "#00B4D8" }}
                         />
-                        <span className="text-xs text-gray-500 leading-relaxed">
+                        <span style={{ fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.5" }}>
                             I agree to the{" "}
-                            <a href="#" className="text-[#006D8A] font-semibold hover:underline">Terms of Service</a>
+                            <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Terms of Service</a>
                             {" "}and{" "}
-                            <a href="#" className="text-[#006D8A] font-semibold hover:underline">Privacy Policy</a>
+                            <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Privacy Policy</a>
                         </span>
                     </label>
                     {errors.agreed && <p className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</p>}
                 </div>
-            </div>
 
-
-            <div className="mt-8">
-                <button
-                    onClick={() => { if (validate()) onSubmit(); }}
-                    className="btn-primary w-full rounded-full text-base font-bold py-3 tracking-wide uppercase"
-                >
-                    Register
-                </button>
             </div>
 
             <StepNav
