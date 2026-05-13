@@ -2,55 +2,9 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Stepper } from "@/components/ui";
 import { Eye, EyeOff, Check } from "lucide-react";
 
-const STEPS = ["Personal\nDetails", "University\nEmail", "Verification", "Password"];
-
-
-function Stepper({ current }: { current: number }) {
-    return (
-        <div className="flex items-start justify-between w-full mb-10 px-2">
-            {STEPS.map((label, i) => {
-                const stepNum = i + 1;
-                const done = stepNum < current;
-                const active = stepNum === current;
-
-                return (
-                    <React.Fragment key={i}>
-                        <div className="flex flex-col items-center flex-1">
-                            <div
-                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 transition-all
-                                ${done
-                                    ? "bg-primary border-primary text-white"
-                                    : active
-                                        ? "border-primary text-primary bg-white"
-                                        : "border-border text-text-subtle bg-white"
-                                }`}
-                            >
-                                {done ? <Check className="w-4 h-4" /> : stepNum}
-                            </div>
-
-                            <span
-                                className={`text-[10px] text-center mt-2 whitespace-pre-line leading-tight h-8
-                                ${active ? "text-primary font-semibold" : "text-text-subtle"}`}
-                            >
-                                {label}
-                            </span>
-                        </div>
-
-                        {i < STEPS.length - 1 && (
-                            <div
-                                className={`w-full h-[2px] mt-4 -mx-2
-                                ${done ? "bg-primary" : "bg-border"}`}
-                            />
-                        )}
-                    </React.Fragment>
-                );
-            })}
-        </div>
-    );
-}
 
 
 function TopPanel() {
@@ -196,7 +150,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
             </div>
             <div className="flex flex-col gap-2 text-xs mb-8">
                 <span className="text-text-subtle">Remaining time: <span className={`font-bold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span></span>
-                <button onClick={() => setSeconds(90)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</button>
+                <button onClick={() => setSeconds(60)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</button>
             </div>
             {error && <p className="text-red-500 text-xs mb-4">{error}</p>}
             <div className="flex gap-4">
@@ -288,7 +242,7 @@ export default function RegisterMobile() {
         <main className="min-h-screen bg-white">
             <div className="w-full flex flex-col">
                 <TopPanel />
-                
+
                 {step === 1 && <Step1 onNext={data => { setFormData(f => ({ ...f, ...data })); setStep(2); }} />}
                 {step === 2 && <Step2 onBack={() => setStep(1)} onNext={data => { setFormData(f => ({ ...f, ...data })); setStep(3); }} />}
                 {step === 3 && <Step3 onBack={() => setStep(2)} onNext={() => setStep(4)} />}

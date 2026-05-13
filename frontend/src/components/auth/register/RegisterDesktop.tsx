@@ -2,58 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input,Card } from "@/components/ui";
+import { Button, Input, Card, Stepper } from "@/components/ui";
 import { Check, Eye, EyeOff } from "lucide-react";
 
 
 
-const STEPS = [
-    "Personal\nDetails",
-    "University\nEmail",
-    "Verification",
-    "Password",
-];
-
-function Stepper({ current }: { current: number }) {
-    return (
-        <div className="flex items-start justify-between mb-6 w-full max-w-[420px]">
-            {STEPS.map((label, i) => {
-                const stepNum = i + 1;
-                const done = stepNum < current;
-                const active = stepNum === current;
-
-                return (
-                    <React.Fragment key={i}>
-                        <div className="flex flex-col items-center min-w-[60px]">
-                            <div
-                                className={`
-                                    w-10 h-10 rounded-full border-2 flex items-center justify-center
-                                    text-sm font-semibold transition-all
-                                    ${done
-                                        ? "bg-[#00B4D8] border-[#00B4D8] text-white"
-                                        : active
-                                            ? "border-[#00B4D8] text-[#00B4D8] bg-white"
-                                            : "border-gray-300 text-gray-400 bg-white"
-                                    }
-                                `}
-                            >
-                                {done ? <Check className="w-5 h-5" /> : stepNum}
-                            </div>
-                            <span
-                                className={`text-[10px] text-center leading-tight mt-2 whitespace-pre-line ${active ? "text-[#00B4D8] font-semibold" : "text-gray-400"}`}
-                            >
-                                {label}
-                            </span>
-                        </div>
-                        {i < STEPS.length - 1 && (
-                            <div className={`flex-1 h-[2px] mt-5 mx-2 ${done ? "bg-[#00B4D8]" : "bg-gray-200"}`} />
-                        )}
-                    </React.Fragment>
-                );
-            })}
-        </div>
-    );
-}
 
 function LeftPanel() {
     return (
@@ -269,9 +222,9 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
 
             <div className="flex items-center justify-between text-xs mb-2">
                 <span className="text-gray-500">
-                    Remaining time: <span className="text-[#00B4D8] font-bold">90:00</span>
+                    Remaining time: <span className="text-[#00B4D8] font-bold">60:00</span>
                 </span>
-                <button className="text-[#006D8A] font-semibold hover:underline">Resend OTP code</button>
+                <Button className="text-[#006D8A] font-semibold hover:underline">Resend OTP code</Button>
             </div>
 
             {error && <p className="text-red-500 text-xs mb-2 font-medium">{error}</p>}
