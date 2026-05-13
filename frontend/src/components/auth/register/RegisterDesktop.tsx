@@ -18,6 +18,20 @@ function LeftPanel() {
     );
 }
 
+interface ErrorProps {
+  children: React.ReactNode;
+  className?: string; 
+}
+
+function ErrorText({ children, className = "" }: ErrorProps) {
+  return (
+    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+      {children}
+    </p>
+  );
+}
+
+
 function FormWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex-1 px-16 py-12 flex flex-col justify-center">
@@ -97,7 +111,7 @@ function Step1({ onNext }: { onNext: (data: any) => void }) {
                         value={firstName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                     />
-                    {errors.firstName && <p className="text-red-600 text-xs mt-1 font-medium">{errors.firstName}</p>}
+                    {errors.firstName && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.firstName}</ErrorText>}
                 </div>
                 <div>
                     <Input
@@ -106,7 +120,7 @@ function Step1({ onNext }: { onNext: (data: any) => void }) {
                         value={surname}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)}
                     />
-                    {errors.surname && <p className="text-red-600 text-xs mt-1 font-medium">{errors.surname}</p>}
+                    {errors.surname && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.surname}</ErrorText>}
                 </div>
             </div>
             <StepNav
@@ -144,7 +158,7 @@ function Step2({ onNext, onBack }: { onNext: (data: any) => void; onBack: () => 
                         value={university}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUniversity(e.target.value)}
                     />
-                    {errors.university && <p className="text-red-600 text-xs mt-1 font-medium">{errors.university}</p>}
+                    {errors.university && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.university}</ErrorText>}
                 </div>
                 <div>
                     <Input
@@ -153,7 +167,7 @@ function Step2({ onNext, onBack }: { onNext: (data: any) => void; onBack: () => 
                         value={email}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     />
-                    {errors.email && <p className="text-red-600 text-xs mt-1 font-medium">{errors.email}</p>}
+                    {errors.email && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.email}</ErrorText>}
                 </div>
             </div>
             <div className="flex items-center justify-between mt-8">
@@ -238,7 +252,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 <Button className="font-semibold">Resend OTP code</Button>
             </div>
 
-            {error && <p className="text-red-500 text-xs mb-2 font-medium">{error}</p>}
+            {error && <ErrorText className="text-red-500 text-xs mb-2 font-medium">{error}</ErrorText>}
 
             <StepNav
                 current={3}
@@ -312,7 +326,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
+                    {errors.password && <ErrorText className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</ErrorText>}
                 </div>
 
 
@@ -353,7 +367,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                         </button>
 
                     </div>
-                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <ErrorText className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</ErrorText>}
                 </div>
 
 
@@ -372,7 +386,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                             <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Privacy Policy</a>
                         </span>
                     </label>
-                    {errors.agreed && <p className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</p>}
+                    {errors.agreed && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</ErrorText>}
                 </div>
 
             </div>

@@ -24,6 +24,19 @@ function StepWrapper({ children }: { children: React.ReactNode }) {
     return <div className="flex-1 px-8 py-10 flex flex-col">{children}</div>;
 }
 
+interface ErrorProps {
+  children: React.ReactNode;
+  className?: string; 
+}
+
+function ErrorText({ children, className = "" }: ErrorProps) {
+  return (
+    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+      {children}
+    </p>
+  );
+}
+
 
 
 function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string }) => void }) {
@@ -54,7 +67,7 @@ function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string
                         value={firstName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                     />
-                    {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                    {errors.firstName && <ErrorText className="text-red-500 text-xs mt-1">{errors.firstName}</ErrorText>}
                 </div>
                 <div>
                     <Input label="Surname"
@@ -63,7 +76,7 @@ function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string
                         value={surname}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value)}
                     />
-                    {errors.surname && <p className="text-red-500 text-xs mt-1">{errors.surname}</p>}
+                    {errors.surname && <ErrorText >{errors.surname}</ErrorText>}
                 </div>
             </div>
             <div className="flex justify-end mt-10" style={{ margin: '20px' }} >
@@ -96,12 +109,12 @@ function Step2({ onNext, onBack }: { onNext: (data: { institution: string; email
                 <div>
                     <Input label="Name of University/Institution" type="text" placeholder="Search institution..."
                         value={institution} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInstitution(e.target.value)} />
-                    {errors.institution && <p className="text-red-500 text-xs mt-1">{errors.institution}</p>}
+                    {errors.institution && <ErrorText className="text-red-500 text-xs mt-1">{errors.institution}</ErrorText>}
                 </div>
                 <div>
                     <Input label="University Email" type="email" placeholder="you@university.ac.za"
                         value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} />
-                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                    {errors.email && <ErrorText className="text-red-500 text-xs mt-1">{errors.email}</ErrorText>}
                 </div>
             </div>
             <div className="flex mt-10 justify-center" style={{ gap: '5rem', margin: '20px' }} >
@@ -168,7 +181,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 <Button onClick={() => setSeconds(60)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</Button>
             </div>
 
-            {error && <p className="text-red-500 text-xs mb-4">{error}</p>}
+            {error && <ErrorText className="text-red-500 text-xs mb-4">{error}</ErrorText >}
 
             <div className="flex mt-10 justify-center" style={{ gap: '5rem', margin: '20px' }} >
                 <Button variant="secondary" className="flex-1" onClick={onBack}>Back</Button>
@@ -243,7 +256,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
+                    {errors.password && <ErrorText className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</ErrorText>}
                 </div>
 
                 <div>
@@ -283,7 +296,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                         </button>
 
                     </div>
-                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <ErrorText className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</ErrorText>}
                 </div>
 
 
@@ -302,7 +315,7 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
                             <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Privacy Policy</a>
                         </span>
                     </label>
-                    {errors.agreed && <p className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</p>}
+                    {errors.agreed && <ErrorText className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</ErrorText>}
                 </div>
 
             </div>
