@@ -8,6 +8,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { ResendEmailProvider } from '../email/resend-email.provider';
 import { EMAIL_SERVICE } from '../email/email.interface';
 import { ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Otp } from './entities/otp.entity';
+import { University } from './entities/university.entity';
 
 @Module({
   imports: [
@@ -17,7 +21,8 @@ import { ConfigService } from '@nestjs/config';
         useFactory: (config: ConfigService) => ({
             secret: config.get('JWT_ACCESS_SECRET'),
         }),
-    }) 
+    }),
+    TypeOrmModule.forFeature([User, University, Otp]),
   ],
   controllers: [AuthController],
   providers: [
