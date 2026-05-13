@@ -19,6 +19,19 @@ export class ListingsService{
             //do we want a message in each listing? the Post uses one
         },
         {
+            id: "1a",
+            title: "title1a",
+            isbn: "isbn1a",
+            edition: "edition1a",
+            condition: "Excellent",
+            annotationLevel: "annot1a",
+            moduleCode: "cos110",
+            price: "100",
+            status: "APPROVED",
+            sellerId: "ID-1",
+            //do we want a message in each listing? the Post uses one
+        },
+        {
             id: "2",
             title: "title2",
             isbn: "isbn2",

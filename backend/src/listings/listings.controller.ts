@@ -73,6 +73,10 @@ export class ListingsController {
         status: 200,
         description: 'Returns all listings that match the inputted',
     })
+    @ApiResponse({
+        status: 404,
+        description: 'Listing not found',
+    })
     getListingsById(@Param('id') id: string){
         return this.listingsService.getListingById(id);
     }
