@@ -42,7 +42,7 @@ function StepNav({
     onNext?: () => void;
 }) {
     return (
-        <div className="flex items-center mt-6" style={{ gap: '1rem', margin:'20px'}}>
+        <div className="flex items-center mt-6" style={{ gap: '1rem', margin: '20px' }}>
             {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
                 <button
                     key={n}
@@ -170,6 +170,14 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [error, setError] = useState("");
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const [seconds, setSeconds] = useState(90);
+
+    useEffect(() => {
+        if (seconds <= 0) return;
+        const t = setTimeout(() => setSeconds(s => s - 1), 1000);
+        return () => clearTimeout(t);
+    }, [seconds]);
+
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d?$/.test(value)) return;
@@ -182,6 +190,8 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
     const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
         if (e.key === "Backspace" && !otp[index] && index > 0) inputRefs.current[index - 1]?.focus();
     };
+
+    const fmt = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
     const validate = () => {
         if (otp.some((digit) => digit === "")) {
@@ -202,8 +212,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification.
             </p>
 
-
-            <div className="flex gap-3 mb-4">
+            <div className="flex " style={{ marginBottom: "30px" }} >
                 {otp.map((digit, i) => (
                     <input
                         key={i}
@@ -222,26 +231,17 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
             </div>
 
             <div className="flex items-center justify-between text-xs mb-2">
-                <span className="text-gray-500">
-                    Remaining time: <span className="text-[#00B4D8] font-bold">60:00</span>
+                <span className="text-text-subtle">
+                    Remaining time: <span className={`font-bold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span>
                 </span>
-                <Button className="text-[#006D8A] font-semibold hover:underline">Resend OTP code</Button>
+                <Button className="font-semibold">Resend OTP code</Button>
             </div>
 
             {error && <p className="text-red-500 text-xs mb-2 font-medium">{error}</p>}
 
-            <div className="mt-4">
-                <Button
-                    onClick={() => { if (validate()) onNext(); }}
-                    className="btn-primary w-full rounded-full text-base font-bold py-3"
-                >
-                    Verify
-                </Button>
-            </div>
-
             <StepNav
                 current={3}
-                nextLabel="Next"
+                nextLabel="Verify"
                 onNext={() => { if (validate()) onNext(); }}
                 onJump={() => { }}
             />
@@ -274,8 +274,8 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
             <p className="text-gray-500 text-sm mt-1 mb-8">Secure your new account</p>
             <Stepper current={4} />
 
-            <div className="flex flex-col gap-6 mb-6">
-
+            <div className="flex flex-col mb-6" style={{gap:"20px", marginBottom:"20px"}}>
+                
                 <div>
                     <label className="form-label">Password</label>
                     <div className="relative">

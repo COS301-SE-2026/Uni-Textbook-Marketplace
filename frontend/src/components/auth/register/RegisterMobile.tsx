@@ -66,7 +66,7 @@ function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string
                     {errors.surname && <p className="text-red-500 text-xs mt-1">{errors.surname}</p>}
                 </div>
             </div>
-            <div className="flex justify-end mt-10">
+            <div className="flex justify-end mt-10" style={{ margin: '20px' }} >
                 <Button className="w-full sm:w-auto px-10" onClick={() => { if (validate()) onNext({ firstName, surname }); }}>Next</Button>
             </div>
         </StepWrapper>
@@ -104,9 +104,9 @@ function Step2({ onNext, onBack }: { onNext: (data: { institution: string; email
                     {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
             </div>
-            <div className="flex gap-4 mt-10">
-                <Button variant="secondary" className="flex-1" onClick={onBack}>Back</Button>
-                <Button className="flex-1" onClick={() => { if (validate()) onNext({ institution, email }); }}>Next</Button>
+            <div className="flex mt-10 justify-center" style={{ gap: '5rem', margin: '20px' }} >
+                <Button variant="secondary" className="w-32" onClick={onBack}>Back</Button>
+                <Button className="w-32" onClick={() => { if (validate()) onNext({ institution, email }); }}>Next</Button>
             </div>
         </StepWrapper>
     );
@@ -146,21 +146,30 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
             <p className="text-sm text-text-dark mb-6 leading-relaxed">
                 Please enter the OTP sent to your registered email to complete verification.
             </p>
+
+
             <div className="flex justify-between gap-2 mb-4">
                 {otp.map((digit, i) => (
                     <input key={i} ref={el => { inputRefs.current[i] = el; }}
                         type="text" inputMode="numeric" maxLength={1} value={digit}
                         onChange={e => handleChange(i, e.target.value)}
                         onKeyDown={e => handleKeyDown(i, e)}
-                        className={`w-12 h-14 text-center text-xl font-bold border-2 rounded-lg focus:outline-none focus:border-primary transition-all
-                            ${digit ? "border-primary bg-blue-50" : "border-border bg-white"}`} />
+                        className={`w-11 h-13 border-2 rounded-lg text-center text-xl font-bold focus:outline-none transition-all
+                            ${digit ? "border-[#00B4D8] bg-[#e8f8fc]" : "border-[#dddddd] bg-white"}
+                            focus:border-[#00B4D8]`}
+                    />
                 ))}
             </div>
+
             <div className="flex flex-col gap-2 text-xs mb-8">
-                <span className="text-text-subtle">Remaining time: <span className={`font-bold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span></span>
+                <span className="text-text-subtle">
+                    Remaining time: <span className={`font-bold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span>
+                </span>
                 <button onClick={() => setSeconds(60)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</button>
             </div>
+
             {error && <p className="text-red-500 text-xs mb-4">{error}</p>}
+
             <div className="flex gap-4">
                 <Button variant="primary" className="flex-1" onClick={onBack}>Back</Button>
                 <Button className="flex-1" onClick={() => {
@@ -168,6 +177,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                     setError(""); onNext();
                 }}>Verify</Button>
             </div>
+
         </StepWrapper>
     );
 }
