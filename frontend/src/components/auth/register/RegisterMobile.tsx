@@ -148,7 +148,7 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
             </p>
 
 
-            <div className="flex justify-between gap-2 mb-4">
+            <div className="flex justify-between gap-2 mb-4" style={{ gap: "5px" }}>
                 {otp.map((digit, i) => (
                     <input key={i} ref={el => { inputRefs.current[i] = el; }}
                         type="text" inputMode="numeric" maxLength={1} value={digit}
@@ -161,17 +161,17 @@ function Step3({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
                 ))}
             </div>
 
-            <div className="flex flex-col gap-2 text-xs mb-8">
-                <span className="text-text-subtle">
+            <div className="flex flex-col text-xs" style={{ gap: "10px" }}>
+                <span className="text-text-subtle" style={{ margin: "10px" }}>
                     Remaining time: <span className={`font-bold ${seconds < 30 ? "text-red-500" : "text-primary"}`}>{fmt}</span>
                 </span>
-                <button onClick={() => setSeconds(60)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</button>
+                <Button onClick={() => setSeconds(60)} className="text-primary font-semibold text-left hover:underline w-fit">Resend OTP code</Button>
             </div>
 
             {error && <p className="text-red-500 text-xs mb-4">{error}</p>}
 
-            <div className="flex gap-4">
-                <Button variant="primary" className="flex-1" onClick={onBack}>Back</Button>
+            <div className="flex mt-10 justify-center" style={{ gap: '5rem', margin: '20px' }} >
+                <Button variant="secondary" className="flex-1" onClick={onBack}>Back</Button>
                 <Button className="flex-1" onClick={() => {
                     if (otp.some(d => d === "")) { setError("Please enter all 6 digits"); return; }
                     setError(""); onNext();
@@ -207,44 +207,107 @@ function Step4({ onBack, onSubmit }: { onBack: () => void; onSubmit: () => void 
             <p className="text-text-subtle text-sm mt-1 mb-8">Secure your new account</p>
             <Stepper current={4} />
             <div className="space-y-5">
+
                 <div>
-                    <label className="text-sm font-medium text-text-dark block mb-2">Password</label>
-                    <div className="relative">
-                        <input type={showPw ? "text" : "password"} placeholder="Min. 8 characters" value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="w-full border border-border rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-primary bg-background-input" />
-                        <button type="button" onClick={() => setShowPw(p => !p)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-subtle">
-                            {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
+                    <label className="form-label">Password</label>
+                    <div style={{ position: "relative", width: "100%" }}>
+                        <input
+                            type={showPw ? "text" : "password"}
+                            placeholder="Create your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            style={{
+                                width: "85%",
+                                paddingRight: "2.75rem",
+                            }}
+                            className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPw((p) => !p)}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: "2.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                color: "#9ca3af",
+                            }}
+                        >
+                            {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
+
                 <div>
-                    <label className="text-sm font-medium text-text-dark block mb-2">Confirm Password</label>
-                    <div className="relative">
-                        <input type={showCf ? "text" : "password"} placeholder="Repeat password" value={confirm}
-                            onChange={e => setConfirm(e.target.value)}
-                            className="w-full border border-border rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-primary bg-background-input" />
-                        <button type="button" onClick={() => setShowCf(p => !p)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-subtle">
-                            {showCf ? <EyeOff size={20} /> : <Eye size={20} />}
+                    <label className="form-label">Confirm Password</label>
+                    <div style={{ position: "relative", width: "100%" }}>
+
+                        <input
+                            type={showCf ? "text" : "password"}
+                            placeholder="Confirm your password"
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                            style={{
+                                width: "85%",
+                                paddingRight: "2.75rem",
+                            }}
+                            className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowCf((p) => !p)}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: "2.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                color: "#9ca3af",
+                            }}
+                        >
+                            {showCf ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
+
                     </div>
-                    {errors.confirm && <p className="text-red-500 text-xs mt-1">{errors.confirm}</p>}
+                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                 </div>
-                <div className="pt-2">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                        <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-1 w-4 h-4 accent-primary" />
-                        <span className="text-xs text-text-subtle leading-relaxed">
-                            I agree to the <a href="#" className="text-primary font-semibold hover:underline">Terms of Service</a> and <a href="#" className="text-primary font-semibold hover:underline">Privacy Policy</a>
+
+
+                <div style={{ paddingTop: "0.25rem", marginTop: "20px" }}>
+                    <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
+                        <input
+                            type="checkbox"
+                            checked={agreed}
+                            onChange={(e) => setAgreed(e.target.checked)}
+                            style={{ marginTop: 2, width: 16, height: 16, flexShrink: 0, accentColor: "#00B4D8" }}
+                        />
+                        <span style={{ fontSize: "0.75rem", color: "#6b7280", lineHeight: "1.5" }}>
+                            I agree to the{" "}
+                            <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Terms of Service</a>
+                            {" "}and{" "}
+                            <a href="#" style={{ color: "#006D8A", fontWeight: 600 }}>Privacy Policy</a>
                         </span>
                     </label>
-                    {errors.agreed && <p className="text-red-500 text-xs mt-1">{errors.agreed}</p>}
+                    {errors.agreed && <p className="text-red-600 text-xs mt-1 font-medium">{errors.agreed}</p>}
                 </div>
+
             </div>
-            <div className="flex gap-4 mt-10">
-                <Button variant="primary" className="flex-1" onClick={onBack}>Back</Button>
+            <div className="flex gap-4 mt-10" style={{ gap: '5rem', margin: '20px' }}>
+                <Button variant="secondary" className="flex-1" onClick={onBack}>Back</Button>
                 <Button className="flex-1" onClick={() => { if (validate()) onSubmit(); }}>Register</Button>
             </div>
         </StepWrapper>
