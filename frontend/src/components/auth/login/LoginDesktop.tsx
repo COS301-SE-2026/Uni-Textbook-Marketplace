@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input, Card } from "@/components/ui";
+import { Button, Input, Card,ErrorText } from "@/components/ui";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginDesktop() {
@@ -94,9 +94,9 @@ export default function LoginDesktop() {
                                     }}
                                 />
                                 {errors.email && (
-                                    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+                                    <ErrorText >
                                         {errors.email}
-                                    </p>
+                                    </ErrorText>
                                 )}
                             </div>
 
@@ -139,16 +139,16 @@ export default function LoginDesktop() {
                                     </button>
                                 </div>
                                 {errors.password && (
-                                    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+                                    <ErrorText>
                                         {errors.password}
-                                    </p>
+                                    </ErrorText>
                                 )}
                             </div>
 
                             {serverError && (
-                                <p style={{ color: "red", fontSize: "0.75rem", fontWeight: 500 }}>
+                                <ErrorText>
                                     {serverError}
-                                </p>
+                                </ErrorText>
                             )}
 
                             <div className="flex justify-end">

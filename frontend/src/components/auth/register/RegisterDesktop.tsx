@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input, Card, Stepper } from "@/components/ui";
+import { Button, Input, Card, Stepper,ErrorText } from "@/components/ui";
 import { Check, Eye, EyeOff } from "lucide-react";
 
 
@@ -16,19 +16,6 @@ function LeftPanel() {
             </h3>
         </div>
     );
-}
-
-interface ErrorProps {
-  children: React.ReactNode;
-  className?: string; 
-}
-
-function ErrorText({ children, className = "" }: ErrorProps) {
-  return (
-    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
-      {children}
-    </p>
-  );
 }
 
 

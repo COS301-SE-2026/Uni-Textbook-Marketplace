@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input, Stepper } from "@/components/ui";
+import { Button, Input, Stepper,ErrorText } from "@/components/ui";
 import { Eye, EyeOff, Check } from "lucide-react";
 
 
@@ -23,20 +23,6 @@ function TopPanel() {
 function StepWrapper({ children }: { children: React.ReactNode }) {
     return <div className="flex-1 px-8 py-10 flex flex-col">{children}</div>;
 }
-
-interface ErrorProps {
-    children: React.ReactNode;
-    className?: string;
-}
-
-function ErrorText({ children, className = "" }: ErrorProps) {
-    return (
-        <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
-            {children}
-        </p>
-    );
-}
-
 
 
 function Step1({ onNext }: { onNext: (data: { firstName: string; surname: string }) => void }) {
