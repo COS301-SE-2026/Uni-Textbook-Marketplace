@@ -4,8 +4,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 export class ListingsService{
     //mock listings:
     //id, title, isbn, edition, condition, annotationLevel, moduleCode, price, status, sellerId.
-    private listings =[
-        {
+    private readonly listings = Object.freeze([
+        Object.freeze({
             id: "1",
             title: "title1",
             isbn: "isbn1",
@@ -17,8 +17,8 @@ export class ListingsService{
             status: "PENDING",
             sellerId: "ID-1",
             //do we want a message in each listing? the Post uses one
-        },
-        {
+        }),
+        Object.freeze({
             id: "1a",
             title: "title1a",
             isbn: "isbn1a",
@@ -30,8 +30,8 @@ export class ListingsService{
             status: "APPROVED",
             sellerId: "ID-1",
             //do we want a message in each listing? the Post uses one
-        },
-        {
+        }),
+        Object.freeze({
             id: "2",
             title: "title2",
             isbn: "isbn2",
@@ -42,8 +42,8 @@ export class ListingsService{
             price: "200",
             status: "APPROVED",
             sellerId: "ID-2"
-        },
-        {
+        }),
+        Object.freeze({
             id: "3",
             title: "title3",
             isbn: "isbn3",
@@ -54,8 +54,8 @@ export class ListingsService{
             price: "300",
             status: "REJECTED",
             sellerId: "ID-3"
-        },
-    ];
+        }),
+    ]);
 
     //Post /listings:
     createListing() {
