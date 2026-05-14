@@ -40,8 +40,8 @@ CREATE TABLE otps (
     code CHAR(6) NOT NULL,
     expires_at TIMESTAMPTZ NOT NULL,
     used BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    attempts INT DEFAULT 0
+    attempts INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 
