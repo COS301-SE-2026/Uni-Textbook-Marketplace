@@ -3,8 +3,8 @@ import {InjectRepository} from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import { MoreThan, Repository } from "typeorm";
 
-import { User } from "./entities/user.entity";
-import { Otp } from './entities/otp.entity';
+import { User } from "../database/entities/users.entity";
+import { OTP } from '../database/entities/otps.entity';
 
 @Injectable()
 export class OtpService {
@@ -17,8 +17,8 @@ export class OtpService {
         @InjectRepository(User)
         private readonly userRespository: Repository<User>,
 
-        @InjectRepository(Otp)
-        private readonly otpRepository: Repository<Otp>,
+        @InjectRepository(OTP)
+        private readonly otpRepository: Repository<OTP>,
     ) {}
 
     async createOtp(email: string): Promise<string> {

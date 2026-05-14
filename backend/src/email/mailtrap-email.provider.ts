@@ -1,21 +1,28 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService} from '@nestjs/config';
-import {Resend} from 'resend';
+import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
 import { IEmailService } from "./email.interface";
 
 @Injectable()
-export class ResendEmailProvider implements IEmailService {
-  private readonly resend: Resend;
-  private readonly logger = new Logger(ResendEmailProvider.name);
+export class MailtrapEmailProvider implements IEmailService {
+  private transporter;
+  private readonly logger = new Logger(MailtrapEmailProvider.name);
 
   constructor(private config: ConfigService) {
-    this.resend = new Resend(this.config.get('RESEND_API_KEY'));
+    this.transporter = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: this.config.get('MAILTRAP_USER'),
+        pass: this.config.get('MAILTRAP_PASS'),
+      },
+    });
   }
 
   async sendOtp(to: string, otp: string): Promise<void> {
     try {
-      await this.resend.emails.send({
-        from: 'Uni Marketplace <noreply@yourdomain.com>',
+      await this.transporter.sendMail({
+        from: 'Uni Marketplace <noreply@unimarketplace.com>',
         to,
         subject: 'Your Textbook Marketplace verification code',
         html: `

@@ -1,4 +1,4 @@
-import { Injectable,BadRequestException, UnauthorizedException, Inject} from "@nestjs/common";
+import { Injectable,BadRequestException, UnauthorizedException, Inject, ConflictException} from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import {ConfigService} from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -13,8 +13,8 @@ import { OtpService } from './otp.service';
 import type { IEmailService } from '../email/email.interface';
 import { EMAIL_SERVICE } from '../email/email.interface';
 
-import { User } from "./entities/user.entity";
-import { University } from "./entities/university.entity";
+import { User } from "../database/entities/users.entity";
+import { University } from "../database/entities/university.entity";
 
 @Injectable()
 export class AuthService{
@@ -52,8 +52,17 @@ export class AuthService{
             },
         });
 
+
         if(!uniResult){
            throw new BadRequestException('Selected university is not valid'); 
+        }
+
+        const existing = await this.userRepository.findOne({ 
+            where: { email: dto.email.toLowerCase().trim() } 
+        });
+
+        if (existing) {
+            throw new ConflictException('Email already registered');
         }
 
 
@@ -70,8 +79,8 @@ export class AuthService{
             password_hash,
             first_name: dto.first_name,
             last_name: dto.last_name,
-            university_id: dto.university_id,
-            faculty: dto.faculty ?? null,
+            university: { id: dto.university_id },
+            faculty: dto.faculty ?? undefined,
         });
         await this.userRepository.save(user)
 

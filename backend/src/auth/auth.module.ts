@@ -5,13 +5,13 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { OtpService } from './otp.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { ResendEmailProvider } from '../email/resend-email.provider';
+import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
 import { EMAIL_SERVICE } from '../email/email.interface';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Otp } from './entities/otp.entity';
-import { University } from './entities/university.entity';
+import { User } from '../database/entities/users.entity';
+import { OTP } from '../database/entities/otps.entity';
+import { University } from '../database/entities/university.entity';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { University } from './entities/university.entity';
             secret: config.get('JWT_ACCESS_SECRET'),
         }),
     }),
-    TypeOrmModule.forFeature([User, University, Otp]),
+    TypeOrmModule.forFeature([User, University, OTP]),
   ],
   controllers: [AuthController],
   providers: [
@@ -31,7 +31,7 @@ import { University } from './entities/university.entity';
     JwtStrategy,
     {
       provide: EMAIL_SERVICE,
-      useClass: ResendEmailProvider,
+      useClass: MailtrapEmailProvider,
     },
   ],
 })

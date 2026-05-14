@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { EMAIL_SERVICE } from './email.interface';
-import { ResendEmailProvider } from './resend-email.provider';
+import { MailtrapEmailProvider } from './mailtrap-email.provider';
 
 @Module({
   imports: [ConfigModule],
   providers: [
-    ResendEmailProvider,
+    MailtrapEmailProvider,
     {
       provide: EMAIL_SERVICE,
-      useClass: ResendEmailProvider,
+      useClass: MailtrapEmailProvider,
     },
   ],
   exports: [EMAIL_SERVICE],
