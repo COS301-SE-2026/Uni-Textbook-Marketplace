@@ -27,7 +27,7 @@ export class User{
     university_id!: string;
 
     @Column({type: 'varchar', length: 100, nullable: true})
-    faculty!: string;
+    faculty!: string | null;
 
     @Column({type: 'boolean', default: false})
     is_verified!: boolean;

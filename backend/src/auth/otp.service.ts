@@ -98,4 +98,24 @@ export class OtpService {
         );
     }
 
+    async canRequestOtp(email: string): Promise<void> {
+
+        const existingOtp = await this.otpRepository.findOne({
+            where: {
+                email,
+                used: false,
+            },
+            order: {
+                created_at: 'DESC',
+            },
+        });
+
+        if (!existingOtp) {
+            
+            throw new BadRequestException(
+                'An OTP has already been sent. Please wait before requesting another one.',
+            );
+        }
+
+    }
 }

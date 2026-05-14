@@ -189,4 +189,60 @@ export class AuthService{
 
         return { accessToken, refreshToken };
     }
+
+    async getUniversities() {
+
+        const unis = await this.universityRepository.find({
+            select : {
+                id : true,
+                name: true,
+                email_domain: true,
+            },
+            order : {
+                name: 'ASC',
+            }
+
+        });
+
+        return unis;
+    }
+
+    async resendOtp(email: string) {
+
+        const user = await this.userRepository.findOne({
+            select: {
+                id: true,
+                email: true,
+                is_verified: true,
+            },
+            where: {
+                email,
+                deleted_at: IsNull(),
+            },
+        });
+
+        if (!user) {
+            return {
+                message: 'If this email is registered, a new code has been sent.',
+            };
+        }
+
+        if (user.is_verified) {
+            return {
+                message: 'This account is already verified.',
+            };
+        }
+
+        await this.otpService.canRequestOtp(email);
+
+        const otp = await this.otpService.createOtp(email);
+
+        await this.emailService.sendOtp(email, otp);
+
+        return {
+            message: 'Verification code sent successfully.',
+        };
+    }
+
+    
 }

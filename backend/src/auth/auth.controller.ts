@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Res, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, HttpCode } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -36,15 +37,15 @@ private getCookieOptions(maxAge: number) {
     // Store access token in httpOnly cookie JS cant read this
     // This is what protects us from XSS attacks stealing tokens
     res.cookie(
-        'access_token',
-        tokens.accessToken,
-        this.getCookieOptions(15 * 60 * 1000),
+      'access_token',
+      tokens.accessToken,
+      this.getCookieOptions(15 * 60 * 1000),
     );
 
     res.cookie(
-        'refresh_token',
-        tokens.refreshToken,
-        this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
+      'refresh_token',
+      tokens.refreshToken,
+      this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
     );
 
     return { message: 'Email verified successfully.' };
@@ -73,6 +74,20 @@ private getCookieOptions(maxAge: number) {
 
     return { message: 'Login successful.' };
   }
+
+  @Get('universities')
+  @HttpCode(200)
+  async getUniversities() {
+    return this.authService.getUniversities();
+  }
+
+  @Throttle({ default: { limit: 4, ttl: 60000 } }) 
+  @Post('resend-otp')
+  @HttpCode(200)
+  async resendOtp(@Body() dto: ResendOtpDto) {
+    return this.authService.resendOtp(dto.email);
+  }
+
 
   @Post('logout')
   @HttpCode(200)
