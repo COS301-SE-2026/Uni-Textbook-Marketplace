@@ -4,7 +4,6 @@ type InputProps = {
     type?: string;
     value?: string;
     className?: string;
-    id?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -15,8 +14,7 @@ export default function Input({
     value = "",
     onChange,
     className,
-}: InputProps) {
-
+}: Readonly<InputProps>) {
     return (
         <div>
             {label && <label className="form-label">{label}</label>}
