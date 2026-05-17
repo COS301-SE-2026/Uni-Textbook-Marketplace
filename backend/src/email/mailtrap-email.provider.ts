@@ -12,10 +12,12 @@ export class MailtrapEmailProvider implements IEmailService {
   constructor(private readonly config: ConfigService) {
     this.transporter = nodemailer.createTransport({
       host: 'sandbox.smtp.mailtrap.io',
-      port: 2525,
+      port: 587,
+      secure: false,      
+      requireTLS: true,   
       auth: {
-        user: this.config.get<string>('MAILTRAP_USER'),
-        pass: this.config.get<string>('MAILTRAP_PASS'),
+        user: this.config.getOrThrow<string>('MAILTRAP_USER'),
+        pass: this.config.getOrThrow<string>('MAILTRAP_PASS'),
       },
     });
   }
