@@ -266,7 +266,7 @@ export default function RegisterMobile() {
         }
     };
 
-const handleResendOtp = () => {
+    const handleResendOtp = () => {
         setOtpTimer(59);
         setTimerActive(true);
         // TODO: call resend OTP endpoint
@@ -397,14 +397,13 @@ const handleResendOtp = () => {
                         <div className="space-y-4">
                             <div>
                                 <label className="form-label">Password</label>
-                                <div style={{ position: "relative", width: "100%" }}>
+                                <div style={{ position: "relative" }}>
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Create your password"
                                         value={form.password}
-                                        style={{ width: "87%", paddingRight: "2.75rem" }}
                                         onChange={(e) => set("password", e.target.value)}
-                                        className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                                        className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                                     />
                                     <button
                                         type="button"
@@ -430,14 +429,13 @@ const handleResendOtp = () => {
 
                             <div>
                                 <label className="form-label">Confirm Password</label>
-                                <div style={{ position: "relative", width: "100%" }}>
+                                <div style={{ position: "relative" }}>
                                     <input
                                         type={showConfirm ? "text" : "password"}
                                         placeholder="Confirm your password"
                                         value={form.confirmPassword}
-                                        style={{ width: "87%", paddingRight: "2.75rem" }}
                                         onChange={(e) => set("confirmPassword", e.target.value)}
-                                        className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                                        className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                                     />
                                     <button
                                         type="button"
@@ -511,7 +509,9 @@ const handleResendOtp = () => {
                     {renderStepContent()}
 
                     {serverError && (
-                        <ErrorText style={{ marginTop: "1rem" }}>{serverError}</ErrorText>
+                        <div style={{ marginTop: "1rem" }}>
+                            <ErrorText>{serverError}</ErrorText>
+                        </div>
                     )}
 
                     {/* Bottom nav */}

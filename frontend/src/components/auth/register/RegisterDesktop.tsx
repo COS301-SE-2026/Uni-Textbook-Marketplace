@@ -207,7 +207,7 @@ export default function RegisterDesktop() {
         if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
     };
 
-    
+    //  Validation per step 
 
     const validateStep1 = () => {
         const e: Record<string, string> = {};
@@ -253,7 +253,7 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
-    
+    //  Navigation 
 
     const handleNext = async () => {
         setServerError("");
@@ -262,7 +262,7 @@ export default function RegisterDesktop() {
         if (step === 3 && !validateStep3()) return;
 
         if (step === 2) {
-            
+            // TODO: call POST /auth/register to send OTP
         }
 
         if (step < 4) {
@@ -270,13 +270,13 @@ export default function RegisterDesktop() {
             return;
         }
 
-        
+        // Step 4 — final submit
         if (!validateStep4()) return;
         setLoading(true);
         try {
-            
+            // TODO: call POST /auth/complete-registration or POST /auth/login after register
             await new Promise((r) => setTimeout(r, 1000));
-            
+            // On success: redirect to /listings or dashboard
         } catch (err: any) {
             setServerError(err.message ?? "Something went wrong. Please try again.");
         } finally {
@@ -287,10 +287,10 @@ export default function RegisterDesktop() {
     const handleResendOtp = () => {
         setOtpTimer(59);
         setTimerActive(true);
-        
+        // TODO: call resend OTP endpoint
     };
 
-    
+    //  Step content 
 
     const renderStepContent = () => {
         switch (step) {
@@ -522,11 +522,12 @@ export default function RegisterDesktop() {
                 return null;
         }
     };
-//  Layout 
+
+    //  Layout 
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-background-light px-4 py-8">
-            <Card className="card w-full max-w-3xl min-h-[500px] flex overflow-hidden" style={{ minWidth: 0 }}>
+            <Card className="card w-full max-w-3xl min-h-[500px] flex overflow-hidden min-w-0">
 
                 {/* Left panel */}
                 <div className="w-[38%] shrink-0 border-r border-border bg-cyan-50 p-8 flex flex-col items-center justify-center">
@@ -543,7 +544,9 @@ export default function RegisterDesktop() {
                         {renderStepContent()}
 
                         {serverError && (
-                            <ErrorText style={{ marginTop: "1rem" }}>{serverError}</ErrorText>
+                            <div style={{ marginTop: "1rem" }}>
+                                <ErrorText>{serverError}</ErrorText>
+                            </div>
                         )}
 
                         {/* Bottom navigation — step dots + Next/Register button */}
