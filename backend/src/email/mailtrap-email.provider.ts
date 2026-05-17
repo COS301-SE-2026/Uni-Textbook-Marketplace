@@ -6,10 +6,10 @@ import { IEmailService } from './email.interface';
 
 @Injectable()
 export class MailtrapEmailProvider implements IEmailService {
-  private transporter: Transporter;
+  private readonly transporter: Transporter;
   private readonly logger = new Logger(MailtrapEmailProvider.name);
 
-  constructor(private config: ConfigService) {
+  constructor(private readonly config: ConfigService) {
     this.transporter = nodemailer.createTransport({
       host: 'sandbox.smtp.mailtrap.io',
       port: 2525,

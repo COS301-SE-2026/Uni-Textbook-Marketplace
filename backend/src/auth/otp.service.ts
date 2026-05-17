@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 import { MoreThan, Repository } from 'typeorm';
 
 import { User } from '../database/entities/users.entity';
