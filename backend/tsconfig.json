@@ -16,21 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-     "strictPropertyInitialization": false,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false,
-    "outDir": "./dist"
-    
-    
+    "outDir": "./dist",
+    "types": ["node", "jest"]
   },
-  "types": ["node,jest"],
-  
   "include": [
-  "src/**/*.ts",
-  "test/**/*.ts"
-]
-
-
-  
-
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
 }
-
