@@ -26,7 +26,15 @@ import { AuditLog } from './database/entities/audit_log.entity';
         url: config.get<string>('DATABASE_URL'),
         synchronize: false,
         logging: true,
-        entities: [User, Listing, Book, ModuleEntity, University, OTP, AuditLog],
+        entities: [
+          User,
+          Listing,
+          Book,
+          ModuleEntity,
+          University,
+          OTP,
+          AuditLog,
+        ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
       }),
@@ -35,9 +43,6 @@ import { AuditLog } from './database/entities/audit_log.entity';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-  ],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

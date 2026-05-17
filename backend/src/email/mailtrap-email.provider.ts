@@ -1,20 +1,21 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { IEmailService } from "./email.interface";
+import { Transporter } from 'nodemailer';
+import { IEmailService } from './email.interface';
 
 @Injectable()
 export class MailtrapEmailProvider implements IEmailService {
-  private transporter;
+  private transporter: Transporter;
   private readonly logger = new Logger(MailtrapEmailProvider.name);
 
   constructor(private config: ConfigService) {
     this.transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
+      host: 'sandbox.smtp.mailtrap.io',
       port: 2525,
       auth: {
-        user: this.config.get('MAILTRAP_USER'),
-        pass: this.config.get('MAILTRAP_PASS'),
+        user: this.config.get<string>('MAILTRAP_USER'),
+        pass: this.config.get<string>('MAILTRAP_PASS'),
       },
     });
   }

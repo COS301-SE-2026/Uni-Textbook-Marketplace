@@ -17,10 +17,10 @@ import { University } from '../database/entities/university.entity';
   imports: [
     PassportModule,
     JwtModule.registerAsync({
-        inject: [ConfigService],
-        useFactory: (config: ConfigService) => ({
-            secret: config.get('JWT_ACCESS_SECRET'),
-        }),
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get('JWT_ACCESS_SECRET'),
+      }),
     }),
     TypeOrmModule.forFeature([User, University, OTP]),
   ],

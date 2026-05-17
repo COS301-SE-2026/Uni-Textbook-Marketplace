@@ -17,21 +17,22 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-private getCookieOptions(maxAge: number) {
-
+  private getCookieOptions(maxAge: number) {
     return {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
-        maxAge,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge,
     };
-}
+  }
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('verify-email')
   @HttpCode(200)
-  async verifyEmail(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response) {
-
+  async verifyEmail(
+    @Body() dto: VerifyOtpDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const tokens = await this.authService.verifyEmail(dto.email, dto.code);
 
     // Store access token in httpOnly cookie JS cant read this
@@ -54,8 +55,10 @@ private getCookieOptions(maxAge: number) {
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('login')
   @HttpCode(200)
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const tokens = await this.authService.login(dto);
 
     res.cookie('access_token', tokens.accessToken, {
@@ -81,17 +84,16 @@ private getCookieOptions(maxAge: number) {
     return this.authService.getUniversities();
   }
 
-  @Throttle({ default: { limit: 4, ttl: 60000 } }) 
+  @Throttle({ default: { limit: 4, ttl: 60000 } })
   @Post('resend-otp')
   @HttpCode(200)
   async resendOtp(@Body() dto: ResendOtpDto) {
     return this.authService.resendOtp(dto.email);
   }
 
-
   @Post('logout')
   @HttpCode(200)
-  async logout(@Res({ passthrough: true }) res: Response) {
+  logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token', this.getCookieOptions(0));
     res.clearCookie('refresh_token', this.getCookieOptions(0));
     return { message: 'Logged out successfully.' };
