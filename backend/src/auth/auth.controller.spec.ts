@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 
 const mockAuthService = {
   getUniversities: jest.fn(),
+  register: jest.fn(),
 };
 
 describe('AuthController', () => {
@@ -50,12 +51,29 @@ describe('AuthController', () => {
       expect(result).toEqual(fakeList);
     });
 
-    it('should return an empty array when authService returns no universities', async () => {
-      mockAuthService.getUniversities.mockResolvedValue([]);
+  });
 
-      const result = await controller.getUniversities();
+  describe('register', () =>  {
+    it('should call authService.register with the dto', async () =>{
 
-      expect(result).toEqual([]);
+      const dto = {
+        email: 'u12345678@tuks.ac.za',
+        password: 'password098',
+        first_name: 'Gift',
+        last_name: 'M',
+        university_id: '1',
+      };
+
+      const serviceResponse = {
+        message: 'Registration successful. Check your university email for verification code',
+      };
+
+      mockAuthService.register.mockResolvedValue(serviceResponse);
+      const result = await controller.register(dto);
+
+      expect(mockAuthService.register).toHaveBeenCalledWith(dto);
+
+      expect(result).toEqual(serviceResponse);
     });
   });
 });

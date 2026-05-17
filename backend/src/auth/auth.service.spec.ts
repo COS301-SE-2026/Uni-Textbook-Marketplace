@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { OtpService } from './otp.service';
 
 describe('AuthService', () => {
-    
+
   let service: AuthService;
 
   const mockUserRepository = {
@@ -59,6 +59,7 @@ describe('AuthService', () => {
 
   describe('getUniversities', () => {
     it('should return universities', async () => {
+
       const fakeUniversities = [
         {
           id: '1',
@@ -79,4 +80,56 @@ describe('AuthService', () => {
       expect(result).toEqual(fakeUniversities);
     });
   });
+
+  describe('register', () => {
+    it('should create a user and send OTP on valid registration', async () => {
+        const dto = {
+            email: 'u12345678@tuks.ac.za',
+            password: 'password098',
+            first_name: 'Gift',
+            last_name: 'M',
+            university_id: '1',
+        };
+
+        const fakeUniversity = {
+            id: '1',
+            email_domain: 'tuks.ac.za',
+        };
+
+        mockUniversityRepository.findOne.mockResolvedValue(fakeUniversity);
+
+        mockUserRepository.findOne.mockResolvedValue(null);
+
+        mockUserRepository.create.mockReturnValue({
+            id: 'user-1',
+            ...dto,
+        });
+
+        mockUserRepository.save.mockResolvedValue(undefined);
+
+        mockOtpService.createOtp.mockResolvedValue('123456');
+
+        mockEmailService.sendOtp.mockResolvedValue(undefined);
+
+        const result = await service.register(dto);
+
+        expect(result).toEqual({
+        message:
+            'Registration successful. Check your university email for verification code',
+        });
+
+        expect(mockUniversityRepository.findOne).toHaveBeenCalled();
+
+        expect(mockUserRepository.save).toHaveBeenCalled();
+
+        expect(mockOtpService.createOtp).toHaveBeenCalledWith(
+            dto.email,
+        );
+
+        expect(mockEmailService.sendOtp).toHaveBeenCalledWith(
+            dto.email,
+            '123456',
+        );
+        });
+    });
 });
