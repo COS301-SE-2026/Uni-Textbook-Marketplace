@@ -51,7 +51,7 @@ export default function LoginDesktop() {
     };
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-background-light px-4">
+        <main className="auth-bg min-h-screen flex items-center justify-center px-4">
 
             <Card className="card w-4/5 max-w-xl min-h-[500px] flex overflow-hidden">
 

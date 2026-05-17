@@ -527,7 +527,7 @@ export default function RegisterDesktop() {
     //  Layout 
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-background-light px-4 py-8">
+        <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-4/5 max-w-3xl flex overflow-hidden min-w-0">
 
                 {/* Left panel */}
