@@ -522,4 +522,79 @@ export default function RegisterDesktop() {
                 return null;
         }
     };
+//  Layout 
+
+    return (
+        <main className="min-h-screen flex items-center justify-center bg-background-light px-4 py-8">
+            <Card className="card w-full max-w-3xl min-h-[500px] flex overflow-hidden" style={{ minWidth: 0 }}>
+
+                {/* Left panel */}
+                <div className="w-[38%] shrink-0 border-r border-border bg-cyan-50 p-8 flex flex-col items-center justify-center">
+                    <Logo className="w-20 h-auto mb-6" />
+                    <h2 className="text-center">Join our student community</h2>
+                    <p className="text-center text-text-subtle mt-4">
+                        Buy, sell and swap textbooks with verified students.
+                    </p>
+                </div>
+
+                {/* Right panel */}
+                <div className="flex-1 min-w-0 p-8 flex items-start justify-center overflow-y-auto">
+                    <div className="w-full max-w-full">
+                        {renderStepContent()}
+
+                        {serverError && (
+                            <ErrorText style={{ marginTop: "1rem" }}>{serverError}</ErrorText>
+                        )}
+
+                        {/* Bottom navigation — step dots + Next/Register button */}
+                        {step !== 3 && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "flex-end",
+                                    gap: "0.6rem",
+                                    marginTop: "2rem",
+                                }}
+                            >
+                                {/* Step dots */}
+                                <div style={{ display: "flex", gap: "0.4rem", marginRight: "0.5rem" }}>
+                                    {[1, 2, 3, 4].map((n) => (
+                                        <div
+                                            key={n}
+                                            style={{
+                                                width: "1.75rem",
+                                                height: "1.75rem",
+                                                borderRadius: "50%",
+                                                border: n <= step ? "2px solid #00B4D8" : "2px solid #9ca3af",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontSize: "0.7rem",
+                                                fontWeight: 700,
+                                                color: n <= step ? "#00B4D8" : "#9ca3af",
+                                                backgroundColor: n === step ? "#00B4D8" : "transparent",
+                                                ...(n === step ? { color: "#ffffff" } : {}),
+                                            }}
+                                        >
+                                            {n}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <Button
+                                    onClick={handleNext}
+                                    disabled={loading}
+                                    className="px-8"
+                                >
+                                    {step === 4 ? "REGISTER" : "Next"}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+            </Card>
+        </main>
+    );
 }
