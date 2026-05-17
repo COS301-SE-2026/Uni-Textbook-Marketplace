@@ -1,13 +1,17 @@
 //Author: Omphemetse Mokgotahdi
-
-type ButtonProps = {
+type ButtonProps = Readonly<{
     children: React.ReactNode;
     variant?: "primary" | "secondary" | "danger";
     disabled?: boolean;
     onClick?: () => void;
     className?: string;
-};
+}>;
 
+const variants = {
+    primary: "btn-primary",
+    secondary: "btn-secondary",
+    danger: "btn-danger",
+};
 
 export default function Button({
     children,
@@ -15,25 +19,14 @@ export default function Button({
     disabled = false,
     onClick,
     className = "",
-
 }: ButtonProps) {
-
-    const varients = {
-        primary: "btn-primary ",
-        secondary: "btn-secondary",
-        danger: "btn-danger",
-    };
-
     return (
-
-
         <button
             onClick={onClick}
             disabled={disabled}
-            className={`${varients[variant]} ${className}`}
+            className={`${variants[variant]} ${className}`}
         >
             {children}
         </button>
     );
 }
-

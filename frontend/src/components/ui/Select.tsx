@@ -1,43 +1,26 @@
+import Button from "./Button";
 
-type Option = {
-    label: string;
-    value: string;
-}
+type ModalProps = Readonly<{
+    isOpen: boolean;
+    title?: string;
+    children: React.ReactNode;
+    onClose: () => void;
+}>;
 
-type SeletProps = {
-    label?: string,
-    options: Option[];
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-}
-
-export default function Select({
-    label,
-    options,
-    value,
-    onChange
-}: SeletProps) {
+export default function Modal({ isOpen, title, children, onClose }: ModalProps) {
+    if (!isOpen) return null;
     return (
-        <div>
-            {label && (
-                <label className="form-label">
-                    {label}
-                </label>
-            )}
-
-            <select
-                value={value}
-                onChange={onChange}
-            >
-                {options.map((option) => (
-
-                    <option
-                        key={option.value}
-                        value={option.value}
-                    > {option.label}</option>
-                ))}
-
-            </select>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="card w-full max-w-lg">
+                <div className="flex items-center justify-between">
+                    {title && <h3>{title}</h3>}
+                    <button onClick={onClose} className="text-xl">×</button>
+                </div>
+                <div className="mt-4">{children}</div>
+                <div className="mt-6 flex justify-end">
+                    <Button variant="secondary" onClick={onClose}>Close</Button>
+                </div>
+            </div>
         </div>
     );
 }

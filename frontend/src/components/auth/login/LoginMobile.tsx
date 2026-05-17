@@ -35,7 +35,7 @@ export default function LoginMobile() {
         if (!validate()) return;
         setLoading(true);
         try {
-            // TODO: replace with real API call — Sprint 2
+            // Sprint 2: wire to POST /auth/login
             await new Promise((r) => setTimeout(r, 1000));
             throw new Error("Invalid email or password");
         } catch (err: unknown) {
@@ -48,7 +48,6 @@ export default function LoginMobile() {
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
             <div className="card w-full max-w-[900px] min-h-[500px] flex flex-col overflow-hidden mx-auto">
-
                 <div className="w-full border-b border-border bg-cyan-50 px-6 py-8 flex flex-col items-center justify-center">
                     <Logo className="w-16 h-auto mb-6" />
                     <h2 className="text-center">Welcome back!</h2>
@@ -56,14 +55,12 @@ export default function LoginMobile() {
                         Access your university marketplace account.
                     </p>
                 </div>
-
                 <div className="w-full px-6 py-8 flex items-center justify-center">
                     <div className="w-full max-w-md mx-auto">
                         <h2>Login</h2>
                         <p className="text-text-subtle mt-2">
                             Enter your details to access your account
                         </p>
-
                         <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
                             <div>
                                 <Input
@@ -82,9 +79,7 @@ export default function LoginMobile() {
                                     </p>
                                 )}
                             </div>
-
                             <div>
-                                {/* Fix: associate label with input via htmlFor/id */}
                                 <label htmlFor="password-mobile" className="form-label">Password</label>
                                 <div style={{ position: "relative", width: "100%" }}>
                                     <input
@@ -119,14 +114,11 @@ export default function LoginMobile() {
                                     </p>
                                 )}
                             </div>
-
                             {serverError && (
                                 <p style={{ color: "red", fontSize: "0.75rem", fontWeight: 500 }}>
                                     {serverError}
                                 </p>
                             )}
-
-                            {/* Fix: use a button instead of href="#" */}
                             <div className="flex justify-end">
                                 <button
                                     type="button"
@@ -136,7 +128,6 @@ export default function LoginMobile() {
                                     Forgot Password?
                                 </button>
                             </div>
-
                             <Button className="w-full" disabled={loading}>
                                 {loading ? "Logging in…" : "Login"}
                             </Button>

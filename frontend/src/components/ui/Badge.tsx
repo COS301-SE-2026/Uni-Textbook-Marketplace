@@ -1,26 +1,18 @@
 //Author: Omphemetse Mokgotahdi
-type BadgeProps ={
+type BadgeProps = Readonly<{
     children: React.ReactElement;
     variant?: "pending" | "approved" | "rejected";
-    
-}
+}>;
 
-export default function Badge({
-    children,
-    variant = "pending",
-    
-}:BadgeProps){
+const variants = {
+    pending: "badge-pending",
+    approved: "badge-approved",
+    rejected: "badge-rejected",
+};
 
-    const varients ={
-        pending:"badge-pending",
-        approved:"badge-approved",
-        rejected:"badge-rejected"
-    }
-
-    return(
-        <span 
-            className={`badge ${varients[variant]}`}
-        >
+export default function Badge({ children, variant = "pending" }: BadgeProps) {
+    return (
+        <span className={`badge ${variants[variant]}`}>
             {children}
         </span>
     );

@@ -1,17 +1,12 @@
-type CardProps = {
-    children: React.ReactNode,
-    className?: string
-}
+type CardProps = Readonly<{
+    children: React.ReactNode;
+    className?: string;
+}>;
 
-export default function Card({
-    children,
-    className = "",
-}: CardProps) {
-
+export default function Card({ children, className = "" }: CardProps) {
     return (
-
         <div className={`card ${className}`}>
             {children}
         </div>
-    )
+    );
 }

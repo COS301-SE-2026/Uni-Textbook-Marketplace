@@ -35,7 +35,7 @@ export default function LoginDesktop() {
         if (!validate()) return;
         setLoading(true);
         try {
-            // TODO: replace with real API call — Sprint 2
+            // Sprint 2: wire to POST /auth/login
             await new Promise((r) => setTimeout(r, 1000));
             throw new Error("Invalid email or password");
         } catch (err: unknown) {
@@ -48,7 +48,6 @@ export default function LoginDesktop() {
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4">
             <Card className="card w-4/5 max-w-xl min-h-[500px] flex overflow-hidden">
-
                 <div className="w-1/2 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
                     <Logo className="w-20 h-auto mb-6" />
                     <h2 className="text-center">Welcome back!</h2>
@@ -56,14 +55,12 @@ export default function LoginDesktop() {
                         Access your university marketplace account.
                     </p>
                 </div>
-
                 <div className="w-[480px] p-8 flex items-center justify-center">
                     <div className="max-w-md mx-auto">
                         <h2>Login</h2>
                         <p className="text-text-subtle mt-2">
                             Enter your details to access your account
                         </p>
-
                         <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
                             <div>
                                 <Input
@@ -78,9 +75,7 @@ export default function LoginDesktop() {
                                 />
                                 {errors.email && <ErrorText>{errors.email}</ErrorText>}
                             </div>
-
                             <div>
-                                {/* Fix: associate label with input via htmlFor/id */}
                                 <label htmlFor="password-desktop" className="form-label">Password</label>
                                 <div style={{ position: "relative", width: "100%" }}>
                                     <input
@@ -111,10 +106,7 @@ export default function LoginDesktop() {
                                 </div>
                                 {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
-
                             {serverError && <ErrorText>{serverError}</ErrorText>}
-
-                            {/* Fix: use a button instead of href="#" */}
                             <div className="flex justify-end">
                                 <button
                                     type="button"
@@ -124,7 +116,6 @@ export default function LoginDesktop() {
                                     Forgot Password?
                                 </button>
                             </div>
-
                             <Button className="w-full" disabled={loading}>
                                 {loading ? "Logging in…" : "Login"}
                             </Button>
