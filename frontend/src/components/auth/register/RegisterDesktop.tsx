@@ -25,7 +25,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
     const steps = ["Personal\nDetails", "University\nEmail", "Verification", "Password"];
 
     return (
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-8" style={{ width: "100%" }}>
             {steps.map((label, index) => {
                 const stepNum = index + 1;
                 const isCompleted = stepNum < currentStep;
@@ -61,7 +61,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                                     textAlign: "center",
                                     whiteSpace: "pre-line",
                                     lineHeight: 1.2,
-                                    width: "4rem",
+                                    maxWidth: "5.5rem",
                                 }}
                             >
                                 {label}
@@ -71,10 +71,11 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                         {index < steps.length - 1 && (
                             <div
                                 style={{
-                                    flex: 1,
+                                    width: "2rem",
+                                    flexShrink: 0,
                                     height: "2px",
                                     backgroundColor: stepNum < currentStep ? "#00B4D8" : "#d1d5db",
-                                    margin: "0 0.25rem",
+                                    margin: "0 0.15rem",
                                     marginBottom: "1.4rem",
                                 }}
                             />
@@ -184,7 +185,7 @@ export default function RegisterDesktop() {
     const [otpTimer, setOtpTimer] = useState(59);
     const [timerActive, setTimerActive] = useState(false);
 
-    
+    // Start countdown when entering step 3
     React.useEffect(() => {
         if (step === 3 && !timerActive) {
             setOtpTimer(59);
@@ -527,10 +528,10 @@ export default function RegisterDesktop() {
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-background-light px-4 py-8">
-            <Card className="card w-full max-w-3xl min-h-[500px] flex overflow-hidden min-w-0">
+            <Card className="card w-4/5 max-w-3xl flex overflow-hidden min-w-0">
 
                 {/* Left panel */}
-                <div className="w-[38%] shrink-0 border-r border-border bg-cyan-50 p-8 flex flex-col items-center justify-center">
+                <div className="w-1/2 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
                     <Logo className="w-20 h-auto mb-6" />
                     <h2 className="text-center">Join our student community</h2>
                     <p className="text-center text-text-subtle mt-4">
@@ -539,8 +540,8 @@ export default function RegisterDesktop() {
                 </div>
 
                 {/* Right panel */}
-                <div className="flex-1 min-w-0 p-8 flex items-start justify-center overflow-y-auto">
-                    <div className="w-full max-w-full">
+                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
+                    <div style={{ width: "100%", maxWidth: 360, padding: "0 2rem", boxSizing: "border-box" }}>
                         {renderStepContent()}
 
                         {serverError && (
