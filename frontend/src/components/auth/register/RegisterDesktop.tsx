@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
 import { Button, Input, Card, ErrorText } from "@/components/ui";
-import { Eye, EyeOff } from "lucide-react";
-import { Check } from "lucide-react";
+import { Eye, EyeOff, Check } from "lucide-react";
 
 //  Types 
 
@@ -21,7 +20,7 @@ interface FormData {
 
 //  Step Indicator 
 
-function StepIndicator({ currentStep }: { currentStep: number }) {
+function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Personal\nDetails", "University\nEmail", "Verification", "Password"];
 
     return (
@@ -40,7 +39,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                                     height: "2.25rem",
                                     borderRadius: "50%",
                                     border: isCompleted || isActive ? "2.5px solid #00B4D8" : "2.5px solid #9ca3af",
-                                    backgroundColor: isCompleted || isActive ? "transparent" : "transparent",
+                                    backgroundColor: "transparent",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
@@ -92,11 +91,17 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
 function OtpInput({
     value,
     onChange,
-}: {
+}: Readonly<{
     value: string[];
     onChange: (val: string[]) => void;
-}) {
-    const inputRefs = Array.from({ length: 6 }, () => React.useRef<HTMLInputElement>(null));
+}>) {
+    const ref0 = React.useRef<HTMLInputElement>(null);
+    const ref1 = React.useRef<HTMLInputElement>(null);
+    const ref2 = React.useRef<HTMLInputElement>(null);
+    const ref3 = React.useRef<HTMLInputElement>(null);
+    const ref4 = React.useRef<HTMLInputElement>(null);
+    const ref5 = React.useRef<HTMLInputElement>(null);
+    const inputRefs = [ref0, ref1, ref2, ref3, ref4, ref5];
 
     const handleChange = (index: number, char: string) => {
         const digit = char.replace(/\D/g, "").slice(-1);
@@ -130,7 +135,7 @@ function OtpInput({
         <div style={{ display: "flex", gap: "0.6rem" }}>
             {value.map((digit, index) => (
                 <input
-                    key={index}
+                    key={`otp-desktop-${index}`}
                     ref={inputRefs[index]}
                     type="text"
                     inputMode="numeric"
@@ -203,7 +208,7 @@ export default function RegisterDesktop() {
         return () => clearTimeout(id);
     }, [otpTimer, timerActive]);
 
-    const set = (field: keyof FormData, value: any) => {
+    const set = (field: keyof FormData, value: FormData[keyof FormData]) => {
         setForm((prev) => ({ ...prev, [field]: value }));
         if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
     };
@@ -263,7 +268,7 @@ export default function RegisterDesktop() {
         if (step === 3 && !validateStep3()) return;
 
         if (step === 2) {
-            // TODO: call POST /auth/register to send OTP
+            // Sprint 2: call POST /auth/register to send OTP
         }
 
         if (step < 4) {
@@ -275,11 +280,11 @@ export default function RegisterDesktop() {
         if (!validateStep4()) return;
         setLoading(true);
         try {
-            // TODO: call POST /auth/complete-registration or POST /auth/login after register
+            // Sprint 2: call POST /auth/complete-registration then redirect
             await new Promise((r) => setTimeout(r, 1000));
             // On success: redirect to /listings or dashboard
-        } catch (err: any) {
-            setServerError(err.message ?? "Something went wrong. Please try again.");
+        } catch (err: unknown) {
+            setServerError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -288,7 +293,7 @@ export default function RegisterDesktop() {
     const handleResendOtp = () => {
         setOtpTimer(59);
         setTimerActive(true);
-        // TODO: call resend OTP endpoint
+        // Sprint 2: call resend OTP endpoint
     };
 
     //  Step content 
@@ -421,9 +426,10 @@ export default function RegisterDesktop() {
 
                         <div className="space-y-5">
                             <div>
-                                <label className="form-label">Password</label>
+                                <label htmlFor="reg-password" className="form-label">Password</label>
                                 <div style={{ position: "relative" }}>
                                     <input
+                                        id="reg-password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Create your password"
                                         value={form.password}
@@ -455,9 +461,10 @@ export default function RegisterDesktop() {
                             </div>
 
                             <div>
-                                <label className="form-label">Confirm Password</label>
+                                <label htmlFor="reg-confirm-password" className="form-label">Confirm Password</label>
                                 <div style={{ position: "relative" }}>
                                     <input
+                                        id="reg-confirm-password"
                                         type={showConfirm ? "text" : "password"}
                                         placeholder="Confirm your password"
                                         value={form.confirmPassword}
@@ -505,11 +512,11 @@ export default function RegisterDesktop() {
                                 />
                                 <label htmlFor="terms" style={{ fontSize: "0.8rem", color: "#3a3a3a", cursor: "pointer" }}>
                                     I agree to the{" "}
-                                    <a href="#" className="text-primary" style={{ fontWeight: 500 }}>
+                                    <a href="/terms" className="text-primary" style={{ fontWeight: 500 }}>
                                         Terms of Service
                                     </a>{" "}
                                     and{" "}
-                                    <a href="#" className="text-primary" style={{ fontWeight: 500 }}>
+                                    <a href="/privacy" className="text-primary" style={{ fontWeight: 500 }}>
                                         Privacy Policy
                                     </a>
                                 </label>
@@ -563,7 +570,9 @@ export default function RegisterDesktop() {
                             >
                                 {/* Step dots */}
                                 <div style={{ display: "flex", gap: "0.4rem", marginRight: "0.5rem" }}>
-                                    {[1, 2, 3, 4].map((n) => (
+                                {[1, 2, 3, 4].map((n) => {
+                                        const dotColor = n === step ? "#ffffff" : n < step ? "#00B4D8" : "#9ca3af";
+                                        return (
                                         <div
                                             key={n}
                                             style={{
@@ -576,14 +585,14 @@ export default function RegisterDesktop() {
                                                 justifyContent: "center",
                                                 fontSize: "0.7rem",
                                                 fontWeight: 700,
-                                                color: n <= step ? "#00B4D8" : "#9ca3af",
+                                                color: dotColor,
                                                 backgroundColor: n === step ? "#00B4D8" : "transparent",
-                                                ...(n === step ? { color: "#ffffff" } : {}),
                                             }}
                                         >
                                             {n}
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                                 <Button
