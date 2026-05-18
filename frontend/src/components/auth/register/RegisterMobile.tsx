@@ -109,7 +109,7 @@ function OtpInput({ value, onChange }: Readonly<{ value: string[]; onChange: (va
         <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
             {value.map((digit, index) => (
                 <input
-                    key={`otp-mobile-${index}`}
+                    key={`otp-mobile-input-${index}`}  
                     ref={inputRefs[index]}
                     type="text"
                     inputMode="numeric"

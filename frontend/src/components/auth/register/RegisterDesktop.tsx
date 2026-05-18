@@ -135,7 +135,7 @@ function OtpInput({
         <div style={{ display: "flex", gap: "0.6rem" }}>
             {value.map((digit, index) => (
                 <input
-                    key={`otp-desktop-${index}`}
+                    key={`otp-desktop-input-${index}`}  
                     ref={inputRefs[index]}
                     type="text"
                     inputMode="numeric"
