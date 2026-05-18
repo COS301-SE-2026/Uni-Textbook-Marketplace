@@ -44,9 +44,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      # Install from root first — this populates the hoisted
+      # node_modules that workspace packages share
+      - name: Install root workspace dependencies
+        run: npm install
+
+      # Install inside backend to ensure all backend-specific
+      # packages are resolved (fixes jsesc / babel module errors)
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci
+        run: npm install
 
       - name: Lint backend
         working-directory: backend
@@ -85,9 +92,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      # Install from root first — this populates the hoisted
+      # node_modules that workspace packages share
+      - name: Install root workspace dependencies
+        run: npm install
+
+      # Install inside frontend to ensure all Next.js specific
+      # packages are resolved (fixes @next/eslint-plugin-next error)
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Lint frontend
         working-directory: frontend
