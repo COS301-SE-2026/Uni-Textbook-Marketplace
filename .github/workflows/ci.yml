@@ -11,6 +11,9 @@ on:
       - develop
 
 jobs:
+  # =========================================
+  # Backend — NestJS
+  # =========================================
   backend:
     name: Backend (NestJS)
     runs-on: ubuntu-latest
@@ -39,20 +42,18 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: package-lock.json
 
+      # Install from root first — this populates the hoisted
+      # node_modules that workspace packages share
+      - name: Install root workspace dependencies
+        run: npm install
+
+      # Install inside backend to ensure all backend-specific
+      # packages are resolved (fixes jsesc / babel module errors)
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-
-      - name: Fix missing jsesc module
-        run: |
-          if [ ! -d "backend/node_modules/jsesc" ] && [ -d "node_modules/jsesc" ]; then
-            ln -sf ../../node_modules/jsesc backend/node_modules/jsesc
-          fi
-          if [ ! -d "backend/node_modules/@babel" ] && [ -d "node_modules/@babel" ]; then
-            ln -sf ../../node_modules/@babel backend/node_modules/@babel
-          fi
+        run: npm install
 
       - name: Lint backend
         working-directory: backend
@@ -73,6 +74,9 @@ jobs:
           flags: backend
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # =========================================
+  # Frontend — Next.js
+  # =========================================
   frontend:
     name: Frontend (Next.js)
     runs-on: ubuntu-latest
@@ -86,121 +90,30 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
+      # Install from root first — this populates the hoisted
+      # node_modules that workspace packages share
+      - name: Install root workspace dependencies
+        run: npm install
+
+      # Install inside frontend to ensure all Next.js specific
+      # packages are resolved (fixes @next/eslint-plugin-next error)
       - name: Install frontend dependencies
         working-directory: frontend
-        run: |
-          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-          npm install --save-dev typescript@5.0.0 @types/node@20.0.0 @types/react@18.0.0 @types/react-dom@18.0.0 --legacy-peer-deps || true
-
-      - name: Create missing OTP page if it doesn't exist
-        working-directory: frontend
-        run: |
-          mkdir -p src/app/auth/otp
-          if [ ! -f "src/app/auth/otp/page.tsx" ]; then
-            echo "export default function OTPPage() {" > src/app/auth/otp/page.tsx
-            echo "  return <div>OTP Verification Page</div>;" >> src/app/auth/otp/page.tsx
-            echo "}" >> src/app/auth/otp/page.tsx
-          fi
-
-      - name: Create Babel configuration
-        working-directory: frontend
-        run: |
-          echo 'module.exports = {' > babel.config.js
-          echo '  presets: [' >> babel.config.js
-          echo '    ["@babel/preset-env", { targets: { node: "current" } }],' >> babel.config.js
-          echo '    ["@babel/preset-react", { runtime: "automatic" }],' >> babel.config.js
-          echo '    "@babel/preset-typescript"' >> babel.config.js
-          echo '  ],' >> babel.config.js
-          echo '};' >> babel.config.js
-
-      - name: Create Jest configuration
-        working-directory: frontend
-        run: |
-          echo 'module.exports = {' > jest.config.js
-          echo '  testEnvironment: "jsdom",' >> jest.config.js
-          echo '  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],' >> jest.config.js
-          echo '  moduleNameMapper: {' >> jest.config.js
-          echo '    "^@/(.*)$": "<rootDir>/src/$1",' >> jest.config.js
-          echo '    "\\.(css|less|scss|sass)$": "identity-obj-proxy",' >> jest.config.js
-          echo '    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"' >> jest.config.js
-          echo '  },' >> jest.config.js
-          echo '  transform: {' >> jest.config.js
-          echo '    "^.+\\\\.(ts|tsx|js|jsx)$": ["babel-jest", { configFile: "./babel.config.js" }]' >> jest.config.js
-          echo '  },' >> jest.config.js
-          echo '  collectCoverageFrom: [' >> jest.config.js
-          echo '    "src/**/*.{ts,tsx,js,jsx}",' >> jest.config.js
-          echo '    "!src/**/*.d.ts",' >> jest.config.js
-          echo '    "!src/**/*.stories.{ts,tsx}",' >> jest.config.js
-          echo '    "!src/**/*.test.{ts,tsx}",' >> jest.config.js
-          echo '    "!src/**/index.{ts,tsx}"' >> jest.config.js
-          echo '  ]' >> jest.config.js
-          echo '};' >> jest.config.js
-
-      - name: Create Jest setup file
-        working-directory: frontend
-        run: |
-          echo "import '@testing-library/jest-dom';" > jest.setup.js
-
-      - name: Create file mock for static assets
-        working-directory: frontend
-        run: |
-          mkdir -p __mocks__
-          echo "module.exports = 'test-file-stub';" > __mocks__/fileMock.js
-
-      - name: Create ESLint configuration
-        working-directory: frontend
-        run: |
-          echo 'import { defineConfig, globalIgnores } from "eslint/config";' > eslint.config.mjs
-          echo 'import nextConfig from "eslint-config-next";' >> eslint.config.mjs
-          echo '' >> eslint.config.mjs
-          echo 'const eslintConfig = defineConfig([' >> eslint.config.mjs
-          echo '  ...nextConfig,' >> eslint.config.mjs
-          echo '  {' >> eslint.config.mjs
-          echo '    files: ["src/components/auth/register/**/*.tsx"],' >> eslint.config.mjs
-          echo '    rules: {' >> eslint.config.mjs
-          echo '      "react/no-array-index-key": "off",' >> eslint.config.mjs
-          echo '      "react-hooks/set-state-in-effect": "off",' >> eslint.config.mjs
-          echo '      "react-hooks/exhaustive-deps": "off"' >> eslint.config.mjs
-          echo '    }' >> eslint.config.mjs
-          echo '  },' >> eslint.config.mjs
-          echo '  globalIgnores([' >> eslint.config.mjs
-          echo '    ".next/**",' >> eslint.config.mjs
-          echo '    "out/**",' >> eslint.config.mjs
-          echo '    "build/**",' >> eslint.config.mjs
-          echo '    "coverage/**",' >> eslint.config.mjs
-          echo '    "node_modules/**",' >> eslint.config.mjs
-          echo '    "next-env.d.ts"' >> eslint.config.mjs
-          echo '  ]),' >> eslint.config.mjs
-          echo ']);' >> eslint.config.mjs
-          echo '' >> eslint.config.mjs
-          echo 'export default eslintConfig;' >> eslint.config.mjs
-
-      - name: Update TypeScript configuration
-        working-directory: frontend
-        run: |
-          if [ -f "tsconfig.json" ]; then
-            # Add skipLibCheck to avoid type errors
-            echo '{"extends": "./tsconfig.json", "compilerOptions": {"skipLibCheck": true, "noEmit": true}}' > tsconfig.ci.json
-          fi
+        run: npm install
 
       - name: Lint frontend
         working-directory: frontend
-        run: npm run lint || true
+        run: npm run lint
 
       - name: Run frontend tests
         working-directory: frontend
-        run: npm run test:coverage || true
+        run: npm run test:coverage
 
       - name: Build frontend
         working-directory: frontend
-        run: |
-          # Skip type checking for CI build if needed
-          NEXT_SKIP_TYPE_CHECK=true npm run build || \
-          npm run build -- --no-lint || \
-          echo 'export default function Page() { return <div>Build Placeholder</div>; }' > src/app/page.tsx && \
-          npm run build
+        run: npm run build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3001
 
@@ -211,6 +124,9 @@ jobs:
           flags: frontend
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # =========================================
+  # Summary — passes only if both pass
+  # =========================================
   ci-success:
     name: CI passed
     runs-on: ubuntu-latest
