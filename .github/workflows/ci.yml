@@ -109,8 +109,8 @@ jobs:
         working-directory: frontend
         run: |
           npm install --legacy-peer-deps
-          # Explicitly install missing Next.js ESLint packages
-          npm install --save-dev @next/eslint-plugin-next@14.1.0 eslint-config-next@14.1.0 --legacy-peer-deps
+          # Ensure ESLint 9 and Next.js plugin are installed
+          npm install --save-dev eslint@9.39.4 @next/eslint-plugin-next@14.1.0 --legacy-peer-deps
 
       - name: Fix missing modules for frontend
         run: |
