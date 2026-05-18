@@ -45,12 +45,25 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install root workspace dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      
       - name: Install backend dependencies
         working-directory: backend
-        run: npm install
+        run: npm install --legacy-peer-deps
+
+      - name: Fix missing jsesc module
+        run: |
+          # Check if jsesc is missing in backend and symlink from root
+          if [ ! -d "backend/node_modules/jsesc" ] && [ -d "node_modules/jsesc" ]; then
+            echo "Creating symlink for jsesc"
+            ln -sf ../../node_modules/jsesc backend/node_modules/jsesc
+          fi
+          
+          # Also symlink @babel if needed
+          if [ ! -d "backend/node_modules/@babel" ] && [ -d "node_modules/@babel" ]; then
+            echo "Creating symlink for @babel"
+            ln -sf ../../node_modules/@babel backend/node_modules/@babel
+          fi
 
       - name: Lint backend
         working-directory: backend
@@ -89,14 +102,30 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      
       - name: Install root workspace dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      
-      - name: Install frontend dependencies
+      - name: Install frontend dependencies with explicit Next.js ESLint packages
         working-directory: frontend
-        run: npm install
+        run: |
+          npm install --legacy-peer-deps
+          # Explicitly install missing Next.js ESLint packages
+          npm install --save-dev @next/eslint-plugin-next@14.1.0 eslint-config-next@14.1.0 --legacy-peer-deps
+
+      - name: Fix missing modules for frontend
+        run: |
+          # Create symlinks for Next.js ESLint packages if still missing
+          mkdir -p frontend/node_modules/@next
+          
+          if [ ! -d "frontend/node_modules/@next/eslint-plugin-next" ] && [ -d "node_modules/@next/eslint-plugin-next" ]; then
+            echo "Creating symlink for @next/eslint-plugin-next"
+            ln -sf ../../node_modules/@next/eslint-plugin-next frontend/node_modules/@next/eslint-plugin-next
+          fi
+          
+          if [ ! -d "frontend/node_modules/eslint-config-next" ] && [ -d "node_modules/eslint-config-next" ]; then
+            echo "Creating symlink for eslint-config-next"
+            ln -sf ../../node_modules/eslint-config-next frontend/node_modules/eslint-config-next
+          fi
 
       - name: Lint frontend
         working-directory: frontend
