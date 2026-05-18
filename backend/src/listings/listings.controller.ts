@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -12,6 +13,8 @@ import {
 } from '@nestjs/swagger';
 
 import { ListingsService } from './listings.service';
+
+import { AuthGuard } from 'src/guards/auth.guard';
 
 const HTTP_OK = 200;
 const HTTP_BAD_REQUEST = 400;
@@ -28,6 +31,7 @@ export class ListingsController {
 
     //Post listings
     @Post()
+    @UseGuards(AuthGuard) //hasnt fully been implemented, just a placeholder
     @ApiOperation({
         summary: 'Creating a new listing',
     })
