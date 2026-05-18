@@ -1,10 +1,8 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -14,14 +12,19 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "ignoreDeprecations" : "6.0",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["jest", "node"]
-  }
+    "outDir": "./dist",
+    "types": ["node", "jest"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
 }

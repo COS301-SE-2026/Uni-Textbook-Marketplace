@@ -33,7 +33,6 @@ We follow **GitHub Flow**:
 - Always create a feature branch from `develop`
 - Open a Pull Request to merge back into `develop`
 - At least **one team member must review** before merging
-- Delete your branch after it is merged
 
 ## Commit Message Convention
 

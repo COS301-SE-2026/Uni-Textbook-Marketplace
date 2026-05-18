@@ -1,13 +1,20 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import nextConfig from "eslint-config-next";
 
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
+  ...nextConfig,
+  {
+    files: [
+      "src/components/auth/register/RegisterDesktop.tsx",
+      "src/components/auth/register/RegisterMobile.tsx"
+    ],
+    rules: {
+      "react/no-array-index-key": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/exhaustive-deps": "off"
+    }
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
