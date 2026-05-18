@@ -17,8 +17,8 @@ export default function LoginDesktop() {
         const e: Record<string, string> = {};
         if (!email.trim()) {
             e.email = "University email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            e.email = "Enter a valid email address";
+        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(email)) {
+            e.email = "Email must end in @tuks.co.za or @up.ac.za";
         }
         if (!password) {
             e.password = "Password is required";
@@ -28,7 +28,6 @@ export default function LoginDesktop() {
         setErrors(e);
         return Object.keys(e).length === 0;
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setServerError("");

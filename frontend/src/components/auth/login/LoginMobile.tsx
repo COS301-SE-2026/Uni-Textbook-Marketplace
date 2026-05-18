@@ -17,8 +17,8 @@ export default function LoginMobile() {
         const e: Record<string, string> = {};
         if (!email.trim()) {
             e.email = "University email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            e.email = "Enter a valid email address";
+        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(email)) {
+            e.email = "Email must end in @tuks.co.za or @up.ac.za";
         }
         if (!password) {
             e.password = "Password is required";
