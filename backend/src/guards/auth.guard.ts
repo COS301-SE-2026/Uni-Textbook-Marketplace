@@ -6,7 +6,7 @@ import {
 
 @Injectable()
 export class AuthGuard implements CanActivate{
-    canActivate(_: ExecutionContext): boolean{
+    canActivate(): boolean{
         return true;
         //Will implement fully in sprint 2
     }
