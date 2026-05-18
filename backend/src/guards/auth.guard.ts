@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate{
-    canActivate(context: ExecutionContext): boolean{
+    canActivate(_: ExecutionContext): boolean{
         return true;
         //Will implement fully in sprint 2
     }
