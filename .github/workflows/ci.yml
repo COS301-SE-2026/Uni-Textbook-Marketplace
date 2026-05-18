@@ -94,18 +94,12 @@ jobs:
 
       # Install from root first — this populates the hoisted
       # node_modules that workspace packages share
-      - name: Install root workspace dependencies
-        run: npm install
-
-      # Install inside frontend to ensure all Next.js specific
-      # packages are resolved (fixes @next/eslint-plugin-next error)
-      - name: Install frontend dependencies
-        working-directory: frontend
+      - name: Install root dependencies
         run: npm install
 
       - name: Lint frontend
         working-directory: frontend
-        run: npm run lint || true
+        run: npm run lint
 
       - name: Run frontend tests
         working-directory: frontend
