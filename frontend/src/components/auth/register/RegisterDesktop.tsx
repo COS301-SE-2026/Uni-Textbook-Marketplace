@@ -168,6 +168,13 @@ function OtpInput({
     );
 }
 
+//  Dot color helper (avoids nested ternary)
+function getDotColor(n: number, step: number): string {
+    if (n === step) return "#ffffff";
+    if (n < step) return "#00B4D8";
+    return "#9ca3af";
+}
+
 //  Main Component 
 
 export default function RegisterDesktop() {
@@ -570,27 +577,27 @@ export default function RegisterDesktop() {
                             >
                                 {/* Step dots */}
                                 <div style={{ display: "flex", gap: "0.4rem", marginRight: "0.5rem" }}>
-                                {[1, 2, 3, 4].map((n) => {
-                                        const dotColor = n === step ? "#ffffff" : n < step ? "#00B4D8" : "#9ca3af";
+                                    {[1, 2, 3, 4].map((n) => {
+                                        const dotColor = getDotColor(n, step);
                                         return (
-                                        <div
-                                            key={n}
-                                            style={{
-                                                width: "1.75rem",
-                                                height: "1.75rem",
-                                                borderRadius: "50%",
-                                                border: n <= step ? "2px solid #00B4D8" : "2px solid #9ca3af",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                fontSize: "0.7rem",
-                                                fontWeight: 700,
-                                                color: dotColor,
-                                                backgroundColor: n === step ? "#00B4D8" : "transparent",
-                                            }}
-                                        >
-                                            {n}
-                                        </div>
+                                            <div
+                                                key={n}
+                                                style={{
+                                                    width: "1.75rem",
+                                                    height: "1.75rem",
+                                                    borderRadius: "50%",
+                                                    border: n <= step ? "2px solid #00B4D8" : "2px solid #9ca3af",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: "0.7rem",
+                                                    fontWeight: 700,
+                                                    color: dotColor,
+                                                    backgroundColor: n === step ? "#00B4D8" : "transparent",
+                                                }}
+                                            >
+                                                {n}
+                                            </div>
                                         );
                                     })}
                                 </div>
