@@ -5,6 +5,8 @@
 dist/
 *.js
 *.js.map
+src/**/*.d.ts
+src/**/*.js.map
 
 # Logs
 logs
