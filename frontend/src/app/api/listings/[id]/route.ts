@@ -5,9 +5,10 @@ import { MOCK_LISTINGS } from '../../../../../lib/mockData'
 
 export async function GET(
     _req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const listing = MOCK_LISTINGS.find(l => l.id === params.id)
+    const { id } = await params
+    const listing = MOCK_LISTINGS.find(l => l.id === id)
 
     if (!listing) {
         return NextResponse.json(
@@ -21,8 +22,10 @@ export async function GET(
 
 export async function DELETE(
     _req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params
+    
     // Mock: just return success
-    return NextResponse.json({ message: `Listing ${params.id} deleted (mock)` })
+    return NextResponse.json({ message: `Listing ${id} deleted (mock)` })
 }
