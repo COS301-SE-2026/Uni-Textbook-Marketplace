@@ -36,7 +36,7 @@ const config: Config = {
             },
 
             fontFamily: {
-                sans: ['Montserrat', 'sans-serif'],
+                sans: ['var(--font-montserrat)', 'sans-serif'],
             },
             fontSize: {
                 'h1':  ['3.125rem',  { lineHeight: '1.2em', fontWeight: '700' }],

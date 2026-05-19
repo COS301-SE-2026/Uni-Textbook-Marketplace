@@ -7,7 +7,8 @@ export default function LandingPage() {
       {/* Hero section */}
       <section className="relative min-h-[500px] bg-[#000f2b] flex items-center overflow-hidden">
         {/* Background overlay — I'll replace with real image later */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#000f2b] via-[#000f2b]/80 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradien
+        t-to-r from-[#000f2b] via-[#000f2b]/80 to-transparent z-10" />
 
         <div className="container-content relative z-20 py-16">
           <h1 className="text-white text-5xl md:text-6xl font-bold leading-tight max-w-lg">
