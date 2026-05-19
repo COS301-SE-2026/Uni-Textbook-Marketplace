@@ -4,7 +4,7 @@ import { User } from '../entities/users.entity';
 import bcrypt from 'bcrypt';
 
 export async function seedStudents() {
-  const userRepository :  Repository<User>= AppDataSource.getRepository(User);
+  const userRepository: Repository<User> = AppDataSource.getRepository(User);
 
   const hashedPassword = await bcrypt.hash('Password123', 10);
 
