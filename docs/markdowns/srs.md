@@ -315,9 +315,7 @@ The system defines the following actor hierarchy for use in use case
 diagrams. The base actor is **User**, which is specialised into
 **Verified Student** and **Admin**.
 
-```
-```
-
+![Use Case Diagram](../images/use_case_diagram.drawio.png)
 ---
 
 ### 3.2 Use Case Overview
@@ -338,9 +336,7 @@ are base features and do not count toward the three required use cases.
 
 #### Use Case Diagram (draw.io)
 
-```
-
-```
+![UC0 - Authentication Use Case Diagram](../images/uc_0.drawio.png)
 
 #### High-Level Description (TUCBW / TUCEW)
 
@@ -379,9 +375,7 @@ to the platform as a Verified Student.
 
 #### Use Case Diagram
 
-```
-
-```
+![UC1 - Creating a Listing](../images/uc_1.drawio.png)
 
 #### High-Level Description (TUCBW / TUCEW)
 
@@ -423,9 +417,7 @@ confirmation with a "Pending Review" badge.
 
 #### Use Case Diagram (draw.io)
 
-```
-
-```
+![UC2 - View Listings](../images/uc_2.drawio.png)
 
 #### High-Level Description (TUCBW / TUCEW)
 
@@ -459,9 +451,7 @@ condition, annotation level, and listing status.
 
 #### Use Case Diagram (draw.io)
 
-```
-
-```
+![UC3 - Admin Review listing](../images/uc_3.drawio.png)
 
 #### High-Level Description (TUCBW / TUCEW)
 
@@ -857,4 +847,4 @@ office on 30 April 2026.
 ---
 
 *Copyright 2026 NexusDev - University of Pretoria COS 301 Capstone Project*
-*This document is version-controlled in the GitHub repository under /docs/srs.md*
+*This document is version-controlled in the GitHub repository under /docs/markdowns/srs.md*
