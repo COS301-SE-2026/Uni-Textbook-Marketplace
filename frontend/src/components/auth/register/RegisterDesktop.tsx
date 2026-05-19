@@ -132,7 +132,7 @@ function OtpInput({
     };
 
     return (
-        <div style={{ display: "flex", gap: "0.6rem" }}>
+        <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap" }}>
             {value.map((digit, index) => (
                 <input
                     // eslint-disable-next-line react/no-array-index-key
@@ -198,7 +198,7 @@ export default function RegisterDesktop() {
     const [otpTimer, setOtpTimer] = useState(59);
     const [timerActive, setTimerActive] = useState(false);
 
-    // Start countdown when entering step 3
+    
     React.useEffect(() => {
         if (step === 3 && !timerActive) {
             setOtpTimer(59);
@@ -376,7 +376,7 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>OTP Verification</h2>
-                        <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "26rem" }}>
+                        <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
                             Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
                         </p>
                         <StepIndicator currentStep={step} />
@@ -543,10 +543,10 @@ export default function RegisterDesktop() {
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
-            <Card className="card w-4/5 max-w-3xl flex overflow-hidden min-w-0">
+            <Card className="card w-4/5 max-w-4xl flex overflow-hidden min-w-0">
 
                 {/* Left panel */}
-                <div className="w-1/2 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
+                <div className="w-2/5 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
                     <Logo className="w-20 h-auto mb-6" />
                     <h2 className="text-center">Join our student community</h2>
                     <p className="text-center text-text-subtle mt-4">
@@ -554,9 +554,9 @@ export default function RegisterDesktop() {
                     </p>
                 </div>
 
-                {/* Right panel */}
-                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
-                    <div style={{ width: "100%", maxWidth: 360, padding: "0 2rem", boxSizing: "border-box" }}>
+                {/* Right panel - wider to fit OTP inputs */}
+                <div className="w-3/5 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
+                    <div style={{ width: "100%", maxWidth: 480, padding: "0 2rem", boxSizing: "border-box" }}>
                         {renderStepContent()}
 
                         {serverError && (
