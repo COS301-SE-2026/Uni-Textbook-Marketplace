@@ -26,17 +26,8 @@
   "author": "NexusDev",
   "license": "ISC",
   "dependencies": {
-    "pg": "^8.20.0",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.29"
-  },
-  "devDependencies": {
-    "@types/node": "^25.7.0",
-    "ts-node": "^10.9.2",
-    "typeorm-ts-node-commonjs": "^0.3.20",
-    "typescript": "^6.0.3",
-    "@types/jest": "30.0.0",
-    "jest": "30.4.2",
-    "ts-jest": "29.4.9"
+    "@hookform/resolvers": "5.2.2",
+    "react-hook-form": "7.75.0",
+    "zod": "4.4.3"
   }
 }
