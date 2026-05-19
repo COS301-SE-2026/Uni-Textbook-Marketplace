@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
-// I'll replace this with real auth context in Sprint 2
+// I'll replace this with real auth context later
 // For now I'll simulate auth state with a prop for testing
 interface NavBarProps {
   isAuthenticated?: boolean
@@ -14,12 +15,12 @@ interface NavBarProps {
   }
 }
 
-// HELPER — get initials from name
+// HELPER - get initials from name
 function getInitials(firstName: string, lastName: string): string {
-return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
 }
 
-// NAV LINKS — authenticated users will see these
+// NAV LINKS - authenticated users will see these
 
 const authNavLinks = [
   { label: 'Browse', href: '/listings' },
@@ -39,7 +40,9 @@ interface NavBarProps {
 export default function NavBar({
   isAuthenticated = false,
   user = { firstName: 'Tiego', lastName: 'Mokwena' },
-}: Readonly <NavBarProps>) {
+   
+}: Readonly<NavBarProps>) {
+  const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
@@ -74,8 +77,11 @@ export default function NavBar({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium text-[#3a3a3a] hover:text-[#00B4D8] 
-                             transition-colors duration-200 no-underline tracking-wide"
+                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide
+                  ${pathname === link.href
+                      ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
+                      : 'text-[#3a3a3a] hover:text-[#00B4D8]'
+                    }`}
                 >
                   {link.label.toUpperCase()}
                 </Link>
@@ -86,7 +92,7 @@ export default function NavBar({
           {/*  RIGHT: Actions (desktop only)  */}
           <div className="hidden md:flex items-center gap-3">
 
-            {/* Theme toggle slot — Omphemetse, you'll fills this in */}
+            {/* Theme toggle slot - Omphemetse, you'll fills this in */}
             {/* <ThemeToggle /> */}
 
             {isAuthenticated ? (
@@ -152,7 +158,7 @@ export default function NavBar({
                       <button
                         onClick={() => {
                           setUserMenuOpen(false)
-                          // Wire to auth logout in Sprint 2
+                          // Wire to logout during integration
                         }}
                         className="w-full text-left px-4 py-3 text-sm text-[#b91c1c] 
                                    hover:bg-[#FDE8E8] transition-colors duration-150"

@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');*/
+@import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +7,7 @@
 /*
    NexusDev - Uni Textbook Marketplace
    Global Styles - Agile Bridge Brand Guidelines
-   Primary colour: #00B4D8 (Cyan) — used as accent/background only
+   Primary colour: #00B4D8 (Cyan) - used as accent/background only
    Font: Montserrat
 */
 
