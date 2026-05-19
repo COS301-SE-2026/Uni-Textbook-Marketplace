@@ -1,9 +1,9 @@
-import { AppDataSource } from '../../data-source';
+import { EntityManager } from 'typeorm/entity-manager/EntityManager.js';
 
 import { University } from '../entities/university.entity';
 
-export async function seedUniversities() {
-  const universityRepository = AppDataSource.getRepository(University);
+export async function seedUniversities(manager: EntityManager) {
+  const universityRepository = manager.getRepository(University);
 
   const universities = [
     universityRepository.create({

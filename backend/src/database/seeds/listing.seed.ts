@@ -1,19 +1,18 @@
-import { AppDataSource } from '../../data-source';
-
+import { EntityManager } from 'typeorm';
 import { Listing, ListingStatus } from '../entities/listing.entity';
 
 import { User } from '../entities/users.entity';
 import { Module } from '../entities/module.entity';
 import { Book } from '../entities/book.entity';
 
-export async function seedListings() {
-  const listingRepository = AppDataSource.getRepository(Listing);
+export async function seedListings(manager: EntityManager) {
+  const listingRepository = manager.getRepository(Listing);
 
-  const userRepository = AppDataSource.getRepository(User);
+  const userRepository = manager.getRepository(User);
 
-  const moduleRepository = AppDataSource.getRepository(Module);
+  const moduleRepository = manager.getRepository(Module);
 
-  const bookRepository = AppDataSource.getRepository(Book);
+  const bookRepository = manager.getRepository(Book);
 
   const students = await userRepository.find({
     where: {

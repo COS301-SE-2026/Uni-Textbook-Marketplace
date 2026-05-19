@@ -1,9 +1,8 @@
-import { AppDataSource } from '../../data-source';
-
+import { EntityManager } from 'typeorm';
 import { Book } from '../entities/book.entity';
 
-export async function seedBooks() {
-  const bookRepository = AppDataSource.getRepository(Book);
+export async function seedBooks(manager: EntityManager) {
+  const bookRepository = manager.getRepository(Book);
 
   const books = [
     bookRepository.create({

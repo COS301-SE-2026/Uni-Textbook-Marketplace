@@ -1,12 +1,11 @@
-import { AppDataSource } from '../../data-source';
-
+import { EntityManager } from 'typeorm/entity-manager/EntityManager.js';
 import { Module } from '../entities/module.entity';
 import { University } from '../entities/university.entity';
 
-export async function seedModules() {
-  const moduleRepository = AppDataSource.getRepository(Module);
+export async function seedModules(manager: EntityManager) {
+  const moduleRepository = manager.getRepository(Module);
 
-  const universityRepository = AppDataSource.getRepository(University);
+  const universityRepository = manager.getRepository(University);
 
   const university = await universityRepository.findOne({
     where: {

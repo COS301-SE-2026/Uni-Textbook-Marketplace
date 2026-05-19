@@ -1,10 +1,9 @@
-import { Repository } from 'typeorm';
-import { AppDataSource } from '../../data-source';
+import { EntityManager } from 'typeorm';
 import { User } from '../entities/users.entity';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
-export async function seedAdmins() {
-  const userRepository: Repository<User> = AppDataSource.getRepository(User);
+export async function seedAdmins(manager: EntityManager) {
+  const userRepository = manager.getRepository(User);
 
   const hashedPassword = await bcrypt.hash('Admin123', 10);
 
