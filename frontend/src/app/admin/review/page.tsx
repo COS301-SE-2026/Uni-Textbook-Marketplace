@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -182,7 +183,7 @@ export default function AdminReviewDashboard() {
                                         {h}
                                     </th>
                                 ))}
-                            </tr>
+                             </tr>
                         </thead>
 
                         <tbody>
@@ -195,13 +196,14 @@ export default function AdminReviewDashboard() {
                                         {/* Book */}
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
-                                                {/* Thumbnail */}
-                                                <div className="w-10 h-12 bg-gray-100 rounded flex-shrink-0 overflow-hidden flex items-center justify-center">
+                                                {/* Thumbnail - Fixed: replaced img with next/image */}
+                                                <div className="relative w-10 h-12 bg-gray-100 rounded flex-shrink-0 overflow-hidden flex items-center justify-center">
                                                     {listing.images?.[0] ? (
-                                                        <img
+                                                        <Image
                                                             src={listing.images[0]}
                                                             alt=""
-                                                            className="w-full h-full object-cover"
+                                                            fill
+                                                            className="object-cover"
                                                         />
                                                     ) : (
                                                         <svg

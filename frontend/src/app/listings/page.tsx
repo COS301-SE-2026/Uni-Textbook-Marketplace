@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -37,10 +37,8 @@ export default function BrowseListingsPage() {
     const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS)
     const [total, setTotal] = useState(0)
 
-    //  Fetch
-
-    const fetchListings = async (f: Filters) => {
-        setLoading(true)
+    
+    const fetchListings = useCallback(async (f: Filters) => {
         try {
             const params = new URLSearchParams()
             if (f.faculty)      params.set('faculty', f.faculty)
@@ -54,18 +52,24 @@ export default function BrowseListingsPage() {
             const res = await fetch(`/api/listings?${params.toString()}`)
             const data = await res.json()
 
-            setListings(data.listings ?? [])
-            setTotal(data.total ?? 0)
+            return { listings: data.listings ?? [], total: data.total ?? 0 }
         } catch (err) {
             console.error('Failed to fetch listings', err)
-        } finally {
+            return { listings: [], total: 0 }
+        }
+    }, [])
+
+    
+    useEffect(() => {
+        const loadListings = async () => {
+            setLoading(true)
+            const { listings: data, total: count } = await fetchListings(applied)
+            setListings(data)
+            setTotal(count)
             setLoading(false)
         }
-    }
-
-    useEffect(() => {
-        fetchListings(applied)
-    }, [applied])
+        loadListings()
+    }, [applied, fetchListings])
 
     // Handlers
 

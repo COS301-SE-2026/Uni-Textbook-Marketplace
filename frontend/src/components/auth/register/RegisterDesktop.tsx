@@ -135,7 +135,6 @@ function OtpInput({
         <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap" }}>
             {value.map((digit, index) => (
                 <input
-                    // eslint-disable-next-line react/no-array-index-key
                     key={`otp-desktop-${index}`}
                     ref={inputRefs[index]}
                     type="text"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 
 export type ListingStatus = 'APPROVED' | 'PENDING' | 'REJECTED'
@@ -57,13 +58,14 @@ export default function ListingCard({
             onClick={handleClick}
             className="card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3"
         >
-            {/* Image placeholder / actual image */}
+            {/* Image placeholder / actual image - Fixed: replaced img with next/image */}
             <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
                 {listing.images?.[0] ? (
-                    <img
+                    <Image
                         src={listing.images[0]}
                         alt={listing.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                     />
                 ) : (
                     /* Generic image placeholder SVG */

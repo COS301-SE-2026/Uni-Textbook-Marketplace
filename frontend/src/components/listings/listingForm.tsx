@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import TextArea from '@/components/ui/TextArea'
@@ -251,16 +252,19 @@ export default function ListingForm({
 
                 {errors.images && <ErrorText>{errors.images}</ErrorText>}
 
-                {/* Preview grid */}
+                {/* Preview grid - Fixed: replaced img with next/image */}
                 {form.images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {form.images.map((image, index) => (
                             <div key={index} className="relative group">
-                                <img
-                                    src={URL.createObjectURL(image)}
-                                    alt={`preview-${index}`}
-                                    className="h-32 w-full rounded border object-cover"
-                                />
+                                <div className="relative h-32 w-full rounded border overflow-hidden">
+                                    <Image
+                                        src={URL.createObjectURL(image)}
+                                        alt={`preview-${index}`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
                                 {/* Remove button */}
                                 <button
                                     type="button"
