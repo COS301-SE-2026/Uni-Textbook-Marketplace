@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, Get, HttpCode, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  HttpCode,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response, Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
@@ -8,9 +17,16 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
+interface AuthenticatedRequest extends ExpressRequest {
+  user: {
+    id: string;
+    email?: string;
+  };
+}
+
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('register')
@@ -100,7 +116,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getMe(@Request() req) {
+  async getMe(@Request() req: AuthenticatedRequest) {
     return this.authService.getMe(req.user.id);
   }
 }

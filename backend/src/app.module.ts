@@ -17,7 +17,6 @@ import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

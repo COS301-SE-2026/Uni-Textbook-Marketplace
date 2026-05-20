@@ -41,7 +41,7 @@ export class AuthService {
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
-  ) { }
+  ) {}
 
   async register(dto: RegisterDto) {
     const uniResult = await this.universityRepository.findOne({
@@ -126,7 +126,7 @@ export class AuthService {
     }
 
     const user = userResult;
-    const tokens = await this.issueTokens(user);
+    const tokens = this.issueTokens(user);
 
     return { tokens, user };
   }
@@ -249,7 +249,6 @@ export class AuthService {
   }
 
   async getMe(userId: string) {
-
     const result = await this.userRepository.findOne({
       select: {
         id: true,

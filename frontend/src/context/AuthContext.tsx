@@ -15,30 +15,29 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function getStoredUser(): AuthUser | null {
+  try {
+    const stored = sessionStorage.getItem('auth_user');
+    if (stored && stored !== 'undefined') {
+      return JSON.parse(stored) as AuthUser;
+    }
+  } catch {
+
+  }
+  return null;
+}
+
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
+
+  const [isLoading, setIsLoading] = useState(() => {
+    return getStoredUser() === null;
+  });
   const router = useRouter();
 
   useEffect(() => {
-  
-    let stored: string | null = null;
-    try {
-      stored = sessionStorage.getItem('auth_user');
-    } catch {
+    if (user) return;
 
-    }
-    if (stored && stored !== 'undefined') {
-      try {
-        setUser(JSON.parse(stored));
-        setIsLoading(false);
-        return;
-      } catch {
-        sessionStorage.removeItem('auth_user');
-      }
-    }
-
-  
     getMe()
       .then((me) => {
         setUser(me);
@@ -46,10 +45,10 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       })
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [user]);
 
   const login = (userData: AuthUser) => {
-    if (!userData) return;  // ← never store undefined
+    if (!userData) return;
     setUser(userData);
     try {
       sessionStorage.setItem('auth_user', JSON.stringify(userData));
@@ -62,7 +61,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     try {
       await logoutUser();
     } catch {
-      
+
     } finally {
       setUser(null);
       sessionStorage.removeItem('auth_user');
