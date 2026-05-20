@@ -1,15 +1,16 @@
-import { Controller, Post, Body, Res, Get, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, HttpCode, UseGuards, Request } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import type { Response } from 'express';
+import type { Response, Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('register')
@@ -20,7 +21,7 @@ export class AuthController {
   private getCookieOptions(maxAge: number) {
     return {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax' as const,
       maxAge,
     };
@@ -35,21 +36,19 @@ export class AuthController {
   ) {
     const tokens = await this.authService.verifyEmail(dto.email, dto.code);
 
-    // Store access token in httpOnly cookie JS cant read this
-    // This is what protects us from XSS attacks stealing tokens
     res.cookie(
       'access_token',
-      tokens.accessToken,
+      tokens.tokens.accessToken,
       this.getCookieOptions(15 * 60 * 1000),
     );
 
     res.cookie(
       'refresh_token',
-      tokens.refreshToken,
+      tokens.tokens.refreshToken,
       this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
     );
 
-    return { message: 'Email verified successfully.' };
+    return { message: 'Email verified successfully.', user: tokens.user };
   }
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
@@ -97,5 +96,11 @@ export class AuthController {
     res.clearCookie('access_token', this.getCookieOptions(0));
     res.clearCookie('refresh_token', this.getCookieOptions(0));
     return { message: 'Logged out successfully.' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getMe(@Request() req) {
+    return this.authService.getMe(req.user.id);
   }
 }

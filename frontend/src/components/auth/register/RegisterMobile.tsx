@@ -1,14 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input, ErrorText } from "@/components/ui";
+import { Button, Input, ErrorText, Select } from "@/components/ui";
 import { Eye, EyeOff, Check } from "lucide-react";
+import { registerUser, verifyOtp, resendOtp, getUniversities, University } from "@/lib/auth.api";
+import type { ApiError } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { useAuth } from '@/context/AuthContext';
+import { getMe } from '@/lib/auth.api';
 
 //  Types
 interface FormData {
     fullName: string;
     surname: string;
-    university: string;
+    university_id: string;
+    university_name: string;
     email: string;
     otp: string[];
     password: string;
@@ -18,7 +24,7 @@ interface FormData {
 
 //  Step Indicator
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
-    const steps = ["Personal\nDetails", "University\nEmail", "Verification", "Password"];
+    const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
     return (
         <div className="flex items-center mb-6">
             {steps.map((label, index) => {
@@ -133,14 +139,14 @@ function OtpInput({ value, onChange }: Readonly<{ value: string[]; onChange: (va
     );
 }
 
-//  Dot color helper (avoids nested ternary)
+//  Dot color helper
 function getDotColor(n: number, step: number): string {
     if (n === step) return "#ffffff";
     if (n < step) return "#00B4D8";
     return "#9ca3af";
 }
 
-//  Per-step render helpers (keeps renderStepContent complexity under 15) 
+//  Per-step render helpers
 
 type StepProps = {
     form: FormData;
@@ -171,24 +177,55 @@ function StepOne({ form, errors, set, step }: Readonly<StepProps>) {
     );
 }
 
-function StepTwo({ form, errors, set, step }: Readonly<StepProps>) {
+type StepTwoProps = Readonly<StepProps & {
+    universities: University[];
+    selectedDomain: string;
+    setSelectedDomain: (d: string) => void;
+}>;
+
+function StepTwo({ form, errors, set, step, universities, selectedDomain, setSelectedDomain }: StepTwoProps) {
     return (
         <>
             <h2>Enter university details</h2>
-            <p className="text-text-subtle mt-1 mb-5">Fill in your details to get started</p>
+            <p className="text-text-subtle mt-1 mb-5">Select & Fill in your details to get started</p>
             <StepIndicator currentStep={step} />
             <div className="space-y-4">
+                {/* University Select */}
                 <div>
-                    <Input label="Name of University/Institution" type="text"
-                        placeholder="Enter the name of the University/Institution"
-                        value={form.university} onChange={(e) => set("university", e.target.value)} />
+                    <Select
+                        label="Name of University/Institution"
+                        name="university"
+                        value={form.university_id}
+                        onChange={(e) => {
+                            const selected = universities.find((u) => u.id === e.target.value);
+                            set("university_id", e.target.value);
+                            set("university_name", selected?.name ?? "");
+                            setSelectedDomain(selected?.email_domain ?? "");
+                        }}
+                    >
+                        <option value="">Select your university</option>
+                        {universities.map((u) => (
+                            <option key={u.id} value={u.id}>{u.name}</option>
+                        ))}
+                    </Select>
                     {errors.university && <ErrorText>{errors.university}</ErrorText>}
                 </div>
+
+                {/* University Email */}
                 <div>
-                    <Input label="University Email" type="email"
-                        placeholder="you@university.ac.za / you@university.co.za"
-                        value={form.email} onChange={(e) => set("email", e.target.value)} />
+                    <Input
+                        label="University Email"
+                        type="email"
+                        placeholder="@university.email"
+                        value={form.email}
+                        onChange={(e) => set("email", e.target.value)}
+                    />
                     {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                    {selectedDomain && (
+                        <p className="mt-1 text-xs text-[#00B4D8]">
+                            Your email should end in @{selectedDomain}
+                        </p>
+                    )}
                 </div>
             </div>
         </>
@@ -196,53 +233,13 @@ function StepTwo({ form, errors, set, step }: Readonly<StepProps>) {
 }
 
 type StepThreeProps = Readonly<StepProps & {
-    otpTimer: number;
-    timerActive: boolean;
-    handleNext: () => void;
-    handleResendOtp: () => void;
-    loading: boolean;
-}>;
-
-function StepThree({ form, errors, set, step, otpTimer, timerActive, handleNext, handleResendOtp, loading }: StepThreeProps) {
-    return (
-        <>
-            <h2>OTP Verification</h2>
-            <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.85rem" }}>
-                Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
-            </p>
-            <StepIndicator currentStep={step} />
-            <div>
-                <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
-                {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem", fontSize: "0.75rem" }}>
-                    <span className="text-text-subtle">
-                        Remaining time:{" "}
-                        <span style={{ color: "#00B4D8", fontWeight: 600 }}>
-                            00:{String(otpTimer).padStart(2, "0")}s
-                        </span>
-                    </span>
-                    <button type="button" onClick={handleResendOtp} disabled={timerActive}
-                        style={{ color: timerActive ? "#9ca3af" : "#00B4D8", background: "none", border: "none",
-                            cursor: timerActive ? "default" : "pointer", fontSize: "0.75rem", fontWeight: 500 }}>
-                        Resend OTP code
-                    </button>
-                </div>
-                <div style={{ marginTop: "1.5rem" }}>
-                    <Button className="w-full" onClick={handleNext} disabled={loading}>Verify</Button>
-                </div>
-            </div>
-        </>
-    );
-}
-
-type StepFourProps = Readonly<StepProps & {
     showPassword: boolean;
     setShowPassword: (v: (p: boolean) => boolean) => void;
     showConfirm: boolean;
     setShowConfirm: (v: (p: boolean) => boolean) => void;
 }>;
 
-function StepFour({ form, errors, set, step, showPassword, setShowPassword, showConfirm, setShowConfirm }: StepFourProps) {
+function StepThree({ form, errors, set, step, showPassword, setShowPassword, showConfirm, setShowConfirm }: StepThreeProps) {
     return (
         <>
             <h2>Password</h2>
@@ -261,9 +258,11 @@ function StepFour({ form, errors, set, step, showPassword, setShowPassword, show
                         />
                         <button type="button" onClick={() => setShowPassword((p) => !p)}
                             aria-label={showPassword ? "Hide password" : "Show password"}
-                            style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "2.75rem",
+                            style={{
+                                position: "absolute", top: 0, right: 0, bottom: 0, width: "2.75rem",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                background: "transparent", border: "none", cursor: "pointer", color: "#9ca3af" }}>
+                                background: "transparent", border: "none", cursor: "pointer", color: "#9ca3af"
+                            }}>
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
@@ -281,9 +280,11 @@ function StepFour({ form, errors, set, step, showPassword, setShowPassword, show
                         />
                         <button type="button" onClick={() => setShowConfirm((p) => !p)}
                             aria-label={showConfirm ? "Hide password" : "Show password"}
-                            style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "2.75rem",
+                            style={{
+                                position: "absolute", top: 0, right: 0, bottom: 0, width: "2.75rem",
                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                background: "transparent", border: "none", cursor: "pointer", color: "#9ca3af" }}>
+                                background: "transparent", border: "none", cursor: "pointer", color: "#9ca3af"
+                            }}>
                             {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
@@ -293,8 +294,10 @@ function StepFour({ form, errors, set, step, showPassword, setShowPassword, show
                     <input type="checkbox" id="terms-mobile"
                         checked={form.agreedToTerms}
                         onChange={(e) => set("agreedToTerms", e.target.checked)}
-                        style={{ marginTop: "0.15rem", accentColor: "#00B4D8",
-                            width: "1rem", height: "1rem", flexShrink: 0, cursor: "pointer" }}
+                        style={{
+                            marginTop: "0.15rem", accentColor: "#00B4D8",
+                            width: "1rem", height: "1rem", flexShrink: 0, cursor: "pointer"
+                        }}
                     />
                     <label htmlFor="terms-mobile" style={{ fontSize: "0.78rem", color: "#3a3a3a", cursor: "pointer" }}>
                         I agree to the{" "}
@@ -309,11 +312,55 @@ function StepFour({ form, errors, set, step, showPassword, setShowPassword, show
     );
 }
 
+type StepFourProps = Readonly<StepProps & {
+    otpTimer: number;
+    timerActive: boolean;
+    handleNext: () => void;
+    handleResendOtp: () => void;
+    loading: boolean;
+}>;
+
+function StepFour({ form, errors, set, step, otpTimer, timerActive, handleNext, handleResendOtp, loading }: StepFourProps) {
+    return (
+        <>
+            <h2>OTP Verification</h2>
+            <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.85rem" }}>
+                Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
+            </p>
+            <StepIndicator currentStep={step} />
+            <div>
+                <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
+                {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem", fontSize: "0.75rem" }}>
+                    <span className="text-text-subtle">
+                        Remaining time:{" "}
+                        <span style={{ color: "#00B4D8", fontWeight: 600 }}>
+                            00:{String(otpTimer).padStart(2, "0")}s
+                        </span>
+                    </span>
+                    <button type="button" onClick={handleResendOtp} disabled={timerActive}
+                        style={{
+                            color: timerActive ? "#9ca3af" : "#00B4D8", background: "none", border: "none",
+                            cursor: timerActive ? "default" : "pointer", fontSize: "0.75rem", fontWeight: 500
+                        }}>
+                        Resend OTP code
+                    </button>
+                </div>
+                <div style={{ marginTop: "1.5rem" }}>
+                    <Button className="w-full" onClick={handleNext} disabled={loading}>
+                        {loading ? "Verifying..." : "REGISTER"}
+                    </Button>
+                </div>
+            </div>
+        </>
+    );
+}
+
 //  Main Component
 export default function RegisterMobile() {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<FormData>({
-        fullName: "", surname: "", university: "", email: "",
+        fullName: "", surname: "", university_id: "", university_name: "", email: "",
         otp: ["", "", "", "", "", ""],
         password: "", confirmPassword: "", agreedToTerms: false,
     });
@@ -324,9 +371,13 @@ export default function RegisterMobile() {
     const [serverError, setServerError] = useState("");
     const [otpTimer, setOtpTimer] = useState(59);
     const [timerActive, setTimerActive] = useState(false);
+    const [universities, setUniversities] = useState<University[]>([]);
+    const [selectedDomain, setSelectedDomain] = useState("");
+    const router = useRouter();
+    const { login } = useAuth();
 
     React.useEffect(() => {
-        if (step === 3 && !timerActive) { setOtpTimer(59); setTimerActive(true); }
+        if (step === 4 && !timerActive) { setOtpTimer(59); setTimerActive(true); }
     }, [step, timerActive]);
 
     React.useEffect(() => {
@@ -335,6 +386,12 @@ export default function RegisterMobile() {
         const id = setTimeout(() => setOtpTimer((t) => t - 1), 1000);
         return () => clearTimeout(id);
     }, [otpTimer, timerActive]);
+
+    React.useEffect(() => {
+        getUniversities()
+            .then(setUniversities)
+            .catch(() => setServerError("Could not load universities. Please refresh the page"));
+    }, []);
 
     const set = (field: keyof FormData, value: FormData[keyof FormData]) => {
         setForm((prev) => ({ ...prev, [field]: value }));
@@ -348,24 +405,20 @@ export default function RegisterMobile() {
         setErrors(e);
         return Object.keys(e).length === 0;
     };
+
     const validateStep2 = () => {
         const e: Record<string, string> = {};
-        if (!form.university.trim()) e.university = "University name is required";
+        if (!form.university_id) e.university = "Please select your university";
         if (!form.email.trim()) {
             e.email = "University email is required";
-        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(form.email)) {
-            e.email = "Email must end in @tuks.co.za or @up.ac.za";
+        } else if (selectedDomain && !form.email.endsWith(`@${selectedDomain}`)) {
+            e.email = `Email must end in @${selectedDomain}`;
         }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
+
     const validateStep3 = () => {
-        const e: Record<string, string> = {};
-        if (form.otp.some((d) => !d)) e.otp = "Please enter the full 6-digit OTP";
-        setErrors(e);
-        return Object.keys(e).length === 0;
-    };
-    const validateStep4 = () => {
         const e: Record<string, string> = {};
         if (!form.password) e.password = "Password is required";
         else if (form.password.length < 8) e.password = "Password must be at least 8 characters";
@@ -376,43 +429,91 @@ export default function RegisterMobile() {
         return Object.keys(e).length === 0;
     };
 
+    const validateStep4 = () => {
+        const e: Record<string, string> = {};
+        if (form.otp.some((d) => !d)) e.otp = "Please enter the full 6-digit OTP";
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    };
+
     const handleNext = async () => {
+        if (loading) return;
         setServerError("");
         if (step === 1 && !validateStep1()) return;
         if (step === 2 && !validateStep2()) return;
         if (step === 3 && !validateStep3()) return;
+
         if (step === 2) {
-            // Sprint 2: call POST /auth/register to send OTP
+            setLoading(true);
+            try {
+
+                setStep((s) => s + 1);
+            } catch (err) {
+                setServerError((err as ApiError).message);
+            } finally {
+                setLoading(false);
+            }
+            return;
         }
+
+
+
+        if (step === 3) {
+            if (!validateStep3()) return;
+            setLoading(true);
+            try {
+                await registerUser({
+                    email: form.email,
+                    password: form.password,
+                    first_name: form.fullName,
+                    last_name: form.surname,
+                    university_id: form.university_id,
+                });
+                setStep((s) => s + 1);
+            } catch (err) {
+                setServerError((err as ApiError).message);
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
         if (step < 4) { setStep((s) => s + 1); return; }
+
+        // Step 4 (OTP) — final submit
         if (!validateStep4()) return;
         setLoading(true);
         try {
-            await new Promise((r) => setTimeout(r, 1000));
-            // Sprint 2: redirect on success
-        } catch (err: unknown) {
-            setServerError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+            const result = await verifyOtp({ email: form.email, code: form.otp.join('') });
+            if (result.user) login(result.user);
+            router.push("/listings");
+        } catch (err) {
+            setServerError((err as ApiError).message);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleResendOtp = () => {
+    const handleResendOtp = async () => {
         setOtpTimer(59);
         setTimerActive(true);
-        // Sprint 2: call resend OTP endpoint
+        try {
+            await resendOtp(form.email);
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        }
     };
 
     const stepProps = { form, errors, set, step };
 
-    // Complexity is now 1 — each case delegates to a named component
     const renderStepContent = () => {
         if (step === 1) return <StepOne {...stepProps} />;
-        if (step === 2) return <StepTwo {...stepProps} />;
-        if (step === 3) return <StepThree {...stepProps} otpTimer={otpTimer} timerActive={timerActive}
-            handleNext={handleNext} handleResendOtp={handleResendOtp} loading={loading} />;
-        if (step === 4) return <StepFour {...stepProps} showPassword={showPassword}
+        if (step === 2) return <StepTwo {...stepProps} universities={universities}
+            selectedDomain={selectedDomain} setSelectedDomain={setSelectedDomain} />;
+        if (step === 3) return <StepThree {...stepProps} showPassword={showPassword}
             setShowPassword={setShowPassword} showConfirm={showConfirm} setShowConfirm={setShowConfirm} />;
+        if (step === 4) return <StepFour {...stepProps} otpTimer={otpTimer} timerActive={timerActive}
+            handleNext={handleNext} handleResendOtp={handleResendOtp} loading={loading} />;
         return null;
     };
 
@@ -429,9 +530,11 @@ export default function RegisterMobile() {
                 <div className="w-full px-6 py-8">
                     {renderStepContent()}
                     {serverError && <div style={{ marginTop: "1rem" }}><ErrorText>{serverError}</ErrorText></div>}
-                    {step !== 3 && (
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end",
-                            gap: "0.5rem", marginTop: "1.75rem" }}>
+                    {step !== 4 && (
+                        <div style={{
+                            display: "flex", alignItems: "center", justifyContent: "flex-end",
+                            gap: "0.5rem", marginTop: "1.75rem"
+                        }}>
                             <div style={{ display: "flex", gap: "0.35rem", marginRight: "0.4rem" }}>
                                 {[1, 2, 3, 4].map((n) => (
                                     <div key={n} style={{
@@ -447,7 +550,7 @@ export default function RegisterMobile() {
                                 ))}
                             </div>
                             <Button onClick={handleNext} disabled={loading} className="px-6">
-                                {step === 4 ? "REGISTER" : "Next"}
+                                Next
                             </Button>
                         </div>
                     )}
