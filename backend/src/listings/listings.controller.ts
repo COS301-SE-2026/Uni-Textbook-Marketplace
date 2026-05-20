@@ -28,7 +28,7 @@ import { CreateListingDto } from './dto/create-listing.dto';
 export class ListingsController {
     constructor(private readonly listingsService: ListingsService) {}
 
-    // UC1 - CREATE LISTING (STUDENT ONLY)
+    // UC1 - create listing
     @Post()
     @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Create listing' })
@@ -36,26 +36,26 @@ export class ListingsController {
         return this.listingsService.createListing(req.user.id, dto);
     }
 
-    // UC2 - APPROVED ONLY
+    // UC2 - only approved
     @Get()
     getAll() {
         return this.listingsService.getAllApproved();
     }
 
-    // UC2 - MY LISTINGS
+    // UC2 - my
     @Get('mine')
     @UseGuards(JwtAuthGuard)
     getMine(@Req() req) {
         return this.listingsService.getMyListings(req.user.id);
     }
 
-    // UC2 - BY ID
+    // UC2 - ID
     @Get(':id')
     getById(@Param('id') id: string) {
         return this.listingsService.getListingById(id);
     }
 
-    // UC3 - ADMIN PENDING
+    // UC3 - Admin
     @Get('admin/pending')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
@@ -63,7 +63,7 @@ export class ListingsController {
         return this.listingsService.getPendingListings();
     }
 
-    // UC3 - APPROVE
+    // UC3 - Approve
     @Patch('admin/:id/approve')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
@@ -71,7 +71,7 @@ export class ListingsController {
         return this.listingsService.approveListing(id, req.user.id);
     }
 
-    // UC3 - REJECT
+    // UC3 - Reject
     @Patch('admin/:id/reject')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')

@@ -23,7 +23,6 @@ export class ListingsService {
         private moduleRepo: Repository<ModuleEntity>,
     ) {}
 
-    // UC1 - CREATE LISTING
     async createListing(userId: string, dto: any) {
         const user = await this.userRepo.findOneBy({ id: userId });
         if (!user) throw new NotFoundException('User not found');
@@ -51,7 +50,6 @@ export class ListingsService {
         return this.listingRepo.save(listing);
     }
 
-    // UC2 - APPROVED ONLY
     async getAllApproved() {
         return this.listingRepo.find({
         where: { status: ListingStatus.APPROVED },
@@ -59,7 +57,6 @@ export class ListingsService {
         });
     }
 
-    // UC2 - MY LISTINGS
     async getMyListings(userId: string) {
         return this.listingRepo.find({
         where: {
@@ -69,7 +66,6 @@ export class ListingsService {
         });
     }
 
-    // UC2 - BY ID
     async getListingById(id: string) {
         const listing = await this.listingRepo.findOne({
         where: { id },
@@ -81,7 +77,6 @@ export class ListingsService {
         return listing;
     }
 
-    // UC3 - ADMIN PENDING
     async getPendingListings() {
         return this.listingRepo.find({
         where: { status: ListingStatus.PENDING },
@@ -89,7 +84,6 @@ export class ListingsService {
         });
     }
 
-    // UC3 - APPROVE
     async approveListing(id: string, adminId: string) {
         const listing = await this.getListingById(id);
 
@@ -100,7 +94,6 @@ export class ListingsService {
         return this.listingRepo.save(listing);
     }
 
-    // UC3 - REJECT
     async rejectListing(id: string, adminId: string) {
         const listing = await this.getListingById(id);
 
