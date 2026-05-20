@@ -1,10 +1,10 @@
 export class CreateListingDto {
-  title: string;
-  bookId: string;
+  title!: string;
+  bookId!: string;
   moduleId?: string;
   condition: 'new' | 'good' | 'fair' | 'poor';
   annotationLevel: 'none' | 'light' | 'heavy';
-  price: number;
+  price!: number;
   photoUrls?: string[];
   hasNotes?: boolean;
 }
