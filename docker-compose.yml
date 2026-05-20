@@ -35,7 +35,10 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      MAILTRAP_USER: ${MAILTRAP_USER}
+      MAILTRAP_PASS: ${MAILTRAP_PASS}
+      
 
   frontend:
     image: node:20

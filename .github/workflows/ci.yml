@@ -59,7 +59,7 @@ jobs:
         run: npm run test:cov
         env:
           DATABASE_URL: postgresql://nexusdev:nexusdev_test@localhost:5432/textbook_marketplace_test
-          JWT_SECRET: ci_test_secret
+          JWT_ACCESS_SECRET: ci_test_secret
           NODE_ENV: test
 
       - name: Upload coverage to Codecov
