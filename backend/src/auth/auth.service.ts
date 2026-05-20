@@ -113,6 +113,8 @@ export class AuthService {
         id: true,
         email: true,
         role: true,
+        first_name: true,
+        last_name: true,
       },
       where: {
         email: email,
@@ -124,11 +126,14 @@ export class AuthService {
     }
 
     const user = userResult;
+    const tokens = this.issueTokens(user);
 
-    return this.issueTokens(user);
+    return { tokens, user };
   }
 
   async login(dto: LoginDto) {
+    const email = dto.email.toLowerCase().trim();
+
     const user = await this.userRepository.findOne({
       select: {
         id: true,
@@ -138,7 +143,7 @@ export class AuthService {
         is_verified: true,
       },
       where: {
-        email: dto.email,
+        email,
         deleted_at: IsNull(),
       },
     });
@@ -241,5 +246,26 @@ export class AuthService {
     return {
       message: 'Verification code sent successfully.',
     };
+  }
+
+  async getMe(userId: string) {
+    const result = await this.userRepository.findOne({
+      select: {
+        id: true,
+        email: true,
+        first_name: true,
+        last_name: true,
+        role: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!result) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return result;
   }
 }

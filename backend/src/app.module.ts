@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { ListingsModule } from './listings/listings.module';
+import { ModuleModule } from './modules/module.module';
 
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
@@ -41,7 +43,8 @@ import { AuditLog } from './database/entities/audit_log.entity';
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     AuthModule,
-    ListingsModule
+    ListingsModule,
+    ModuleModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

@@ -2,80 +2,88 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Param,
+  Body,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { ListingsService } from './listings.service';
 
-import { AuthGuard } from 'src/guards/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
+
+import { CreateListingDto } from './dto/create-listing.dto';
+
+import { Request } from 'express';
+
+interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: string;
+}
+
+interface RequestWithUser extends Request {
+  user: AuthenticatedUser;
+}
 
 @ApiTags('Listings')
 @Controller('listings')
 export class ListingsController {
-    constructor(
-        private readonly listingsService:ListingsService,
-    ){};
+  constructor(private readonly listingsService: ListingsService) {}
 
-    //Post listings
-    @Post()
-    @UseGuards(AuthGuard) //hasnt fully been implemented, just a placeholder
-    @ApiOperation({
-        summary: 'Creating a new listing',
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'Listing submitted for review',
-    })
-    createListing() {
-        return this.listingsService.createListing();
-    }
+  //create
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create listing' })
+  createListing(@Req() req: RequestWithUser, @Body() dto: CreateListingDto) {
+    return this.listingsService.createListing(req.user.id, dto);
+  }
 
-    //Get listings
-    //getAll:
-    @Get()
-    @ApiOperation({
-        summary: 'Return all the listings',
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Returns all listings',
-    })
-    getAllListings(){
-        return this.listingsService.getAllListings();
-    }
+  //get appro
+  @Get()
+  getAll() {
+    return this.listingsService.getAllApproved();
+  }
 
-    @Get('mine')
-    @ApiOperation({
-        summary: 'Returns the listings this user has made',
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Returns the listings this user has made',
-    })
-    getMyListings(){
-        return this.listingsService.getMyListings();
-    }
+  // my
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  getMine(@Req() req: RequestWithUser) {
+    return this.listingsService.getMyListings(req.user.id);
+  }
 
-    @Get(':id')
-    @ApiOperation({
-        summary: 'Returns all listings that match the inputted id',
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'Returns all listings that match the inputted',
-    })
-    @ApiResponse({
-        status: 404,
-        description: 'Listing not found',
-    })
-    getListingsById(@Param('id') id: string){
-        return this.listingsService.getListingById(id);
-    }
+  // search by ID
+  @Get(':id')
+  getById(@Param('id') id: string) {
+    return this.listingsService.getListingById(id);
+  }
+
+  // admins only
+  @Get('admin/pending')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  getPending() {
+    return this.listingsService.getPendingListings();
+  }
+
+  // admins only
+  @Patch('admin/:id/approve')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  approve(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.listingsService.approveListing(id, req.user.id);
+  }
+
+  // admins only
+  @Patch('admin/:id/reject')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  reject(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.listingsService.rejectListing(id, req.user.id);
+  }
 }

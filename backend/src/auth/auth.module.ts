@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../database/entities/users.entity';
 import { OTP } from '../database/entities/otps.entity';
 import { University } from '../database/entities/university.entity';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { University } from '../database/entities/university.entity';
       provide: EMAIL_SERVICE,
       useClass: MailtrapEmailProvider,
     },
+    RolesGuard,
   ],
 })
 export class AuthModule {}
