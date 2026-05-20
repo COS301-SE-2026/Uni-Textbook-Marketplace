@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/NavBar'
+import { AuthProvider } from '@/context/AuthContext'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -21,11 +22,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} font-sans antialiased`}>
-        <NavBar isAuthenticated={true} user={{ firstName: 'Tiego', lastName: 'Mokwena' }} />
-        <main>
-          {children}
-        </main>
+      <body className={`${montserrat.variable} font-sans antialiased`} suppressHydrationWarning>
+        <AuthProvider>
+          <NavBar />
+          <main>
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   )

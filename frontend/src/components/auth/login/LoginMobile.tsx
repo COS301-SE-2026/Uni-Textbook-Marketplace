@@ -4,6 +4,11 @@ import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
 import { Button, Input } from "@/components/ui";
 import { Eye, EyeOff } from "lucide-react";
+import { loginUser } from "@/lib/auth.api"
+import type { ApiError } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { useAuth } from '@/context/AuthContext';
+import { getMe } from '@/lib/auth.api';
 
 export default function LoginMobile() {
     const [email, setEmail] = useState("");
@@ -12,6 +17,8 @@ export default function LoginMobile() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState("");
+    const router = useRouter();
+    const { login } = useAuth();
 
     const validate = () => {
         const e: Record<string, string> = {};
@@ -35,11 +42,13 @@ export default function LoginMobile() {
         if (!validate()) return;
         setLoading(true);
         try {
-            // Sprint 2: wire to POST /auth/login
-            await new Promise((r) => setTimeout(r, 1000));
-            throw new Error("Invalid email or password");
-        } catch (err: unknown) {
-            setServerError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+            const normalizedEmail = email.toLowerCase().trim();
+            await loginUser({ email: normalizedEmail, password });
+            const me = await getMe();
+            login(me);
+            router.push('/listings');
+        } catch (err) {
+            setServerError((err as ApiError).message);
         } finally {
             setLoading(false);
         }

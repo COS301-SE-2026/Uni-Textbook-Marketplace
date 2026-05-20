@@ -2,15 +2,21 @@
 
 import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input, Card, ErrorText } from "@/components/ui";
+import { Button, Input, Card, ErrorText, Select } from "@/components/ui";
 import { Eye, EyeOff, Check } from "lucide-react";
+import { registerUser, verifyOtp, resendOtp, getUniversities, University } from "@/lib/auth.api"
+import type { ApiError } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { useAuth } from '@/context/AuthContext';
+import { getMe } from '@/lib/auth.api';
 
 //  Types 
 
 interface FormData {
     fullName: string;
     surname: string;
-    university: string;
+    university_id: string;
+    university_name: string;
     email: string;
     otp: string[];
     password: string;
@@ -21,7 +27,7 @@ interface FormData {
 //  Step Indicator 
 
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
-    const steps = ["Personal\nDetails", "University\nEmail", "Verification", "Password"];
+    const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
 
     return (
         <div className="flex items-center mb-8" style={{ width: "100%" }}>
@@ -182,7 +188,8 @@ export default function RegisterDesktop() {
     const [form, setForm] = useState<FormData>({
         fullName: "",
         surname: "",
-        university: "",
+        university_id: "",
+        university_name: "",
         email: "",
         otp: ["", "", "", "", "", ""],
         password: "",
@@ -196,10 +203,13 @@ export default function RegisterDesktop() {
     const [serverError, setServerError] = useState("");
     const [otpTimer, setOtpTimer] = useState(59);
     const [timerActive, setTimerActive] = useState(false);
+    const [universities, setUniversities] = useState<University[]>([]);
+    const [selectedDomain, setSelectedDomain] = useState('');
+    const router = useRouter();
+    const { login } = useAuth();
 
-    
     React.useEffect(() => {
-        if (step === 3 && !timerActive) {
+        if (step === 4 && !timerActive) {
             setOtpTimer(59);
             setTimerActive(true);
         }
@@ -220,6 +230,12 @@ export default function RegisterDesktop() {
         if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
     };
 
+    React.useEffect(() => {
+        getUniversities()
+            .then(setUniversities)
+            .catch(() => setServerError('Could not load universities. Please refresh the page'));
+    }, []);
+
     //  Validation per step 
 
     const validateStep1 = () => {
@@ -231,25 +247,19 @@ export default function RegisterDesktop() {
     };
 
     const validateStep2 = () => {
+
         const e: Record<string, string> = {};
-        if (!form.university.trim()) e.university = "University name is required";
+        if (!form.university_id) e.university = 'Please select your university';
         if (!form.email.trim()) {
-            e.email = "University email is required";
-        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(form.email)) {
-            e.email = "Email must end in @tuks.co.za or @up.ac.za";
+            e.email = 'University email is required';
+        } else if (selectedDomain && !form.email.endsWith(`@${selectedDomain}`)) {
+            e.email = `Email must end in @${selectedDomain}`;
         }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
 
     const validateStep3 = () => {
-        const e: Record<string, string> = {};
-        if (form.otp.some((d) => !d)) e.otp = "Please enter the full 6-digit OTP";
-        setErrors(e);
-        return Object.keys(e).length === 0;
-    };
-
-    const validateStep4 = () => {
         const e: Record<string, string> = {};
         if (!form.password) {
             e.password = "Password is required";
@@ -266,16 +276,55 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
+    const validateStep4 = () => {
+        const e: Record<string, string> = {};
+        if (form.otp.some((d) => !d)) e.otp = "Please enter the full 6-digit OTP";
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    };
+
     //  Navigation 
 
     const handleNext = async () => {
+        if (loading) return;
         setServerError("");
         if (step === 1 && !validateStep1()) return;
         if (step === 2 && !validateStep2()) return;
         if (step === 3 && !validateStep3()) return;
 
         if (step === 2) {
-            // Sprint 2: call POST /auth/register to send OTP
+            setLoading(true);
+            try {
+
+                setStep((s) => s + 1);
+            } catch (err) {
+                setServerError((err as ApiError).message);
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
+
+
+        if (step === 3) {
+            if (!validateStep3()) return;
+            setLoading(true);
+            try {
+                await registerUser({
+                    email: form.email,
+                    password: form.password,
+                    first_name: form.fullName,
+                    last_name: form.surname,
+                    university_id: form.university_id,
+                });
+                setStep((s) => s + 1);
+            } catch (err) {
+                setServerError((err as ApiError).message);
+            } finally {
+                setLoading(false);
+            }
+            return;
         }
 
         if (step < 4) {
@@ -283,24 +332,30 @@ export default function RegisterDesktop() {
             return;
         }
 
-        // Step 4 — final submit
+        // Step 4 (OTP) — final submit
         if (!validateStep4()) return;
         setLoading(true);
         try {
-            // Sprint 2: call POST /auth/complete-registration then redirect
-            await new Promise((r) => setTimeout(r, 1000));
-            // On success: redirect to /listings or dashboard
-        } catch (err: unknown) {
-            setServerError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+            const result = await verifyOtp({ email: form.email, code: form.otp.join('') });
+            if (result.user) login(result.user);
+
+            router.push('/listings');
+        } catch (err) {
+            setServerError((err as ApiError).message);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleResendOtp = () => {
+    const handleResendOtp = async () => {
         setOtpTimer(59);
         setTimerActive(true);
-        // Sprint 2: call resend OTP endpoint
+
+        try {
+            await resendOtp(form.email);
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        }
     };
 
     //  Step content 
@@ -343,88 +398,74 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>Enter university details</h2>
-                        <p className="text-text-subtle mt-1 mb-6">Fill in your details to get started</p>
+                        <p className="text-text-subtle mt-1 mb-6">
+                            Select & Fill in your details to get started
+                        </p>
+
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
+
+                            {/* University Select */}
                             <div>
-                                <Input
+                                <Select
                                     label="Name of University/Institution"
-                                    type="text"
-                                    placeholder="Enter the name of the University/Institution"
-                                    value={form.university}
-                                    onChange={(e) => set("university", e.target.value)}
-                                />
-                                {errors.university && <ErrorText>{errors.university}</ErrorText>}
+                                    name="university"
+                                    value={form.university_id}
+                                    onChange={(e) => {
+                                        const selected = universities.find(
+                                            (u) => u.id === e.target.value
+                                        );
+
+                                        set("university_id", e.target.value);
+                                        set("university_name", selected?.name ?? "");
+                                        setSelectedDomain(selected?.email_domain ?? "");
+                                    }}
+                                >
+                                    <option value="">Select your university</option>
+
+                                    {universities.map((u) => (
+                                        <option key={u.id} value={u.id}>
+                                            {u.name}
+                                        </option>
+                                    ))}
+                                </Select>
+
+                                {errors.university && (
+                                    <ErrorText>{errors.university}</ErrorText>
+                                )}
                             </div>
+
+                            {/* University Email */}
                             <div>
                                 <Input
                                     label="University Email"
                                     type="email"
-                                    placeholder="you@university.ac.za / you@university.co.za"
+                                    placeholder="@university.email"
                                     value={form.email}
                                     onChange={(e) => set("email", e.target.value)}
                                 />
-                                {errors.email && <ErrorText>{errors.email}</ErrorText>}
+
+                                {errors.email && (
+                                    <ErrorText>{errors.email}</ErrorText>
+                                )}
+
+
+                                {selectedDomain && (
+                                    <p
+                                        className="mt-1 text-xs text-[#00B4D8]"
+                                    >
+                                        Your email should end in @{selectedDomain}
+                                    </p>
+                                )}
                             </div>
+
                         </div>
                     </>
                 );
 
+            // Step 3 is now Password (previously step 4)
             case 3:
-                return (
-                    <>
-                        <h2>OTP Verification</h2>
-                        <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
-                            Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
-                        </p>
-                        <StepIndicator currentStep={step} />
-
-                        <div>
-                            <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
-                            {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
-
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    marginTop: "1rem",
-                                    fontSize: "0.8rem",
-                                }}
-                            >
-                                <span className="text-text-subtle">
-                                    Remaining time:{" "}
-                                    <span style={{ color: "#00B4D8", fontWeight: 600 }}>
-                                        00:{String(otpTimer).padStart(2, "0")}s
-                                    </span>
-                                </span>
-                                <button
-                                    type="button"
-                                    onClick={handleResendOtp}
-                                    disabled={timerActive}
-                                    style={{
-                                        color: timerActive ? "#9ca3af" : "#00B4D8",
-                                        background: "none",
-                                        border: "none",
-                                        cursor: timerActive ? "default" : "pointer",
-                                        fontSize: "0.8rem",
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    Resend OTP code
-                                </button>
-                            </div>
-
-                            <div style={{ marginTop: "1.5rem" }}>
-                                <Button className="w-full" onClick={handleNext} disabled={loading}>
-                                    Verify
-                                </Button>
-                            </div>
-                        </div>
-                    </>
-                );
-
-            case 4:
                 return (
                     <>
                         <h2>Password</h2>
@@ -533,6 +574,60 @@ export default function RegisterDesktop() {
                     </>
                 );
 
+            // Step 4 is now OTP Verification (previously step 3) — last step
+            case 4:
+                return (
+                    <>
+                        <h2>OTP Verification</h2>
+                        <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
+                            Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
+                        </p>
+                        <StepIndicator currentStep={step} />
+
+                        <div>
+                            <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
+                            {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: "1rem",
+                                    fontSize: "0.8rem",
+                                }}
+                            >
+                                <span className="text-text-subtle">
+                                    Remaining time:{" "}
+                                    <span style={{ color: "#00B4D8", fontWeight: 600 }}>
+                                        00:{String(otpTimer).padStart(2, "0")}s
+                                    </span>
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={handleResendOtp}
+                                    disabled={timerActive}
+                                    style={{
+                                        color: timerActive ? "#9ca3af" : "#00B4D8",
+                                        background: "none",
+                                        border: "none",
+                                        cursor: timerActive ? "default" : "pointer",
+                                        fontSize: "0.8rem",
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    Resend OTP code
+                                </button>
+                            </div>
+
+                            <div style={{ marginTop: "1.5rem" }}>
+                                <Button className="w-full" onClick={handleNext} disabled={loading}>
+                                    {loading ? "Verifying..." : "REGISTER"}
+                                </Button>
+                            </div>
+                        </div>
+                    </>
+                );
+
             default:
                 return null;
         }
@@ -564,8 +659,8 @@ export default function RegisterDesktop() {
                             </div>
                         )}
 
-                        {/* Bottom navigation — step dots + Next/Register button */}
-                        {step !== 3 && (
+                        {/* Bottom navigation — step dots + Next button (hidden on last OTP step since it has its own button) */}
+                        {step !== 4 && (
                             <div
                                 style={{
                                     display: "flex",
@@ -607,7 +702,7 @@ export default function RegisterDesktop() {
                                     disabled={loading}
                                     className="px-8"
                                 >
-                                    {step === 4 ? "REGISTER" : "Next"}
+                                    Next
                                 </Button>
                             </div>
                         )}
