@@ -4,62 +4,28 @@ import bcrypt from 'bcryptjs';
 
 export async function seedStudents(manager: EntityManager) {
   const userRepository = manager.getRepository(User);
-
   const hashedPassword = await bcrypt.hash('Password123', 10);
 
-  const students = [
-    userRepository.create({
-      email: 'student1@tuks.co.za',
-      password_hash: hashedPassword,
-      first_name: 'John',
-      last_name: 'Doe',
-      faculty: 'Engineering',
-      is_verified: true,
-      role: 'student',
-    }),
-
-    userRepository.create({
-      email: 'student2@tuks.co.za',
-      password_hash: hashedPassword,
-      first_name: 'Sarah',
-      last_name: 'Smith',
-      faculty: 'Health Sciences',
-      is_verified: true,
-      role: 'student',
-    }),
-
-    userRepository.create({
-      email: 'student3@tuks.co.za',
-      password_hash: hashedPassword,
-      first_name: 'Mike',
-      last_name: 'Johnson',
-      faculty: 'Law',
-      is_verified: true,
-      role: 'student',
-    }),
-
-    userRepository.create({
-      email: 'student4@tuks.co.za',
-      password_hash: hashedPassword,
-      first_name: 'Emma',
-      last_name: 'Brown',
-      faculty: 'Commerce',
-      is_verified: true,
-      role: 'student',
-    }),
-
-    userRepository.create({
-      email: 'student5@tuks.co.za',
-      password_hash: hashedPassword,
-      first_name: 'David',
-      last_name: 'Wilson',
-      faculty: 'Natural Sciences',
-      is_verified: true,
-      role: 'student',
-    }),
+  const studentsData = [
+    { email: 'student1@tuks.co.za', firstName: 'John', lastName: 'Doe', faculty: 'Engineering' },
+    { email: 'student2@tuks.co.za', firstName: 'Sarah', lastName: 'Smith', faculty: 'Health Sciences' },
+    { email: 'student3@tuks.co.za', firstName: 'Mike', lastName: 'Johnson', faculty: 'Law' },
+    { email: 'student4@tuks.co.za', firstName: 'Emma', lastName: 'Brown', faculty: 'Commerce' },
+    { email: 'student5@tuks.co.za', firstName: 'David', lastName: 'Wilson', faculty: 'Natural Sciences' },
   ];
 
-  await userRepository.save(students);
+  const students = studentsData.map(data =>
+    userRepository.create({
+      email: data.email,
+      password_hash: hashedPassword,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      faculty: data.faculty,
+      is_verified: true,
+      role: 'student',
+    })
+  );
 
-  console.log('5 students seeded');
+  await userRepository.save(students);
+  console.log(`${students.length} students seeded`);
 }

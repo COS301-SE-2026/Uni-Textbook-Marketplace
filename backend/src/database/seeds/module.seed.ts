@@ -1,105 +1,45 @@
 import { EntityManager } from 'typeorm/entity-manager/EntityManager.js';
-import { Module } from '../entities/module.entity';
-import { University } from '../entities/university.entity';
+import { Module } from '../entities/module.entity.js';
+import { University } from '../entities/university.entity.js';
 
 export async function seedModules(manager: EntityManager) {
   const moduleRepository = manager.getRepository(Module);
-
   const universityRepository = manager.getRepository(University);
 
   const university = await universityRepository.findOne({
-    where: {
-      name: 'University of Pretoria',
-    },
+    where: { name: 'University of Pretoria' },
   });
 
   if (!university) {
     throw new Error('University of Pretoria not found');
   }
 
-  const modules = [
-    moduleRepository.create({
-      code: 'COS132',
-      name: 'Imperative Programming',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'COS151',
-      name: 'Introduction to Computer Science',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'COS212',
-      name: 'Data Structures and Algorithms',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'COS214',
-      name: 'Software Modelling',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'COS216',
-      name: 'Netcentric Computer Systems',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'COS284',
-      name: 'Computer Organisation and Architecture',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 2,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'WTW114',
-      name: 'Calculus',
-      faculty: 'Natural and Agricultural Sciences',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'WTW124',
-      name: 'Mathematics',
-      faculty: 'Natural and Agricultural Sciences',
-      semester: 2,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'STK110',
-      name: 'Statistics',
-      faculty: 'Natural and Agricultural Sciences',
-      semester: 1,
-      university,
-    }),
-
-    moduleRepository.create({
-      code: 'INF214',
-      name: 'Informatics',
-      faculty: 'Engineering, Built Environment and IT',
-      semester: 2,
-      university,
-    }),
+  const modulesData = [
+    { code: 'COS132', name: 'Imperative Programming', semester: 1 },
+    { code: 'COS151', name: 'Introduction to Computer Science', semester: 1 },
+    { code: 'COS212', name: 'Data Structures and Algorithms', semester: 1 },
+    { code: 'COS214', name: 'Software Modelling', semester: 1 },
+    { code: 'COS216', name: 'Netcentric Computer Systems', semester: 1 },
+    { code: 'COS284', name: 'Computer Organisation and Architecture', semester: 2 },
+    { code: 'WTW114', name: 'Calculus', semester: 1 },
+    { code: 'WTW124', name: 'Mathematics', semester: 2 },
+    { code: 'STK110', name: 'Statistics', semester: 1 },
+    { code: 'INF214', name: 'Informatics', semester: 2 },
   ];
 
-  await moduleRepository.save(modules);
+  const faculty = 'Engineering, Built Environment and IT';
+  const scienceFaculty = 'Natural and Agricultural Sciences';
 
-  console.log('10 modules seeded');
+  const modules = modulesData.map(data => 
+    moduleRepository.create({
+      ...data,
+      faculty: data.code.startsWith('WTW') || data.code === 'STK110' 
+        ? scienceFaculty 
+        : faculty,
+      university,
+    })
+  );
+
+  await moduleRepository.save(modules);
+  console.log(`${modules.length} modules seeded`);
 }
