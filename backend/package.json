@@ -18,6 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:cov:auth": "jest --coverage --collectCoverageFrom='src/auth/auth.service.ts' --testPathPatterns='auth.service.spec.ts'",
+    "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
@@ -76,25 +78,25 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.ts",
-      "!src/main.ts",
-      "!src/**/*.module.ts",
-      "!src/database/entities/**/*.ts",
-      "!src/database/migrations/**/*.ts",
-      "!src/data-source.ts"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  }
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "**/*.ts",
+    "!**/*.spec.ts",
+    "!main.ts",
+    "!**/*.module.ts",
+    "!database/entities/**/*.ts",
+    "!database/migrations/**/*.ts",
+    "!data-source.ts"
+  ],
+  "coverageDirectory": "../coverage",
+  "testEnvironment": "node"
+}
 }
