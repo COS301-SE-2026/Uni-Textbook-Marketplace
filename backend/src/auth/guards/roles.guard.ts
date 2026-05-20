@@ -1,22 +1,32 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+
 import { Reflector } from '@nestjs/core';
 
-//added this for future, essentially just surety for roles after access is allowed, may not even use
+interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: string;
+}
+
+interface RequestWithUser {
+  user: AuthenticatedUser;
+}
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRole = this.reflector.get<string>(
-      'role',
-      context.getHandler(),
-    );
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-    if (!requiredRole) return true;
+    if (!roles) {
+      return true;
+    }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
+
     const user = request.user;
 
-    return user?.role === requiredRole;
+    return roles.includes(user.role);
   }
 }

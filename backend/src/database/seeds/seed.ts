@@ -15,7 +15,7 @@ async function seed() {
     const moduleRepo = AppDataSource.getRepository(Module);
     const listingRepo = AppDataSource.getRepository(Listing);
 
-    // --- USER ---
+    // create users
     const user = await userRepo.save(
         userRepo.create({
         email: 'student@test.com',
@@ -27,7 +27,7 @@ async function seed() {
         }),
     );
 
-    // --- BOOK ---
+    //create books
     const book = await bookRepo.save(
         bookRepo.create({
         isbn: '9781234567890',
@@ -38,17 +38,17 @@ async function seed() {
         }),
     );
 
-    // --- MODULE ---
+    //add modules
     const module = await moduleRepo.save(
         moduleRepo.create({
-            code: 'COS301',
-            name: 'Databases',
-            faculty: 'Engineering',
-            semester: 2,
+        code: 'COS301',
+        name: 'Databases',
+        faculty: 'Engineering',
+        semester: 2,
         }),
     );
 
-    // --- LISTINGS ---
+    //list
     await listingRepo.save([
         listingRepo.create({
         title: 'COS301 DB Textbook - Excellent Condition',
@@ -82,6 +82,6 @@ async function seed() {
 }
 
 seed().catch((err) => {
-  console.error(err);
-  process.exit(1);
+    console.error(err);
+    process.exit(1);
 });
