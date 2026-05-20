@@ -16,7 +16,7 @@ import { Module as ModuleEntity } from './database/entities/module.entity';
 import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
-import { ListingsModule } from './listings/listings.module';
+
 
 @Module({
   imports: [
