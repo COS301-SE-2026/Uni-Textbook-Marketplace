@@ -1,5 +1,4 @@
 import { AppDataSource } from '../../data-source';
-
 import { seedUniversities } from './university.seed';
 import { seedStudents } from './student.seed';
 import { seedAdmins } from './admin.seed';
@@ -9,7 +8,10 @@ import { seedListings } from './listing.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
-
+  
+  // Add this line to automatically create tables from entities
+  await AppDataSource.synchronize(false); // false means don't drop data
+  
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
