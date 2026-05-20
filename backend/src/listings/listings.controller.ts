@@ -8,8 +8,7 @@ import {
 
 import {
   ApiTags,
-  ApiOperation,
-  ApiResponse,
+  ApiOperation
 } from '@nestjs/swagger';
 
 import { ListingsService } from './listings.service';
