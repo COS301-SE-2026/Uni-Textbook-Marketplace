@@ -5,7 +5,7 @@ type ErrorProps = Readonly<{
 
 export default function ErrorText({ children }: ErrorProps) {
     return (
-        <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
+        <p className="form-error">
             {children}
         </p>
     );

@@ -49,11 +49,6 @@ jobs:
       - name: Install root workspace dependencies
         run: npm install
 
-      # Install inside backend to ensure all backend-specific
-      # packages are resolved (fixes jsesc / babel module errors)
-      - name: Install backend dependencies
-        working-directory: backend
-        run: npm install
 
       - name: Lint backend
         working-directory: backend

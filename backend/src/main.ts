@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -7,7 +8,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Uni Textbook Marketplace API')
-    .setDescription('API documention')
+    .setDescription('Textbook Marketplace API')
     .setVersion('1.0')
     .build();
 

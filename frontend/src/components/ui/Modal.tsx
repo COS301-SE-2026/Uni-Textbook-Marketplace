@@ -14,11 +14,11 @@ export default function Modal({ isOpen, title, children, onClose }: ModalProps) 
             <div className="card w-full max-w-lg">
                 <div className="flex items-center justify-between">
                     {title && <h3>{title}</h3>}
-                    <button onClick={onClose} className="text-xl">×</button>
+                    <Button onClick={onClose} variant="secondary">×</Button>
                 </div>
                 <div className="mt-4">{children}</div>
                 <div className="mt-6 flex justify-end">
-                    <Button variant="secondary" onClick={onClose}>Close</Button>
+                      
                 </div>
             </div>
         </div>

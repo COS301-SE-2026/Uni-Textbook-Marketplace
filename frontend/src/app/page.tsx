@@ -1,34 +1,75 @@
 import Link from 'next/link'
-import { Search } from 'lucide-react'
+import { Search, CheckCircle, Shield, DollarSign } from 'lucide-react'
+import Card from '@/components/ui/Card'
+import Image from 'next/image'
 
 export default function LandingPage() {
   return (
     <>
-      {/* Hero section */}
+      {/* Hero section with background image */}
       <section className="relative min-h-[500px] bg-[#000f2b] flex items-center overflow-hidden">
-        {/* Background overlay — I'll replace with real image later */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#000f2b] via-[#000f2b]/80 to-transparent z-10" />
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/hero-bg.png"
+            alt="Students on campus"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
 
-        <div className="container-content relative z-20 py-16">
-          <h1 className="text-white text-5xl md:text-6xl font-bold leading-tight max-w-lg">
-            Made for Students,{' '}
-            <span className="text-[#00B4D8]">by Students</span>
-          </h1>
-          <p className="text-white/80 text-lg mt-4 max-w-md">
-            Buy, sell or swap textbooks with students from your university
-          </p>
-          <div className="flex gap-3 mt-8">
-            <Link href="/auth/register" className="btn-primary">
-              Get Started
-            </Link>
-            <Link
-              href="/listings"
-              className="px-7 py-3 text-sm font-semibold text-white border-2 
-                         border-white/40 rounded hover:border-white 
-                         transition-all duration-200 no-underline"
-            >
-              Browse Listings
-            </Link>
+        {/* Gradient overlay: darker on left for text, lighter on right to reveal image */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
+
+        <div className="container-content relative z-20 py-16 w-full">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12">
+
+            {/* LEFT — text + buttons */}
+            <div className="max-w-lg">
+              <h1 className="text-white font-bold leading-tight">
+                Made for Students,{' '}
+                <span className="text-[#00B4D8]">by Students</span>
+              </h1>
+              <p className="text-white/80 text-lg mt-4">
+                Buy, sell or swap textbooks with students from your university
+              </p>
+              <div className="flex gap-3 mt-8">
+                <Link href="/auth/register" className="btn-primary">
+                  Get Started
+                </Link>
+                <Link
+                  href="/listings"
+                  className="px-7 py-3 text-sm font-semibold text-white border-2 
+                       border-white/40 rounded hover:border-white 
+                       transition-all duration-200 no-underline"
+                >
+                  Browse Listings
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT — feature cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:max-w-lg">
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
+                <CheckCircle size={24} className="text-[#00B4D8]" />
+                <p className="text-white text-xs font-semibold">Verified Students</p>
+                <p className="text-white/60 text-xs">University email verification</p>
+              </Card>
+
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
+                <Shield size={24} className="text-[#00B4D8]" />
+                <p className="text-white text-xs font-semibold">Safe & Private</p>
+                <p className="text-white/60 text-xs">In-app messaging keeps you safe</p>
+              </Card>
+
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
+                <DollarSign size={24} className="text-[#00B4D8]" />
+                <p className="text-white text-xs font-semibold">Save Money</p>
+                <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
+              </Card>
+            </div>
+
           </div>
         </div>
       </section>

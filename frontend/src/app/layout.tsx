@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} font-sans antialiased`}>
-        <NavBar />
+        <NavBar isAuthenticated={true} user={{ firstName: 'Tiego', lastName: 'Mokwena' }} />
         <main>
           {children}
         </main>
