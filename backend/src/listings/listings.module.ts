@@ -10,14 +10,7 @@ import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Listing,
-      User,
-      Book,
-      ModuleEntity,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity])],
   controllers: [ListingsController],
   providers: [ListingsService],
 })

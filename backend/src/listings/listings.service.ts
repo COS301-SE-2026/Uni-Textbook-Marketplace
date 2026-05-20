@@ -7,6 +7,8 @@ import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 
+import { CreateListingDto } from './dto/create-listing.dto';
+
 @Injectable()
 export class ListingsService {
     constructor(
@@ -23,8 +25,8 @@ export class ListingsService {
         private moduleRepo: Repository<ModuleEntity>,
     ) {}
 
-    // UC1 - CREATE LISTING
-    async createListing(userId: string, dto: any) {
+    //Create
+    async createListing(userId: string, dto: CreateListingDto) {
         const user = await this.userRepo.findOneBy({ id: userId });
         if (!user) throw new NotFoundException('User not found');
 
@@ -36,22 +38,22 @@ export class ListingsService {
         : null;
 
         const listing = this.listingRepo.create({
-            title: dto.title,
-            seller: user,
-            book,
-            module: module ?? undefined,
-            condition: dto.condition,
-            annotation_level: dto.annotationLevel,
-            price: dto.price,
-            status: ListingStatus.PENDING,
-            photo_urls: dto.photoUrls ?? [],
-            has_notes: dto.hasNotes ?? false,
+        title: dto.title,
+        seller: user,
+        book,
+        module: module ?? undefined,
+        condition: dto.condition,
+        annotation_level: dto.annotationLevel,
+        price: dto.price,
+        status: ListingStatus.PENDING,
+        photo_urls: dto.photoUrls ?? [],
+        has_notes: dto.hasNotes ?? false,
         });
 
         return this.listingRepo.save(listing);
     }
 
-    // UC2 - APPROVED ONLY
+    //get the validated ones
     async getAllApproved() {
         return this.listingRepo.find({
         where: { status: ListingStatus.APPROVED },
@@ -59,7 +61,7 @@ export class ListingsService {
         });
     }
 
-    // UC2 - MY LISTINGS
+    //get listings specific to the user
     async getMyListings(userId: string) {
         return this.listingRepo.find({
         where: {
@@ -69,7 +71,7 @@ export class ListingsService {
         });
     }
 
-    // UC2 - BY ID
+    //similar to getMy, just specifies seller
     async getListingById(id: string) {
         const listing = await this.listingRepo.findOne({
         where: { id },
@@ -81,7 +83,7 @@ export class ListingsService {
         return listing;
     }
 
-    // UC3 - ADMIN PENDING
+    //awaiting approval
     async getPendingListings() {
         return this.listingRepo.find({
         where: { status: ListingStatus.PENDING },
@@ -89,7 +91,7 @@ export class ListingsService {
         });
     }
 
-    // UC3 - APPROVE
+    //ensure admin only access
     async approveListing(id: string, adminId: string) {
         const listing = await this.getListingById(id);
 
@@ -100,7 +102,7 @@ export class ListingsService {
         return this.listingRepo.save(listing);
     }
 
-    // UC3 - REJECT
+    ///enrurer admin only access
     async rejectListing(id: string, adminId: string) {
         const listing = await this.getListingById(id);
 
