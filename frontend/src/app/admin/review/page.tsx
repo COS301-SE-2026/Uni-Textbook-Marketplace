@@ -60,7 +60,7 @@ function getStatusBadgeVariant(status: string): 'approved' | 'rejected' {
 }
 
 
-function BookCell({ listing }: { listing: AdminListing }) {
+function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
     return (
         <td className="px-4 py-3">
             <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ function BookCell({ listing }: { listing: AdminListing }) {
     )
 }
 
-function ModuleCell({ module }: { module: AdminListing['module'] }) {
+function ModuleCell({ module }: Readonly<{ module: AdminListing['module'] }>) {
     if (!module) {
         return <td className="px-4 py-3"><span className="text-xs text-gray-400">—</span></td>
     }
@@ -99,12 +99,12 @@ function ActionsCell({
     actionLoading,
     onApprove,
     onStartReject,
-}: {
+}: Readonly<{
     listing: AdminListing
     actionLoading: string | null
     onApprove: (id: string) => void
     onStartReject: (id: string) => void
-}) {
+}>) {
     const isLoading = actionLoading === listing.id
 
     if (listing.status !== 'PENDING') {
@@ -254,7 +254,10 @@ function StatCard({
 }) {
     return (
         <div
+            role="button"
+            tabIndex={0}
             onClick={onClick}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
             className={`cursor-pointer transition ${isActive ? 'ring-2 ring-offset-2' : ''}`}
         >
             <Card>
@@ -349,18 +352,19 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
     const [approvedCount, setApprovedCount] = useState(0)
     const [rejectedCount, setRejectedCount] = useState(0)
 
-    useEffect(() => {
-        const fetchPending = async () => {
-            setLoading(true)
-            try {
-                const data = await getPendingListings()
-                setListings(data ?? [])
-            } catch {
-                showToast('Failed to load listings', 'error')
-            } finally {
-                setLoading(false)
-            }
+    const fetchPending = async () => {
+        setLoading(true)
+        try {
+            const data = await getPendingListings()
+            setListings(data ?? [])
+        } catch {
+            showToast('Failed to load listings', 'error')
+        } finally {
+            setLoading(false)
         }
+    }
+
+    useEffect(() => {
         fetchPending()
     }, [])
 
