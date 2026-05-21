@@ -2,7 +2,7 @@
 
 # Uni Textbook Marketplace
 
-<img src="docs/images/README_Uni_Textbook_Marketplace.png" alt="Uni Textbook Marketplace" width="45%">
+<img src="docs/images/README_Uni_Textbook_Marketplace.png" alt="Uni Textbook Marketplace" width="60%">
 
 > **A marketplace for students, by students.**
 
