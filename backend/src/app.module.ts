@@ -16,6 +16,7 @@ import { Module as ModuleEntity } from './database/entities/module.entity';
 import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AuditLog } from './database/entities/audit_log.entity';
     AuthModule,
     ListingsModule,
     ModuleModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

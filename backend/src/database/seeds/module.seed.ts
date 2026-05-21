@@ -20,7 +20,11 @@ export async function seedModules(manager: EntityManager) {
     { code: 'COS212', name: 'Data Structures and Algorithms', semester: 1 },
     { code: 'COS214', name: 'Software Modelling', semester: 1 },
     { code: 'COS216', name: 'Netcentric Computer Systems', semester: 1 },
-    { code: 'COS284', name: 'Computer Organisation and Architecture', semester: 2 },
+    {
+      code: 'COS284',
+      name: 'Computer Organisation and Architecture',
+      semester: 2,
+    },
     { code: 'WTW114', name: 'Calculus', semester: 1 },
     { code: 'WTW124', name: 'Mathematics', semester: 2 },
     { code: 'STK110', name: 'Statistics', semester: 1 },
@@ -30,14 +34,15 @@ export async function seedModules(manager: EntityManager) {
   const faculty = 'Engineering, Built Environment and IT';
   const scienceFaculty = 'Natural and Agricultural Sciences';
 
-  const modules = modulesData.map(data => 
+  const modules = modulesData.map((data) =>
     moduleRepository.create({
       ...data,
-      faculty: data.code.startsWith('WTW') || data.code === 'STK110' 
-        ? scienceFaculty 
-        : faculty,
+      faculty:
+        data.code.startsWith('WTW') || data.code === 'STK110'
+          ? scienceFaculty
+          : faculty,
       university,
-    })
+    }),
   );
 
   await moduleRepository.save(modules);
