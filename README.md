@@ -213,7 +213,7 @@ The system follows a **modular monolith** architecture for core features with an
 ---
 
 ### Neo Bosoga - Data Engineer & Tester
-> PostgreSQL database design and management, complex queries, database indexing, seed data, backend unit tests, and integration tests.
+> PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests.
 
 [![GitHub](https://img.shields.io/badge/GitHub-u23591732-181717?logo=github)](https://github.com/u23591732)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-0077B5?logo=linkedin)](https://www.linkedin.com/in/neo-bosoga-67167227a/)
