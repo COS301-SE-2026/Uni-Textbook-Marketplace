@@ -44,12 +44,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      # Install from root first — this populates the hoisted
-      # node_modules that workspace packages share
-      - name: Install root workspace dependencies
+        # Delete any frontend lockfile before installing so the root
+      # workspace lockfile is the single source of truth. This prevents
+      # native binary mismatches between Windows-generated lockfiles
+      # and the Linux CI runner (@tailwindcss/oxide, lightningcss).
+      - name: Remove frontend lockfile
+        run: rm -f frontend/package-lock.json
+
+      - name: Install root dependencies
         run: npm install
 
-      - name: Lint backend
+      - name: Lint frontendt backend
         working-directory: backend
         run: npm run lint
 
@@ -86,8 +91,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      # Install from root first — this populates the hoisted
-      # node_modules that workspace packages share
+      - name: Remove frontend lockfile
+        run: rm -f frontend/package-lock.json
+
       - name: Install root dependencies
         run: npm install
 
