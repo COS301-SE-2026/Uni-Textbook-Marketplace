@@ -5,6 +5,8 @@ import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import { mapListing } from '@/lib/mappers/listingMapper'
+
 
 // Filter state
 
@@ -41,19 +43,38 @@ export default function BrowseListingsPage() {
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
+            const BASE = process.env.NEXT_PUBLIC_API_URL
+
             const params = new URLSearchParams()
-            if (f.faculty)      params.set('faculty', f.faculty)
-            if (f.moduleCode)   params.set('moduleCode', f.moduleCode)
-            if (f.edition)      params.set('edition', f.edition)
-            if (f.priceMin)     params.set('priceMin', f.priceMin)
-            if (f.priceMax)     params.set('priceMax', f.priceMax)
-            if (f.condition)    params.set('condition', f.condition)
+
+            if (f.faculty) params.set('faculty', f.faculty)
+            if (f.moduleCode) params.set('moduleCode', f.moduleCode)
+            if (f.edition) params.set('edition', f.edition)
+            if (f.priceMin) params.set('priceMin', f.priceMin)
+            if (f.priceMax) params.set('priceMax', f.priceMax)
+            if (f.condition) params.set('condition', f.condition)
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
 
-            const res = await fetch(`/api/listings?${params.toString()}`)
+            const url = `${BASE}/listings?${params.toString()}`
+            console.log('FETCH URL:', url)
+
+            const res = await fetch(url)
+
+            console.log('STATUS:', res.status)
+            console.log('OK:', res.ok)
+            console.log('CONTENT TYPE:', res.headers.get('content-type'))
+
             const data = await res.json()
 
-            return { listings: data.listings ?? [], total: data.total ?? 0 }
+            console.log('DATA:', data)
+
+            const listings = data.map(mapListing)
+            const total = data.length
+
+            return {
+            listings,
+            total,
+            }
         } catch (err) {
             console.error('Failed to fetch listings', err)
             return { listings: [], total: 0 }
@@ -191,37 +212,38 @@ export default function BrowseListingsPage() {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-medium mb-1">
-                                    Condition
-                                </label>
-                                <Select
-                                    name="condition"
-                                    value={filters.condition}
-                                    onChange={handleFilterChange}
-                                >
-                                    <option value="">Any Condition</option>
-                                    <option value="LIKE_NEW">Like New</option>
-                                    <option value="GOOD">Good</option>
-                                    <option value="ACCEPTABLE">Acceptable</option>
-                                </Select>
-                            </div>
+                        <div>
+                            <label className="block text-xs font-medium mb-1">
+                                Condition
+                            </label>
+                            <Select
+                                name="condition"
+                                value={filters.condition}
+                                onChange={handleFilterChange}
+                            >
+                                <option value="">Any Condition</option>
+                                <option value="new">Like New</option>
+                                <option value="good">Good</option>
+                                <option value="fair">Fair</option>
+                                <option value="poor">Poor</option>
+                            </Select>
+                        </div>
 
-                            <div>
-                                <label className="block text-xs font-medium mb-1">
-                                    Annotation Level
-                                </label>
-                                <Select
-                                    name="annotationLevel"
-                                    value={filters.annotationLevel}
-                                    onChange={handleFilterChange}
-                                >
-                                    <option value="">Any Level</option>
-                                    <option value="NONE">None</option>
-                                    <option value="LIGHT">Light</option>
-                                    <option value="HEAVY">Heavy</option>
-                                </Select>
-                            </div>
+                        <div>
+                            <label className="block text-xs font-medium mb-1">
+                                Annotation Level
+                            </label>
+                            <Select
+                                name="annotationLevel"
+                                value={filters.annotationLevel}
+                                onChange={handleFilterChange}
+                            >
+                                <option value="">Any Level</option>
+                                <option value="none">None</option>
+                                <option value="light">Light</option>
+                                <option value="heavy">Heavy</option>
+                            </Select>
+                        </div>
 
                             <button
                                 onClick={handleApply}

@@ -8,6 +8,7 @@ import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import { CreateListingDto } from './dto/create-listing.dto';
+import { ListingFiltersDto } from './dto/listingFilter.dto';
 
 @Injectable()
 export class ListingsService {
@@ -54,13 +55,45 @@ export class ListingsService {
   }
 
   //get the validated ones
-  async getAllApproved() {
-    return this.listingRepo.find({
-      where: { status: ListingStatus.APPROVED },
-      relations: ['book', 'module', 'seller'],
-    });
+  async getAllApproved(query?: ListingFiltersDto) {
+    const qb = this.listingRepo.createQueryBuilder('listing')
+      .leftJoinAndSelect('listing.book', 'book')
+      .leftJoinAndSelect('listing.module', 'module')
+      .leftJoinAndSelect('listing.seller', 'seller')
+      .where('listing.status = :status', { status: ListingStatus.APPROVED });
+    //optional query fikters
+    if (query?.moduleCode) {
+      qb.andWhere('module.code = :moduleCode', {
+        moduleCode: query.moduleCode,
+      });
+    }
+    if (query?.faculty) {
+      qb.andWhere('module.faculty = :faculty', {
+        faculty: query.faculty,
+      });
+    }
+    if (query?.condition) {
+      qb.andWhere('listing.condition = :condition', {
+        condition: query.condition,
+      });
+    }
+    if (query?.annotationLevel) {
+      qb.andWhere('listing.annotation_level = :annotationLevel', {
+        annotationLevel: query.annotationLevel,
+      });
+    }
+    if (query?.priceMin) {
+      qb.andWhere('listing.price >= :priceMin', {
+        priceMin: query.priceMin,
+      });
+    }
+    if (query?.priceMax) {
+      qb.andWhere('listing.price <= :priceMax', {
+        priceMax: query.priceMax,
+      });
+    }
+    return qb.getMany();
   }
-
   //get listings specific to the user
   async getMyListings(userId: string) {
     return this.listingRepo.find({

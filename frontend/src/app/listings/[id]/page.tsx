@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
+import { normalizeImage } from '@/lib/image'
 
 // Helpers
 
@@ -169,9 +170,9 @@ export default function ListingDetailPage() {
 
                     {/* Main image */}
                     <div className="relative w-full aspect-square max-w-sm bg-gray-100 rounded-lg overflow-hidden mb-3">
-                        {listing.images?.[activeImage] ? (
+                        {listing.photo_urls?.[activeImage] ? (
                             <Image
-                                src={listing.images[activeImage]}
+                                src={normalizeImage(listing.photo_urls?.[activeImage]) ?? normalizeImage(listing.photo_urls?.[0])}
                                 alt={listing.title}
                                 fill
                                 className="object-cover"
@@ -198,9 +199,9 @@ export default function ListingDetailPage() {
                     </div>
 
                     {/* Thumbnails */}
-                    {listing.images?.length > 1 && (
+                    {listing.photo_urls?.length > 1 && (
                         <div className="flex gap-2">
-                            {listing.images.map((img, i) => (
+                            {listing.photo_urls.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImage(i)}
@@ -210,7 +211,7 @@ export default function ListingDetailPage() {
                                         }`}
                                 >
                                     <Image
-                                        src={img}
+                                        src={normalizeImage(img)}
                                         alt=""
                                         fill
                                         className="object-cover"
@@ -222,12 +223,12 @@ export default function ListingDetailPage() {
                     )}
 
                     {/* Description */}
-                    <div className="mt-6">
+                    {/*<div className="mt-6">
                         <h4 className="font-semibold mb-1">Description</h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
                             {listing.description}
                         </p>
-                    </div>
+                    </div>*/}
 
                 </div>
 
@@ -238,10 +239,10 @@ export default function ListingDetailPage() {
                         {listing.title}
                     </h2>
                     <p className="text-gray-500 text-sm mt-1">
-                        {listing.edition} Edition
+                        {listing.book.edition} Edition
                     </p>
                     <p className="text-gray-700 text-sm mt-1">
-                        {listing.author}
+                        {listing.book.author}
                     </p>
 
                     <p className="text-2xl font-bold mt-4">
@@ -253,11 +254,11 @@ export default function ListingDetailPage() {
                         <tbody>
                             {[
                                 ['Condition', CONDITION_LABEL[listing.condition] ?? listing.condition],
-                                ['Annotations', ANNOTATION_LABEL[listing.annotationLevel] ?? listing.annotationLevel],
-                                ['Module Code', listing.moduleCode],
-                                ['Faculty', FACULTY_LABEL[listing.faculty] ?? listing.faculty],
-                                ['ISBN', listing.isbn],
-                                ['Listed', timeAgo(listing.createdAt)],
+                                ['Annotations', ANNOTATION_LABEL[listing.annotation_level] ?? listing.annotation_level],
+                                ['Module Code', listing.module.code],
+                                ['Faculty', listing.module.faculty],
+                                ['ISBN', listing.book.isbn],
+                                ['Listed', timeAgo(listing.created_at)],
                             ].map(([label, value]) => (
                                 <tr key={label} className="border-b border-gray-100">
                                     <td className="py-2 text-gray-500 w-32">
@@ -308,13 +309,13 @@ export default function ListingDetailPage() {
 
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                                    {seller.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                    `${seller.first_name} ${seller.last_name}`
                                 </div>
                                 <div>
                                     <p className="font-semibold text-sm">
-                                        {seller.name}
+                                        {`${seller.first_name} ${seller.last_name}`}
                                     </p>
-                                    {seller.verified && (
+                                    {seller.is_verified && (
                                         <span className="text-xs text-green-600 flex items-center gap-1">
                                             ✓ Verified Student
                                         </span>
@@ -322,11 +323,11 @@ export default function ListingDetailPage() {
                                 </div>
                             </div>
 
-                            <p className="text-xs text-gray-500 mb-1">
+                            {/*<p className="text-xs text-gray-500 mb-1">
                                 Member since {seller.memberSince}
-                            </p>
+                            </p>*/}
 
-                            <div className="flex items-center gap-1 text-sm">
+                            {/*<div className="flex items-center gap-1 text-sm">
                                 <span className="text-yellow-400">★</span>
                                 <span className="font-medium">
                                     {seller.rating.toFixed(1)}
@@ -334,11 +335,11 @@ export default function ListingDetailPage() {
                                 <span className="text-gray-400 text-xs">
                                     ({seller.reviewCount} reviews)
                                 </span>
-                            </div>
+                            </div>*/}
                         </div>
 
                         {/* Meetup preferences */}
-                        <div className="card">
+                        {/*<div className="card">
                             <h4 className="font-semibold mb-2 text-sm">
                                 Meet up Preferences
                             </h4>
@@ -369,7 +370,7 @@ export default function ListingDetailPage() {
                     setShowMessageModal(false)
                     setMessageSent(false)
                 }}
-                title={`Message ${seller?.name ?? 'Seller'}`}
+                title={`Message ${seller?.first_name ?? 'Seller'}`}
             >
                 {messageSent ? (
                     <div className="text-center py-6">

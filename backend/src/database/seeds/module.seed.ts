@@ -1,6 +1,6 @@
-import { EntityManager } from 'typeorm/entity-manager/EntityManager.js';
-import { Module } from '../entities/module.entity.js';
-import { University } from '../entities/university.entity.js';
+import { EntityManager } from 'typeorm';
+import { Module } from '../entities/module.entity';
+import { University } from '../entities/university.entity';
 
 export async function seedModules(manager: EntityManager) {
   const moduleRepository = manager.getRepository(Module);
