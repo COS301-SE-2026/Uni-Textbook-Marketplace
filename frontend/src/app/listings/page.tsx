@@ -60,11 +60,11 @@ export default function BrowseListingsPage() {
 
             console.log('STATUS:', res.status)
             console.log('OK:', res.ok)
+            console.log('CONTENT TYPE:', res.headers.get('content-type'))
 
-            const raw = await res.text()
-            console.log('RAW RESPONSE:', raw)
+            const data = await res.json()
 
-            const data = JSON.parse(raw)
+            console.log('DATA:', data)
 
             const listings = data.map(mapListing)
             const total = data.length

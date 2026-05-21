@@ -107,7 +107,7 @@ export class ListingsService {
   async getListingById(id: string) {
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller'],
+      relations: ['seller', 'book', 'module'],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');

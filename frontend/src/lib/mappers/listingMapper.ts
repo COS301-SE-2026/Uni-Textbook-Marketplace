@@ -1,38 +1,41 @@
 import { Listing } from '@/components/listings/listingCard'
 
-export function mapListing(api: any): Listing {
+export function mapListing(apiListing: any): Listing {
     return {
-        id: api.id,
-        title: api.title,
+        id: apiListing.id,
 
-        price: Number(api.price),
+        title: apiListing.title || apiListing.book?.title || '',
 
-        condition: api.condition,
-        annotation_level: api.annotation_level,
-        status: api.status,
+        price: Number(apiListing.price),
 
-        photo_urls: api.photo_urls ?? [],
+        condition: apiListing.condition,
 
-        created_at: api.created_at,
+        annotation_level: apiListing.annotation_level,
+
+        status: apiListing.status,
+
+        photo_urls: apiListing.photo_urls || [],
+
+        created_at: apiListing.created_at,
 
         book: {
-        edition: api.book?.edition,
-        author: api.book?.author,
-        isbn: api.book?.isbn,
-        title: api.book?.title,
+            edition: apiListing.book?.edition || 0,
+            author: apiListing.book?.author || '',
+            isbn: apiListing.book?.isbn || '',
+            title: apiListing.book?.title || '',
         },
 
         module: {
-        code: api.module?.code,
-        faculty: api.module?.faculty,
+            code: apiListing.module?.code || '',
+            faculty: apiListing.module?.faculty || '',
         },
 
-        seller: api.seller
-        ? {
-            first_name: api.seller.first_name,
-            last_name: api.seller.last_name,
-            is_verified: api.seller.is_verified,
+        seller: apiListing.seller
+            ? {
+                first_name: apiListing.seller.first_name,
+                last_name: apiListing.seller.last_name,
+                is_verified: apiListing.seller.is_verified,
             }
-        : undefined,
+            : undefined,
     }
 }

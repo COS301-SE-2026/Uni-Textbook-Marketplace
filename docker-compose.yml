@@ -38,7 +38,6 @@ services:
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       MAILTRAP_USER: ${MAILTRAP_USER}
       MAILTRAP_PASS: ${MAILTRAP_PASS}
-      
 
   frontend:
     image: node:20
@@ -54,6 +53,7 @@ services:
       - backend
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      BACKEND_URL: http://backend:3001
 
 volumes:
   postgres_data:
