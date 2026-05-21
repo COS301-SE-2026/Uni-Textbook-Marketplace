@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Modal from '@/components/ui/Modal';
 
-export default function AdminRoute({ children }: { children: React.ReactNode }) {
+export default function AdminRoute(
+    { children }: Readonly<{ children: React.ReactNode }>
+) {
     const { user, isLoading } = useAuth();
     const router = useRouter();
 
-    const showModal = !isLoading && (!user || user.role !== 'admin')  // ← derived
+    const showModal = !isLoading && (!user || user.role !== 'admin');
 
     const handleClose = () => {
         router.push('/listings');
