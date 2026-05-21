@@ -7,6 +7,7 @@ import {
   Body,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -46,8 +47,8 @@ export class ListingsController {
 
   //get appro
   @Get()
-  getAll() {
-    return this.listingsService.getAllApproved();
+  getAll(@Query() query: any) {
+    return this.listingsService.getAllApproved(query);
   }
 
   // my
