@@ -44,17 +44,12 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-        # Delete any frontend lockfile before installing so the root
-      # workspace lockfile is the single source of truth. This prevents
-      # native binary mismatches between Windows-generated lockfiles
-      # and the Linux CI runner (@tailwindcss/oxide, lightningcss).
-      - name: Remove frontend lockfile
-        run: rm -f frontend/package-lock.json
-
-      - name: Install root dependencies
+      # Install from root — this populates the hoisted
+      # node_modules that workspace packages share
+      - name: Install root workspace dependencies
         run: npm install
 
-      - name: Lint frontendt backend
+      - name: Lint backend
         working-directory: backend
         run: npm run lint
 
@@ -88,11 +83,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
-      - name: Remove frontend lockfile
-        run: rm -f frontend/package-lock.json
+      - name: Remove lockfiles for clean Linux install
+        run: |
+          rm -f package-lock.json
+          rm -f frontend/package-lock.json
 
       - name: Install root dependencies
         run: npm install
