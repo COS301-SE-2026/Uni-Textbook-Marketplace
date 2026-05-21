@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -28,6 +28,7 @@ interface StatConfig {
     color: string
     filter: FilterTab
 }
+
 
 const FACULTY_LABEL: Record<string, string> = {
     ENG: 'Engineering',
@@ -336,11 +337,11 @@ function LoadingSkeleton() {
 function useToasts() {
     const [toasts, setToasts] = useState<Toast[]>([])
 
-    const showToast = (message: string, type: Toast['type']) => {
+    const showToast = useCallback((message: string, type: Toast['type']) => {
         const id = crypto.randomUUID()
         setToasts(prev => [...prev, { id, message, type }])
         setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000)
-    }
+    }, [])
 
     return { toasts, showToast }
 }
@@ -352,21 +353,17 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
     const [approvedCount, setApprovedCount] = useState(0)
     const [rejectedCount, setRejectedCount] = useState(0)
 
-    const fetchPending = async () => {
-        setLoading(true)
-        try {
-            const data = await getPendingListings()
-            setListings(data ?? [])
-        } catch {
-            showToast('Failed to load listings', 'error')
-        } finally {
-            setLoading(false)
-        }
-    }
-
     useEffect(() => {
-        fetchPending()
-    }, [])
+        getPendingListings()
+            .then(data => {
+                setListings(data ?? [])
+                setLoading(false)
+            })
+            .catch(() => {
+                showToast('Failed to load listings', 'error')
+                setLoading(false)
+            })
+    }, [showToast])
 
     const updateListingStatus = (id: string, status: string) => {
         setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l))
@@ -448,9 +445,9 @@ export default function AdminReviewDashboard() {
     const filtered = listings.filter(l => l.status === (activeFilter ?? 'PENDING'))
 
     const stats: StatConfig[] = [
-        { label: 'Pending Review', value: pendingCount,   color: 'text-amber-600', filter: 'PENDING' },
-        { label: 'Approved',       value: approvedCount,  color: 'text-green-600', filter: 'APPROVED' },
-        { label: 'Rejected',       value: rejectedCount,  color: 'text-red-600',   filter: 'REJECTED' },
+        { label: 'Pending Review', value: pendingCount, color: 'text-amber-600', filter: 'PENDING' },
+        { label: 'Approved', value: approvedCount, color: 'text-green-600', filter: 'APPROVED' },
+        { label: 'Rejected', value: rejectedCount, color: 'text-red-600', filter: 'REJECTED' },
     ]
 
     const toggleFilter = (filter: FilterTab) =>
