@@ -4,10 +4,11 @@ const BACKEND_URL = process.env.BACKEND_URL
 
 export async function GET(
         _req: NextRequest,
-        { params }: { params: { id: string } }
+        context: { params: Promise<{ id: string }> }
     ) {
         try {
-            const res = await fetch(`${BACKEND_URL}/listings/${params.id}`, {
+            const { id } = await context.params;
+            const res = await fetch(`${BACKEND_URL}/listings/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
