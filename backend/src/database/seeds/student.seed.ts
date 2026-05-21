@@ -7,14 +7,39 @@ export async function seedStudents(manager: EntityManager) {
   const hashedPassword = await bcrypt.hash('Password123', 10);
 
   const studentsData = [
-    { email: 'student1@tuks.co.za', firstName: 'John', lastName: 'Doe', faculty: 'Engineering' },
-    { email: 'student2@tuks.co.za', firstName: 'Sarah', lastName: 'Smith', faculty: 'Health Sciences' },
-    { email: 'student3@tuks.co.za', firstName: 'Mike', lastName: 'Johnson', faculty: 'Law' },
-    { email: 'student4@tuks.co.za', firstName: 'Emma', lastName: 'Brown', faculty: 'Commerce' },
-    { email: 'student5@tuks.co.za', firstName: 'David', lastName: 'Wilson', faculty: 'Natural Sciences' },
+    {
+      email: 'student1@tuks.co.za',
+      firstName: 'John',
+      lastName: 'Doe',
+      faculty: 'Engineering',
+    },
+    {
+      email: 'student2@tuks.co.za',
+      firstName: 'Sarah',
+      lastName: 'Smith',
+      faculty: 'Health Sciences',
+    },
+    {
+      email: 'student3@tuks.co.za',
+      firstName: 'Mike',
+      lastName: 'Johnson',
+      faculty: 'Law',
+    },
+    {
+      email: 'student4@tuks.co.za',
+      firstName: 'Emma',
+      lastName: 'Brown',
+      faculty: 'Commerce',
+    },
+    {
+      email: 'student5@tuks.co.za',
+      firstName: 'David',
+      lastName: 'Wilson',
+      faculty: 'Natural Sciences',
+    },
   ];
 
-  const students = studentsData.map(data =>
+  const students = studentsData.map((data) =>
     userRepository.create({
       email: data.email,
       password_hash: hashedPassword,
@@ -23,7 +48,7 @@ export async function seedStudents(manager: EntityManager) {
       faculty: data.faculty,
       is_verified: true,
       role: 'student',
-    })
+    }),
   );
 
   await userRepository.save(students);
