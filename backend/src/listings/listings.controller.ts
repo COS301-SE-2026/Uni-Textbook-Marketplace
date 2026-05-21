@@ -22,6 +22,8 @@ import { CreateListingDto } from './dto/create-listing.dto';
 
 import { Request } from 'express';
 
+import { ListingFiltersDto } from './dto/listingFilter.dto';
+
 interface AuthenticatedUser {
   id: string;
   email: string;
@@ -47,7 +49,7 @@ export class ListingsController {
 
   //get appro
   @Get()
-  getAll(@Query() query: any) {
+  getAll(@Query() query: ListingFiltersDto) {
     return this.listingsService.getAllApproved(query);
   }
 

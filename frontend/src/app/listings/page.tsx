@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import { mapListing } from '@/lib/mappers/listingMapper'
 
+
 // Filter state
 
 interface Filters {
