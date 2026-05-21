@@ -8,6 +8,7 @@ import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import { CreateListingDto } from './dto/create-listing.dto';
+import { ListingFiltersDto } from './dto/listingFilter.dto';
 
 @Injectable()
 export class ListingsService {
@@ -54,7 +55,7 @@ export class ListingsService {
   }
 
   //get the validated ones
-  async getAllApproved(query?: any) {
+  async getAllApproved(query?: ListingFiltersDto) {
     const qb = this.listingRepo.createQueryBuilder('listing')
       .leftJoinAndSelect('listing.book', 'book')
       .leftJoinAndSelect('listing.module', 'module')
