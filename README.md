@@ -1,34 +1,55 @@
+<div align="center">
+
 # Uni Textbook Marketplace
 
+![Uni Textbook Marketplace](docs/images/README_Uni_Textbook_Marketplace.png) 
+
 > **A marketplace for students, by students.**
-> A verified, module-aware platform where university students can buy, sell, and swap textbooks. Safely, affordably, and without the chaos of WhatsApp groups.
+
+</div>
 
 ---
 
-## Presented by 
-# NexusDev
+<div align="center">
+
+### Presented by NexusDev
+
+![NexusDev Logo](docs/images/_NexusDev_LOGO_main.png) 
+
+</div>
 
 ---
+
+<div align="center">
 
 ## Project Description
 
-**NexusDev - Uni Textbook Marketplace - A web-based marketplace where verified university students can buy, sell, or swap second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and semester, smart filters, and privacy-first in-app messaging.**
+**A web-based marketplace where verified university students can buy, sell, or swap second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and semester, smart filters, and privacy-first in-app messaging.**
 
 Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301 Software Engineering Capstone Project at the University of Pretoria.
 
+</div>
+
 ---
+
+<div align = "center">
 
 ## Documentation
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specification (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md) |
-|  Architecture Overview | *Coming soon — Sprint 2* |
-|  Brand Style Guide | [View Brand Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/brand-style-guide.md) |
+|  Software Requirements Specification (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Software_Requirements_Specifications.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Design_Specifications) |
 |  User Guide | *Coming soon* |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
+|  Demo 1 Slides | [View Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/brand-style-guide.md) |
+|  Demo 1 Video | [View Demo 1 Video](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/brand-style-guide.md) |
+
+</div>
 
 ---
+
+<div align = "center">
 
 ## Project Board & CI Status
 
@@ -37,7 +58,11 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
 
+</div>
+
 ---
+
+<div align = "center">
 
 ## Build & Quality Badges
 
@@ -51,91 +76,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 ![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-336791)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
----
-
-## Repository Structure
-
-```
-Uni-Textbook-Marketplace/
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml                        # GitHub Actions CI/CD pipeline
-│
-├── backend/                              # NestJS modular monolith API
-│   ├── src/
-│   │   ├── app.controller.spec.ts              
-│   │   ├── app.controller.ts                 
-│   │   ├── app.module.ts
-│   │   ├── app.service.ts
-│   │   └── main.ts
-│   ├── test/   
-|   ├── .dockerignore              
-│   ├── .gitignore                
-│   ├── .prettierrc   
-|   ├── Dockerfile.dev                   # Docker file setup for containerization
-│   ├── eslint.config.mjs                  
-│   ├── nest-cli.json
-|   ├── package-lock.json
-│   ├── package.json
-│   ├── tsconfig.build.json
-│   └── tscofig.json
-│
-├── frontend/                             # Next.js (React) web application
-│   ├── src/
-│   │   ├── app/                          # Next.js App Router
-│   │   │   ├── auth/
-│   │   │   │   ├── login/
-│   │   │   │   │   └── page.tsx          # /auth/login
-│   │   │   │   └── register/
-│   │   │   │       └── page.tsx          # /auth/register
-│   │   │   ├── listings/
-│   │   │   │   └── page.tsx              # /listings
-│   │   │   ├── admin/
-│   │   │   │   └── page.tsx              # /admin
-│   │   │   ├── layout.tsx                # Root layout with NavBar
-│   │   │   ├── page.tsx                  # Landing page /
-│   │   │   └── globals.css              # Global styles + brand tokens
-│   │   └── components/
-│   │       ├── NavBar.tsx                # Navigation bar (auth-aware)
-│   │       └── ui/                       # Reusable UI component library
-│   ├── public/                           # Static assets
-│   ├── .env.example                      # Environment variable template
-|   ├── .gitignore                    
-|   ├── .dockerignore
-|   ├── Dockerfile.dev                    # Docker file setup for containerization
-│   ├── jest.config.js                    # Jest configuration
-│   ├── jest.setup.ts                     # Jest setup
-│   ├── eslint.config.mjs 
-│   ├── next.config.ts
-│   ├── tailwind.config.ts                # Brand colours and tokens
-│   ├── tsconfig.json
-│   └── package.json
-│
-├── messaging/                            # External Firebase microservice
-│   └── .gitkeep                          # Populated in Sprint 2
-│
-├── database/
-│   ├── migrations/                       # TypeORM migration files
-│   ├── schema/
-│   │   └── schema.sql                    # Full PostgreSQL schema
-│   └── seeds/                            # Demo seed data
-│
-├── docs/
-│   ├── architecture/                     # Architecture diagrams
-│   ├── wireframes/                       # UI wireframes
-│   ├── brand-style-guide.md              # Agile Bridge brand guidelines
-│   └── srs.md                            # Software Requirements Specification
-│
-├── .gitignore
-├── .npmrc
-├── CONTRIBUTING.md                       # Branching strategy and commit conventions
-├── docker-compose.yml                    # Local PostgreSQL development database
-├── package.json                          # Root npm workspace coordinator
-├── package-lock.json
-├── README.md
-└── tsconfig.json                         # Shared TypeScript base config
-```
+</div>
 
 ---
 
@@ -146,7 +87,7 @@ Uni-Textbook-Marketplace/
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 - Docker (for local PostgreSQL)
-- Git (system-installed — no GUI clients)
+- Git (system-installed - no GUI clients)
 
 ### Installation
 
@@ -181,8 +122,6 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-> Full environment setup guide will be added to `/docs/setup.md` in Sprint 2.
-
 ---
 
 ## Branching Strategy
@@ -191,7 +130,7 @@ We follow **GitHub Flow**:
 
 | Branch | Purpose |
 |---|---|
-| `main` | Always stable and production-ready. Protected — no direct commits. |
+| `main` | Always stable and production-ready. Protected with no direct commits. |
 | `develop` | Integration branch for completed features. |
 | `feature/[issue-number]-[name]` | New features (e.g. `feature/7-backend-scaffold`) |
 | `fix/[issue-number]-[name]` | Bug fixes (e.g. `fix/12-listing-validation`) |
@@ -240,13 +179,16 @@ The system follows a **modular monolith** architecture for core features with an
 - **Hosting** : Azure Static Web Apps + Azure App Service
 - **CI/CD** : GitHub Actions
 
-> Full architecture diagram available in the [SRS document](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/srs.md).
-
 ---
+<div align = "center">
 
 ## The Team
 
-### Tiego Mokwena - Project Manager & UI Engineer 1 & DevOps
+![Team Members](docs/images/The_Team.png) 
+
+</div>
+
+### Tiego Mokwena - Project Manager & UI Engineer & DevOps
 > Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy.
 
 [![GitHub](https://img.shields.io/badge/GitHub-tl21thebe-181717?logo=github)](https://github.com/tl21thebe)
@@ -270,7 +212,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Neo Bosoga - Data Engineer & Backend Tester
+### Neo Bosoga - Data Engineer & Tester
 > PostgreSQL database design and management, complex queries, database indexing, seed data, backend unit tests, and integration tests.
 
 [![GitHub](https://img.shields.io/badge/GitHub-u23591732-181717?logo=github)](https://github.com/u23591732)
@@ -278,13 +220,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 ---
 
-### Omphemetse Mokgothadi - UI Engineer 2 & Frontend Tester
-> Frontend UI components (Next.js/React), responsive design, filter UI, messaging UI (Socket.io client), frontend unit tests, and end-to-end tests (Cypress).
-
-[![GitHub](https://img.shields.io/badge/GitHub-nalediO-181717?logo=github)](https://github.com/nalediO)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Omphemetse%20Mokgothadi-0077B5?logo=linkedin)](https://www.linkedin.com/in/omphemetse-mokgothadi-7671aa367/)
-
----
+<div align = "center">
 
 ## Contact
 
@@ -294,6 +230,12 @@ The system follows a **modular monolith** architecture for core features with an
 | Client | Agile Bridge |
 | University | University of Pretoria - COS 301 Software Engineering 2026 |
 
+</div>
+
 ---
 
+<div align = "center">
+
 *© 2026 NexusDev - University of Pretoria COS 301 Capstone Project*
+
+</div>
