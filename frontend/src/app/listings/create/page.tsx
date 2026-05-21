@@ -8,79 +8,73 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { createBook, createModule, uploadImages, createListing, CreateListingData } from '@/lib/listings.api'
 import Modal from '@/components/ui/Modal'
 
+
 const ISBN_REGEX = /^(?:\d{10}|\d{13})$/
 const PRICE_REGEX = /^\d+(\.\d{1,2})?$/
 
-function validateStep(
-    step: number,
-    form: ListingFormData
-): Partial<Record<keyof ListingFormData, string>> {
+type FormErrors = Partial<Record<keyof ListingFormData, string>>
 
-    const errors: Partial<Record<keyof ListingFormData, string>> = {}
+function validateBookDetails(form: ListingFormData): FormErrors {
+    const errors: FormErrors = {}
+    if (!form.title.trim())     errors.title     = 'Title is required'
+    if (!form.author.trim())    errors.author    = 'Author is required'
+    if (!form.edition.trim())   errors.edition   = 'Edition is required'
+    if (!form.publisher.trim()) errors.publisher = 'Publisher is required'
 
-    //Book Details
-    if (step === 1) {
-        if (!form.title.trim())
-            errors.title = 'Title is required'
-
-        if (!form.author.trim())
-            errors.author = 'Author is required'
-
-        if (!form.edition.trim())
-            errors.edition = 'Edition is required'
-
-        if (!form.isbn.trim()) {
-            errors.isbn = 'ISBN is required'
-        } else if (!ISBN_REGEX.test(form.isbn.replace(/-/g, ''))) {
-            errors.isbn = 'Enter a valid 10 or 13-digit ISBN'
-        }
-
-        if (!form.publisher.trim())
-            errors.publisher = 'Publisher is required'
-    }
-
-    //Module Details
-    if (step === 2) {
-        if (!form.code.trim())
-            errors.code = 'Module code is required'
-
-        if (!form.name.trim())
-            errors.name = 'Module name is required'
-
-        if (!form.faculty)
-            errors.faculty = 'Faculty is required'
-    }
-
-    //Listing Details
-    if (step === 3) {
-        if (!form.condition)
-            errors.condition = 'Condition is required'
-
-        if (!form.annotationLevel)
-            errors.annotationLevel = 'Annotation level is required'
-
-        if (!form.price.trim()) {
-            errors.price = 'Price is required'
-        } else if (!PRICE_REGEX.test(form.price) || Number(form.price) <= 0) {
-            errors.price = 'Enter a valid price (e.g. 350 or 350.00)'
-        }
-
-        if (!form.description.trim())
-            errors.description = 'Description is required'
-        else if (form.description.trim().length < 20)
-            errors.description = 'Description must be at least 20 characters'
-    }
-
-    //Images
-    if (step === 4) {
-        if (form.images.length < 4)
-            errors.images = 'Please upload at least 4 images'
+    if (!form.isbn.trim()) {
+        errors.isbn = 'ISBN is required'
+    } else if (!ISBN_REGEX.test(form.isbn.replace(/-/g, ''))) {
+        errors.isbn = 'Enter a valid 10 or 13-digit ISBN'
     }
 
     return errors
 }
 
+function validateModuleDetails(form: ListingFormData): FormErrors {
+    const errors: FormErrors = {}
+    if (!form.code.trim()) errors.code    = 'Module code is required'
+    if (!form.name.trim()) errors.name    = 'Module name is required'
+    if (!form.faculty)     errors.faculty = 'Faculty is required'
+    return errors
+}
+
+function validateListingDetails(form: ListingFormData): FormErrors {
+    const errors: FormErrors = {}
+    if (!form.condition)       errors.condition       = 'Condition is required'
+    if (!form.annotationLevel) errors.annotationLevel = 'Annotation level is required'
+
+    if (!form.price.trim()) {
+        errors.price = 'Price is required'
+    } else if (!PRICE_REGEX.test(form.price) || Number(form.price) <= 0) {
+        errors.price = 'Enter a valid price (e.g. 350 or 350.00)'
+    }
+
+    const description = form.description.trim()
+    if (!description)                errors.description = 'Description is required'
+    else if (description.length < 20) errors.description = 'Description must be at least 20 characters'
+
+    return errors
+}
+
+function validateImages(form: ListingFormData): FormErrors {
+    return form.images.length < 4
+        ? { images: 'Please upload at least 4 images' }
+        : {}
+}
+
+const STEP_VALIDATORS: Record<number, (form: ListingFormData) => FormErrors> = {
+    1: validateBookDetails,
+    2: validateModuleDetails,
+    3: validateListingDetails,
+    4: validateImages,
+}
+
+function validateStep(step: number, form: ListingFormData): FormErrors {
+    return STEP_VALIDATORS[step]?.(form) ?? {}
+}
+
 const STEP_LABELS = ['Book Details', 'Module Details', 'Listing Details', 'Upload Pictures']
+
 
 export default function CreateListingPage() {
 
@@ -109,8 +103,7 @@ export default function CreateListingPage() {
         images: [],
     })
 
-    const [errors, setErrors] =
-        useState<Partial<Record<keyof ListingFormData, string>>>({})
+    const [errors, setErrors] = useState<FormErrors>({})
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -157,7 +150,6 @@ export default function CreateListingPage() {
         setLoading(true)
 
         try {
-            //Step 1 create the book
             const book = await createBook({
                 title: form.title,
                 author: form.author,
@@ -166,17 +158,14 @@ export default function CreateListingPage() {
                 publisher: form.publisher || undefined,
             })
 
-            //Step 2 create the module
             const createdModule = await createModule({
                 code: form.code,
                 name: form.name,
                 faculty: form.faculty || undefined,
             })
 
-            //Step 3 upload images
             const { urls } = await uploadImages(form.images)
 
-            //Step 4 create the listing
             await createListing({
                 title: form.title,
                 bookId: book.id,
@@ -211,12 +200,13 @@ export default function CreateListingPage() {
                         <button
                             key={label}
                             disabled
-                            className={`px-4 py-2 rounded text-sm font-medium ${step === i + 1
-                                ? 'bg-blue-600 text-white'
-                                : step > i + 1
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'bg-gray-200 text-gray-500'
-                                }`}
+                            className={`px-4 py-2 rounded text-sm font-medium ${
+                                step === i + 1
+                                    ? 'bg-blue-600 text-white'
+                                    : step > i + 1
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : 'bg-gray-200 text-gray-500'
+                            }`}
                         >
                             {step > i + 1 ? `✓ ${label}` : label}
                         </button>
@@ -236,23 +226,15 @@ export default function CreateListingPage() {
                 {/* Navigation */}
                 <div className="flex justify-between mt-8">
                     {step > 1 ? (
-                        <Button onClick={prevStep} variant="secondary">
-                            Previous
-                        </Button>
+                        <Button onClick={prevStep} variant="secondary">Previous</Button>
                     ) : (
                         <div />
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} variant="secondary">
-                            Next
-                        </Button>
+                        <Button onClick={nextStep} variant="secondary">Next</Button>
                     ) : (
-                        <Button
-                            onClick={handleSubmit}
-                            variant="secondary"
-                            disabled={loading}
-                        >
+                        <Button onClick={handleSubmit} variant="secondary" disabled={loading}>
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
                     )}
