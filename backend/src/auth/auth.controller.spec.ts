@@ -93,7 +93,7 @@ describe('AuthController', () => {
       code: '123456',
     };
 
-   
+    // The service returns { tokens, user }
     const verifyEmailResponse = {
       tokens: {
         accessToken: 'access-token-123',
@@ -103,6 +103,8 @@ describe('AuthController', () => {
         id: 'user-1',
         email: 'u12345678@tuks.ac.za',
         role: 'student',
+        first_name: 'Gift',
+        last_name: 'M',
       },
     };
 
@@ -129,7 +131,11 @@ describe('AuthController', () => {
         expect.objectContaining({ httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
       );
       
-      expect(result).toEqual({ message: 'Email verified successfully.' });
+      // FIX: The controller returns { message, user }
+      expect(result).toEqual({
+        message: 'Email verified successfully.',
+        user: verifyEmailResponse.user
+      });
     });
   });
 
