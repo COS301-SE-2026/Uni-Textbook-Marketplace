@@ -16,11 +16,13 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:cov:auth": "jest --coverage --collectCoverageFrom='src/auth/auth.service.ts' --testPathPatterns='auth.service.spec.ts'",
-    "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
+   "test:cov:auth": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"!src/auth/**/*.spec.ts\" src/auth/",
+   "test:cov:listings": "jest --coverage --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/listings/**/*.spec.ts\" src/listings/listings.service.spec.ts",
+   "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
+   "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
+   "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
