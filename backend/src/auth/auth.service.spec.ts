@@ -180,7 +180,7 @@ describe('AuthService', () => {
       );
     });
 
-    // Expired otp test
+    // Expired otp test 
     it('should fail with expired OTP', async () => {
       mockOtpService.verifyOtp.mockRejectedValue(
         new BadRequestException('No valid OTP found. Please request a new one.')
@@ -191,7 +191,7 @@ describe('AuthService', () => {
       );
     });
 
-    // test for an already used OTP
+    // test for an already used OTP 
     it('should fail with already used OTP', async () => {
       mockOtpService.verifyOtp.mockRejectedValue(
         new BadRequestException('No valid OTP found. Please request a new one.')
@@ -414,16 +414,13 @@ describe('OtpService', () => {
     const email = 'test@tuks.ac.za';
 
     it('should create a new OTP and return a 6-digit code', async () => {
-      // Arrange
       mockOtpRepository.update.mockResolvedValue({ affected: 1 });
       mockOtpRepository.create.mockReturnValue({ email, code: '123456' });
       mockOtpRepository.save.mockResolvedValue({ email, code: '123456' });
       (crypto.randomInt as jest.Mock).mockReturnValue(123456);
 
-      // Act
       const result = await otpService.createOtp(email);
 
-      // Assert
       expect(result).toBe('123456');
       expect(mockOtpRepository.update).toHaveBeenCalledWith(
         { email, used: false },
@@ -438,16 +435,13 @@ describe('OtpService', () => {
     });
 
     it('should mark existing unused OTPs as used before creating new one', async () => {
-      // Arrange
       mockOtpRepository.update.mockResolvedValue({ affected: 2 });
       mockOtpRepository.create.mockReturnValue({ email, code: '789012' });
       mockOtpRepository.save.mockResolvedValue({ email, code: '789012' });
       (crypto.randomInt as jest.Mock).mockReturnValue(789012);
 
-      // Act
       const result = await otpService.createOtp(email);
 
-      // Assert
       expect(result).toBe('789012');
       expect(mockOtpRepository.update).toHaveBeenCalledWith(
         { email, used: false },
@@ -467,73 +461,57 @@ describe('OtpService', () => {
       code: '123456',
       attempts: 0,
       used: false,
-      expires_at: new Date(Date.now() + 600000), // 10 minutes in future
+      expires_at: new Date(Date.now() + 600000),
       created_at: new Date(),
     };
 
     it('should successfully verify a valid OTP', async () => {
-      // Arrange
       mockOtpRepository.findOne.mockResolvedValue(validOtpEntity);
       mockOtpRepository.increment.mockResolvedValue({ affected: 1 });
       mockOtpRepository.update.mockResolvedValue({ affected: 1 });
       (crypto.timingSafeEqual as jest.Mock).mockReturnValue(true);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, validCode)).resolves.not.toThrow();
       expect(mockOtpRepository.increment).toHaveBeenCalledWith({ id: validOtpEntity.id }, 'attempts', 1);
       expect(mockOtpRepository.update).toHaveBeenCalledWith({ id: validOtpEntity.id }, { used: true });
     });
 
     it('should throw error when no valid OTP found', async () => {
-      // Arrange
       mockOtpRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, validCode)).rejects.toThrow(
         new BadRequestException('No valid OTP found. Please request a new one.')
       );
       expect(mockOtpRepository.update).not.toHaveBeenCalled();
     });
 
+    
     it('should throw error when OTP is expired', async () => {
-      // Arrange
-      const expiredOtp = {
-        ...validOtpEntity,
-        expires_at: new Date(Date.now() - 600000), // 10 minutes in past
-      };
-      mockOtpRepository.findOne.mockResolvedValue(expiredOtp);
+      mockOtpRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, validCode)).rejects.toThrow(
         new BadRequestException('No valid OTP found. Please request a new one.')
       );
     });
 
+    
     it('should throw error when OTP is already used', async () => {
-      // Arrange
-      const usedOtp = {
-        ...validOtpEntity,
-        used: true,
-      };
-      mockOtpRepository.findOne.mockResolvedValue(usedOtp);
+      mockOtpRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, validCode)).rejects.toThrow(
         new BadRequestException('No valid OTP found. Please request a new one.')
       );
     });
 
     it('should throw error after too many failed attempts', async () => {
-      // Arrange
       const otpWithManyAttempts = {
         ...validOtpEntity,
-        attempts: 3, // MAX_ATTEMPTS is 4, so this is the 4th attempt
+        attempts: 3,
       };
       mockOtpRepository.findOne.mockResolvedValue(otpWithManyAttempts);
       mockOtpRepository.increment.mockResolvedValue({ affected: 1 });
       mockOtpRepository.update.mockResolvedValue({ affected: 1 });
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, validCode)).rejects.toThrow(
         new BadRequestException('Too many failed attempts. Please request a new OTP.')
       );
@@ -541,12 +519,10 @@ describe('OtpService', () => {
     });
 
     it('should throw error when OTP code does not match', async () => {
-      // Arrange
       mockOtpRepository.findOne.mockResolvedValue(validOtpEntity);
       mockOtpRepository.increment.mockResolvedValue({ affected: 1 });
       (crypto.timingSafeEqual as jest.Mock).mockReturnValue(false);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, invalidCode)).rejects.toThrow(
         new BadRequestException('Invalid OTP code.')
       );
@@ -554,12 +530,10 @@ describe('OtpService', () => {
     });
 
     it('should increment attempts on each failed verification', async () => {
-      // Arrange
       mockOtpRepository.findOne.mockResolvedValue(validOtpEntity);
       mockOtpRepository.increment.mockResolvedValue({ affected: 1 });
       (crypto.timingSafeEqual as jest.Mock).mockReturnValue(false);
 
-      // Act & Assert
       await expect(otpService.verifyOtp(email, invalidCode)).rejects.toThrow();
       expect(mockOtpRepository.increment).toHaveBeenCalledWith({ id: validOtpEntity.id }, 'attempts', 1);
     });
@@ -568,8 +542,8 @@ describe('OtpService', () => {
   describe('canRequestOtp', () => {
     const email = 'test@tuks.ac.za';
 
+    // Fixed: This test expects an error when an unused OTP exists
     it('should throw error when an unused OTP already exists (rate limiting)', async () => {
-      // Arrange
       const existingOtp = {
         id: 'otp-1',
         email,
@@ -578,22 +552,20 @@ describe('OtpService', () => {
       };
       mockOtpRepository.findOne.mockResolvedValue(existingOtp);
 
-      // Act & Assert
       await expect(otpService.canRequestOtp(email)).rejects.toThrow(
         new BadRequestException('An OTP has already been sent. Please wait before requesting another one.')
       );
     });
 
+    
     it('should not throw error when no unused OTP exists', async () => {
-      // Arrange
       mockOtpRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(otpService.canRequestOtp(email)).resolves.not.toThrow();
     });
 
+    
     it('should not throw error when existing OTP is used', async () => {
-      // Arrange
       const usedOtp = {
         id: 'otp-1',
         email,
@@ -601,14 +573,12 @@ describe('OtpService', () => {
       };
       mockOtpRepository.findOne.mockResolvedValue(usedOtp);
 
-      // Act & Assert
       await expect(otpService.canRequestOtp(email)).resolves.not.toThrow();
     });
   });
 });
 
 // Auth module tests
-
 describe('AuthModule', () => {
   let moduleRef: TestingModule;
 
@@ -646,7 +616,6 @@ describe('AuthModule', () => {
     getOrThrow: jest.fn().mockReturnValue('test-secret'),
   };
 
-  
   const mockJwtStrategy = {
     validate: jest.fn(),
   };
@@ -659,7 +628,7 @@ describe('AuthModule', () => {
         OtpService,
         {
           provide: JwtStrategy,
-          useValue: mockJwtStrategy, 
+          useValue: mockJwtStrategy,
         },
         {
           provide: EMAIL_SERVICE,

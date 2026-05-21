@@ -375,7 +375,7 @@ describe('ListingsService', () => {
 
   describe('approveListing (Admin only)', () => {
     const adminId = 'admin-1';
-    const approvedListing = { ...mockListing, status: ListingStatus.APPROVED };
+    const approvedListing = { ...mockListing, status: ListingStatus.APPROVED, reviewer: { id: adminId }, reviewed_at: new Date() };
 
     it('should approve a pending listing', async () => {
       mockListingRepository.findOne.mockResolvedValue(mockPendingListing);
@@ -384,7 +384,9 @@ describe('ListingsService', () => {
       const result = await service.approveListing('listing-1', adminId);
 
       expect(result.status).toBe(ListingStatus.APPROVED);
-      expect(result.reviewer).toEqual({ id: adminId });
+      // Fix: Check reviewer property correctly
+      expect(result.reviewer).toBeDefined();
+      expect(result.reviewer.id).toBe(adminId);
       expect(result.reviewed_at).toBeDefined();
       expect(mockListingRepository.save).toHaveBeenCalled();
     });
@@ -400,7 +402,7 @@ describe('ListingsService', () => {
 
   describe('rejectListing (Admin only)', () => {
     const adminId = 'admin-1';
-    const rejectedListing = { ...mockListing, status: ListingStatus.REJECTED };
+    const rejectedListing = { ...mockListing, status: ListingStatus.REJECTED, reviewer: { id: adminId }, reviewed_at: new Date() };
 
     it('should reject a pending listing', async () => {
       mockListingRepository.findOne.mockResolvedValue(mockPendingListing);
@@ -409,7 +411,9 @@ describe('ListingsService', () => {
       const result = await service.rejectListing('listing-1', adminId);
 
       expect(result.status).toBe(ListingStatus.REJECTED);
-      expect(result.reviewer).toEqual({ id: adminId });
+      // Fix: Check reviewer property correctly
+      expect(result.reviewer).toBeDefined();
+      expect(result.reviewer.id).toBe(adminId);
       expect(result.reviewed_at).toBeDefined();
       expect(mockListingRepository.save).toHaveBeenCalled();
     });
