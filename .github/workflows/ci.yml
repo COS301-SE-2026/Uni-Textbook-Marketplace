@@ -49,11 +49,6 @@ jobs:
       - name: Install root workspace dependencies
         run: npm install
 
-      - name: Install frontend optional dependencies (Linux natives)
-        working-directory: frontend
-        run: npm install --include=optional
-
-
       - name: Lint backend
         working-directory: backend
         run: npm run lint
