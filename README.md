@@ -2,7 +2,7 @@
 
 # Uni Textbook Marketplace
 
-![Uni Textbook Marketplace](docs/images/README_Uni_Textbook_Marketplace.png) 
+<img src="docs/images/README_Uni_Textbook_Marketplace.png" alt="Uni Textbook Marketplace" width="45%">
 
 > **A marketplace for students, by students.**
 
@@ -14,7 +14,7 @@
 
 ### Presented by NexusDev
 
-![NexusDev Logo](docs/images/_NexusDev_LOGO_main.png) 
+<img src="docs/images/_NexusDev_LOGO_main.png" alt="NexusDev Logo" width="25%">
 
 </div>
 
