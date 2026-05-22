@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
@@ -31,6 +31,17 @@ export default function NavBar() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+      const id = requestAnimationFrame(() => {
+          setMounted(true);
+      });
+
+      return () => cancelAnimationFrame(id);
+  }, []);
+
+if (!mounted) return null;
 
   if (isLoading) {
     return (

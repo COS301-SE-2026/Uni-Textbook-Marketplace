@@ -13,6 +13,8 @@ import {
     AdminListing,
 } from '@/lib/admin.api'
 
+import { normalizeImage } from '@/lib/image'
+
 
 type FilterTab = 'PENDING' | 'APPROVED' | 'REJECTED' | null
 
@@ -67,7 +69,7 @@ function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
             <div className="flex items-center gap-3">
                 <div className="relative w-10 h-12 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
                     {listing.photo_urls?.[0] ? (
-                        <Image src={listing.photo_urls[0]} alt="" fill className="object-cover" />
+                        <Image src={normalizeImage(listing.photo_urls[0])} alt="" fill className="object-cover" />
                     ) : (
                         <span className="text-gray-300">📷</span>
                     )}

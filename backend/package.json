@@ -23,7 +23,9 @@
    "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
    "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
    "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "typeorm migration:run -d dist/database/data-source.js",
+    "migration:generate": "typeorm migration:generate -d src/database/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

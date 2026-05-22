@@ -7,6 +7,7 @@ import { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import { normalizeImage } from '@/lib/image'
+import BASE_URL from '@/lib/api';
 
 // Helpers
 
@@ -65,7 +66,7 @@ export default function ListingDetailPage() {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const res = await fetch(`/api/listings/${id}`)
+                const res = await fetch(`${BASE_URL}/listings/${id}`)
                 if (!res.ok) throw new Error('Not found')
                 const data = await res.json()
                 setListing(data)
@@ -83,7 +84,7 @@ export default function ListingDetailPage() {
     const handleSave = async () => {
         setSaving(true)
         try {
-            await fetch(`/api/listings/${id}/save`, { method: 'POST' })
+            await fetch(`${BASE_URL}/listings/${id}/save`, { method: 'POST' })
             setSaved(true)
         } catch (err) {
             console.error(err)
@@ -95,11 +96,11 @@ export default function ListingDetailPage() {
     const handleSendMessage = async () => {
         if (!message.trim()) return
         try {
-            await fetch('/api/messages', {
+            await fetch(`${BASE_URL}/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ listingId: id, content: message }),
-            })
+            });
             setMessageSent(true)
             setMessage('')
         } catch (err) {
