@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL = process.env.BACKEND_URL
+const BASE_URL = process.env.BACKEND_URL
 
 export async function GET(
         _req: NextRequest,
@@ -8,7 +8,7 @@ export async function GET(
     ) {
         try {
             const { id } = await context.params;
-            const res = await fetch(`${BACKEND_URL}/listings/${id}`, {
+            const res = await fetch(`${BASE_URL}/listings/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

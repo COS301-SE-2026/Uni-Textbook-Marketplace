@@ -43,7 +43,7 @@ export default function BrowseListingsPage() {
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
-            const BASE = process.env.NEXT_PUBLIC_API_URL
+            const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
             const params = new URLSearchParams()
 
@@ -55,9 +55,13 @@ export default function BrowseListingsPage() {
             if (f.condition) params.set('condition', f.condition)
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
 
-            const url = `${BASE}/listings?${params.toString()}`
-            console.log('FETCH URL:', url)
+            const query = params.toString();
 
+            const url = query
+                ? `${BASE_URL}/listings?${query}`
+                : `${BASE_URL}/listings`;
+                console.log("BASE_URL:", BASE_URL);
+                console.log("URL:", url);
             const res = await fetch(url)
 
             console.log('STATUS:', res.status)

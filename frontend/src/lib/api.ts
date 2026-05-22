@@ -1,5 +1,3 @@
-"use client";
-
 // This is the BASE API client, one file that knows how to talk to our backend
 // Every other API file (auth.api.ts, listings.api.ts, etc.) will builds on top of this
 
@@ -14,7 +12,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
-
+export default BASE_URL;
 
 async function request<T>(
     method: string,

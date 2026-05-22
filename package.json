@@ -27,8 +27,12 @@
   "license": "ISC",
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
+    "dotenv": "17.4.2",
     "react-hook-form": "7.75.0",
     "ts-node": "10.9.2",
     "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1"
   }
 }
