@@ -39,7 +39,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 | Document | Link |
 |---|---|
 |  Software Requirements Specification (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Software_Requirements_Specifications.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Design_Specifications) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Design_Specifications.pdf) |
 |  User Guide | *Coming soon* |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 |  Demo 1 Slides | [View Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/brand-style-guide.md) |
