@@ -1,0 +1,318 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+
+
+
+function getInitials(firstName: string, lastName: string): string {
+  if (!firstName || !lastName) return '??';
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+}
+
+const authNavLinks = [
+  { label: 'Browse', href: '/listings' },
+  { label: 'Sell', href: '/listings/create' },
+  { label: 'Messages', href: '/messages' },
+  { label: 'Favourites', href: '/favourites' },
+]
+
+const adminNavLinks = [
+  ...authNavLinks,
+  { label: 'Moderate', href: '/admin' },
+]
+
+
+export default function NavBar() {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+      const id = requestAnimationFrame(() => {
+          setMounted(true);
+      });
+
+      return () => cancelAnimationFrame(id);
+  }, []);
+
+if (!mounted) return null;
+
+  if (isLoading) {
+    return (
+      <nav className="w-full bg-white border-b border-[#dddddd] sticky top-0 z-50">
+        <div className="container-content">
+          <div className="flex items-center justify-between h-[70px]">
+            <Link href="/" className="flex items-center gap-2 no-underline">
+              <BookOpen size={24} className="text-[#00B4D8]" aria-hidden="true" />
+              <div className="leading-tight">
+                <span className="block text-xs font-semibold text-[#00B4D8] tracking-widest uppercase">
+                  Uni Textbook
+                </span>
+                <span className="block text-lg font-bold text-[#000f2b] leading-none">
+                  Marketplace
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
+  const initials = user ? getInitials(user.first_name, user.last_name) : '';
+  const isAdmin = user?.role === 'admin';
+  const navLinks = isAdmin ? adminNavLinks : authNavLinks;
+
+  return (
+    <nav className="w-full bg-white border-b border-[#dddddd] sticky top-0 z-50">
+      <div className="container-content">
+        <div className="flex items-center justify-between h-[70px]">
+
+          {/* LEFT: Logo */}
+          <Link href="/" className="flex items-center gap-2 no-underline">
+            <BookOpen size={24} className="text-[#00B4D8]" aria-hidden="true" />
+            <div className="leading-tight">
+              <span className="block text-xs font-semibold text-[#00B4D8] tracking-widest uppercase">
+                Uni Textbook
+              </span>
+              <span className="block text-lg font-bold text-[#000f2b] leading-none">
+                Marketplace
+              </span>
+            </div>
+          </Link>
+
+          {/* MIDDLE: Nav links (desktop only) */}
+          {isAuthenticated && (
+            <div className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide
+                  ${pathname === link.href
+                      ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
+                      : 'text-[#3a3a3a] hover:text-[#00B4D8]'
+                    }`}
+                >
+                  {link.label.toUpperCase()}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* RIGHT: Actions (desktop only) */}
+          <div className="hidden md:flex items-center gap-3">
+
+            {isAuthenticated && user ? (
+              <>
+                {/* Notification bell */}
+                <button
+                  aria-label="Notifications"
+                  className="relative p-2 text-[#3a3a3a] hover:text-[#00B4D8]
+                             transition-colors duration-200 rounded-full
+                             hover:bg-[#F5F5F5]"
+                >
+                  <Bell size={20} />
+                </button>
+
+                {/* User menu */}
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 p-1 rounded-full
+                               hover:bg-[#F5F5F5] transition-colors duration-200"
+                    aria-label="User menu"
+                    aria-expanded={userMenuOpen}
+                  >
+                    <div className="w-9 h-9 rounded-full bg-[#00B4D8] flex items-center
+                                    justify-center text-[#000f2b] text-sm font-bold">
+                      {initials}
+                    </div>
+                    <span className="text-sm font-medium text-[#3a3a3a]">
+                      {user.first_name}
+                    </span>
+                    <ChevronDown
+                      size={16}
+                      className={`text-[#4B4F58] transition-transform duration-200
+                                  ${userMenuOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  {/* Dropdown */}
+                  {userMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white
+                                    border border-[#dddddd] rounded-md shadow-md
+                                    overflow-hidden z-50">
+                      {isAdmin && (
+                        <>
+                          <Link
+                            href="/admin"
+                            className="block px-4 py-3 text-sm text-[#3a3a3a]
+                                       hover:bg-[#F5F5F5] hover:text-[#00B4D8]
+                                       no-underline transition-colors duration-150"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Admin Panel
+                          </Link>
+                          <div className="border-t border-[#dddddd]" />
+                        </>
+                      )}
+                      <Link
+                        href="/listings/mine"
+                        className="block px-4 py-3 text-sm text-[#3a3a3a]
+                                   hover:bg-[#F5F5F5] hover:text-[#00B4D8]
+                                   no-underline transition-colors duration-150"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Listings
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="block px-4 py-3 text-sm text-[#3a3a3a]
+                                   hover:bg-[#F5F5F5] hover:text-[#00B4D8]
+                                   no-underline transition-colors duration-150"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Settings
+                      </Link>
+                      <div className="border-t border-[#dddddd]" />
+                      <button
+                        onClick={async () => {
+                          setUserMenuOpen(false);
+                          await logout();
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm text-[#b91c1c]
+                                   hover:bg-[#FDE8E8] transition-colors duration-150"
+                      >
+                        Log Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/register"
+                  className="px-5 py-2 text-sm font-semibold text-[#00B4D8]
+                             border-2 border-[#00B4D8] rounded no-underline
+                             hover:bg-[#00B4D8] hover:text-[#000f2b]
+                             transition-all duration-200"
+                >
+                  Register
+                </Link>
+                <Link
+                  href="/auth/login"
+                  className="btn-primary text-sm px-5 py-2"
+                >
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* HAMBURGER: Mobile only */}
+          <button
+            className="md:hidden p-2 text-[#3a3a3a] hover:text-[#00B4D8]
+                       transition-colors duration-200"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* MOBILE MENU */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-[#dddddd] bg-white">
+          <div className="container-content py-4 flex flex-col gap-1">
+            {isAuthenticated && user ? (
+              <>
+                <div className="flex items-center gap-3 py-3 border-b border-[#dddddd] mb-2">
+                  <div className="w-10 h-10 rounded-full bg-[#00B4D8] flex items-center
+                                  justify-center text-[#000f2b] text-sm font-bold">
+                    {initials}
+                  </div>
+                  <span className="text-sm font-medium text-[#3a3a3a]">
+                    {user.first_name} {user.last_name}
+                  </span>
+                </div>
+
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`py-3 text-sm font-medium no-underline
+                               border-b border-[#F5F5F5] transition-colors
+                               ${pathname === link.href
+                                 ? 'text-[#00B4D8]'
+                                 : 'text-[#3a3a3a] hover:text-[#00B4D8]'
+                               }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+
+                <Link
+                  href="/listings/mine"
+                  className="py-3 text-sm text-[#3a3a3a] hover:text-[#00B4D8]
+                             no-underline border-b border-[#F5F5F5] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Listings
+                </Link>
+                <Link
+                  href="/settings"
+                  className="py-3 text-sm text-[#3a3a3a] hover:text-[#00B4D8]
+                             no-underline border-b border-[#F5F5F5] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Settings
+                </Link>
+                <button
+                  className="py-3 text-left text-sm text-[#b91c1c]
+                             hover:text-[#7F1D1D] transition-colors"
+                  onClick={async () => {
+                    setMobileMenuOpen(false);
+                    await logout();
+                  }}
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/register"
+                  className="py-3 text-sm font-medium text-[#3a3a3a]
+                             hover:text-[#00B4D8] no-underline
+                             border-b border-[#F5F5F5] transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Register
+                </Link>
+                <Link
+                  href="/auth/login"
+                  className="py-3 text-sm font-medium text-[#3a3a3a]
+                             hover:text-[#00B4D8] no-underline transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  )
+}

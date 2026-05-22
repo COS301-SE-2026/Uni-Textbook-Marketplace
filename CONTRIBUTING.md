@@ -33,14 +33,13 @@ We follow **GitHub Flow**:
 - Always create a feature branch from `develop`
 - Open a Pull Request to merge back into `develop`
 - At least **one team member must review** before merging
-- Delete your branch after it is merged
 
 ## Commit Message Convention
 
 We use **Conventional Commits**:
 
 ```
-type: short description (max 72 chars)
+type: short description
 ```
 
 | Type | When to use |
@@ -67,10 +66,10 @@ git commit -m "chore: configure GitHub Actions CI pipeline"
 1. Create your branch from `develop`
 2. Make your changes with clear, conventional commits
 3. Push your branch and open a PR against `develop`
-4. Fill in the PR description — what did you change and why?
+4. Fill in the PR description - what did you change and why?
 5. Request a review from at least one team member
 6. Fix any review comments
-7. Merge once approved — **squash and merge** preferred
+7. Merge once approved - **squash and merge** preferred
 
 ## Code Quality
 
@@ -81,7 +80,4 @@ git commit -m "chore: configure GitHub Actions CI pipeline"
 
 ## COS 301 Specific Rules
 
-- Use **system Git via command line only** — no GitHub Desktop, GitKraken etc.
-- The **COS301 VibeCheck tool must be active** when committing code (*It still hasn't been setup*)
-- You must understand and be able to explain every line you commit
-- Commits heavily concentrated in the final week before a demo will be flagged
+- Use **system Git via command line only** - no GitHub Desktop, GitKraken etc.
