@@ -13,10 +13,14 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        const id = requestAnimationFrame(() => {
         setMounted(true);
+        });
+
+        return () => cancelAnimationFrame(id);
     }, []);
 
-if (!mounted) return null;
+    if (!mounted) return null;
     const handleClose = () => {
         router.push('/');
     };

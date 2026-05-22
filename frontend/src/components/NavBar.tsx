@@ -34,9 +34,14 @@ export default function NavBar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+      const id = requestAnimationFrame(() => {
+          setMounted(true);
+      });
+
+      return () => cancelAnimationFrame(id);
   }, []);
-  if (!mounted) return null;
+
+if (!mounted) return null;
 
   if (isLoading) {
     return (
