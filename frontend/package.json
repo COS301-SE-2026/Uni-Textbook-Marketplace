@@ -31,8 +31,10 @@
     ]
   },
   "dependencies": {
+    "@nestjs/swagger": "5.2.1",
     "lucide-react": "1.14.0",
     "next": "16.2.9",
+    "nodemailer": "9.0.0",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
@@ -51,7 +53,7 @@
     "babel-jest": "24.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
-    "jest": "30.4.2",
+    "jest": "24.1.0",
     "jest-environment-jsdom": "30.4.1",
     "postcss": "8.5.14",
     "tailwindcss": "4.3.0",
