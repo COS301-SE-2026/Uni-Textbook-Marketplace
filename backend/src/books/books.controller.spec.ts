@@ -24,7 +24,7 @@ describe('BooksContoller', () => {
         }).compile();
 
         bookController = module.get(BooksController);
-        bookService = module.get(BooksService);
+        
     });
 
     describe('Book Create', () => {
