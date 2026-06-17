@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
+import {getListings} from '@/lib/listings.api'
 
 
 // Filter state
@@ -43,8 +44,6 @@ export default function BrowseListingsPage() {
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
-            const BASE_URL = process.env.NEXT_PUBLIC_API_URL
-
             const params = new URLSearchParams()
 
             if (f.faculty) params.set('faculty', f.faculty)
@@ -55,29 +54,17 @@ export default function BrowseListingsPage() {
             if (f.condition) params.set('condition', f.condition)
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
 
-            const query = params.toString();
+            const response = await getListings(params.toString())
 
-            const url = query
-                ? `${BASE_URL}/listings?${query}`
-                : `${BASE_URL}/listings`;
-                console.log("BASE_URL:", BASE_URL);
-                console.log("URL:", url);
-            const res = await fetch(url)
+            console.log('Raw response from getListings:', response);
 
-            console.log('STATUS:', res.status)
-            console.log('OK:', res.ok)
-            console.log('CONTENT TYPE:', res.headers.get('content-type'))
+            const listings = Array.isArray(response.listings) ? response.listings : [];
 
-            const data = await res.json()
-
-            console.log('DATA:', data)
-
-            const listings = data.map(mapListing)
-            const total = data.length
-
+            const total = typeof response.total === 'number' ? response.total : listings.length;
+            
             return {
-            listings,
-            total,
+                listings: listings.map(mapListing),
+                total: total,
             }
         } catch (err) {
             console.error('Failed to fetch listings', err)
