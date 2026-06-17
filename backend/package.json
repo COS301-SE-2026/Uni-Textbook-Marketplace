@@ -18,11 +18,11 @@
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-   "test:cov:auth": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"!src/auth/**/*.spec.ts\" src/auth/",
-   "test:cov:listings": "jest --coverage --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/listings/**/*.spec.ts\" src/listings/listings.service.spec.ts",
-   "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
-   "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
-   "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
+    "test:cov:auth": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"!src/auth/**/*.spec.ts\" src/auth/",
+    "test:cov:listings": "jest --coverage --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/listings/**/*.spec.ts\" src/listings/listings.service.spec.ts",
+    "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
+    "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
+    "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": "typeorm migration:run -d dist/database/data-source.js",
     "migration:generate": "typeorm migration:generate -d src/database/data-source.ts"
@@ -34,19 +34,21 @@
     "@nestjs/jwt": "11.0.2",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/swagger": "11.4.2",
+    "@nestjs/swagger": "11.4.4",
     "@nestjs/throttler": "6.5.0",
     "@nestjs/typeorm": "11.0.1",
     "@types/nodemailer": "8.0.0",
+    "babel-jest": "^29.7.0",
     "bcrypt": "6.0.0",
     "bcryptjs": "3.0.3",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "cookie-parser": "1.4.7",
     "dotenv": "16.6.1",
-    "nodemailer": "^6.10.1",
     "ecdsa-sig-formatter": "1.0.11",
     "lodash.includes": "4.3.0",
+    "next": "16.2.9",
+    "nodemailer": "9.0.0",
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "pg": "8.20.0",
@@ -65,7 +67,7 @@
     "@types/bcrypt": "6.0.0",
     "@types/cookie-parser": "1.4.10",
     "@types/express": "^5.0.0",
-    "@types/jest": "30.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^24.12.4",
     "@types/passport-jwt": "4.0.1",
     "@types/supertest": "^7.0.0",
@@ -73,11 +75,11 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^17.0.0",
-    "jest": "30.4.1",
+    "jest": "^29.7.0",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
-    "ts-jest": "29.4.9",
+    "ts-jest": "^29.4.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -85,25 +87,25 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
-  "moduleFileExtensions": [
-    "js",
-    "json",
-    "ts"
-  ],
-  "testRegex": ".*\\.spec\\.ts$",
-  "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
-  },
-  "collectCoverageFrom": [
-    "**/*.ts",
-    "!**/*.spec.ts",
-    "!main.ts",
-    "!**/*.module.ts",
-    "!database/entities/**/*.ts",
-    "!database/migrations/**/*.ts",
-    "!data-source.ts"
-  ],
-  "coverageDirectory": "../coverage",
-  "testEnvironment": "node"
-}
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.spec.ts",
+      "!main.ts",
+      "!**/*.module.ts",
+      "!database/entities/**/*.ts",
+      "!database/migrations/**/*.ts",
+      "!data-source.ts"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
 }
