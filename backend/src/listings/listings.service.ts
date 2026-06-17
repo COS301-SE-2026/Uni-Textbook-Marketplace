@@ -56,7 +56,8 @@ export class ListingsService {
 
   //get the validated ones
   async getAllApproved(query?: ListingFiltersDto) {
-    const qb = this.listingRepo.createQueryBuilder('listing')
+    const qb = this.listingRepo
+      .createQueryBuilder('listing')
       .leftJoinAndSelect('listing.book', 'book')
       .leftJoinAndSelect('listing.module', 'module')
       .leftJoinAndSelect('listing.seller', 'seller')
