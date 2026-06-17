@@ -12,7 +12,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
-//export default BASE_URL;
+export default BASE_URL;
 //Temp Helper
 function getAuthToken(): string | null {
     if (typeof window === 'undefined') return null;
@@ -36,11 +36,7 @@ async function request<T>(
     const response = await fetch(`${BASE_URL}${path}`, {
         method,
         headers,
-        /* {
-            'Content-Type': 'application/json',
-        },*/
         credentials: 'include',
-
         body: body ? JSON.stringify(body) : undefined,
     });
 

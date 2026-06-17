@@ -93,6 +93,11 @@ export class ListingsService {
         priceMax: query.priceMax,
       });
     }
+    if (query?.edition) {
+      qb.andWhere('book.edition = :edition', {
+        edition: query.edition,
+      });
+    }
     return qb.getMany();
   }
   //get listings specific to the user

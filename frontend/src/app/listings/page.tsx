@@ -100,6 +100,13 @@ export default function BrowseListingsPage() {
         setApplied(EMPTY_FILTERS)
     }
 
+    const getOrdinal = (n: number): string => {
+        if (n === 1) return '1st';
+        if (n === 2) return '2nd';
+        if (n === 3) return '3rd';
+        return `${n}th`;
+    }
+
     // Render
 
     return (
@@ -173,9 +180,9 @@ export default function BrowseListingsPage() {
                                     onChange={handleFilterChange}
                                 >
                                     <option value="">Any Edition</option>
-                                    {['1st','2nd','3rd','4th','5th',
-                                    '6th','7th','8th','9th','10th'].map(e => (
-                                        <option key={e} value={e}>{e}</option>
+                                    {['1','2','3','4','5',
+                                    '6','7','8','9','10'].map(e => (
+                                        <option key={e} value={e}>{getOrdinal(parseInt(e))}</option>
                                     ))}
                                 </Select>
                             </div>

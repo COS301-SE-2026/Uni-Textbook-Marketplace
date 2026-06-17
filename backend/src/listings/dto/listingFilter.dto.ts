@@ -27,4 +27,9 @@ export class ListingFiltersDto {
     @Type(() => Number)
     @IsNumber()
     priceMax?: number;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    edition?: number;
 }

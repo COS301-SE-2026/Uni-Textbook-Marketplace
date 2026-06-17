@@ -12,15 +12,16 @@ import BASE_URL from '@/lib/api';
 // Helpers
 
 const CONDITION_LABEL: Record<string, string> = {
-    LIKE_NEW: 'Like New',
-    GOOD: 'Good',
-    ACCEPTABLE: 'Acceptable',
+    'new': 'Like New',
+    'good': 'Good',
+    'fair': 'Fair',
+    'poor': 'Poor',
 }
 
 const ANNOTATION_LABEL: Record<string, string> = {
-    NONE: 'None',
-    LIGHT: 'Light',
-    HEAVY: 'Heavy',
+    'none': 'None',
+    'light': 'Light',
+    'heavy': 'Heavy',
 }
 
 const FACULTY_LABEL: Record<string, string> = {
@@ -66,12 +67,18 @@ export default function ListingDetailPage() {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const res = await fetch(`${BASE_URL}/listings/${id}`)
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${BASE_URL}/listings/${id}`, {
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : '',
+                    },
+                })
                 if (!res.ok) throw new Error('Not found')
                 const data = await res.json()
+                console.log('Listing data:', data)
                 setListing(data)
             } catch (err) {
-                console.error(err)
+                console.error('Error fetching listing:', err)
             } finally {
                 setLoading(false)
             }
@@ -151,19 +158,27 @@ export default function ListingDetailPage() {
         )
     }
 
-    const seller = listing.seller
+    const seller = listing.seller || { first_name: 'Unknown', last_name: 'Seller', is_verified: false }
+    const book = listing.book || { edition: 'N/A', author: 'Unknown', isbn: 'N/A'}
+    const moduleData = listing.module || { code: 'N/A', faculty: 'N/A' }
+    const photoUrls = listing.photo_urls || []
+    const title = listing.title || 'Untitled'
+    const price = listing.price || 0
+    const condition = listing.condition || 'good'
+    const annotationLevel = listing.annotation_level || 'none'
+    const createdAt = listing.created_at || new Date().toISOString()
 
     return (
         <div className="container-content py-8">
 
             {/* Back */}
-            <Button
-                variant='secondary'
+            <button
                 onClick={() => router.back()}
-                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-6"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6 group"
             >
-                ← Back to results
-            </Button>
+                <span className="transform group-hover:-translate-x-1 transition-transform duration-200">←</span>
+                Back to results
+            </button>
 
             <div className="flex flex-col lg:flex-row gap-8">
 
@@ -171,38 +186,34 @@ export default function ListingDetailPage() {
 
                     {/* Main image */}
                     <div className="relative w-full aspect-square max-w-sm bg-gray-100 rounded-lg overflow-hidden mb-3">
-                        {listing.photo_urls?.[activeImage] ? (
+                        {photoUrls.length > 0 ? (
                             <Image
-                                src={normalizeImage(listing.photo_urls?.[activeImage]) ?? normalizeImage(listing.photo_urls?.[0])}
-                                alt={listing.title}
+                                src={normalizeImage(photoUrls[activeImage] || photoUrls[0])}
+                                alt={title}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                             />
                         ) : (
-                            <svg
-                                className="w-24 h-24 text-gray-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1}
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16
-                                       16m-2-2l1.586-1.586a2 2 0 012.828 0L20
-                                       14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2
-                                       0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
+                            <div className="flex items-center justify-center h-full text-gray-300">
+                                <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1}
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16
+                                        16m-2-2l1.586-1.586a2 2 0 012.828 0L20
+                                        14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2
+                                        0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                            </div>
                         )}
                     </div>
 
                     {/* Thumbnails */}
-                    {listing.photo_urls?.length > 1 && (
+                    {photoUrls.length > 1 && (
                         <div className="flex gap-2">
-                            {listing.photo_urls.map((img, i) => (
+                            {photoUrls.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImage(i)}
@@ -237,29 +248,29 @@ export default function ListingDetailPage() {
                 <div className="flex-1">
 
                     <h2 className="text-xl font-bold leading-snug">
-                        {listing.title}
+                        {title}
                     </h2>
                     <p className="text-gray-500 text-sm mt-1">
-                        {listing.book.edition} Edition
+                        {book.edition} Edition
                     </p>
                     <p className="text-gray-700 text-sm mt-1">
-                        {listing.book.author}
+                        {book.author}
                     </p>
 
                     <p className="text-2xl font-bold mt-4">
-                        R {listing.price}
+                        R {Number(price).toFixed(2)}
                     </p>
 
                     {/* Details table */}
                     <table className="mt-6 w-full text-sm">
                         <tbody>
                             {[
-                                ['Condition', CONDITION_LABEL[listing.condition] ?? listing.condition],
-                                ['Annotations', ANNOTATION_LABEL[listing.annotation_level] ?? listing.annotation_level],
-                                ['Module Code', listing.module.code],
-                                ['Faculty', listing.module.faculty],
-                                ['ISBN', listing.book.isbn],
-                                ['Listed', timeAgo(listing.created_at)],
+                                ['Condition', CONDITION_LABEL[condition] || condition],
+                                ['Annotations', ANNOTATION_LABEL[annotationLevel] || annotationLevel],
+                                ['Module Code', moduleData.code],
+                                ['Faculty', moduleData.faculty],
+                                ['ISBN', book.isbn],
+                                ['Listed', timeAgo(createdAt)],
                             ].map(([label, value]) => (
                                 <tr key={label} className="border-b border-gray-100">
                                     <td className="py-2 text-gray-500 w-32">
@@ -299,7 +310,7 @@ export default function ListingDetailPage() {
 
                 </div>
 
-                {seller && (
+                {/* Seller column */}
                     <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
 
                         {/* Seller info */}
@@ -310,11 +321,11 @@ export default function ListingDetailPage() {
 
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                                    `${seller.first_name} ${seller.last_name}`
+                                    {seller.first_name?.[0]}{seller.last_name?.[0] || ''}
                                 </div>
                                 <div>
                                     <p className="font-semibold text-sm">
-                                        {`${seller.first_name} ${seller.last_name}`}
+                                        {seller.first_name} {seller.last_name}
                                     </p>
                                     {seller.is_verified && (
                                         <span className="text-xs text-green-600 flex items-center gap-1">
@@ -359,10 +370,7 @@ export default function ListingDetailPage() {
                                 personal details with sellers.
                             </p>
                         </div>
-
                     </aside>
-                )}
-
             </div>
 
             <Modal
@@ -393,7 +401,7 @@ export default function ListingDetailPage() {
                 ) : (
                     <div className="flex flex-col gap-4">
                         <p className="text-sm text-gray-600">
-                            Enquiring about: <strong>{listing.title}</strong>
+                            Enquiring about: <strong>{title}</strong>
                         </p>
                         <textarea
                             className="w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
