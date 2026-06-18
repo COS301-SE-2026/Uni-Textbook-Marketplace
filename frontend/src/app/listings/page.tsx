@@ -56,7 +56,6 @@ export default function BrowseListingsPage() {
 
             const response = await getListings(params.toString())
 
-            console.log('Raw response from getListings:', response);
 
             const listings = Array.isArray(response.listings) ? response.listings : [];
 

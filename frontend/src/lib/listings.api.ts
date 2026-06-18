@@ -66,15 +66,12 @@ export async function createListing(data: CreateListingData) {
 export async function getListings(queryParams?: string): Promise<{ listings: any[]; total: number }> {
   const url = queryParams ? `/listings?${queryParams}` : '/listings';
 
-  console.log('getListings URL:', url);
 
   const data: unknown = await api.get(url);
 
-  console.log('Raw response from backend:', data);
-  console.log('Response type:', Array.isArray(data) ? 'Array' : typeof data);
 
   if (Array.isArray(data)) {
-    console.log('Backend returned array with', data.length, 'items');
+    
     return {
       listings: data,
       total: data.length
@@ -90,7 +87,6 @@ export async function getListings(queryParams?: string): Promise<{ listings: any
     const listingsArray = Array.isArray(listings) ? listings : [];
     const total = obj.total ?? obj.count ?? listingsArray.length;
 
-    console.log('Backend returned object with', listingsArray.length, 'items');
 
     return {
       listings: listingsArray,
