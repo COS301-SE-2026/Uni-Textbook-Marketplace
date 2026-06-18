@@ -75,7 +75,6 @@ export default function ListingDetailPage() {
                 })
                 if (!res.ok) throw new Error('Not found')
                 const data = await res.json()
-                console.log('Listing data:', data)
                 setListing(data)
             } catch (err) {
                 console.error('Error fetching listing:', err)
