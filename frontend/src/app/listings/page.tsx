@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
+import {getListings} from '@/lib/listings.api'
 
 
 // Filter state
@@ -43,8 +44,6 @@ export default function BrowseListingsPage() {
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
-            const BASE_URL = process.env.NEXT_PUBLIC_API_URL
-
             const params = new URLSearchParams()
 
             if (f.faculty) params.set('faculty', f.faculty)
@@ -55,29 +54,17 @@ export default function BrowseListingsPage() {
             if (f.condition) params.set('condition', f.condition)
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
 
-            const query = params.toString();
+            const response = await getListings(params.toString())
 
-            const url = query
-                ? `${BASE_URL}/listings?${query}`
-                : `${BASE_URL}/listings`;
-                console.log("BASE_URL:", BASE_URL);
-                console.log("URL:", url);
-            const res = await fetch(url)
+            console.log('Raw response from getListings:', response);
 
-            console.log('STATUS:', res.status)
-            console.log('OK:', res.ok)
-            console.log('CONTENT TYPE:', res.headers.get('content-type'))
+            const listings = Array.isArray(response.listings) ? response.listings : [];
 
-            const data = await res.json()
-
-            console.log('DATA:', data)
-
-            const listings = data.map(mapListing)
-            const total = data.length
-
+            const total = typeof response.total === 'number' ? response.total : listings.length;
+            
             return {
-            listings,
-            total,
+                listings: listings.map(mapListing),
+                total: total,
             }
         } catch (err) {
             console.error('Failed to fetch listings', err)
@@ -111,6 +98,13 @@ export default function BrowseListingsPage() {
     const handleClear = () => {
         setFilters(EMPTY_FILTERS)
         setApplied(EMPTY_FILTERS)
+    }
+
+    const getOrdinal = (n: number): string => {
+        if (n === 1) return '1st';
+        if (n === 2) return '2nd';
+        if (n === 3) return '3rd';
+        return `${n}th`;
     }
 
     // Render
@@ -186,9 +180,9 @@ export default function BrowseListingsPage() {
                                     onChange={handleFilterChange}
                                 >
                                     <option value="">Any Edition</option>
-                                    {['1st','2nd','3rd','4th','5th',
-                                    '6th','7th','8th','9th','10th'].map(e => (
-                                        <option key={e} value={e}>{e}</option>
+                                    {['1','2','3','4','5',
+                                    '6','7','8','9','10'].map(e => (
+                                        <option key={e} value={e}>{getOrdinal(parseInt(e))}</option>
                                     ))}
                                 </Select>
                             </div>

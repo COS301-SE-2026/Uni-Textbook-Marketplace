@@ -41,6 +41,11 @@ export interface CreateListingData {
   photoUrls: string[];
 }
 
+export interface ListingResponse {
+  listings: any[];
+  total: number;
+}
+
 export async function createBook(data: CreateBookData): Promise<Book> {
   return api.post<Book>('/books', data);
 }
@@ -56,4 +61,46 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
 
 export async function createListing(data: CreateListingData) {
   return api.post('/listings', data);
+}
+
+export async function getListings(queryParams?: string): Promise<{ listings: any[]; total: number }> {
+  const url = queryParams ? `/listings?${queryParams}` : '/listings';
+
+  console.log('getListings URL:', url);
+
+  const data: unknown = await api.get(url);
+
+  console.log('Raw response from backend:', data);
+  console.log('Response type:', Array.isArray(data) ? 'Array' : typeof data);
+
+  if (Array.isArray(data)) {
+    console.log('Backend returned array with', data.length, 'items');
+    return {
+      listings: data,
+      total: data.length
+    };
+  }
+
+  if (data && typeof data === 'object') {
+    
+    const obj = data as Record<string, unknown>;
+
+    const listings = obj.listings || obj.data || obj.items || obj.results || [];
+
+    const listingsArray = Array.isArray(listings) ? listings : [];
+    const total = obj.total ?? obj.count ?? listingsArray.length;
+
+    console.log('Backend returned object with', listingsArray.length, 'items');
+
+    return {
+      listings: listingsArray,
+      total: typeof total === 'number' ? total : listingsArray.length
+    };
+  }
+
+  console.warn('Unexpected response format:', data);
+  return {
+    listings: [],
+    total: 0
+  };
 }
