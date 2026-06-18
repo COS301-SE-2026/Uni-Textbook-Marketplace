@@ -19,16 +19,37 @@
     color: #000f2b;
   }
 
+  /* Light mode (default)*/
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+    --card-bg: #ffffff;
+    --card-border: #e5e7eb;
+    --nav-bg: #ffffff;
+    --nav-border: #dddddd;
+  }
+
+  /* Dark mode */
+  .dark {
+    --background: #171717;
+    --foreground: #ededed;
+    --card-bg: #1a1a1a;
+    --card-border: #374151;
+    --nav-bg: #1a1a1a;
+    --nav-border: #374151;
+  }
+
   /* Base */
   body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.6em;
-    color: #3a3a3a;
-    background-color: #ffffff;
+    color: var(--foreground);
+    background-color: var(--background);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Headings */
@@ -36,7 +57,7 @@
     font-size: 3.125rem;
     font-weight: 700;
     line-height: 1.2em;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   h2 {
@@ -44,35 +65,35 @@
     font-weight: 700;
     line-height: 1.3em;
     text-transform: uppercase;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   h3 {
     font-size: 1.375rem;
     font-weight: 600;
     line-height: 1.3em;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   h4 {
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.3em;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   h5 {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.4em;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   h6 {
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.4em;
-    color: #000f2b;
+    color: var(--foreground);
   }
 
   /* Links */
@@ -94,9 +115,9 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     font-weight: 400;
-    color: #3a3a3a;
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
+    color: var(--foreground);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 4px;
     outline: none;
     width: 100%;
@@ -199,6 +220,17 @@
     cursor: not-allowed;
   }
 
+  .dark .btn-secondary {
+    color: #00B4D8;
+    border-color: #00B4D8;
+  }
+
+  .dark .btn-secondary:hover,
+  .dark .btn-secondary:focus {
+    background-color: #00B4D8;
+    color: #000f2b;
+  }
+
   /* Danger Button */
   /* #ffffff on #dc2626 = ~4.6:1 WCAG AA */
   .btn-danger {
@@ -225,11 +257,11 @@
 
   /* Card */
   .card {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 6px;
     padding: 1.5rem;
-    transition: box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
   }
 
   .card:hover {
@@ -295,7 +327,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #3a3a3a;
+    color: var(--foreground);
     margin-bottom: 6px;
   }
 
