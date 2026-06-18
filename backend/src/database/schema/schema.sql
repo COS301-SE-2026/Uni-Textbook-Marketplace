@@ -18,7 +18,7 @@ CREATE TABLE users (
 
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
-
+    faculty_id UUID REFERENCES faculties(id) ON DELETE SET NULL,
     university_id UUID REFERENCES universities(id) ON DELETE SET NULL,
     is_verified BOOLEAN DEFAULT FALSE,
 
