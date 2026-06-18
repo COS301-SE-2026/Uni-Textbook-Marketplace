@@ -1,4 +1,4 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');*/
+
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
@@ -26,7 +26,7 @@
     --card-bg: #ffffff;
     --card-border: #e5e7eb;
     --nav-bg: #ffffff;
-    --nav-border: #dddddd;
+    --nav-border: #ffffff;
   }
 
   /* Dark mode */

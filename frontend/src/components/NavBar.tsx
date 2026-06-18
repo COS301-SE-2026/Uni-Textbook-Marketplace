@@ -71,7 +71,7 @@ if (!mounted) return null;
   const navLinks = isAdmin ? adminNavLinks : authNavLinks;
 
   return (
-    <nav className="w-full bg-white dark:bg-[#1a1a1a] border-b border-[#dddddd} dark:border-[#374151] sticky top-0 z-50 transition-colors duration-300">
+    <nav className="w-full bg-[var(--nav-bg)] border-b border-white dark:border-[#374151] sticky top-0 z-50 transition-colors duration-300">
       <div className="container-content">
         <div className="flex items-center justify-between h-[70px]">
 
@@ -82,7 +82,7 @@ if (!mounted) return null;
               <span className="block text-xs font-semibold text-[#00B4D8] tracking-widest uppercase">
                 Uni Textbook
               </span>
-              <span className="block text-lg font-bold text-[#000f2b] dark:text-white leading-none">
+              <span className="block text-lg font-bold text-[var(--foreground)] leading-none">
                 Marketplace
               </span>
             </div>
@@ -95,10 +95,10 @@ if (!mounted) return null;
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide
+                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8]
                   ${pathname === link.href
                       ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
-                      : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
+                      : 'text-[var(--foreground)]'
                     }`}
                 >
                   {link.label.toUpperCase()}
@@ -113,13 +113,12 @@ if (!mounted) return null;
             {/* Theme Toggle */}
             <ThemeToggle />
 
-
             {isAuthenticated && user ? (
               <>
                 {/* Notification bell */}
                 <button
                   aria-label="Notifications"
-                  className="relative p-2 text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8] transition-colors duration-200 rounded-full hover:bg-[#F5F5F5] dark:hover:bg-gray-800"
+                  className="relative p-2 text-[var(--foreground)] hover:text-[#00B4D8] transition-colors duration-200 rounded-full hover:bg-[#F5F5F5] dark:hover:bg-gray-800"
                 >
                   <Bell size={20} />
                 </button>
@@ -134,10 +133,10 @@ if (!mounted) return null;
                     aria-expanded={userMenuOpen}
                   >
                     <div className="w-9 h-9 rounded-full bg-[#00B4D8] flex items-center
-                                    justify-center text-[#000f2b] text-sm font-bold">
+                                    justify-center text-[#000f2b] dark:text-white text-sm font-bold">
                       {initials}
                     </div>
-                    <span className="text-sm font-medium text-[#3a3a3a] dark:text-gray-300">
+                    <span className="text-sm font-medium text-[var(--foreground)]">
                       {user.first_name}
                     </span>
                     <ChevronDown
@@ -149,24 +148,22 @@ if (!mounted) return null;
 
                   {/* Dropdown */}
                   {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1a1a1a] border border-[#dddddd] dark:border-[#374151] rounder-md shadow-md overflow-hidden z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50">
                       {isAdmin && (
                         <>
                           <Link
                             href="/admin"
-                            className="block px-4 py-3 text-sm text-[#3a3a3a]
-                                       dark:text-gray-300 hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
+                            className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
                             onClick={() => setUserMenuOpen(false)}
                           >
                             Admin Panel
                           </Link>
-                          <div className="border-t border-[#dddddd] dark:border-[#374151]" />
+                          <div className="border-t border-[var(--card-border)]" />
                         </>
                       )}
                       <Link
                         href="/listings/mine"
-                        className="block px-4 py-3 text-sm text-[#3a3a3a] dark:text-gray-300
-                                   hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
+                        className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
                                    no-underline transition-colors duration-150"
                         onClick={() => setUserMenuOpen(false)}
                       >
@@ -174,14 +171,13 @@ if (!mounted) return null;
                       </Link>
                       <Link
                         href="/settings"
-                        className="block px-4 py-3 text-sm text-[#3a3a3a]
-                                   dark:text-gray-300 hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
+                        className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
                                    no-underline transition-colors duration-150"
                         onClick={() => setUserMenuOpen(false)}
                       >
                         Settings
                       </Link>
-                      <div className="border-t border-[#dddddd] dark:border-[#374151]" />
+                      <div className="border-t border-[var(--card-border)]" />
                       <button
                         onClick={async () => {
                           setUserMenuOpen(false);
@@ -203,8 +199,7 @@ if (!mounted) return null;
                   href="/auth/register"
                   className="px-5 py-2 text-sm font-semibold text-[#00B4D8]
                              border-2 border-[#00B4D8] rounded no-underline
-                             hover:bg-[#00B4D8] hover:text-[#000f2b]
-                             transition-all duration-200"
+                             hover:bg-[#00B4D8] hover:text-[#000f2b]"
                 >
                   Register
                 </Link>
@@ -233,16 +228,16 @@ if (!mounted) return null;
 
       {/* MOBILE MENU */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#dddddd] dark:border-[#374151] bg-white dark:bg-[#1a1a1a]">
+        <div className="md:hidden border-t border-[var(--nav-border)] bg-[var(--nav-bg)]">
           <div className="container-content py-4 flex flex-col gap-1">
             {isAuthenticated && user ? (
               <>
-                <div className="flex items-center gap-3 py-3 border-b border-[#dddddd] dark:border-[#374151] mb-2">
+                <div className="flex items-center gap-3 py-3 border-b border-[var(--nav-border)] mb-2">
                   <div className="w-10 h-10 rounded-full bg-[#00B4D8] flex items-center
-                                  justify-center text-[#000f2b] text-sm font-bold">
+                                  justify-center text-[#000f2b] dark:text-white text-sm font-bold">
                     {initials}
                   </div>
-                  <span className="text-sm font-medium text-[#3a3a3a] dark:text-gray-300">
+                  <span className="text-sm font-medium text-[var(--foreground)]">
                     {user.first_name} {user.last_name}
                   </span>
                 </div>
@@ -252,10 +247,10 @@ if (!mounted) return null;
                     key={link.href}
                     href={link.href}
                     className={`py-3 text-sm font-medium no-underline
-                               border-b border-[#F5F5F5] dark:border-[#374151] transition-colors
+                               border-b border-[var(--card-border)] transition-colors
                                ${pathname === link.href
-                                 ? 'text-[#00B4D8]'
-                                 : 'text-[#3a3a3a] dark:text-gray-300hover:text-[#00B4D8]'
+                                 ? 'text-[#00B4D8]!'
+                                 : 'text-[var(--foreground)] hover:text-[#00B4D8]'
                                }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -265,16 +260,16 @@ if (!mounted) return null;
 
                 <Link
                   href="/listings/mine"
-                  className="py-3 text-sm text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]
-                             no-underline border-b border-[#F5F5F5] dark:border-[#2a2a2a] transition-colors"
+                  className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
+                             no-underline border-b border-[var(--card-border)] transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   My Listings
                 </Link>
                 <Link
                   href="/settings"
-                  className="py-3 text-sm text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]
-                             no-underline border-b border-[#F5F5F5] dark:border-[#2a2a2a] transition-colors"
+                  className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
+                             no-underline border-b border-[var(--card-border)] transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Settings
@@ -297,7 +292,7 @@ if (!mounted) return null;
                   className="py-3 text-sm font-medium text-[#3a3a3a]
                              dark:text-gray-300
                              hover:text-[#00B4D8] no-underline
-                             border-b border-[#F5F5F5] dark:border-[#2a2a2a] transition-colors"
+                             border-b border-[var(--card-border)] transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Register

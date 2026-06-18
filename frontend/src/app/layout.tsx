@@ -25,12 +25,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} font-sans antialiased`} suppressHydrationWarning>
         <ThemeProvider>
-        <AuthProvider>
-          <NavBar />
-          <main>
-            {children}
-          </main>
-        </AuthProvider>
+          <AuthProvider>
+            <NavBar />
+            <main>
+              {children}
+            </main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
