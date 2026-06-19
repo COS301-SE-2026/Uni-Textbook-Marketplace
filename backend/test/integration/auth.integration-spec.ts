@@ -8,6 +8,8 @@ import { University } from "../../src/database/entities/university.entity";
 import { User } from "../../src/database/entities/users.entity";
 import { EMAIL_SERVICE } from "../../src/email/email.interface";
 
+const Test_Password = 'student@123';
+
 
 describe('Auth Integration', () => {
 
@@ -27,7 +29,7 @@ describe('Auth Integration', () => {
             .post('/auth/register')
             .send({
                 email: 'u1234598@tuks.co.za',
-                password: 'student@123',
+                password: Test_Password,
                 first_name: 'gift',
                 last_name: 'mohub',
                 faculty: 'EBIT',
@@ -128,7 +130,7 @@ describe('Auth Integration', () => {
                 .post('/auth/login')
                 .send({
                     email: `u1234598@tuks.co.za`,
-                    password: 'student@123',
+                    password: Test_Password,
                 })
                 .expect(200);
 
