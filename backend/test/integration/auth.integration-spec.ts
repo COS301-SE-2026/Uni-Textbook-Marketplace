@@ -6,6 +6,7 @@ import request from "supertest";
 
 import { University } from "../../src/database/entities/university.entity";
 import { User } from "../../src/database/entities/users.entity";
+import { EMAIL_SERVICE } from "../../src/email/email.interface";
 
 
 describe('Auth Integration', () => {
@@ -19,6 +20,10 @@ describe('Auth Integration', () => {
         
         const moduleRef = await Test.createTestingModule({
             imports: [AppModule]
+        })
+        .overrideProvider(EMAIL_SERVICE)
+        .useValue({
+            sendOtp: jest.fn().mockResolvedValue(undefined)
         }).compile();
 
         app = moduleRef.createNestApplication();
@@ -111,5 +116,39 @@ describe('Auth Integration', () => {
         expect(response.body).toBeDefined();
     },15000);
 
-    
+    //api/auth/login
+    it('it should login a student', async () =>{
+
+        const university = await universityRepository.save({
+            name: 'University of Pretoria',
+            email_domain: 'tuks.co.za'
+        }); 
+
+        const response = await request(app.getHttpServer())
+            .post('/auth/register')
+            .send({
+                email: `u1234598@tuks.co.za`,
+                password: 'student@123',
+                first_name: 'gift',
+                last_name: 'mohub',
+                university_id: university.id,
+                faculty: 'EBIT',
+            })
+            .expect(201);
+
+        await userRepository.update(
+            { email: 'u1234598@tuks.co.za'},
+            { is_verified: true}
+        )
+
+        const loginResponse = await request(app.getHttpServer())
+            .post('/auth/login')
+            .send({
+                email: `u1234598@tuks.co.za`,
+                password: 'student@123',
+            })
+            .expect(200);
+
+        expect(loginResponse.body.message).toBe('Login successful.');
+    });
 });
