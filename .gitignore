@@ -11,6 +11,7 @@ yarn-error.log*
 .env.staging
 .env.production
 *.env
+*.test
 
 # ─── Next.js ────────────────────────────
 frontend/.next/
