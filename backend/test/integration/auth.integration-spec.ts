@@ -151,4 +151,20 @@ describe('Auth Integration', () => {
 
         expect(loginResponse.body.message).toBe('Login successful.');
     });
+
+    //api/auth/universities
+    it('it should return list of unis', async () =>{
+        
+        await universityRepository.save({
+            name: 'University of Pretoria',
+            email_domain: 'tuks.co.za'
+        });
+
+        const response = await request(app.getHttpServer())
+            .get('/auth/universities')
+            .send()
+            .expect(200);
+
+        expect(response.body).toBeDefined();
+    });
 });
