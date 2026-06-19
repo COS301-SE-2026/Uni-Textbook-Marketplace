@@ -1,31 +1,44 @@
-// app/api/listings/[id]/route.ts
-
 import { NextRequest, NextResponse } from 'next/server'
-import { MOCK_LISTINGS } from '../../../../../lib/mockData'
+
+const BASE_URL = process.env.BACKEND_URL
 
 export async function GET(
-    _req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    const { id } = await params
-    const listing = MOCK_LISTINGS.find(l => l.id === id)
+        _req: NextRequest,
+        context: { params: Promise<{ id: string }> }
+    ) {
+        try {
+            const { id } = await context.params;
+            const res = await fetch(`${BASE_URL}/listings/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                cache: 'no-store',
+            })
 
-    if (!listing) {
-        return NextResponse.json(
-            { error: 'Listing not found' },
-            { status: 404 }
-        )
-    }
+            const data = await res.json()
+            console.log("testing get by ID:")
+            console.log('GET BY ID RESPONSE DATA:', data)
 
-    return NextResponse.json(listing)
-}
+            if (!res.ok) {
+                return NextResponse.json(
+                    {
+                        error: 'Backend error',
+                        status: res.status,
+                        details: data,
+                    },
+                    { status: res.status }
+                )
+            }
 
-export async function DELETE(
-    _req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    const { id } = await params
-    
-    // Mock: just return success
-    return NextResponse.json({ message: `Listing ${id} deleted (mock)` })
+            return NextResponse.json(data)
+        } catch (err) {
+            return NextResponse.json(
+                {
+                    error: 'Backend unreachable',
+                    details: err instanceof Error ? err.message : String(err),
+                },
+                { status: 500 }
+            )
+        }
 }

@@ -11,6 +11,7 @@ yarn-error.log*
 .env.staging
 .env.production
 *.env
+*.test
 
 # ─── Next.js ────────────────────────────
 frontend/.next/
@@ -43,3 +44,6 @@ docker-compose.override.yml
 # ─── Logs ───────────────────────────────
 logs/
 *.log
+
+#please don't remove this
+development/

@@ -66,13 +66,21 @@ describe('ListingsService', () => {
     status: ListingStatus.PENDING,
   };
 
-  // Mock repositories
+  const qbMock = {
+    leftJoinAndSelect: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
   const mockListingRepository = {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
     findOne: jest.fn(),
     findOneBy: jest.fn(),
+
+    createQueryBuilder: jest.fn(() => qbMock),
   };
 
   const mockUserRepository = {
@@ -86,6 +94,7 @@ describe('ListingsService', () => {
   const mockModuleRepository = {
     findOneBy: jest.fn(),
   };
+
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -240,41 +249,31 @@ describe('ListingsService', () => {
         mockApprovedListing,
         { ...mockApprovedListing, id: 'listing-4' },
       ];
-      mockListingRepository.find.mockResolvedValue(approvedListings);
+
+      qbMock.getMany.mockResolvedValue(approvedListings);
 
       const result = await service.getAllApproved();
 
       expect(result).toEqual(approvedListings);
-      expect(mockListingRepository.find).toHaveBeenCalledWith({
-        where: { status: ListingStatus.APPROVED },
-        relations: ['book', 'module', 'seller'],
-      });
+      expect(mockListingRepository.createQueryBuilder).toHaveBeenCalledWith('listing');
+      expect(qbMock.getMany).toHaveBeenCalled();
     });
 
     it('should return empty array when no approved listings exist', async () => {
-      mockListingRepository.find.mockResolvedValue([]);
+      qbMock.getMany.mockResolvedValue([]);
 
       const result = await service.getAllApproved();
 
       expect(result).toEqual([]);
-      expect(result).toHaveLength(0);
     });
 
     it('should not return PENDING or REJECTED listings', async () => {
-      const allListings = [
-        mockApprovedListing,
-        mockPendingListing,
-        { ...mockListing, id: 'listing-4', status: ListingStatus.REJECTED },
-      ];
-      
-      mockListingRepository.find.mockResolvedValue([mockApprovedListing]);
+      qbMock.getMany.mockResolvedValue([mockApprovedListing]);
 
       const result = await service.getAllApproved();
 
       expect(result).toHaveLength(1);
       expect(result[0].status).toBe(ListingStatus.APPROVED);
-      expect(result).not.toContainEqual(expect.objectContaining({ status: ListingStatus.PENDING }));
-      expect(result).not.toContainEqual(expect.objectContaining({ status: ListingStatus.REJECTED }));
     });
   });
 

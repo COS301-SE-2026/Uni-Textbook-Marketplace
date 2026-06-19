@@ -6,14 +6,14 @@ import Select from '@/components/ui/Select'
 import TextArea from '@/components/ui/TextArea'
 import ErrorText from '@/components/ui/ErrorText'
 
-
-
 export interface ListingFormData {
     title: string
     author: string
     edition: string
     isbn: string
-    moduleCode: string
+    publisher: string
+    code: string
+    name: string
     faculty: string
     condition: string
     annotationLevel: string
@@ -26,16 +26,10 @@ interface ListingFormProps {
     step: number
     form: ListingFormData
     errors: Partial<Record<keyof ListingFormData, string>>
-    onChange: (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-        >
-    ) => void
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
     onRemoveImage: (index: number) => void
 }
-
-// Component 
 
 export default function ListingForm({
     step,
@@ -46,7 +40,7 @@ export default function ListingForm({
     onRemoveImage,
 }: ListingFormProps) {
 
-    //Step 1 : Book Details
+    // Step 1 : Book Details
 
     if (step === 1) {
         return (
@@ -60,7 +54,7 @@ export default function ListingForm({
                         name="title"
                         value={form.title}
                         onChange={onChange}
-                        placeholder="e.g. Database Systems: Concepts"
+                        placeholder="e.g. Software Engineering"
                     />
                     {errors.title && <ErrorText>{errors.title}</ErrorText>}
                 </div>
@@ -71,7 +65,7 @@ export default function ListingForm({
                         name="author"
                         value={form.author}
                         onChange={onChange}
-                        placeholder="e.g. Abraham Silberschatz"
+                        placeholder="e.g. David C Kung"
                     />
                     {errors.author && <ErrorText>{errors.author}</ErrorText>}
                 </div>
@@ -82,7 +76,8 @@ export default function ListingForm({
                         name="edition"
                         value={form.edition}
                         onChange={onChange}
-                        placeholder="e.g. 7th"
+                        placeholder="e.g. 2"
+                        type="number"
                     />
                     {errors.edition && <ErrorText>{errors.edition}</ErrorText>}
                 </div>
@@ -93,21 +88,54 @@ export default function ListingForm({
                         name="isbn"
                         value={form.isbn}
                         onChange={onChange}
-                        placeholder="e.g. 978-0-07-352332-3"
+                        placeholder="e.g. 978-1260792683"
                     />
                     {errors.isbn && <ErrorText>{errors.isbn}</ErrorText>}
                 </div>
 
                 <div>
                     <Input
-                        label="Module Code *"
-                        name="moduleCode"
-                        value={form.moduleCode}
+                        label="Publisher *"
+                        name="publisher"
+                        value={form.publisher}
                         onChange={onChange}
-                        placeholder="e.g. COS326"
+                        placeholder="e.g. McGraw Hill"
                     />
-                    {errors.moduleCode &&
-                        <ErrorText>{errors.moduleCode}</ErrorText>}
+                    {errors.publisher && <ErrorText>{errors.publisher}</ErrorText>}
+                </div>
+
+            </div>
+        )
+    }
+
+    // Step 2 : Module Details
+
+    if (step === 2) {
+        return (
+            <div className="card flex flex-col gap-5">
+
+                <h3>Module Details</h3>
+
+                <div>
+                    <Input
+                        label="Module Code *"
+                        name="code"
+                        value={form.code}
+                        onChange={onChange}
+                        placeholder="e.g. COS301"
+                    />
+                    {errors.code && <ErrorText>{errors.code}</ErrorText>}
+                </div>
+
+                <div>
+                    <Input
+                        label="Module Name *"
+                        name="name"
+                        value={form.name}
+                        onChange={onChange}
+                        placeholder="e.g. Software Engineering"
+                    />
+                    {errors.name && <ErrorText>{errors.name}</ErrorText>}
                 </div>
 
                 <div>
@@ -118,13 +146,12 @@ export default function ListingForm({
                         onChange={onChange}
                     >
                         <option value="">Select Faculty</option>
-                        <option value="ENG">Engineering</option>
                         <option value="EBIT">EBIT</option>
                         <option value="LAW">Law</option>
                         <option value="HUM">Humanities</option>
                         <option value="MED">Health Sciences</option>
-                        <option value="NAT">Natural & Agricultural Sciences</option>
-                        <option value="ECO">Economic & Management Sciences</option>
+                        <option value="NAT">Natural Sciences</option>
+                        <option value="ECO">Economic Sciences</option>
                         <option value="EDU">Education</option>
                     </Select>
                     {errors.faculty && <ErrorText>{errors.faculty}</ErrorText>}
@@ -134,9 +161,9 @@ export default function ListingForm({
         )
     }
 
-    //Step 2 : Listing Details
+    // Step 3 : Listing Details
 
-    if (step === 2) {
+    if (step === 3) {
         return (
             <div className="card flex flex-col gap-5">
 
@@ -150,12 +177,12 @@ export default function ListingForm({
                         onChange={onChange}
                     >
                         <option value="">Select Condition</option>
-                        <option value="LIKE_NEW">Like New</option>
-                        <option value="GOOD">Good</option>
-                        <option value="ACCEPTABLE">Acceptable</option>
+                        <option value="new">New</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
                     </Select>
-                    {errors.condition &&
-                        <ErrorText>{errors.condition}</ErrorText>}
+                    {errors.condition && <ErrorText>{errors.condition}</ErrorText>}
                 </div>
 
                 <div>
@@ -166,12 +193,11 @@ export default function ListingForm({
                         onChange={onChange}
                     >
                         <option value="">Select Level</option>
-                        <option value="NONE">None</option>
-                        <option value="LIGHT">Light</option>
-                        <option value="HEAVY">Heavy</option>
+                        <option value="none">None</option>
+                        <option value="light">Light</option>
+                        <option value="heavy">Heavy</option>
                     </Select>
-                    {errors.annotationLevel &&
-                        <ErrorText>{errors.annotationLevel}</ErrorText>}
+                    {errors.annotationLevel && <ErrorText>{errors.annotationLevel}</ErrorText>}
                 </div>
 
                 <div>
@@ -195,17 +221,16 @@ export default function ListingForm({
                         rows={4}
                         placeholder="Describe the condition of your book, any highlights, missing pages, etc."
                     />
-                    {errors.description &&
-                        <ErrorText>{errors.description}</ErrorText>}
+                    {errors.description && <ErrorText>{errors.description}</ErrorText>}
                 </div>
 
             </div>
         )
     }
 
-    //  Step 3 : Upload Pictures
+    // Step 4 : Upload Pictures
 
-    if (step === 3) {
+    if (step === 4) {
         return (
             <div className="card flex flex-col gap-5">
 
@@ -222,7 +247,6 @@ export default function ListingForm({
                     <li>Inside pages (showing any annotations)</li>
                 </ul>
 
-                {/* Upload button */}
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
                     <svg
                         className="w-8 h-8 text-gray-400 mb-2"
@@ -234,8 +258,7 @@ export default function ListingForm({
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={1.5}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0
-                               003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                         />
                     </svg>
                     <span className="text-sm text-gray-500">
@@ -252,7 +275,6 @@ export default function ListingForm({
 
                 {errors.images && <ErrorText>{errors.images}</ErrorText>}
 
-                {/* Preview grid - Fixed: replaced img with next/image */}
                 {form.images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {form.images.map((image, index) => (
@@ -265,7 +287,6 @@ export default function ListingForm({
                                         className="object-cover"
                                     />
                                 </div>
-                                {/* Remove button */}
                                 <button
                                     type="button"
                                     onClick={() => onRemoveImage(index)}

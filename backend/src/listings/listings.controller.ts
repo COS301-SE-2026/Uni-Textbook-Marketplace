@@ -7,6 +7,7 @@ import {
   Body,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -20,6 +21,8 @@ import { Roles } from '../auth/decorator/roles.decorator';
 import { CreateListingDto } from './dto/create-listing.dto';
 
 import { Request } from 'express';
+
+import { ListingFiltersDto } from './dto/listingFilter.dto';
 
 interface AuthenticatedUser {
   id: string;
@@ -46,8 +49,8 @@ export class ListingsController {
 
   //get appro
   @Get()
-  getAll() {
-    return this.listingsService.getAllApproved();
+  getAll(@Query() query: ListingFiltersDto) {
+    return this.listingsService.getAllApproved(query);
   }
 
   // my

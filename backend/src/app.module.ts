@@ -16,10 +16,16 @@ import { Module as ModuleEntity } from './database/entities/module.entity';
 import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ 
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test'
+        ? '.env.test'
+        : '.env',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -45,6 +51,7 @@ import { AuditLog } from './database/entities/audit_log.entity';
     AuthModule,
     ListingsModule,
     ModuleModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

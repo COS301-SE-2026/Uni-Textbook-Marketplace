@@ -1,6 +1,6 @@
 //Author: Omphemetse Mokgotahdi
 type BadgeProps = Readonly<{
-    children: React.ReactElement;
+    children: React.ReactNode;
     variant?: "pending" | "approved" | "rejected";
 }>;
 

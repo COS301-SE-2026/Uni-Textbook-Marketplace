@@ -1,5 +1,6 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body } from '@nestjs/common';
 import { ModuleService } from './module.service';
+import { CreateModuleDto } from '../modules/dto/create.module.dto';
 
 @Controller('modules')
 export class ModuleController {
@@ -11,5 +12,10 @@ export class ModuleController {
     @Query('university') university: string,
   ) {
     return this.moduleService.search(search, university);
+  }
+
+  @Post()
+  async create(@Body() dto: CreateModuleDto) {
+    return await this.moduleService.create(dto);
   }
 }

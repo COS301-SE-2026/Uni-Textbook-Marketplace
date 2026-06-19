@@ -5,15 +5,16 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
+import { api } from '@/lib/api'
 
 // Filter tabs
 
 type Tab = 'ALL' | 'APPROVED' | 'PENDING' | 'REJECTED'
 
 const TABS: { label: string; value: Tab }[] = [
-    { label: 'All',      value: 'ALL' },
-    { label: 'Active',   value: 'APPROVED' },
-    { label: 'Pending',  value: 'PENDING' },
+    { label: 'All', value: 'ALL' },
+    { label: 'Active', value: 'APPROVED' },
+    { label: 'Pending', value: 'PENDING' },
     { label: 'Rejected', value: 'REJECTED' },
 ]
 
@@ -34,9 +35,8 @@ export default function MyListingsPage() {
         const fetchMine = async () => {
             setLoading(true)
             try {
-                const res = await fetch('/api/listings/mine')
-                const data = await res.json()
-                setListings(data.listings ?? [])
+                const data = await api.get<Listing[]>('/listings/mine')
+                setListings(data ?? [])
             } catch (err) {
                 console.error('Failed to load listings', err)
             } finally {
@@ -53,9 +53,9 @@ export default function MyListingsPage() {
         : listings.filter(l => l.status === activeTab)
 
     const counts: Record<Tab, number> = {
-        ALL:      listings.length,
+        ALL: listings.length,
         APPROVED: listings.filter(l => l.status === 'APPROVED').length,
-        PENDING:  listings.filter(l => l.status === 'PENDING').length,
+        PENDING: listings.filter(l => l.status === 'PENDING').length,
         REJECTED: listings.filter(l => l.status === 'REJECTED').length,
     }
 
@@ -65,7 +65,7 @@ export default function MyListingsPage() {
         if (!deleteTarget) return
         setDeleting(true)
         try {
-            await fetch(`/api/listings/${deleteTarget}`, { method: 'DELETE' })
+            await api.delete(`/listings/${deleteTarget}`)
             setListings(prev => prev.filter(l => l.id !== deleteTarget))
             setDeleteTarget(null)
         } catch (err) {
@@ -101,19 +101,17 @@ export default function MyListingsPage() {
                     <button
                         key={tab.value}
                         onClick={() => setActiveTab(tab.value)}
-                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                            activeTab === tab.value
-                                ? 'border-blue-600 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
+                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.value
+                            ? 'border-blue-600 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
                     >
                         {tab.label}
                         {counts[tab.value] > 0 && (
-                            <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${
-                                activeTab === tab.value
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'bg-gray-100 text-gray-500'
-                            }`}>
+                            <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${activeTab === tab.value
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-gray-100 text-gray-500'
+                                }`}>
                                 {counts[tab.value]}
                             </span>
                         )}
