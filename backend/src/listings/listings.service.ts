@@ -62,15 +62,15 @@ export class ListingsService {
       .leftJoinAndSelect('listing.module', 'module')
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
-    //optional query fikters
+    //optional query filters
     if (query?.moduleCode) {
-      qb.andWhere('module.code = :moduleCode', {
-        moduleCode: query.moduleCode,
+      qb.andWhere('module.code ILIKE :moduleCode', {
+        moduleCode: `%${query.moduleCode}%`,
       });
     }
     if (query?.faculty) {
-      qb.andWhere('module.faculty = :faculty', {
-        faculty: query.faculty,
+      qb.andWhere('module.faculty ILIKE :faculty', {
+        faculty: `%${query.faculty}%`,
       });
     }
     if (query?.condition) {
@@ -91,6 +91,11 @@ export class ListingsService {
     if (query?.priceMax) {
       qb.andWhere('listing.price <= :priceMax', {
         priceMax: query.priceMax,
+      });
+    }
+    if (query?.edition) {
+      qb.andWhere('book.edition = :edition', {
+        edition: query.edition,
       });
     }
     return qb.getMany();

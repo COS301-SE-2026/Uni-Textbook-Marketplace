@@ -13,19 +13,30 @@ if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
 export default BASE_URL;
+//Temp Helper
+function getAuthToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('token');
+}
 
 async function request<T>(
     method: string,
     path: string,
     body?: unknown,
 ): Promise<T> {
+    const token = getAuthToken();
+
+    const headers: HeadersInit = {
+        'Content-type': 'application/json',
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     const response = await fetch(`${BASE_URL}${path}`, {
         method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers,
         credentials: 'include',
-
         body: body ? JSON.stringify(body) : undefined,
     });
 

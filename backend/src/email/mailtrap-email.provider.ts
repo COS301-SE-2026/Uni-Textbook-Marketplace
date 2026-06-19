@@ -14,7 +14,7 @@ export class MailtrapEmailProvider implements IEmailService {
       host: 'sandbox.smtp.mailtrap.io',
       port: 587,
       secure: false,
-      requireTLS: true,
+      requireTLS: false, //This is temporary
       auth: {
         user: this.config.getOrThrow<string>('MAILTRAP_USER'),
         pass: this.config.getOrThrow<string>('MAILTRAP_PASS'),
