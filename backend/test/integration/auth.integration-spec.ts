@@ -8,7 +8,7 @@ import { University } from "../../src/database/entities/university.entity";
 import { User } from "../../src/database/entities/users.entity";
 import { EMAIL_SERVICE } from "../../src/email/email.interface";
 
-const Test_Password = 'student@123';
+const Test_Password = process.env.TEST_PASSWORD;
 
 
 describe('Auth Integration', () => {
