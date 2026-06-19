@@ -1,17 +1,26 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 export default function ThemeToggle() {
-    const { theme, setTheme } = useTheme();
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        const storedTheme = window.localStorage.getItem('theme') as 'light' | 'dark' | null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = storedTheme ?? (prefersDark ? 'dark' : 'light');
+
+        setTheme(initialTheme);
         setMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (!mounted) return;
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        window.localStorage.setItem('theme', theme);
+    }, [theme, mounted]);
 
     if (!mounted) {
         return <div className="w-9 h-9"/>;
