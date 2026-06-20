@@ -55,7 +55,7 @@ export class User {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'faculty_id' })
-  faculty!: Faculty;
+  faculty!: Faculty | null;
 
   /*
     listings sold by this user

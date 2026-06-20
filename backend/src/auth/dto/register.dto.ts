@@ -43,7 +43,7 @@ export class RegisterDto {
   @ApiPropertyOptional({
     example: 'Ebit',
   })
-  @IsString()
+  @IsUUID()
   @IsOptional()
-  faculty?: string;
+  faculty_id?: string;
 }
