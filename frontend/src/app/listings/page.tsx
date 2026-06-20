@@ -181,7 +181,7 @@ export default function BrowseListingsPage() {
                                     <option value="">Any Edition</option>
                                     {['1','2','3','4','5',
                                     '6','7','8','9','10'].map(e => (
-                                        <option key={e} value={e}>{getOrdinal(parseInt(e))}</option>
+                                        <option key={e} value={e}>{getOrdinal(Number.parseInt(e))}</option>
                                     ))}
                                 </Select>
                             </div>
