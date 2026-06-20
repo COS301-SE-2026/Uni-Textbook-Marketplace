@@ -98,7 +98,7 @@ describe('AuthService', () => {
       first_name: 'Gift',
       last_name: 'M',
       university_id: 'uni-1',
-      faculty: 'Engineering',
+      faculty_id: 'fac-1',
     };
 
     const mockUniversity = {
@@ -167,7 +167,7 @@ describe('AuthService', () => {
     it('should reject if faculty does not exist', async () => {
       const registerDataWithFaculty = {
         ...validRegisterData,
-        faculty: 'NonExistentFaculty',
+        faculty_id: 'non-existent-fac',
       };
       mockUniversityRepository.findOne.mockResolvedValue(mockUniversity);
       mockUserRepository.findOne.mockResolvedValue(null);
