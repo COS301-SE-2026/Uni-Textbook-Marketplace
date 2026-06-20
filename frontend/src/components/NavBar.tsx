@@ -22,8 +22,9 @@ const authNavLinks = [
 ]
 
 const adminNavLinks = [
-  ...authNavLinks,
-  { label: 'Moderate', href: '/admin' },
+  { label: 'Browse', href: '/listings' },
+  { label: 'Messages', href: '/messages' },
+  { label: 'Moderate', href: '/admin/review' },
 ]
 
 
@@ -152,7 +153,7 @@ if (!mounted) return null;
                       {isAdmin && (
                         <>
                           <Link
-                            href="/admin"
+                            href="/admin/review"
                             className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
                             onClick={() => setUserMenuOpen(false)}
                           >
@@ -161,14 +162,16 @@ if (!mounted) return null;
                           <div className="border-t border-[var(--card-border)]" />
                         </>
                       )}
-                      <Link
-                        href="/listings/mine"
-                        className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
-                                   no-underline transition-colors duration-150"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        My Listings
-                      </Link>
+                      {!isAdmin && (
+                        <Link
+                          href="/listings/mine"
+                          className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
+                                    no-underline transition-colors duration-150"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          My Listings
+                        </Link>
+                      )}
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -258,14 +261,16 @@ if (!mounted) return null;
                   </Link>
                 ))}
 
-                <Link
-                  href="/listings/mine"
-                  className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
-                             no-underline border-b border-[var(--card-border)] transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Listings
-                </Link>
+                {!isAdmin && (
+                    <Link
+                    href="/listings/mine"
+                    className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
+                              no-underline border-b border-[var(--card-border)] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Listings
+                  </Link>
+                )}
                 <Link
                   href="/settings"
                   className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
