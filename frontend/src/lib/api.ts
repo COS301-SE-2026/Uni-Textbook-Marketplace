@@ -15,7 +15,7 @@ if (!BASE_URL) {
 export default BASE_URL;
 //Temp Helper
 function getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof globalThis.window === 'undefined') return null;
     return localStorage.getItem('token');
 }
 

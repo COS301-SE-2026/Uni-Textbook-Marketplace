@@ -21,6 +21,7 @@ import { EMAIL_SERVICE } from '../email/email.interface';
 
 import { User } from '../database/entities/users.entity';
 import { University } from '../database/entities/university.entity';
+import { Faculty } from '../database/entities/faculty.entity'; // ADD THIS IMPORT
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,9 @@ export class AuthService {
 
     @InjectRepository(University)
     private readonly universityRepository: Repository<University>,
+
+    @InjectRepository(Faculty) // ADD THIS
+    private readonly facultyRepository: Repository<Faculty>, // ADD THIS
 
     private readonly otpService: OtpService,
 
@@ -76,13 +80,24 @@ export class AuthService {
 
     const password_hash = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
 
+    // Handle faculty relation - if faculty_id is provided, find the faculty entity
+    let facultyEntity: Faculty | null = null;
+    if (dto.faculty_id) {
+      facultyEntity = await this.facultyRepository.findOne({
+        where: { id: dto.faculty_id },
+      });
+      if (!facultyEntity) {
+        throw new BadRequestException('Selected faculty is not valid');
+      }
+    }
+
     const user = this.userRepository.create({
       email: dto.email.toLowerCase().trim(),
       password_hash,
       first_name: dto.first_name,
       last_name: dto.last_name,
       university: { id: dto.university_id },
-      faculty: dto.faculty ?? undefined,
+      faculty: facultyEntity,
     });
     await this.userRepository.save(user);
 

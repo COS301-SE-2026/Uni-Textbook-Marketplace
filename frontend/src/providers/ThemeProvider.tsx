@@ -3,7 +3,7 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 interface ThemeProviderProps {
-    children: React.ReactNode;
+    readonly children: React.ReactNode;
 }
 
 export default function ThemeProvider({ children}: ThemeProviderProps) {

@@ -18,9 +18,8 @@ CREATE TABLE users (
 
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
-
+    faculty_id UUID REFERENCES faculties(id) ON DELETE SET NULL,
     university_id UUID REFERENCES universities(id) ON DELETE SET NULL,
-    faculty VARCHAR(100) NULL,
     is_verified BOOLEAN DEFAULT FALSE,
 
     role VARCHAR(10) DEFAULT 'student'
@@ -68,6 +67,13 @@ CREATE TABLE books (
     publisher VARCHAR
 );
 
+--create faculties table 
+CREATE TABLE faculties(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) UNIQUE NOT NULL , 
+    university_id UUID REFERENCES universities(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 
 -- listings

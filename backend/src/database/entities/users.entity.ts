@@ -12,6 +12,7 @@ import {
 
 import { University } from './university.entity';
 import { Listing } from './listing.entity';
+import { Faculty } from './faculty.entity';
 
 @Entity('users')
 export class User {
@@ -29,9 +30,6 @@ export class User {
 
   @Column()
   last_name!: string;
-
-  @Column({ nullable: true })
-  faculty!: string;
 
   @Column({ default: false })
   is_verified!: boolean;
@@ -51,6 +49,13 @@ export class User {
   })
   @JoinColumn({ name: 'university_id' })
   university!: University;
+
+  @ManyToOne(() => Faculty, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'faculty_id' })
+  faculty!: Faculty | null;
 
   /*
     listings sold by this user

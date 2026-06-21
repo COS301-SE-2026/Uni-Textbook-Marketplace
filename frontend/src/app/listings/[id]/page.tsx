@@ -175,7 +175,7 @@ export default function ListingDetailPage() {
                 onClick={() => router.back()}
                 className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6 group"
             >
-                <span className="transform group-hover:-translate-x-1 transition-transform duration-200">←</span>
+                <span className="transform group-hover:-translate-x-1 transition-transform duration-200">&larr;</span>
                 Back to results
             </button>
 

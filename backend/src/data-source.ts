@@ -9,6 +9,7 @@ import { Module } from './database/entities/module.entity';
 import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
+import { Faculty } from './database/entities/faculty.entity';
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: true,
 
-  entities: [User, Listing, Book, Module, University, OTP, AuditLog],
+  entities: [User, Listing, Book, Module, University, OTP, AuditLog, Faculty],
 
   migrations: ['src/database/migrations/*.ts'],
 });

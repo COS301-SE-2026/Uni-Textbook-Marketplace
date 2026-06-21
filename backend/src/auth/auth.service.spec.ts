@@ -13,6 +13,7 @@ import { EMAIL_SERVICE } from '../email/email.interface';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
+import { Faculty } from '../database/entities/faculty.entity';
 
 
 jest.mock('bcrypt', () => ({
@@ -44,6 +45,13 @@ describe('AuthService', () => {
     find: jest.fn(),
   };
 
+  const mockFacultyRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
   const mockOtpService = {
     createOtp: jest.fn(),
     verifyOtp: jest.fn(),
@@ -68,6 +76,7 @@ describe('AuthService', () => {
         AuthService,
         { provide: getRepositoryToken(User), useValue: mockUserRepository },
         { provide: getRepositoryToken(University), useValue: mockUniversityRepository },
+        { provide: getRepositoryToken(Faculty), useValue: mockFacultyRepository },
         { provide: OtpService, useValue: mockOtpService },
         { provide: JwtService, useValue: mockJwtService },
         { provide: ConfigService, useValue: mockConfigService },
@@ -89,7 +98,7 @@ describe('AuthService', () => {
       first_name: 'Gift',
       last_name: 'M',
       university_id: 'uni-1',
-      faculty: 'Engineering',
+      faculty_id: 'fac-1',
     };
 
     const mockUniversity = {
@@ -97,10 +106,17 @@ describe('AuthService', () => {
       email_domain: 'tuks.ac.za',
     };
 
+    const mockFaculty = {
+      id: 'fac-1',
+      name: 'Engineering',
+      university_id: 'uni-1',
+    };
+
     // Happy path test
     it('should successfully register a new user (happy path)', async () => {
       mockUniversityRepository.findOne.mockResolvedValue(mockUniversity);
       mockUserRepository.findOne.mockResolvedValue(null);
+      mockFacultyRepository.findOne.mockResolvedValue(mockFaculty);
       mockUserRepository.create.mockReturnValue({ id: 'user-1' });
       mockUserRepository.save.mockResolvedValue({ id: 'user-1' });
       mockOtpService.createOtp.mockResolvedValue('123456');
@@ -145,6 +161,20 @@ describe('AuthService', () => {
 
       await expect(service.register(validRegisterData)).rejects.toThrow(
         new ConflictException('Email already registered')
+      );
+    });
+
+    it('should reject if faculty does not exist', async () => {
+      const registerDataWithFaculty = {
+        ...validRegisterData,
+        faculty_id: 'non-existent-fac',
+      };
+      mockUniversityRepository.findOne.mockResolvedValue(mockUniversity);
+      mockUserRepository.findOne.mockResolvedValue(null);
+      mockFacultyRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.register(registerDataWithFaculty)).rejects.toThrow(
+        new BadRequestException('Selected faculty is not valid')
       );
     });
   });
@@ -595,6 +625,13 @@ describe('AuthModule', () => {
     find: jest.fn(),
   };
 
+  const mockFacultyRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
   const mockOtpRepository = {
     update: jest.fn(),
     create: jest.fn(),
@@ -651,6 +688,10 @@ describe('AuthModule', () => {
         {
           provide: getRepositoryToken(University),
           useValue: mockUniversityRepository,
+        },
+        {
+          provide: getRepositoryToken(Faculty),
+          useValue: mockFacultyRepository,
         },
         {
           provide: getRepositoryToken(OTP),

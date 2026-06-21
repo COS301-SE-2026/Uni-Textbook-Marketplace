@@ -1,0 +1,41 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+
+import { University } from './university.entity';
+import { User } from './users.entity';
+
+@Entity('faculties')
+export class Faculty {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    unique: true,
+  })
+  name!: string;
+
+  @ManyToOne(() => University, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'university_id' })
+  university!: University;
+
+  @CreateDateColumn({
+    type: 'timestamptz',
+    default: () => 'NOW()',
+  })
+  created_at!: Date;
+
+  @OneToMany(() => User, (user: User) => user.faculty)
+  users!: User[];
+}
