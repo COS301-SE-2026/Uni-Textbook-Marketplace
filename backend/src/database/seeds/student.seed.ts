@@ -45,7 +45,7 @@ export async function seedStudents(manager: EntityManager) {
       password_hash: hashedPassword,
       first_name: data.firstName,
       last_name: data.lastName,
-      faculty: data.faculty,
+      
       is_verified: true,
       role: 'student',
     }),
