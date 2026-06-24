@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@test-utils';
+import { render, screen, fireEvent } from '@/test-utils';
 import ThemeToggle from '../ThemeToggle';
 import { useTheme } from 'next-themes';
 
