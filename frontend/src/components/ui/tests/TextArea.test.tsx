@@ -23,7 +23,7 @@ describe('TextArea', () => {
     it('uses default rows of 4', () => {
         render(<TextArea />);
         const textarea = screen.getByRole('textbox');
-        expect(textarea).toHaveAttribute('rows', 4);
+        expect(textarea).toHaveAttribute('rows', '4');
     });
 
     it('respects custom rows', () => {

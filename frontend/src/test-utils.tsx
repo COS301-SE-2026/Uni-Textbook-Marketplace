@@ -2,10 +2,10 @@ import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
 
 jest.mock('next-themes', () => ({
-    useTheme: () => ({
+    useTheme: jest.fn(() => ({
         theme: 'light',
         setTheme: jest.fn(),
-    }),
+    })),
 }));
 
 jest.mock('lucide-react', () => ({

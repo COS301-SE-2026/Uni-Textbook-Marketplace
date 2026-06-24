@@ -13,8 +13,8 @@ describe('Badge', () => {
     });
 ;
     it('applies approved variant', () => {
-        render(<Badge>Approved</Badge>);
-        expect(screen.getByText('Pending')).toHaveClass('badge-approved');
+        render(<Badge variant="approved">Approved</Badge>);
+        expect(screen.getByText('Approved')).toHaveClass('badge-approved');
     });
 
     it('applies rejected variant', () => {

@@ -10,9 +10,15 @@ describe('Card', () => {
     it('applies default variant class', () => {
         render(<Card>Content</Card>);
         const card = screen.getByText('Content').parentElement;
+        expect(card).toHaveClass('card');
+    });
+
+    it('applies glass variant class', () => {
+        render(<Card variant="glass">Content</Card>);
+        const card = screen.getByText('Content').parentElement;
         expect(card).toHaveClass('glass');
         expect(card).toHaveClass('backdrop-blur-md');
-    });
+    })
 
     it('merges custom className', () => {
         render(<Card className="custom-class">Content</Card>);

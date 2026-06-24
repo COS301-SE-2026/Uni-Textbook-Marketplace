@@ -29,7 +29,7 @@ describe('Modal', () => {
     it('calls onClose when close button is clicked', () => {
         const onClose = jest.fn();
         render(<Modal {...defaultProps} onClose={onClose} />);
-        const closeButton = screen.getByText('x');
+        const closeButton = screen.getByText('×');
         fireEvent.click(closeButton);
         expect(onClose).toHaveBeenCalledTimes(1);
     });

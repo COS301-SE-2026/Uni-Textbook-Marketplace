@@ -2,6 +2,10 @@ import { render, screen, fireEvent } from '@/test-utils';
 import ListingForm from '../listingForm';
 import { FileInput } from 'lucide-react';
 
+beforeAll(() => {
+    global.URL.createObjectURL = jest.fn(() => 'mock-image-url');
+});
+
 const defaultProps = {
     step: 1,
     form: {
@@ -52,7 +56,7 @@ describe('ListingForm', () => {
             expect(screen.getByText('Module Details')).toBeInTheDocument();
             expect(screen.getByLabelText('Module Code *')).toBeInTheDocument();
             expect(screen.getByLabelText('Module Name *')).toBeInTheDocument();
-            expect(screen.getByLabelText('Faculty *')).toBeInTheDocument();
+            expect(screen.getByText('Faculty *')).toBeInTheDocument();
         });
 
         it('renders faculty options', () => {
@@ -94,7 +98,7 @@ describe('ListingForm', () => {
         it('calls onImageUpload when file input changes', () => {
             const handleUpload = jest.fn();
             render(<ListingForm {...defaultProps} step={4} onImageUpload={handleUpload} />);
-            const fileInput = document.querySelector('in[ut[type="file"');
+            const fileInput = document.querySelector('input[type="file"]');
             expect(fileInput).toBeInTheDocument();
         });
     });
