@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@/test-utils';
 import ListingForm from '../listingForm';
+import { FileInput } from 'lucide-react';
 
 const defaultProps = {
     step: 1,
@@ -73,5 +74,36 @@ describe('ListingForm', () => {
         });
     });
 
-    
-})
+    describe('Step 4: Upload Pictures', () => {
+        it('renders upload section', () => {
+            render(<ListingForm {...defaultProps} step={4} />);
+            expect(screen.getByText('Upload Pictures')).toBeInTheDocument();
+            expect(screen.getByText('Click to upload images')).toBeInTheDocument();
+        });
+
+        it('shows image previews when images are uploaded', () => {
+            const mockFiles = [new File([''], 'image1.jpg', {type: 'image/jpeg' })];
+            const formWithImages = {
+                ...defaultProps.form,
+                images: mockFiles,
+            };
+            render(<ListingForm {...defaultProps} step={4} form={formWithImages} />);
+            expect(screen.getByText('1 / 4+ images uploaded')).toBeInTheDocument();
+        });
+
+        it('calls onImageUpload when file input changes', () => {
+            const handleUpload = jest.fn();
+            render(<ListingForm {...defaultProps} step={4} onImageUpload={handleUpload} />);
+            const fileInput = document.querySelector('in[ut[type="file"');
+            expect(fileInput).toBeInTheDocument();
+        });
+    });
+
+    it('returns null for invalid step', () => {
+        render(<ListingForm {...defaultProps} step={99} />);
+        expect(screen.queryByText('Book Details')).not.toBeInTheDocument();
+        expect(screen.queryByText('Module Details')).not.toBeInTheDocument();
+        expect(screen.queryByText('Listing Details')).not.toBeInTheDocument();
+        expect(screen.queryByText('Upload Pictures')).not.toBeInTheDocument();
+    });
+});
