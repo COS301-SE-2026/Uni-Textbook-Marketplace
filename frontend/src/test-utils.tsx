@@ -1,0 +1,42 @@
+import { render, RenderOptions } from '@testing-library/react';
+import { ReactElement } from 'react';
+
+jest.mock('next-themes', () => ({
+    useTheme: () => ({
+        theme: 'light',
+        setTheme: jest.fn(),
+    }),
+}));
+
+jest.mock('lucide-react', () => ({
+    Moon: () => <svg data-testid="moon-icon" />,
+    Sun: () => <svg data-testid="sun-icon" />,
+    Menu: () => <svg data-testid="menu-icon" />,
+    X: () => <svg data-testid="x-icon" />,
+    Bell: () => <svg data-testid="bell-icon" />,
+    ChevronDown: () => <svg data-testid="chevron-down-icon" />,
+    BookOpen: () => <svg data-testid="book-open-icon" />,
+    Check: () => <svg data-testid="check-icon" />,
+}));
+
+jest.mock('next/navigation', () => ({
+    usePathname: jest.fn(() => '/'),
+    useRouter: jest.fn(() => ({
+        push: jest.fn(),
+        back: jest.fn(),
+    })),
+}));
+
+jest.mock('next/image', () => ({
+    __esModule: true,
+    default: (props: any) => {
+        // eslint-disable-next-line @next/next/no-img-element
+        return <img {...props} alt={props.alt} />;
+    },
+}));
+
+const customRender = (ui: ReactElement, options?: RenderOptions) => 
+    render(ui, { ...options });
+
+export * from '@testing-library/react';
+export { customRender as render };
