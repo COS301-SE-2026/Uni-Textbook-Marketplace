@@ -16,7 +16,7 @@ describe('Card', () => {
     it('applies glass variant class', () => {
         const { container } =  render(<Card variant="glass">Content</Card>);
         const card = container.firstChild as HTMLElement;
-        expect(card).toHaveClass('glass');
+        expect(card).toHaveClass('bg-white/10');
         expect(card).toHaveClass('backdrop-blur-md');
     })
 
