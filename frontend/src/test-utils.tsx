@@ -1,5 +1,4 @@
 import { render, RenderOptions } from '@testing-library/react';
-import { addListener, removeListener } from 'process';
 import { ReactElement } from 'react';
 
 Object.defineProperty(window, 'matchMedia', {
