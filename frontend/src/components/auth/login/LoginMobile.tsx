@@ -81,7 +81,7 @@ export default function LoginMobile() {
                                 <Input
                                     label="University Email"
                                     type="email"
-                                    placeholder="you@university.ac.za"
+                                    placeholder="studentNO@uni.co.za"
                                     value={email}
                                     onChange={(e) => {
                                         setEmail(e.target.value);
@@ -137,7 +137,7 @@ export default function LoginMobile() {
                             <div className="flex justify-end">
                                 <button
                                     type="button"
-                                    className="text-sm text-primary"
+                                    className="text-sm text-primary hover:text-[#00B4D8]"
                                     style={{ margin: "15px", background: "none", border: "none", cursor: "pointer" }}
                                     onClick={forgotPass}
                                 >

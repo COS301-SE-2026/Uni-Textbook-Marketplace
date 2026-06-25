@@ -128,7 +128,7 @@ export default function LoginDesktop() {
                                 <div className="flex justify-end">
                                     <button
                                         type="button"
-                                        className="text-sm text-primary hover:text-[#dddddd]"
+                                        className="text-sm text-primary hover:text-[#00B4D8]"
                                         style={{ margin: "15px", background: "none", border: "none", cursor: "pointer" }}
                                         onClick={forgotPass}
                                     >
