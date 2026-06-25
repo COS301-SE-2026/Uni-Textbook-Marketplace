@@ -14,7 +14,7 @@ export default function Input({
     type = "text",
     name,
     value = "",
-    onChange,
+    onChange = () => {},
     className,
 }: Readonly<InputProps>) {
     return (
