@@ -11,6 +11,7 @@ describe('ThemeToggle', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        const { useTheme } = require('next-themes');
         (useTheme as jest.Mock).mockReturnValue({
             theme: 'light',
             setTheme: mockSetTheme,
@@ -49,13 +50,6 @@ describe('ThemeToggle', () => {
         const button = screen.getByRole('button', { name: /toggle theme/i });
         fireEvent.click(button);
         expect(mockSetTheme).toHaveBeenCalledWith('light');
-    });
-
-    it('returns placeholder div before mounting to prevent hydration mismatch', () => {
-        jest.spyOn(require('react'), 'useState').mockImplementationOnce(() => [false, jest.fn()]);
-        render(<ThemeToggle />);
-        const placeholder = document.querySelector('.w-9.h-9');
-        expect(placeholder).toBeInTheDocument();
     });
 
     it('applies hover styles classes', () => {

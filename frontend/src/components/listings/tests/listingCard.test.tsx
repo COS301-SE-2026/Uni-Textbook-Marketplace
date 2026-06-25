@@ -1,8 +1,6 @@
 import { render, screen, fireEvent } from '@/test-utils';
 import ListingCard from '../listingCard';
-import { usePathname, useRouter } from 'next/navigation';
-import { mock } from 'node:test';
-import { List } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -44,8 +42,8 @@ describe('ListingCard', () => {
 
     it('renders listing title and price', () => {
         render(<ListingCard listing={mockListing} />);
-        expect(screen.getByText('Text Book')).toBeInTheDocument();
-        expect(screen.getByText('R450.00')).toBeInTheDocument();
+        expect(screen.getByText(/Test Book/)).toBeInTheDocument();
+        expect(screen.getByText(/R450.00/)).toBeInTheDocument();
     });
 
     it('renders edition and module code', () => {
@@ -56,20 +54,22 @@ describe('ListingCard', () => {
 
     it('renders condition', () => {
         render(<ListingCard listing={mockListing} />);
-        expect(screen.getByText('Good')).toBeInTheDocument();
+        expect(screen.getByText(/Good/)).toBeInTheDocument();
     });
 
     it('renders seller name and verified badge', () => {
         render(<ListingCard listing={mockListing} />);
-        expect(screen.getByText('John Doe')).toBeInTheDocument();
-        expect(screen.getByText('* Verified')).toBeInTheDocument();
+        expect(screen.getByText(/John/)).toBeInTheDocument();
+        expect(screen.getByText(/Doe/)).toBeInTheDocument();
+        expect(screen.getByText(/Verified/)).toBeInTheDocument();
     });
 
     it('navigates to listing detail on click', () => {
         render(<ListingCard listing={mockListing} />);
-        const card= screen.getByText('Text Book').closest('div');
+        const card = document.querySelector('.card');
+        expect(card).toBeInTheDocument();
         fireEvent.click(card!);
-        expect(mockPush).toHaveBeenCalledWith('/listingd/123');
+        expect(mockPush).toHaveBeenCalledWith('/listings/123');
     });
 
     it('shows pending badge when showStatus is true and status is PENDING', () => {

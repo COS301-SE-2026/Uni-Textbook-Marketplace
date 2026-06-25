@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@/test-utils';
 import ListingForm from '../listingForm';
-import { FileInput } from 'lucide-react';
+//import { FileInput } from 'lucide-react';
 
 beforeAll(() => {
     global.URL.createObjectURL = jest.fn(() => 'mock-image-url');
@@ -44,7 +44,7 @@ describe('ListingForm', () => {
         it('calls onChange when input changes', () => {
             const handleChange = jest.fn();
             render(<ListingForm {...defaultProps} step={1} onChange={handleChange} />);
-            const input = screen.getByText('Title *');
+            const input = screen.getByPlaceholderText('e.g. Software Engineering');
             fireEvent.change(input, { target: { name: 'title', value: 'New Book' } });
             expect(handleChange).toHaveBeenCalledTimes(1);
         });
@@ -61,7 +61,7 @@ describe('ListingForm', () => {
 
         it('renders faculty options', () => {
             render(<ListingForm {...defaultProps} step={2} />);
-            const select = screen.getByText('Faculty *');
+            const select = screen.getByRole('combobox');
             expect(select).toContainHTML('<option value="EBIT">EBIT</option>');
             expect(select).toContainHTML('<option value="LAW">Law</option>');
         });

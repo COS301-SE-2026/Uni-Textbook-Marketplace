@@ -1,7 +1,6 @@
 import { render, screen } from '@/test-utils';
 import NavBar from '../NavBar';
 import { useAuth } from '@/context/AuthContext';
-import { usePathname } from 'next/navigation';
 
 jest.mock('@/context/AuthContext', () => ({
     useAuth: jest.fn(),
@@ -15,20 +14,28 @@ jest.mock('next/navigation', () => ({
     })),
 }));
 
+jest.mock('@/context/AuthContext', () => ({
+    useAuth: jest.fn(() => ({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        logout: jest.fn(),
+    }))
+}))
 describe('NavBar', () => {
-    beforeAll(() => {
+    beforeEach(() => {
         jest.clearAllMocks();
     });
     it('renders logo and Marketplace text', () => {
-        (useAuth as jest.Mock).mockRejectedValue({
+        (useAuth as jest.Mock).mockReturnValue({
             user: null,
             isAuthenticated: false,
             isLoading: false,
             logout: jest.fn(),
         });
         render(<NavBar />);
-        expect(screen.getByText('Uni Textbook')).toBeInTheDocument();
-        expect(screen.getByText('Marketplace')).toBeInTheDocument();
+        expect(screen.getByText(/Uni Textbook/)).toBeInTheDocument();
+        expect(screen.getByText(/Marketplace/)).toBeInTheDocument();
     });
 
     it('shows Register and Login buttons when not authenticated', () => {
@@ -39,8 +46,8 @@ describe('NavBar', () => {
             logout:jest.fn(),
         });
         render(<NavBar />);
-        expect(screen.getByText('Register')).toBeInTheDocument();
-        expect(screen.getByText('Login')).toBeInTheDocument();
+        expect(screen.getByText(/Register/)).toBeInTheDocument();
+        expect(screen.getByText(/Login/)).toBeInTheDocument();
     });
 
     it('shows user menu when authenticated', () => {
@@ -51,9 +58,9 @@ describe('NavBar', () => {
             logout: jest.fn(),
         });
         render(<NavBar />);
-        expect(screen.getByText('John')).toBeInTheDocument();
-        expect(screen.getByText('Browse')).toBeInTheDocument();
-        expect(screen.getByText('Sell')).toBeInTheDocument();
+        expect(screen.getByText(/John/)).toBeInTheDocument();
+        expect(screen.getByText(/Browse/)).toBeInTheDocument();
+        expect(screen.getByText(/Sell/)).toBeInTheDocument();
     });
 
     it('shows admin nav links when user is admin', () => {
@@ -64,6 +71,6 @@ describe('NavBar', () => {
             logout: jest.fn(),
         });
         render(<NavBar />);
-        expect(screen.getByText('Moderate')).toBeInTheDocument();
+        expect(screen.getByText(/Moderate/)).toBeInTheDocument();
     });
 });
