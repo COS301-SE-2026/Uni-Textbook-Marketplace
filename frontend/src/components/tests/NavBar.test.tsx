@@ -9,10 +9,16 @@ jest.mock('@/context/AuthContext', () => ({
 
 jest.mock('next/navigation', () => ({
     usePathname: jest.fn(() => '/'),
-    useRouter: jest.fn(() => ({ push: jest.fn() })),
+    useRouter: jest.fn(() => ({ 
+        push: jest.fn(),
+        back: jest.fn(),
+    })),
 }));
 
 describe('NavBar', () => {
+    beforeAll(() => {
+        jest.clearAllMocks();
+    });
     it('renders logo and Marketplace text', () => {
         (useAuth as jest.Mock).mockRejectedValue({
             user: null,

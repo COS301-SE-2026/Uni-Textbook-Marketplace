@@ -1,5 +1,20 @@
 import { render, RenderOptions } from '@testing-library/react';
+import { addListener, removeListener } from 'process';
 import { ReactElement } from 'react';
+
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+        matches: false,
+        media:query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+    })),
+});
 
 jest.mock('next-themes', () => ({
     useTheme: jest.fn(() => ({

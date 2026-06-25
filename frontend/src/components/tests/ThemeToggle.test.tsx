@@ -52,7 +52,7 @@ describe('ThemeToggle', () => {
     });
 
     it('returns placeholder div before mounting to prevent hydration mismatch', () => {
-        jest.spyOn(require('react'), 'useSate').mockImplementationOnce(() => [false, jest.fn()]);
+        jest.spyOn(require('react'), 'useState').mockImplementationOnce(() => [false, jest.fn()]);
         render(<ThemeToggle />);
         const placeholder = document.querySelector('.w-9.h-9');
         expect(placeholder).toBeInTheDocument();
