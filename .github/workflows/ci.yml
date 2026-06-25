@@ -44,8 +44,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      # Install from root — this populates the hoisted
-      # node_modules that workspace packages share
       - name: Install root workspace dependencies
         run: npm install
 
