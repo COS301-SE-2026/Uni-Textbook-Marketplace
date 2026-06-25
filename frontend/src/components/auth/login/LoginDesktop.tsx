@@ -22,10 +22,12 @@ export default function LoginDesktop() {
 
     const validate = () => {
         const e: Record<string, string> = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!email.trim()) {
             e.email = "University email is required";
-        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(email)) {
-            e.email = "Email must end in @tuks.co.za or @up.ac.za";
+        } else if (!emailRegex.test(email)) {
+            e.email = "Invalid email";
         }
         if (!password) {
             e.password = "Password is required";
@@ -52,6 +54,10 @@ export default function LoginDesktop() {
             setLoading(false);
         }
     };
+
+    const forgotPass = () => {
+        router.push('/auth/resetpassword');
+    }
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
@@ -122,8 +128,9 @@ export default function LoginDesktop() {
                                 <div className="flex justify-end">
                                     <button
                                         type="button"
-                                        className="text-sm text-primary"
+                                        className="text-sm text-primary hover:text-[#dddddd]"
                                         style={{ margin: "15px", background: "none", border: "none", cursor: "pointer" }}
+                                        onClick={forgotPass}
                                     >
                                         Forgot Password?
                                     </button>
