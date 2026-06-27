@@ -285,9 +285,9 @@ export class AuthService {
     return result;
   }
 
-  async forgotPassword(UserEmail: string){
+  async forgotPassword(dto: ForgotPasswordDto){
 
-    const email = UserEmail.toLowerCase().trim();
+    const email = dto.email.toLowerCase().trim();
 
     const user = await this.userRepository.findOne({
       select: { id: true },
@@ -297,6 +297,21 @@ export class AuthService {
     if(!user){
       throw new UnauthorizedException('User not found');
     }
-    return;
+
+    const hassPassword = await bcrypt.hash(dto.password,this.BCRYPT_ROUNDS);
+
+    await this.userRepository.update(
+      {
+        id : user.id,
+      },
+      {
+        password_hash: hassPassword,
+        is_verified: false
+      }
+    )
+
+    
+
+    return this.resendOtp(email);
   }
 }

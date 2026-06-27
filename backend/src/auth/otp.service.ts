@@ -17,7 +17,7 @@ export class OtpService {
 
     @InjectRepository(OTP)
     private readonly otpRepository: Repository<OTP>,
-  ) {}
+  ) { }
 
   async createOtp(email: string): Promise<string> {
     await this.otpRepository.update(
@@ -88,13 +88,11 @@ export class OtpService {
       where: {
         email,
         used: false,
-      },
-      order: {
-        created_at: 'DESC',
-      },
+        expires_at: MoreThan(new Date())
+      }
     });
 
-    if (!existingOtp) {
+    if (existingOtp) {
       throw new BadRequestException(
         'An OTP has already been sent. Please wait before requesting another one.',
       );

@@ -125,7 +125,7 @@ export class AuthController {
   @Post('forgot-password')
   @HttpCode(200)
   async forgotPassword(@Body() dto: ForgotPasswordDto){
-    return this.authService.forgotPassword(dto.email);
+    return this.authService.forgotPassword(dto);
   }
 
 }
