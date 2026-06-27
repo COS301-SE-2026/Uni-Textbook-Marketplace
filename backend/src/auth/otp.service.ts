@@ -17,7 +17,7 @@ export class OtpService {
 
     @InjectRepository(OTP)
     private readonly otpRepository: Repository<OTP>,
-  ) { }
+  ) {}
 
   async createOtp(email: string): Promise<string> {
     await this.otpRepository.update(
@@ -88,8 +88,8 @@ export class OtpService {
       where: {
         email,
         used: false,
-        expires_at: MoreThan(new Date())
-      }
+        expires_at: MoreThan(new Date()),
+      },
     });
 
     if (existingOtp) {

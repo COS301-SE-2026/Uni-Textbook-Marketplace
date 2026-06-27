@@ -23,13 +23,13 @@ export class ListingFiltersDto {
   @IsNumber()
   priceMin?: number;
 
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
-    priceMax?: number;
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  priceMax?: number;
 
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
-    edition?: number;
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  edition?: number;
 }

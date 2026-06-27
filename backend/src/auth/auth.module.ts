@@ -24,7 +24,7 @@ import { RolesGuard } from './guards/roles.guard';
         secret: config.get('JWT_ACCESS_SECRET'),
       }),
     }),
-    TypeOrmModule.forFeature([User, University, OTP,Faculty]),
+    TypeOrmModule.forFeature([User, University, OTP, Faculty]),
   ],
   controllers: [AuthController],
   providers: [

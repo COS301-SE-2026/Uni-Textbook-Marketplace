@@ -573,36 +573,30 @@ describe('OtpService', () => {
   const email = 'test@tuks.ac.za';
 
  
-  it('should not throw error when an unused OTP already exists', async () => {
+  it('should throw error when an unused OTP already exists', async () => {
     const existingOtp = {
       id: 'otp-1',
       email,
       used: false,
-      created_at: new Date(),
+      expires_at: new Date(Date.now() + 600000),
     };
     mockOtpRepository.findOne.mockResolvedValue(existingOtp);
 
     
-    await expect(otpService.canRequestOtp(email)).resolves.not.toThrow();
+    await expect(otpService.canRequestOtp(email)).rejects.toThrow(BadRequestException);
   });
 
   
   it('should throw error when no unused OTP exists (rate limiting after request)', async () => {
     mockOtpRepository.findOne.mockResolvedValue(null);
 
-    await expect(otpService.canRequestOtp(email)).rejects.toThrow(
-      new BadRequestException('An OTP has already been sent. Please wait before requesting another one.')
-    );
+    await expect(otpService.canRequestOtp(email)).resolves.not.toThrow();
   });
 
   
   it('should not throw error when existing OTP is used', async () => {
-    const usedOtp = {
-      id: 'otp-1',
-      email,
-      used: true,
-    };
-    mockOtpRepository.findOne.mockResolvedValue(usedOtp);
+    
+    mockOtpRepository.findOne.mockResolvedValue(null);
 
     await expect(otpService.canRequestOtp(email)).resolves.not.toThrow();
   });

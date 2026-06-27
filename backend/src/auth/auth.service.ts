@@ -285,32 +285,29 @@ export class AuthService {
     return result;
   }
 
-  async forgotPassword(dto: ForgotPasswordDto){
-
+  async forgotPassword(dto: ForgotPasswordDto) {
     const email = dto.email.toLowerCase().trim();
 
     const user = await this.userRepository.findOne({
       select: { id: true },
-      where:{ email}
-    })
+      where: { email },
+    });
 
-    if(!user){
+    if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
-    const hassPassword = await bcrypt.hash(dto.password,this.BCRYPT_ROUNDS);
+    const hassPassword = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
 
     await this.userRepository.update(
       {
-        id : user.id,
+        id: user.id,
       },
       {
         password_hash: hassPassword,
-        is_verified: false
-      }
-    )
-
-    
+        is_verified: false,
+      },
+    );
 
     return this.resendOtp(email);
   }
