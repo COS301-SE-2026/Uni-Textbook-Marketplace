@@ -16,6 +16,7 @@ import { LoginDto } from './dto/login.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 interface AuthenticatedRequest extends ExpressRequest {
   user: {
@@ -118,5 +119,12 @@ export class AuthController {
   @Get('me')
   async getMe(@Request() req: AuthenticatedRequest) {
     return this.authService.getMe(req.user.id);
+  }
+
+  @Throttle({ default: { limit: 4, ttl: 60000 } })
+  @Post('forgot-password')
+  @HttpCode(200)
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
   }
 }

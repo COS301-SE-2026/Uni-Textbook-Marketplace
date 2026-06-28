@@ -640,7 +640,7 @@ export default function RegisterDesktop() {
             <Card className="card w-4/5 max-w-4xl flex overflow-hidden min-w-0">
 
                 {/* Left panel */}
-                <div className="w-2/5 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
+                <div className="w-1/2 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
                     <Logo className="w-20 h-auto mb-6" />
                     <h2 className="text-center">Join our student community</h2>
                     <p className="text-center text-text-subtle mt-4">
@@ -649,7 +649,7 @@ export default function RegisterDesktop() {
                 </div>
 
                 {/* Right panel - wider to fit OTP inputs */}
-                <div className="w-3/5 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
+                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
                     <div style={{ width: "100%", maxWidth: 480, padding: "0 2rem", boxSizing: "border-box" }}>
                         {renderStepContent()}
 
