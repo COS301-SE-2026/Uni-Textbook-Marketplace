@@ -4,12 +4,9 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  OneToMany,
   JoinColumn,
 } from 'typeorm';
-
 import { University } from './university.entity';
-import { User } from './users.entity';
 
 @Entity('faculties')
 export class Faculty {
@@ -23,6 +20,7 @@ export class Faculty {
   })
   name!: string;
 
+
   @ManyToOne(() => University, {
     nullable: false,
     onDelete: 'CASCADE',
@@ -35,7 +33,4 @@ export class Faculty {
     default: () => 'NOW()',
   })
   created_at!: Date;
-
-  @OneToMany(() => User, (user: User) => user.faculty)
-  users!: User[];
 }
