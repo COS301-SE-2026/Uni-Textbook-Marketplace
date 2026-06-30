@@ -24,14 +24,25 @@ export async function seedModules(manager: EntityManager) {
     throw new Error('University of Pretoria not found');
   }
 
-  const jsonPath = path.join(__dirname, '..', '..', '..', 'modules-data.json');
+  const jsonPath = path.join(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'modules-data.json',
+  );
 
   let modulesData: ModuleData[] = [];
 
   try {
     const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-    modulesData = JSON.parse(fileContent);
-    console.log(`Loaded ${modulesData.length} modules from modules-data.json`);
+
+    
+    modulesData = JSON.parse(fileContent) as ModuleData[];
+
+    console.log(
+      `Loaded ${modulesData.length} modules from modules-data.json`,
+    );
     console.log(`File path: ${jsonPath}`);
   } catch (error) {
     console.error('Failed to read modules-data.json:', error);
@@ -57,9 +68,11 @@ export async function seedModules(manager: EntityManager) {
   let skippedCount = 0;
 
   for (const data of modulesData) {
-    // Check if module already exists by code
     const existing = await moduleRepository.findOne({
-      where: { code: data.code, university: { id: university.id } },
+      where: {
+        code: data.code,
+        university: { id: university.id },
+      },
     });
 
     if (existing) {
@@ -69,18 +82,22 @@ export async function seedModules(manager: EntityManager) {
     }
 
     const semester = determineSemester(data.code);
+
     const facultyName =
-      data.faculty || facultyMapping[data.facultyCode] || 'Unknown Faculty';
+      data.faculty ||
+      facultyMapping[data.facultyCode] ||
+      'Unknown Faculty';
 
     const module = moduleRepository.create({
       code: data.code,
       name: data.name,
       faculty: facultyName,
-      semester: semester,
-      university: university,
+      semester,
+      university,
     });
 
     await moduleRepository.save(module);
+
     console.log(`Created: ${data.code} - ${data.name}`);
     createdCount++;
   }
