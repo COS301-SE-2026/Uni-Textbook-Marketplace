@@ -17,14 +17,13 @@ import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
 import { BooksModule } from './books/books.module';
+import { Faculty } from './database/entities/faculty.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ 
+    ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test'
-        ? '.env.test'
-        : '.env',
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -42,6 +41,7 @@ import { BooksModule } from './books/books.module';
           University,
           OTP,
           AuditLog,
+          Faculty,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
