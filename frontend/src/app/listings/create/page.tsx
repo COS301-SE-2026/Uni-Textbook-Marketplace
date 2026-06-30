@@ -9,7 +9,8 @@ import { createBook, createModule, uploadImages, createListing, CreateListingDat
 import Modal from '@/components/ui/Modal'
 
 
-const ISBN_REGEX = /^(?:\d{10}|\d{13})$/
+const ISBN_REGEX = /^(?:\d{9}[\dX]|\d{13})$/i;
+
 const PRICE_REGEX = /^\d+(\.\d{1,2})?$/
 
 type FormErrors = Partial<Record<keyof ListingFormData, string>>

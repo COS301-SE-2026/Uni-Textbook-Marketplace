@@ -22,10 +22,12 @@ export default function LoginMobile() {
 
     const validate = () => {
         const e: Record<string, string> = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!email.trim()) {
             e.email = "University email is required";
-        } else if (!/^[^\s@]+@(tuks\.co\.za|up\.ac\.za)$/.test(email)) {
-            e.email = "Email must end in @tuks.co.za or @up.ac.za";
+        } else if (!emailRegex.test(email)) {
+            e.email = "Invalid email";
         }
         if (!password) {
             e.password = "Password is required";
@@ -54,6 +56,10 @@ export default function LoginMobile() {
         }
     };
 
+    const forgotPass = () => {
+        router.push('/auth/resetpassword');
+    }
+
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
             <div className="card w-full max-w-[900px] min-h-[500px] flex flex-col overflow-hidden mx-auto">
@@ -75,7 +81,7 @@ export default function LoginMobile() {
                                 <Input
                                     label="University Email"
                                     type="email"
-                                    placeholder="you@university.ac.za"
+                                    placeholder="studentNO@uni.co.za"
                                     value={email}
                                     onChange={(e) => {
                                         setEmail(e.target.value);
@@ -131,8 +137,9 @@ export default function LoginMobile() {
                             <div className="flex justify-end">
                                 <button
                                     type="button"
-                                    className="text-sm text-primary"
+                                    className="text-sm text-primary hover:text-[#00B4D8]"
                                     style={{ margin: "15px", background: "none", border: "none", cursor: "pointer" }}
+                                    onClick={forgotPass}
                                 >
                                     Forgot Password?
                                 </button>

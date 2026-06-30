@@ -88,13 +88,11 @@ export class OtpService {
       where: {
         email,
         used: false,
-      },
-      order: {
-        created_at: 'DESC',
+        expires_at: MoreThan(new Date()),
       },
     });
 
-    if (!existingOtp) {
+    if (existingOtp) {
       throw new BadRequestException(
         'An OTP has already been sent. Please wait before requesting another one.',
       );

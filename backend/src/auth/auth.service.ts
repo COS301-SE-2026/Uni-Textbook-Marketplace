@@ -22,6 +22,7 @@ import { EMAIL_SERVICE } from '../email/email.interface';
 import { User } from '../database/entities/users.entity';
 import { University } from '../database/entities/university.entity';
 import { Faculty } from '../database/entities/faculty.entity'; // ADD THIS IMPORT
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -282,5 +283,32 @@ export class AuthService {
     }
 
     return result;
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const email = dto.email.toLowerCase().trim();
+
+    const user = await this.userRepository.findOne({
+      select: { id: true },
+      where: { email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const hassPassword = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
+
+    await this.userRepository.update(
+      {
+        id: user.id,
+      },
+      {
+        password_hash: hassPassword,
+        is_verified: false,
+      },
+    );
+
+    return this.resendOtp(email);
   }
 }

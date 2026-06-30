@@ -9,7 +9,7 @@ import { api } from './api';
  * 
  * These mirrow our backend DTOs exactly
  *  
- */ 
+ */
 
 export interface University {
   id: string;
@@ -28,10 +28,15 @@ export interface RegisterData {
 
 export interface VerifyOtpData {
   email: string;
-  code: string;         
+  code: string;
 }
 
 export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface ForgotPasswordData {
   email: string;
   password: string;
 }
@@ -75,4 +80,8 @@ export async function logoutUser(): Promise<MessageResponse> {
 
 export async function getMe(): Promise<AuthUser> {
   return api.get<AuthUser>('/auth/me');
+}
+
+export async function forgotPassword(data: ForgotPasswordData): Promise<void> {
+  return api.post<void>('/auth/forgot-password', data);
 }

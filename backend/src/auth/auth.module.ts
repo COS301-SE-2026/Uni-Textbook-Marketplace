@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../database/entities/users.entity';
 import { OTP } from '../database/entities/otps.entity';
 import { University } from '../database/entities/university.entity';
+import { Faculty } from '../database/entities/faculty.entity';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
@@ -23,7 +24,7 @@ import { RolesGuard } from './guards/roles.guard';
         secret: config.get('JWT_ACCESS_SECRET'),
       }),
     }),
-    TypeOrmModule.forFeature([User, University, OTP]),
+    TypeOrmModule.forFeature([User, University, OTP, Faculty]),
   ],
   controllers: [AuthController],
   providers: [
