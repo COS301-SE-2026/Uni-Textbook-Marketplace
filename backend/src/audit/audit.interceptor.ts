@@ -1,90 +1,120 @@
-// interceptors/audit.interceptor.ts
 import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { AuditService } from './audit.service';
 import { Reflector } from '@nestjs/core';
-import { User } from 'src/database/entities/users.entity';
 import { Request } from 'express';
+import { User } from '../database/entities/users.entity';
 
-interface RequestWithUser extends Request {
-  user: User;
-  params: {
-    id?: string;
-    [key: string]: any;
-  };
-  body: {
-    id?: string;
-    [key: string]: any;
-  };
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
 }
 
-// Define a generic type for the response
-type ResponseType = Record<string, any> | any[] | null | undefined;
+// Type guard functions
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function hasId(obj: unknown): obj is { id: string } {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    isString((obj as { id: unknown }).id)
+  );
+}
+
+function isResponseWithId(value: unknown): value is { id: string } {
+  return hasId(value);
+}
+
+function isArrayWithId(value: unknown): value is Array<{ id: string }> {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every(item => hasId(item))
+  );
+}
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
   constructor(
-    private auditService: AuditService,
-    private reflector: Reflector,
+    private readonly auditService: AuditService,
+    private readonly reflector: Reflector,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    // Get the request with proper typing
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
+  intercept<T>(
+    context: ExecutionContext,
+    next: CallHandler<T>,
+  ): Observable<T> {
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const user = request.user;
 
-    // Get metadata from the decorator
     const entityType = this.reflector.get<string>(
       'entityType',
       context.getHandler(),
     );
-    const action = this.reflector.get<string>('action', context.getHandler());
 
-    // Only log if we have an admin user and required metadata
-    if (user?.role === 'admin' && entityType && action) {
-      // Get entity ID from various possible locations
-      const entityId = request.params?.id || request.body?.id;
+    const action = this.reflector.get<string>(
+      'action',
+      context.getHandler(),
+    );
 
-      // Use switchMap to properly handle async operations
-      return next.handle().pipe(
-        switchMap(async (response: ResponseType): Promise<ResponseType> => {
-          try {
-            const finalEntityId = entityId;
-
-            if (finalEntityId) {
-              await this.auditService.logAction(
-                user,
-                entityType,
-                finalEntityId,
-                action,
-                `Performed by ${user.email} (${user.id})`,
-              );
-            } else {
-              console.warn(
-                `Audit log warning: No entity ID found for ${entityType} ${action}`,
-              );
-            }
-          } catch (error) {
-            console.error('Failed to create audit log:', error);
-          }
-
-          // Return the response with proper typing
-          return response;
-        }),
-        catchError((error: Error): Observable<never> => {
-          console.error('Error in intercepted request:', error);
-          throw error;
-        }),
-      );
+    // No auditing required
+    if (user?.role !== 'admin' || !entityType || !action) {
+      return next.handle();
     }
 
-    // If no logging needed, just continue
-    return next.handle();
+    let entityId: string | undefined;
+
+    // Check route parameter
+    if (typeof request.params?.id === 'string') {
+      entityId = request.params.id;
+    }
+
+    // Check request body
+    if (!entityId && isString(request.body?.id)) {
+      entityId = request.body.id;
+    }
+
+    return next.handle().pipe(
+      mergeMap((response: T) =>
+        from(
+          (async (): Promise<T> => {
+            let finalEntityId = entityId;
+
+            if (!finalEntityId) {
+              if (isResponseWithId(response)) {
+                finalEntityId = response.id;
+              } else if (isArrayWithId(response)) {
+                finalEntityId = response[0].id;
+              }
+            }
+
+            if (finalEntityId && user) {
+              try {
+                await this.auditService.logAction(
+                  user,
+                  entityType,
+                  finalEntityId,
+                  action,
+                  `Performed by ${user.email}`,
+                );
+              } catch (error) {
+                console.error('Failed to create audit log:', error);
+              }
+            }
+
+            return response;
+          })(),
+        ),
+      ),
+    );
   }
 }

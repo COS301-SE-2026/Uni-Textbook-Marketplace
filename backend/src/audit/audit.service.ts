@@ -23,13 +23,12 @@ export class AuditService {
       entity_type: entityType,
       entity_id: entityId,
       action,
-      notes: notes,
+      notes: notes , 
     });
 
     return await this.auditLogRepository.save(auditLog);
   }
 
-  // Transaction-safe version
   async logActionWithTransaction(
     manager: EntityManager,
     performedBy: User,
@@ -43,7 +42,7 @@ export class AuditService {
       entity_type: entityType,
       entity_id: entityId,
       action,
-      notes: notes,
+      notes: notes ,
     });
 
     return await manager.save(auditLog);
