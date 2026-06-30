@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Body, Req, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Param, Body, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { AdminService } from './admin.service';
 import { User } from '../database/entities/users.entity';
