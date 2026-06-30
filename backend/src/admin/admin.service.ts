@@ -34,7 +34,7 @@ export class AdminService {
     });
   }
 
-  async rejectListing(id: string, admin: User, _reason?: string) {
+  async rejectListing(id: string, admin: User) {
     return await this.entityManager.transaction(async (manager) => {
       const listingRepository = manager.getRepository(Listing);
 
