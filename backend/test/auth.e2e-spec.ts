@@ -1,17 +1,17 @@
 import { Test } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import { AppModule } from "../../src/app.module";
+import { AppModule } from "../src/app.module";
 import { DataSource, Repository } from "typeorm";
 import request from "supertest";
 
-import { University } from "../../src/database/entities/university.entity";
-import { User } from "../../src/database/entities/users.entity";
-import { EMAIL_SERVICE } from "../../src/email/email.interface";
+import { University } from "../src/database/entities/university.entity";
+import { User } from "../src/database/entities/users.entity";
+import { EMAIL_SERVICE } from "../src/email/email.interface";
 
 const Test_Password = process.env.TEST_PASSWORD;
 
 
-describe('Auth Integration', () => {
+describe('Auth (e2e) test', () => {
 
     let app: INestApplication;
     let dataSource: DataSource;
