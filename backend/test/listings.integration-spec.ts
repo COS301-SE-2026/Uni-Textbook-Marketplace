@@ -402,4 +402,129 @@ describe('ListingsController Integration Tests', () => {
             expect(response.body[0].title).toBe('Matching Listing');
         });
     });
+    describe('GET /listings/mine - Get My Listings', () => {
+        it('should return listings for authenticated user', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            // Create listings for this user
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'My Listing 1',
+                status: ListingStatus.PENDING
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'My Listing 2',
+                status: ListingStatus.APPROVED
+            });
+
+            // Create listing for another user
+            const otherUser = await userRepository.save({
+                email: 'other@tuks.co.za',
+                password: Test_Password,
+                first_name: 'Other',
+                last_name: 'User',
+                faculty: 'EBIT',
+                university: university,
+                is_verified: true
+            });
+            await createTestListing(otherUser.id, book.id, module.id, {
+                title: 'Other User Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings/mine')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body).toHaveLength(2);
+            expect(response.body.every((l: any) => l.seller.id === user.id)).toBe(true);
+        });
+
+        it('should return 401 when not authenticated', async () => {
+            await request(app.getHttpServer())
+                .get('/listings/mine')
+                .expect(401);
+        });
+    });
+
+    describe('GET /listings/:id - Get Listing By ID', () => {
+        it('should return listing by ID', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED
+            });
+
+            const response = await request(app.getHttpServer())
+                .get(`/listings/${listing.id}`)
+                .expect(200);
+
+            expect(response.body).toMatchObject({
+                id: listing.id,
+                title: listing.title,
+                price: listing.price,
+                status: listing.status
+            });
+            expect(response.body.seller.id).toBe(user.id);
+            expect(response.body.book.id).toBe(book.id);
+            expect(response.body.module.id).toBe(module.id);
+        });
+
+        it('should return 404 when listing not found', async () => {
+            await request(app.getHttpServer())
+                .get('/listings/non-existent-id')
+                .expect(404);
+        });
+    });
+
+    describe('GET /listings/admin/pending - Admin Get Pending Listings', () => {
+        it('should return pending listings for admin', async () => {
+            const university = await createUniversity();
+            const admin = await createVerifiedAdmin(university.id);
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            // Create pending listings
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'Pending 1',
+                status: ListingStatus.PENDING
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'Pending 2',
+                status: ListingStatus.PENDING
+            });
+            // Create approved listing (should not be returned)
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'Approved',
+                status: ListingStatus.APPROVED
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings/admin/pending')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body).toHaveLength(2);
+            expect(response.body.every((l: any) => l.status === ListingStatus.PENDING)).toBe(true);
+        });
+
+        it('should return 403 for non-admin users', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .get('/listings/admin/pending')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        });
+    });
 });
