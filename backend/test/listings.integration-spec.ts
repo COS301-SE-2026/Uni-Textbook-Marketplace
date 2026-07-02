@@ -167,4 +167,239 @@ describe('ListingsController Integration Tests', () => {
             expect(true).toBe(true);
         });
     });
+    describe('POST /listings - Create Listing', () => {
+        it('should reject unauthenticated request', async () => {
+            await request(app.getHttpServer())
+                .post('/listings')
+                .send({
+                    title: 'Test Listing',
+                    bookId: 'some-id',
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99
+                })
+                .expect(401);
+        });
+
+        it('should create a listing successfully', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const response = await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    title: 'My Textbook',
+                    bookId: book.id,
+                    moduleId: module.id,
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99,
+                    photoUrls: ['http://example.com/photo1.jpg'],
+                    hasNotes: true
+                })
+                .expect(201);
+
+            expect(response.body).toMatchObject({
+                title: 'My Textbook',
+                condition: 'good',
+                annotation_level: 'light',
+                price: 49.99,
+                status: ListingStatus.PENDING,
+                has_notes: true,
+                photo_urls: ['http://example.com/photo1.jpg']
+            });
+            expect(response.body.id).toBeDefined();
+            expect(response.body.seller.id).toBe(user.id);
+            expect(response.body.book.id).toBe(book.id);
+            expect(response.body.module.id).toBe(module.id);
+        });
+
+        it('should reject when book does not exist', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    title: 'Test Listing',
+                    bookId: 'non-existent-book-id',
+                    moduleId: module.id,
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99
+                })
+                .expect(404);
+        });
+
+        it('should create listing without module', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const token = getAuthToken(user);
+
+            const response = await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    title: 'Listing Without Module',
+                    bookId: book.id,
+                    condition: 'good',
+                    annotationLevel: 'none',
+                    price: 29.99,
+                    photoUrls: [],
+                    hasNotes: false
+                })
+                .expect(201);
+
+            expect(response.body.module).toBeNull();
+            expect(response.body.title).toBe('Listing Without Module');
+        });
+    });
+
+    describe('GET /listings - Get All Approved Listings', () => {
+        it('should return all approved listings', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+
+            // Create approved listings
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                title: 'Approved Listing 1'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                title: 'Approved Listing 2'
+            });
+            // Create pending listing (should not be returned)
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                title: 'Pending Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings')
+                .expect(200);
+
+            expect(response.body).toHaveLength(2);
+            expect(response.body.every((l: any) => l.status === ListingStatus.APPROVED)).toBe(true);
+            expect(response.body.map((l: any) => l.title)).toContain('Approved Listing 1');
+            expect(response.body.map((l: any) => l.title)).toContain('Approved Listing 2');
+        });
+
+        it('should filter listings by module code', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module1 = await createModule();
+            const module2 = await moduleRepository.save({
+                code: 'COS110',
+                name: 'Programming',
+                faculty: 'Engineering'
+            });
+
+            await createTestListing(user.id, book.id, module1.id, {
+                status: ListingStatus.APPROVED,
+                title: 'COS132 Listing'
+            });
+            await createTestListing(user.id, book.id, module2.id, {
+                status: ListingStatus.APPROVED,
+                title: 'COS110 Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings?moduleCode=COS132')
+                .expect(200);
+
+            expect(response.body).toHaveLength(1);
+            expect(response.body[0].title).toBe('COS132 Listing');
+        });
+
+        it('should filter listings by condition', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                condition: 'good',
+                title: 'Good Condition'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                condition: 'new',
+                title: 'New Condition'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings?condition=good')
+                .expect(200);
+
+            expect(response.body).toHaveLength(1);
+            expect(response.body[0].condition).toBe('good');
+        });
+
+        it('should filter listings by price range', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                price: 29.99,
+                title: 'Cheap Book'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                price: 89.99,
+                title: 'Expensive Book'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings?priceMin=30&priceMax=100')
+                .expect(200);
+
+            expect(response.body).toHaveLength(1);
+            expect(response.body[0].price).toBe(89.99);
+        });
+
+        it('should combine multiple filters', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                condition: 'good',
+                price: 45.00,
+                annotation_level: 'light',
+                title: 'Matching Listing'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                condition: 'new',
+                price: 55.00,
+                annotation_level: 'heavy',
+                title: 'Non-Matching Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings?condition=good&priceMin=40&priceMax=50&annotationLevel=light')
+                .expect(200);
+
+            expect(response.body).toHaveLength(1);
+            expect(response.body[0].title).toBe('Matching Listing');
+        });
+    });
 });
