@@ -527,4 +527,182 @@ describe('ListingsController Integration Tests', () => {
                 .expect(403);
         });
     });
+    describe('PATCH /listings/admin/:id/approve - Admin Approve Listing', () => {
+        it('should approve pending listing for admin', async () => {
+            const university = await createUniversity();
+            const admin = await createVerifiedAdmin(university.id);
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/listings/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body.status).toBe(ListingStatus.APPROVED);
+            expect(response.body.reviewer.id).toBe(admin.id);
+            expect(response.body.reviewed_at).toBeDefined();
+        });
+
+        it('should return 403 for non-admin users', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        });
+
+        it('should return 404 when listing not found', async () => {
+            const university = await createUniversity();
+            const admin = await createVerifiedAdmin(university.id);
+            const token = getAuthToken(admin);
+
+            await request(app.getHttpServer())
+                .patch('/listings/admin/non-existent-id/approve')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(404);
+        });
+    });
+
+    describe('PATCH /listings/admin/:id/reject - Admin Reject Listing', () => {
+        it('should reject pending listing for admin', async () => {
+            const university = await createUniversity();
+            const admin = await createVerifiedAdmin(university.id);
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/listings/admin/${listing.id}/reject`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body.status).toBe(ListingStatus.REJECTED);
+            expect(response.body.reviewer.id).toBe(admin.id);
+            expect(response.body.reviewed_at).toBeDefined();
+        });
+
+        it('should return 403 for non-admin users', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/admin/${listing.id}/reject`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        });
+    });
+
+    describe('Edge Cases and Error Scenarios', () => {
+        it('should handle invalid data types', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    title: 'Invalid Listing',
+                    bookId: book.id,
+                    condition: 'invalid-condition', // Invalid enum
+                    annotationLevel: 'light',
+                    price: 'not-a-number', // Invalid price
+                    photoUrls: 'not-an-array' // Invalid photoUrls
+                })
+                .expect(400);
+        });
+
+        it('should handle expired tokens', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const expiredToken = jwtService.sign(
+                { sub: user.id, email: user.email },
+                { expiresIn: '0s' }
+            );
+
+            await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${expiredToken}`)
+                .send({
+                    title: 'Test Listing',
+                    bookId: 'some-id',
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99
+                })
+                .expect(401);
+        });
+
+        it('should handle invalid token format', async () => {
+            await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', 'Bearer invalid-token-format')
+                .send({
+                    title: 'Test Listing',
+                    bookId: 'some-id',
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99
+                })
+                .expect(401);
+        });
+    });
+
+    describe('Concurrent Operations', () => {
+        it('should handle concurrent listing creation', async () => {
+            const university = await createUniversity();
+            const user = await createVerifiedUser(university.id);
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const promises = Array(5).fill(null).map(() =>
+                request(app.getHttpServer())
+                    .post('/listings')
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({
+                        title: 'Concurrent Listing',
+                        bookId: book.id,
+                        moduleId: module.id,
+                        condition: 'good',
+                        annotationLevel: 'light',
+                        price: 49.99,
+                        photoUrls: [],
+                        hasNotes: false
+                    })
+            );
+
+            const responses = await Promise.all(promises);
+            expect(responses.every(r => r.status === 201)).toBe(true);
+        });
+    });
 });
