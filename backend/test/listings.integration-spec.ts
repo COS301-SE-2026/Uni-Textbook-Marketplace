@@ -11,6 +11,7 @@ import { Module } from "../src/database/entities/module.entity";
 import { University } from "../src/database/entities/university.entity";
 import { ListingStatus } from "../src/database/entities/listing.entity";
 import { JwtService } from "@nestjs/jwt";
+import { Faculty } from "../src/database/entities/faculty.entity";
 
 const Test_Password = process.env.TEST_PASSWORD;
 
@@ -22,6 +23,7 @@ describe('ListingsController Integration Tests', () => {
     let bookRepository: Repository<Book>;
     let moduleRepository: Repository<Module>;
     let universityRepository: Repository<University>;
+    let facultyRepository: Repository<Faculty>;
     let jwtService: JwtService;
 
     // Test data
@@ -41,6 +43,7 @@ describe('ListingsController Integration Tests', () => {
         faculty: 'EBIT',
         role: 'admin'
     };
+
     // Helper functions
     const createUniversity = () => universityRepository.save({
         name: 'University of Pretoria',
@@ -61,6 +64,9 @@ describe('ListingsController Integration Tests', () => {
         name: 'Imperative Programming',
         faculty: 'Engineering'
     });
+
+    const createFaculty = (name: string = 'EBIT') =>
+        facultyRepository.save({ name });
 
     const registerUser = (university_id: string, overrides = {}) =>
         request(app.getHttpServer())
@@ -147,12 +153,13 @@ describe('ListingsController Integration Tests', () => {
         bookRepository = dataSource.getRepository(Book);
         moduleRepository = dataSource.getRepository(Module);
         universityRepository = dataSource.getRepository(University);
+        facultyRepository = dataSource.getRepository(Faculty);
         jwtService = moduleRef.get(JwtService);
     });
 
     afterEach(async () => {
         await dataSource.query(
-            'TRUNCATE TABLE listings, books, modules, users, universities CASCADE'
+            'TRUNCATE TABLE listings, books, modules, users, universities, faculties CASCADE'
         );
     });
 
@@ -167,6 +174,7 @@ describe('ListingsController Integration Tests', () => {
             expect(true).toBe(true);
         });
     });
+
     describe('POST /listings - Create Listing', () => {
         it('should reject unauthenticated request', async () => {
             await request(app.getHttpServer())
@@ -186,11 +194,12 @@ describe('ListingsController Integration Tests', () => {
             const user = await createVerifiedUser(university.id);
             const book = await createBook();
             const module = await createModule();
+            
             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    const token = getAuthToken(user);
+                throw new Error('User not found');
+            }
+            
+            const token = getAuthToken(user);
 
             const response = await request(app.getHttpServer())
                 .post('/listings')
@@ -226,11 +235,12 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
             const module = await createModule();
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    const token = getAuthToken(user);
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
+            const token = getAuthToken(user);
 
             await request(app.getHttpServer())
                 .post('/listings')
@@ -250,11 +260,12 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
             const book = await createBook();
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    const token = getAuthToken(user);
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
+            const token = getAuthToken(user);
 
             const response = await request(app.getHttpServer())
                 .post('/listings')
@@ -279,10 +290,11 @@ describe('ListingsController Integration Tests', () => {
         it('should return all approved listings', async () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
             const book = await createBook();
             const module = await createModule();
 
@@ -314,11 +326,11 @@ describe('ListingsController Integration Tests', () => {
         it('should filter listings by module code', async () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
             const book = await createBook();
             const module1 = await createModule();
             const module2 = await moduleRepository.save({
@@ -347,11 +359,11 @@ describe('ListingsController Integration Tests', () => {
         it('should filter listings by condition', async () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
             const book = await createBook();
             const module = await createModule();
 
@@ -378,11 +390,10 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-   
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
             const book = await createBook();
             const module = await createModule();
 
@@ -409,11 +420,10 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
             const book = await createBook();
             const module = await createModule();
 
@@ -440,16 +450,17 @@ describe('ListingsController Integration Tests', () => {
             expect(response.body[0].title).toBe('Matching Listing');
         });
     });
+
     describe('GET /listings/mine - Get My Listings', () => {
         it('should return listings for authenticated user', async () => {
             const university = await createUniversity();
+            const faculty = await createFaculty();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(user);
@@ -470,7 +481,7 @@ describe('ListingsController Integration Tests', () => {
                 password: Test_Password,
                 first_name: 'Other',
                 last_name: 'User',
-                faculty: 'EBIT',
+                faculty: faculty,
                 university: university,
                 is_verified: true
             });
@@ -499,10 +510,9 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
 
             const book = await createBook();
             const module = await createModule();
@@ -538,18 +548,16 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const admin = await createVerifiedAdmin(university.id);
 
-             if (!admin) {
-        throw new Error('Admin not found');
-    }
-    
-    
+            if (!admin) {
+                throw new Error('Admin not found');
+            }
+
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-   
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(admin);
@@ -582,10 +590,9 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
 
             const token = getAuthToken(user);
 
@@ -595,25 +602,22 @@ describe('ListingsController Integration Tests', () => {
                 .expect(403);
         });
     });
+
     describe('PATCH /listings/admin/:id/approve - Admin Approve Listing', () => {
         it('should approve pending listing for admin', async () => {
             const university = await createUniversity();
             const admin = await createVerifiedAdmin(university.id);
- if (!admin) {
-        throw new Error('Admin not found');
-    }
 
-    
-    
-   
+            if (!admin) {
+                throw new Error('Admin not found');
+            }
 
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(admin);
@@ -636,11 +640,10 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-   
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(user);
@@ -658,11 +661,11 @@ describe('ListingsController Integration Tests', () => {
         it('should return 404 when listing not found', async () => {
             const university = await createUniversity();
             const admin = await createVerifiedAdmin(university.id);
-             if (!admin) {
-        throw new Error('Admin not found');
-    }
-    
-   
+
+            if (!admin) {
+                throw new Error('Admin not found');
+            }
+
             const token = getAuthToken(admin);
 
             await request(app.getHttpServer())
@@ -677,17 +680,16 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const admin = await createVerifiedAdmin(university.id);
 
-             if (!admin) {
-        throw new Error('Admin not found');
-    }
-    
-   
+            if (!admin) {
+                throw new Error('Admin not found');
+            }
+
             const user = await createVerifiedUser(university.id);
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
- 
+
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(admin);
@@ -709,10 +711,10 @@ describe('ListingsController Integration Tests', () => {
         it('should return 403 for non-admin users', async () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
+
+            if (!user) {
+                throw new Error('User not found');
+            }
 
             const book = await createBook();
             const module = await createModule();
@@ -734,13 +736,9 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-
-
-
+            if (!user) {
+                throw new Error('User not found');
+            }
 
             const book = await createBook();
             const token = getAuthToken(user);
@@ -751,10 +749,10 @@ describe('ListingsController Integration Tests', () => {
                 .send({
                     title: 'Invalid Listing',
                     bookId: book.id,
-                    condition: 'invalid-condition', // Invalid enum
+                    condition: 'invalid-condition',
                     annotationLevel: 'light',
-                    price: 'not-a-number', // Invalid price
-                    photoUrls: 'not-an-array' // Invalid photoUrls
+                    price: 'not-a-number',
+                    photoUrls: 'not-an-array'
                 })
                 .expect(400);
         });
@@ -763,11 +761,10 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-   
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const expiredToken = jwtService.sign(
                 { sub: user.id, email: user.email },
                 { expiresIn: '0s' }
@@ -806,11 +803,10 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const user = await createVerifiedUser(university.id);
 
-             if (!user) {
-        throw new Error('User not found');
-    }
-    
-    
+            if (!user) {
+                throw new Error('User not found');
+            }
+
             const book = await createBook();
             const module = await createModule();
             const token = getAuthToken(user);
