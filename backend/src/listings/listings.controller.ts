@@ -73,7 +73,7 @@ export class ListingsController {
   getPending() {
     return this.listingsService.getPendingListings();
   }
-  
+
   // admins only
   @Patch('admin/:id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
