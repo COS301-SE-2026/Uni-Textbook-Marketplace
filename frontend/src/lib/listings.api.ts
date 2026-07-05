@@ -74,14 +74,20 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('Uploading failed');
+        const error = await response.json();
+        throw new Error(error.message || 'Uploading failed');
       }
+      const responseData = await response.json();
+
+      if (responseData.url) {
+        return { urls: [responseData.url]};
+      }
+
+      return { urls: responseData.urls || []};
     } catch (error) {
       console.error('Uploading error:', error);
       return { urls: [] };
     }
-    console.log(`${files.length} images selected but upload not yet configured`)
-    return { urls: [] }
 }
 
 export async function createListing(data: CreateListingData) {
