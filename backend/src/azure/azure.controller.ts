@@ -20,7 +20,7 @@ export class AzureController {
     constructor(private readonly azureService: AzureService) {}
 
     @Post('upload')
-    @UseInterceptors(FileInterceptor('image'))
+    @UseInterceptors(FileInterceptor('image', 5))
     async uploadImage(@UploadedFile() file: any) {
         if(!file) {
             throw new BadRequestException('No file uploaded');
