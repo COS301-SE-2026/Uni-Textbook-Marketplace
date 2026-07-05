@@ -22,7 +22,7 @@ export class AzureService {
 
     }
 
-    async uploadImage(file: Express.Multer.File): Promise<string> {
+    async uploadImage(file: any): Promise<string> {
         if (!file) {
             throw new BadRequestException('No file provided');
         }
