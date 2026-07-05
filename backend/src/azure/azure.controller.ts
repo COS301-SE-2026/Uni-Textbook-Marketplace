@@ -21,8 +21,8 @@ export class AzureController {
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('image', 5))
-    async uploadImage(@UploadedFile() file: any[]) {
-        if(!file || files.length === 0) {
+    async uploadImage(@UploadedFile() files: any[]) {
+        if(!files || files.length === 0) {
             throw new BadRequestException('No file uploaded');
         }
         const urls: string[] = [];
