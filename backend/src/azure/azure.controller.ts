@@ -21,12 +21,17 @@ export class AzureController {
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('image', 5))
-    async uploadImage(@UploadedFile() file: any) {
-        if(!file) {
+    async uploadImage(@UploadedFile() file: any[]) {
+        if(!file || files.length === 0) {
             throw new BadRequestException('No file uploaded');
         }
-        const url = await this.azureService.uploadImage(file);
-        return { url };
+        const urls: string[] = [];
+
+        for (const file of files) {
+            const url = await this.azureService.uploadImage(file);
+            urls.push(url);
+        }
+        return { urls };
     }
 
     @Get('list')
