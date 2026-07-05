@@ -64,7 +64,18 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
     });
 
     try {
-
+      const token = localStorage.getItem('token');
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${BASE_URL}/images/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Uploading failed');
+      }
     } catch (error) {
       console.error('Uploading error:', error);
       return { urls: [] };
