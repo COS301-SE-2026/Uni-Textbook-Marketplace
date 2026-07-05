@@ -15,10 +15,10 @@ export class AdminController {
   @Post(':id/reject')
   async rejectListing(
     @Param('id') id: string,
-    @Body('reason') reason: string,
+    //@Body('reason') reason: string,
     @Req() req: RequestWithUser, 
   ) {
-    return await this.adminService.rejectListing(id, req.user, reason);
+    return await this.adminService.rejectListing(id, req.user);
   }
 
   @Post(':id/approve')
