@@ -55,17 +55,28 @@ export async function createModule(data: CreateModuleData): Promise<Module> {
 }
 
 export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
+
+    console.log('Uploading images:', files.length, 'files')
     if (!files || files.length === 0) {
       return { urls: []};
     }
     const formData = new FormData();
     files.forEach((file) => {
+      console.log('Adding file:', file.name, file.type, file.size)
+
       formData.append('images', file);
     });
 
     try {
       const token = localStorage.getItem('token');
+
+      console.log('Token exists:', !!token)
+
       const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+      const url = `${BASE_URL}/images/upload`;
+      console.log('Sending to:', url)
+
       const response = await fetch(`${BASE_URL}/images/upload`, {
         method: 'POST',
         headers: {
@@ -73,11 +84,18 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
         },
         body: formData,
       });
+
+      console.log('Response status:', response.status)
+
       if (!response.ok) {
         const error = await response.json();
+
+        console.error('Upload fail:', error)
         throw new Error(error.message || 'Uploading failed');
       }
       const responseData = await response.json();
+
+      console.log('Upload response:', responseData)
 
       if (responseData.url) {
         return { urls: [responseData.url]};
@@ -86,7 +104,8 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
       return { urls: responseData.urls || []};
     } catch (error) {
       console.error('Uploading error:', error);
-      return { urls: [] };
+      throw error;
+      //return { urls: [] };
     }
 }
 

@@ -166,6 +166,7 @@ export default function CreateListingPage() {
             })
 
             const { urls } = await uploadImages(form.images)
+            console.log('Uploaded images:', urls)
 
             await createListing({
                 title: form.title,
@@ -182,7 +183,15 @@ export default function CreateListingPage() {
 
         } catch (err) {
             console.error(err)
-            alert('Something went wrong. Please try again.')
+
+            if (err instanceof Error) {
+                console.error('Error:', err.message)
+                console.error('Stack error:', err.stack)
+                alert(`Error: ${err.message}`)
+            } else {
+                alert('Something went wrong. Please try again.')
+            }
+            
         } finally {
             setLoading(false)
         }
