@@ -55,6 +55,20 @@ export async function createModule(data: CreateModuleData): Promise<Module> {
 }
 
 export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
+    if (!files || files.length === 0) {
+      return { urls: []};
+    }
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    try {
+
+    } catch (error) {
+      console.error('Uploading error:', error);
+      return { urls: [] };
+    }
     console.log(`${files.length} images selected but upload not yet configured`)
     return { urls: [] }
 }
