@@ -5,7 +5,7 @@ import {
     Delete,
     UseGuards,
     UseInterceptors,
-    UploadedFile,
+    UploadedFiles,
     BadRequestException,
     Body,
 } from '@nestjs/common';
@@ -21,9 +21,9 @@ export class AzureController {
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('image', 5))
-    async uploadImage(@UploadedFile() files: any[]) {
+    async uploadImage(@UploadedFiles() files: any[]) {
         if(!files || files.length === 0) {
-            throw new BadRequestException('No file uploaded');
+            throw new BadRequestException('No files uploaded');
         }
         const urls: string[] = [];
 
