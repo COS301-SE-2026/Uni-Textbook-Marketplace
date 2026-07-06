@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -12,6 +16,7 @@ import { ListingFiltersDto } from './dto/listingFilter.dto';
 
 @Injectable()
 export class ListingsService {
+  [x: string]: any;
   constructor(
     @InjectRepository(Listing)
     private listingRepo: Repository<Listing>,
@@ -42,7 +47,7 @@ export class ListingsService {
       title: dto.title,
       seller: user,
       book,
-      module: module ?? undefined,
+      module: module ?? null,
       condition: dto.condition,
       annotation_level: dto.annotationLevel,
       price: dto.price,
@@ -112,6 +117,10 @@ export class ListingsService {
 
   //similar to getMy, just specifies seller
   async getListingById(id: string) {
+    if (!this.isValidUUID(id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
     const listing = await this.listingRepo.findOne({
       where: { id },
       relations: ['book', 'module', 'seller'],
@@ -134,6 +143,10 @@ export class ListingsService {
   async approveListing(id: string, adminId: string) {
     const listing = await this.getListingById(id);
 
+    if (!listing) {
+      throw new NotFoundException(`Listing with ID ${id} not found`);
+    }
+
     listing.status = ListingStatus.APPROVED;
     listing.reviewer = { id: adminId } as User;
     listing.reviewed_at = new Date();
@@ -150,5 +163,11 @@ export class ListingsService {
     listing.reviewed_at = new Date();
 
     return this.listingRepo.save(listing);
+  }
+
+  private isValidUUID(uuid: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
   }
 }
