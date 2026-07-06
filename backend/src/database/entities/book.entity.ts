@@ -6,7 +6,7 @@ export class Book {
   id!: string;
 
   @Column({
-    length: 13,
+    length: 20,
     unique: true,
     nullable: true,
   })

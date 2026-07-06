@@ -68,7 +68,20 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
     });
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || 
+      
+                    sessionStorage.getItem('auth_token') ||
+
+                    (() =>  {
+                      const user = sessionStorage.getItem('auth_user');
+                      if (user) {
+                        try {
+                          return JSON.parse(user)?.token;
+                        } catch {}
+                      }
+
+                      return null;
+                    })();
 
       console.log('Token exists:', !!token)
 
