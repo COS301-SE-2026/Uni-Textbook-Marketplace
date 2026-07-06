@@ -19,6 +19,7 @@ describe("listing (e2e) test", () => {
     let moduleRepository!: Repository<Module>;
 
     let userToken!: string;
+    let createdListingId!: string;
 
     const createUniversity = () => {
         return universityRepository.save({
@@ -163,6 +164,7 @@ describe("listing (e2e) test", () => {
             expect(res.status).toBe(201);
             expect(res.body).toHaveProperty("id");
             expect(res.body.title).toBe("Test Listing");
+            createdListingId = res.body.id;
         });
     });
 
@@ -193,6 +195,26 @@ describe("listing (e2e) test", () => {
 
             expect(Array.isArray(res.body)).toBe(true);
             expect(res.body.some((l: any) => l.title === "Test Listing")).toBe(false);
+        });
+    });
+
+    describe("get listing by id", () => {
+
+        it("should return the listing", async() => {
+
+            const res = await request(app.getHttpServer())
+                .get(`/listings/${createdListingId}`)
+                .expect(200);
+
+            expect(res.body).toHaveProperty("id",createdListingId);
+            expect(res.body.title).toBe("Test Listing");
+        });
+
+        it("should return 404 for id thats not there", async () => {
+
+            await request(app.getHttpServer())
+                .get("/listings/00000000-0000-0000-0000-000000000000")
+                .expect(404);
         });
     });
 });
