@@ -86,7 +86,7 @@ describe("listing (e2e) test", () => {
                 title: "Software Engineering",
                 author: "gift",
                 edition: 3,
-                publisher:"nexusdev"
+                publisher: "nexusdev"
             })
             .expect(201);
         return res.body.id;
@@ -113,16 +113,18 @@ describe("listing (e2e) test", () => {
     });
 
     afterAll(async () => {
+        
+        if(dataSource?.isInitialized){
+            await dataSource.query(
+                `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities" RESTART IDENTITY CASCADE`
+            )
+        }
+
         if (app) {
             await app.close();
         }
     });
 
-    afterEach(async () => {
-        await dataSource.query(
-            `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities" RESTART IDENTITY CASCADE`
-        )
-    });
 
     describe("test connetion", () => {
         it("should load app", () => {
@@ -159,6 +161,23 @@ describe("listing (e2e) test", () => {
             expect(res.status).toBe(201);
             expect(res.body).toHaveProperty("id");
             expect(res.body.title).toBe("Test Listing");
+        });
+    });
+
+    describe("get mine listing", () => {
+
+        it("should return my listing", async () => {
+
+            const token = await loginVerifiedStudent();
+
+            const res = await request(app.getHttpServer())
+                .get("/listings/mine")
+                .set("Cookie", `access_token=${token}`)
+                .expect(200);
+
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body.length).toBeGreaterThan(0);
+            expect(res.body[0]).toHaveProperty("title", "Test Listing");
         });
     });
 });
