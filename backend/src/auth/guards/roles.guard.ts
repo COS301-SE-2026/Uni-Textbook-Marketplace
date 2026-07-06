@@ -22,14 +22,31 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    console.log('RolesGuard: Checking roles...'); // Debug
+    console.log('RolesGuard: Checking roles...');
 
-    // Use the constant instead of string literal
-    const roles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler());
-    console.log('RolesGuard: Required roles:', roles);
+    // Get the roles metadata - could be string or array
+    const rolesMetadata = this.reflector.get<string | string[]>(
+      ROLES_KEY,
+      context.getHandler(),
+    );
+
+    console.log('RolesGuard: Raw roles metadata:', rolesMetadata);
+
+    // Normalize to array (handles both single string and array)
+    let requiredRoles: string[] = [];
+    if (typeof rolesMetadata === 'string') {
+      requiredRoles = [rolesMetadata]; // Convert single string to array
+    } else if (Array.isArray(rolesMetadata)) {
+      requiredRoles = rolesMetadata;
+    } else {
+      // No roles required
+      return true;
+    }
+
+    console.log('RolesGuard: Required roles:', requiredRoles);
 
     // If no roles are required, allow access
-    if (!roles) {
+    if (requiredRoles.length === 0) {
       return true;
     }
 
@@ -41,15 +58,16 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User not authenticated');
     }
 
-    // Check if user has required role
-    const hasRole = roles.includes(user.role);
+    // Check if user has any of the required roles
+    const hasRole = requiredRoles.includes(user.role);
 
     if (!hasRole) {
       throw new ForbiddenException(
-        'Insufficient permissions. Admin role required.',
+        `Insufficient permissions. Required roles: ${requiredRoles.join(', ')}`,
       );
     }
 
+    console.log('RolesGuard: Access granted');
     return true;
   }
 }
