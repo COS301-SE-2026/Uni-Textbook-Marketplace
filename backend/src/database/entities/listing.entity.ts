@@ -45,7 +45,7 @@ export class Listing {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'module_id' })
-  module: Module;
+  module: Module | null;
 
   @Column({
     type: 'enum',

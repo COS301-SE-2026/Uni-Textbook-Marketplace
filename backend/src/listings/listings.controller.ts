@@ -8,6 +8,7 @@ import {
   Req,
   UseGuards,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -47,7 +48,7 @@ export class ListingsController {
     return this.listingsService.createListing(req.user.id, dto);
   }
 
-  //get appro
+  //get approved
   @Get()
   getAll(@Query() query: ListingFiltersDto) {
     return this.listingsService.getAllApproved(query);
@@ -78,15 +79,38 @@ export class ListingsController {
   @Patch('admin/:id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  approve(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.listingsService.approveListing(id, req.user.id);
+  async approve(@Param('id') id: string, @Req() req: RequestWithUser) {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id))
+      throw new NotFoundException(`Invalid listing ID format`);
+    try {
+      return await this.listingsService.approveListing(id, req.user.id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new NotFoundException(`Listing with ID ${id} not found`);
+    }
   }
 
   // admins only
   @Patch('admin/:id/reject')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  reject(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.listingsService.rejectListing(id, req.user.id);
+  async reject(@Param('id') id: string, @Req() req: RequestWithUser) {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id))
+      throw new NotFoundException(`Invalid listing ID format`);
+
+    try {
+      return await this.listingsService.rejectListing(id, req.user.id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new NotFoundException(`Listing with ID ${id} not found`);
+    }
   }
 }
