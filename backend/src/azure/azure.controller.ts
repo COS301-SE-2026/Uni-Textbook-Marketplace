@@ -5,11 +5,11 @@ import {
     Delete,
     UseGuards,
     UseInterceptors,
-    UploadedFile,
+    UploadedFiles,
     BadRequestException,
     Body,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AzureService } from './azure.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -20,13 +20,19 @@ export class AzureController {
     constructor(private readonly azureService: AzureService) {}
 
     @Post('upload')
-    @UseInterceptors(FileInterceptor('images'))
-    async uploadImage(@UploadedFile() file: any) {
-        if(!file) {
+    @UseInterceptors(FilesInterceptor('images', 5))
+    async uploadImages(@UploadedFiles() files: any[]) {
+        if(!files || files.length === 0) {
             throw new BadRequestException('No files uploaded');
         }
-        const url = await this.azureService.uploadImage(file);
-        return { url };
+
+        const urls: string[] = [];
+        for (const file of files) {
+            const url = await this.azureService.uploadImage(file);
+            urls.push(url);
+        }
+        
+        return { urls };
     }
 
     @Get('list')

@@ -64,7 +64,7 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
     files.forEach((file) => {
       console.log('Adding file:', file.name, file.type, file.size)
 
-      formData.append('image', files[0]);
+      formData.append('images', file);
     });
 
     try {
