@@ -132,6 +132,17 @@ CREATE TABLE audit_log (
     notes TEXT
 );
 
+-- wishlist
+
+CREATE TABLE wishlist (
+
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    listings_id UUID NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+   
+    PRIMARY KEY (user_id, listings_id)
+);
+
 
 -- indexes
 
