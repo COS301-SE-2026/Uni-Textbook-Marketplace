@@ -58,8 +58,8 @@ function validateListingDetails(form: ListingFormData): FormErrors {
 }
 
 function validateImages(form: ListingFormData): FormErrors {
-    return form.images.length < 4
-        ? { images: 'Please upload at least 4 images' }
+    return form.images.length < 1
+        ? { images: 'Please upload at least 1 image' }
         : {}
 }
 

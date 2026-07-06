@@ -34,6 +34,11 @@ export class AzureController {
         return this.azureService.listBlobs();
     }
 
+    @Get('test')
+    async test() {
+        return { message: 'Test endpoint is working' };
+    }
+
     @Delete('delete')
     async deleteImage(@Body('url') url: string) {
         await this.azureService.deleteImage(url);
