@@ -12,13 +12,13 @@ export class WishlistService {
 
     constructor(
         @InjectRepository(Wishlist)
-        private wishlistRepository: Repository<Wishlist>,
+        private readonly wishlistRepository: Repository<Wishlist>,
 
         @InjectRepository(Listing)
-        private listingRepository: Repository<Listing>,
+        private readonly listingRepository: Repository<Listing>,
 
         @InjectRepository(User)
-        private userRepository: Repository<User>
+        private readonly userRepository: Repository<User>
     ) { }
 
     async save(userId: string, listingId: string) {
