@@ -166,7 +166,7 @@ export default function CreateListingPage() {
             })
 
             const { urls } = await uploadImages(form.images)
-            console.log('Uploaded images:', urls)
+            
 
             await createListing({
                 title: form.title,

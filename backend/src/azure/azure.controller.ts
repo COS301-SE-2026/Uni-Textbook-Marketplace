@@ -22,7 +22,7 @@ export class AzureController {
     @Post('upload')
     @UseInterceptors(FilesInterceptor('images', 5))
     async uploadImages(@UploadedFiles() files: any[]) {
-        console.log('Files received:', files?.length || 0);
+        
         if(!files || files.length === 0) {
             throw new BadRequestException('No files uploaded');
         }
