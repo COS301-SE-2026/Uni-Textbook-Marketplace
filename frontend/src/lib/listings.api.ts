@@ -56,70 +56,41 @@ export async function createModule(data: CreateModuleData): Promise<Module> {
 
 export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
 
-    console.log('Uploading images:', files.length, 'files')
+    
     if (!files || files.length === 0) {
       return { urls: []};
     }
     const formData = new FormData();
     files.forEach((file) => {
-      console.log('Adding file:', file.name, file.type, file.size)
 
       formData.append('images', file);
     });
 
-    try {
-      const token = localStorage.getItem('token') || 
-      
-                    sessionStorage.getItem('auth_token') ||
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-                    (() =>  {
-                      const user = sessionStorage.getItem('auth_user');
-                      if (user) {
-                        try {
-                          return JSON.parse(user)?.token;
-                        } catch {}
-                      }
+    const  response = await fetch(`{BASE_URL}/images/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
 
-                      return null;
-                    })();
+    if (!response.ok) {
 
-      console.log('Token exists:', !!token)
+      const error = await response.json();
 
-      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+      throw new Error(error.message || 'Upload failed');
 
-      const url = `${BASE_URL}/images/upload`;
-      console.log('Sending to:', url)
-
-      const response = await fetch(`${BASE_URL}/images/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: formData,
-      });
-
-      console.log('Response status:', response.status)
-
-      if (!response.ok) {
-        const error = await response.json();
-
-        console.error('Upload fail:', error)
-        throw new Error(error.message || 'Uploading failed');
-      }
-      const responseData = await response.json();
-
-      console.log('Upload response:', responseData)
-
-      if (responseData.url) {
-        return { urls: [responseData.url]};
-      }
-
-      return { urls: responseData.urls || []};
-    } catch (error) {
-      console.error('Uploading error:', error);
-      throw error;
-      //return { urls: [] };
     }
+
+    const responseInfo = await response.json();
+
+    if (responseInfo.url) {
+
+      return { urls: [responseInfo.url] };
+    }
+
+    return { urls: responseInfo.urls || [] };
+    
 }
 
 export async function createListing(data: CreateListingData) {
