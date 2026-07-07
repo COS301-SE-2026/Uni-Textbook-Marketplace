@@ -44,9 +44,11 @@ export default function LoginDesktop() {
         setLoading(true);
         try {
             const normalizedEmail = email.toLowerCase().trim();
-            await loginUser({ email: normalizedEmail, password });
-            const me = await getMe();
-            login(me);
+
+            const response = await loginUser({ email: normalizedEmail, password });
+            const token = response.accessToken;
+            const user = response.user;
+            login(user, token);
             router.push('/listings');
         } catch (err) {
             setServerError((err as ApiError).message);

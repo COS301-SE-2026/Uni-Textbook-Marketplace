@@ -9,7 +9,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (user: AuthUser) => void;
+  login: (user: AuthUser, token: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -47,11 +47,13 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       .finally(() => setIsLoading(false));
   }, [user]);
 
-  const login = (userData: AuthUser) => {
+  const login = (userData: AuthUser, token: string) => {
     if (!userData) return;
     setUser(userData);
     try {
       sessionStorage.setItem('auth_user', JSON.stringify(userData));
+      localStorage.setItem('token', token);
+      console.log('Token stored');
     } catch {
       // sessionStorage not available
     }
@@ -65,6 +67,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     } finally {
       setUser(null);
       sessionStorage.removeItem('auth_user');
+      localStorage.removeItem('token');
       router.push('/auth/login');
     }
   };

@@ -36,6 +36,12 @@ export interface LoginData {
   password: string;
 }
 
+export interface LoginResponse {
+  message: string;
+  accessToken: string;
+  user: AuthUser;
+}
+
 export interface ForgotPasswordData {
   email: string;
   password: string;
@@ -70,8 +76,8 @@ export async function resendOtp(email: string): Promise<MessageResponse> {
   return api.post<MessageResponse>('/auth/resend-otp', { email });
 }
 
-export async function loginUser(data: LoginData): Promise<MessageResponse> {
-  return api.post<MessageResponse>('/auth/login', data);
+export async function loginUser(data: LoginData): Promise<LoginResponse> {
+  return api.post<LoginResponse>('/auth/login', data);
 }
 
 export async function logoutUser(): Promise<MessageResponse> {
