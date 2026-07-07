@@ -39,12 +39,12 @@ export default function LandingPage() {
                   Get Started
                 </Link>
                 <Link
-                  href="/listings"
+                  href="/auth/login"
                   className="px-7 py-3 text-sm font-semibold text-white border-2 
                        border-white/40 rounded hover:border-white 
                        transition-all duration-200 no-underline"
                 >
-                  Browse Listings
+                  Login
                 </Link>
               </div>
             </div>

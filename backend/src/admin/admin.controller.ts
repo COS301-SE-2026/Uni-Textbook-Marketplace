@@ -22,10 +22,7 @@ export class AdminController {
   }
 
   @Post(':id/approve')
-  async approveListing(
-    @Param('id') id: string,
-    @Req() req: RequestWithUser, 
-  ) {
+  async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
     return await this.adminService.approveListing(id, req.user);
   }
 }

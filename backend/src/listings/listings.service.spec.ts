@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { ListingsService } from './listings.service';
@@ -38,8 +38,12 @@ describe('ListingsService', () => {
     name: 'Imperative Programming',
   };
 
+  // Valid UUIDs for testing
+  const validUuid = '123e4567-e89b-12d3-a456-426614174000';
+  const validUuid2 = '223e4567-e89b-12d3-a456-426614174001';
+
   const mockListing = {
-    id: 'listing-1',
+    id: validUuid,
     title: 'Test Listing',
     condition: 'Good',
     annotation_level: 'Light',
@@ -56,13 +60,13 @@ describe('ListingsService', () => {
 
   const mockApprovedListing = {
     ...mockListing,
-    id: 'listing-2',
+    id: validUuid2,
     status: ListingStatus.APPROVED,
   };
 
   const mockPendingListing = {
     ...mockListing,
-    id: 'listing-3',
+    id: validUuid2,
     status: ListingStatus.PENDING,
   };
 
@@ -79,7 +83,6 @@ describe('ListingsService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     findOneBy: jest.fn(),
-
     createQueryBuilder: jest.fn(() => qbMock),
   };
 
@@ -94,7 +97,6 @@ describe('ListingsService', () => {
   const mockModuleRepository = {
     findOneBy: jest.fn(),
   };
-
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -144,7 +146,6 @@ describe('ListingsService', () => {
       hasNotes: true,
     };
 
-    // Happy path test 
     it('should create a new listing with PENDING status (happy path)', async () => {
       mockUserRepository.findOneBy.mockResolvedValue(mockUser);
       mockBookRepository.findOneBy.mockResolvedValue(mockBook);
@@ -173,7 +174,6 @@ describe('ListingsService', () => {
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
     });
 
-    // User not found test
     it('should throw NotFoundException when user does not exist', async () => {
       mockUserRepository.findOneBy.mockResolvedValue(null);
 
@@ -183,7 +183,6 @@ describe('ListingsService', () => {
       expect(mockBookRepository.findOneBy).not.toHaveBeenCalled();
     });
 
-    // Book not found
     it('should throw NotFoundException when book does not exist', async () => {
       mockUserRepository.findOneBy.mockResolvedValue(mockUser);
       mockBookRepository.findOneBy.mockResolvedValue(null);
@@ -194,7 +193,6 @@ describe('ListingsService', () => {
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
     });
 
-    // Optional moduleId not provided
     it('should create listing without module when moduleId not provided', async () => {
       const dtoWithoutModule = { ...createListingDto, moduleId: undefined };
       
@@ -209,7 +207,6 @@ describe('ListingsService', () => {
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
     });
 
-    // Default values for optional fields
     it('should use default values for optional fields when not provided', async () => {
       const minimalDto: CreateListingDto = {
         title: 'Minimal Listing',
@@ -243,11 +240,10 @@ describe('ListingsService', () => {
   });
 
   describe('getAllApproved', () => {
-    
     it('should return only listings with APPROVED status', async () => {
       const approvedListings = [
         mockApprovedListing,
-        { ...mockApprovedListing, id: 'listing-4' },
+        { ...mockApprovedListing, id: validUuid2 },
       ];
 
       qbMock.getMany.mockResolvedValue(approvedListings);
@@ -280,11 +276,10 @@ describe('ListingsService', () => {
   describe('getMyListings', () => {
     const userId = 'user-1';
     const userListings = [
-      { ...mockListing, id: '1', seller: { id: userId } },
-      { ...mockListing, id: '2', seller: { id: userId } },
+      { ...mockListing, id: validUuid, seller: { id: userId } },
+      { ...mockListing, id: validUuid2, seller: { id: userId } },
     ];
 
-    
     it('should return only listings belonging to the authenticated user', async () => {
       mockListingRepository.find.mockResolvedValue(userListings);
 
@@ -317,32 +312,33 @@ describe('ListingsService', () => {
   });
 
   describe('getListingById', () => {
-   
     it('should return listing when valid ID is provided', async () => {
       mockListingRepository.findOne.mockResolvedValue(mockListing);
 
-      const result = await service.getListingById('listing-1');
+      const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'listing-1' },
+        where: { id: validUuid },
         relations: ['book', 'module', 'seller'],
       });
     });
 
-   
-    it('should throw NotFoundException when listing does not exist', async () => {
-      mockListingRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.getListingById('non-existent-id')).rejects.toThrow(
-        new NotFoundException('Listing not found')
-      );
+    it('should throw BadRequestException when ID is not a valid UUID', async () => {
+      await expect(service.getListingById('invalid-id')).rejects.toThrow(BadRequestException);
+      await expect(service.getListingById('invalid-id')).rejects.toThrow('Invalid listing ID format');
     });
 
-    it('should throw NotFoundException for empty string ID', async () => {
+    it('should throw BadRequestException for empty string ID', async () => {
+      await expect(service.getListingById('')).rejects.toThrow(BadRequestException);
+      await expect(service.getListingById('')).rejects.toThrow('Invalid listing ID format');
+    });
+
+    it('should throw NotFoundException when listing does not exist with valid UUID', async () => {
       mockListingRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getListingById('')).rejects.toThrow(NotFoundException);
+      await expect(service.getListingById(validUuid)).rejects.toThrow(NotFoundException);
+      await expect(service.getListingById(validUuid)).rejects.toThrow('Listing not found');
     });
   });
 
@@ -350,7 +346,7 @@ describe('ListingsService', () => {
     it('should return all listings with PENDING status', async () => {
       const pendingListings = [
         mockPendingListing,
-        { ...mockPendingListing, id: 'listing-4' },
+        { ...mockPendingListing, id: validUuid },
       ];
       mockListingRepository.find.mockResolvedValue(pendingListings);
 
@@ -374,55 +370,71 @@ describe('ListingsService', () => {
 
   describe('approveListing (Admin only)', () => {
     const adminId = 'admin-1';
-    const approvedListing = { ...mockListing, status: ListingStatus.APPROVED, reviewer: { id: adminId }, reviewed_at: new Date() };
+    const approvedListing = { 
+      ...mockListing, 
+      status: ListingStatus.APPROVED, 
+      reviewer: { id: adminId }, 
+      reviewed_at: new Date() 
+    };
 
-    it('should approve a pending listing', async () => {
+    it('should approve a pending listing with valid UUID', async () => {
       mockListingRepository.findOne.mockResolvedValue(mockPendingListing);
       mockListingRepository.save.mockResolvedValue(approvedListing);
 
-      const result = await service.approveListing('listing-1', adminId);
+      const result = await service.approveListing(validUuid2, adminId);
 
       expect(result.status).toBe(ListingStatus.APPROVED);
-      // Fix: Check reviewer property correctly
       expect(result.reviewer).toBeDefined();
       expect(result.reviewer.id).toBe(adminId);
       expect(result.reviewed_at).toBeDefined();
       expect(mockListingRepository.save).toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when listing does not exist', async () => {
+    it('should throw BadRequestException when ID is not a valid UUID', async () => {
+      await expect(service.approveListing('invalid-id', adminId)).rejects.toThrow(BadRequestException);
+      await expect(service.approveListing('invalid-id', adminId)).rejects.toThrow('Invalid listing ID format');
+    });
+
+    it('should throw NotFoundException when listing does not exist with valid UUID', async () => {
       mockListingRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.approveListing('non-existent-id', adminId)).rejects.toThrow(
-        new NotFoundException('Listing not found')
-      );
+      await expect(service.approveListing(validUuid, adminId)).rejects.toThrow(NotFoundException);
+      await expect(service.approveListing(validUuid, adminId)).rejects.toThrow('Listing not found');
     });
   });
 
   describe('rejectListing (Admin only)', () => {
     const adminId = 'admin-1';
-    const rejectedListing = { ...mockListing, status: ListingStatus.REJECTED, reviewer: { id: adminId }, reviewed_at: new Date() };
+    const rejectedListing = { 
+      ...mockListing, 
+      status: ListingStatus.REJECTED, 
+      reviewer: { id: adminId }, 
+      reviewed_at: new Date() 
+    };
 
-    it('should reject a pending listing', async () => {
+    it('should reject a pending listing with valid UUID', async () => {
       mockListingRepository.findOne.mockResolvedValue(mockPendingListing);
       mockListingRepository.save.mockResolvedValue(rejectedListing);
 
-      const result = await service.rejectListing('listing-1', adminId);
+      const result = await service.rejectListing(validUuid2, adminId);
 
       expect(result.status).toBe(ListingStatus.REJECTED);
-      // Fix: Check reviewer property correctly
       expect(result.reviewer).toBeDefined();
       expect(result.reviewer.id).toBe(adminId);
       expect(result.reviewed_at).toBeDefined();
       expect(mockListingRepository.save).toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when listing does not exist', async () => {
+    it('should throw BadRequestException when ID is not a valid UUID', async () => {
+      await expect(service.rejectListing('invalid-id', adminId)).rejects.toThrow(BadRequestException);
+      await expect(service.rejectListing('invalid-id', adminId)).rejects.toThrow('Invalid listing ID format');
+    });
+
+    it('should throw NotFoundException when listing does not exist with valid UUID', async () => {
       mockListingRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.rejectListing('non-existent-id', adminId)).rejects.toThrow(
-        new NotFoundException('Listing not found')
-      );
+      await expect(service.rejectListing(validUuid, adminId)).rejects.toThrow(NotFoundException);
+      await expect(service.rejectListing(validUuid, adminId)).rejects.toThrow('Listing not found');
     });
   });
 });

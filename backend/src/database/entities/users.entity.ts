@@ -40,7 +40,6 @@ export class User {
   })
   role!: string;
 
- 
   @ManyToOne(() => University, {
     nullable: true,
     onDelete: 'SET NULL',
@@ -48,7 +47,6 @@ export class User {
   @JoinColumn({ name: 'university_id' })
   university!: University;
 
-  
   @ManyToOne(() => Faculty, {
     nullable: true,
     onDelete: 'SET NULL',
