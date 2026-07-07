@@ -68,7 +68,7 @@ export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
 
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-    const  response = await fetch(`{BASE_URL}/images/upload`, {
+    const  response = await fetch(`${BASE_URL}/images/upload`, {
       method: 'POST',
       credentials: 'include',
       body: formData,
