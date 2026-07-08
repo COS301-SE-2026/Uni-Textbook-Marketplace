@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { University } from './university.entity';
+import { Faculty } from './faculty.entity';
 
 @Entity('modules')
 export class Module {
@@ -22,10 +23,9 @@ export class Module {
   @Column()
   name!: string;
 
-  @Column({
-    nullable: true,
-  })
-  faculty!: string;
+  @ManyToOne(() => Faculty, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'faculty_id' })
+  faculty!: Faculty | null;
 
   @Column({
     nullable: true,
