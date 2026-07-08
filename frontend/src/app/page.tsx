@@ -77,29 +77,27 @@ export default function LandingPage() {
             </div>
 
           </div>
+          {/* Search bar*/}
+            <div className="flex justify-center mt-6">
+              <div className="flex items-center w-full max-full max-w-xl bg-white rounded-full overflow-hidden shadow-md">
+                <div className="flex-1 flex items-center gap-2 px-3 py-1.5">
+                  <Search size={16} className="text-[#4B4F58] flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search textbooks..."
+                    className="w-full text-xs text-[#3a3a3a] placeholder-[#4B4F58] 
+                              border-none outline-none bg-transparent py-1"
+                  />
+                </div>
+                <button className="bg=[#00B4D8] text-[#000f2b] font-semi-bold text-xs px-4 py-1 hover:bg-[#0096B4] transition-colors">
+                  SEARCH
+                </button>
+              </div>
+            </div>
         </div>
       </section>
 
-      {/* Search bar */}
-      <section className="bg-white py-6 border-b border-[#dddddd]">
-        <div className="container-content">
-          <div className="flex items-center gap-0 max-w-3xl mx-auto">
-            <div className="flex-1 flex items-center gap-3 px-4 py-3 border-2 
-                            border-[#dddddd] rounded-l-md bg-white">
-              <Search size={18} className="text-[#4B4F58]" />
-              <input
-                type="text"
-                placeholder="Search by title, author, ISBN, or module code..."
-                className="flex-1 text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
-                           border-none outline-none bg-transparent"
-              />
-            </div>
-            <button className="btn-primary rounded-l-none rounded-r-md px-8 py-3 text-sm">
-              SEARCH
-            </button>
-          </div>
-        </div>
-      </section>
+      
     </>
   )
 }
