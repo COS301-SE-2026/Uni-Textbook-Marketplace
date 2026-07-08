@@ -55,28 +55,46 @@ export default function LandingPage() {
               </div>
             </div>
 
+
             {/* RIGHT — feature cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:max-w-xl">
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
-                <CheckCircle size={28} className="text-[#00B4D8]" />
-                <p className="text-white text-xs font-semibold">Verified Students</p>
-                <p className="text-white/60 text-xs">University email verification</p>
-              </Card>
+            <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
 
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
-                <Shield size={28} className="text-[#00B4D8]" />
-                <p className="text-white text-xs font-semibold">Safe & Private</p>
-                <p className="text-white/60 text-xs">In-app messaging keeps you safe</p>
-              </Card>
+              {/* Partnership */}
+              <div className="flex items-center gap-5 mt-4">
+                <span className="text-white text-xl uppercase tracking-wider">
+                  In partership with
+                </span>
 
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
-                <DollarSign size={28} className="text-[#00B4D8]" />
-                <p className="text-white text-xs font-semibold">Save Money</p>
-                <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
-              </Card>
+                <Image
+                  src="/Agile-Bridge-logo-white-2.png"
+                  alt="Agile Bridge"
+                  width={250}
+                  height={200}
+                />
+              </div>
+
+              <div className="grid grd-cols-1 md:grid-cols-3 gap-5 w-full">
+                <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                  <CheckCircle size={28} className="text-[#00B4D8]" />
+                  <p className="text-white text-xs font-semibold">Verified Students</p>
+                  <p className="text-white/60 text-xs">University email verification</p>
+                </Card>
+
+                <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                  <Shield size={28} className="text-[#00B4D8]" />
+                  <p className="text-white text-xs font-semibold">Safe & Private</p>
+                  <p className="text-white/60 text-xs">In-app messaging keeps you safe</p>
+                </Card>
+
+                <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                  <DollarSign size={28} className="text-[#00B4D8]" />
+                  <p className="text-white text-xs font-semibold">Save Money</p>
+                  <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
+                </Card>
             </div>
-
           </div>
+
+        </div>
           {/* Search bar*/}
             <div className="flex justify-center mt-8">
               <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
