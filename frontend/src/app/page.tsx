@@ -7,12 +7,12 @@ export default function LandingPage() {
   return (
     <>
       {/* Hero section with background image */}
-      <section className="relative min-h-[500px] bg-[#000f2b] flex items-center overflow-hidden">
+      <section className="relative h-screen w-full bg-[#000f2b] flex items-center overflow-hidden -mt-[70px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero-bg.png"
-            alt="Students on campus"
+            alt="Books on campus"
             fill
             className="object-cover"
             priority
@@ -23,7 +23,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
 
         <div className="container-content relative z-20 py-16 w-full">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12 min-h-[80vh]">
 
             {/* LEFT — text + buttons */}
             <div className="max-w-lg">

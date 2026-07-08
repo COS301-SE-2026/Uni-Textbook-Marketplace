@@ -90,18 +90,20 @@ if (!mounted) return null;
   const navLinks = isAdmin ? adminNavLinks : authNavLinks;
 
   return (
-    <nav className="w-full bg-[var(--nav-bg)] border-b border-[var(--nav-border)] sticky top-0 z-50 transition-colors duration-300">
+    <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
+      isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
+    }`}>
       <div className="container-content">
         <div className="flex items-center justify-between h-[70px]">
 
           {/* LEFT: Logo */}
           <Link href="/" className="flex items-center gap-2 no-underline">
-            <BookOpen size={24} className="text-[#00B4D8]" aria-hidden="true" />
+            <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
             <div className="leading-tight">
-              <span className="block text-xs font-semibold text-[#00B4D8] tracking-widest uppercase">
+              <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                 Uni Textbook
               </span>
-              <span className="block text-lg font-bold text-[var(--foreground)] leading-none">
+              <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white' : 'text-[var(--foreground)]'}`}>
                 Marketplace
               </span>
             </div>
@@ -117,7 +119,7 @@ if (!mounted) return null;
                   className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8]
                   ${pathname === link.href
                       ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
-                      : 'text-[var(--foreground)]'
+                      : isTransparent ? 'text-white' : 'text-[var(--foreground)]'
                     }`}
                 >
                   {link.label.toUpperCase()}
@@ -129,11 +131,10 @@ if (!mounted) return null;
           {/* RIGHT: Actions (desktop only) */}
           <div className="hidden md:flex items-center gap-3">
 
+
+            {isAuthenticated && <ThemeToggle /> }
             {isAuthenticated && user ? (
               <>
-
-                {/* Theme Toggle */}
-                <ThemeToggle />
 
                 {/* Notification bell */}
                 <button
@@ -219,15 +220,17 @@ if (!mounted) return null;
               <>
                 <Link
                   href="/auth/register"
-                  className="px-5 py-2 text-sm font-semibold text-[#00B4D8]
-                             border-2 border-[#00B4D8] rounded no-underline
-                             hover:bg-[#00B4D8] hover:text-[#000f2b]"
-                >
+                  className={`px-5 py-2 text-sm font-semibold rounded no-underline transition-colors duration-200 ${
+                    isTransparent ? 'text-white border-2 border-white hover:bg-white hover:text-[#000f2b]'
+                    : 'text-[#00B4D8] border-2 border-[#00B4D8] hover:bg-[#00B4D8] hover:text-[#000f2b]'}`
+                  }>
                   Register
                 </Link>
                 <Link
                   href="/auth/login"
-                  className="btn-primary text-sm px-5 py-2"
+                  className={`text-sm px-5 py-2 rounded transition-colors duration-200 ${
+                    isTransparent ? 'bg-white text-[#000f2b] hover:bg-white/90' : 'btn-primary'}`
+                  }
                 >
                   Login
                 </Link>
@@ -237,8 +240,9 @@ if (!mounted) return null;
 
           {/* HAMBURGER: Mobile only */}
           <button
-            className="md:hidden p-2 text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]
-                       transition-colors duration-200"
+            className={`md:hidden p-2 transition-colors duration-200 ${
+              isTransparent ? 'text-white' : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
+            }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
