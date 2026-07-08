@@ -1,11 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { BlobServiceClient } from '@azure/storage-blob';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AzureService {
-  private blobServiceClient: BlobServiceClient;
-  private containerName: string;
-  private accountName: string;
+  private readonly blobServiceClient: BlobServiceClient;
+  private readonly containerName: string;
+  private readonly accountName: string;
 
   constructor() {
     const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
@@ -48,9 +49,9 @@ export class AzureService {
     const containerClient = this.blobServiceClient.getContainerClient(
       this.containerName,
     );
-    const timestamp = Date.now();
+    
     const extension = file.originalname.split('.').pop();
-    const blobName = `${timestamp}-${Math.random().toString(36).substring(2, 8)}.${extension}`;
+    const blobName = `${randomUUID()}.${extension}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
     await blockBlobClient.uploadData(file.buffer, {
@@ -85,7 +86,7 @@ export class AzureService {
       );
       const urlParts = new URL(imageUrl);
       const pathParts = urlParts.pathname.split('/');
-      const blobName = pathParts[pathParts.length - 1];
+      const blobName = pathParts.at(1);
 
       if (blobName) {
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
