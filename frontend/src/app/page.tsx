@@ -27,11 +27,11 @@ export default function LandingPage() {
 
             {/* LEFT — text + buttons */}
             <div className="max-w-lg">
-              <h1 className="text-white font-bold leading-tight">
+              <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
                 Made for Students,{' '}
                 <span className="text-[#00B4D8]">by Students</span>
               </h1>
-              <p className="text-white/80 text-lg mt-4">
+              <p className="text-white/80 text-xl md:text-2xl mt-4">
                 Buy, sell or swap textbooks with students from your university
               </p>
               <div className="flex gap-3 mt-8">
@@ -44,27 +44,33 @@ export default function LandingPage() {
                        border-white/40 rounded hover:border-white 
                        transition-all duration-200 no-underline"
                 >
-                  Login
+                  Buy
                 </Link>
+                <Link href="/auth/login"
+                  className="px-7 py-3 text-sm font-semibold text-white border-2
+                      border-white/40 rounded hover:border-white
+                      transition-all duration-200 no-underline">
+                        Sell
+                      </Link>
               </div>
             </div>
 
             {/* RIGHT — feature cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:max-w-lg">
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
-                <CheckCircle size={24} className="text-[#00B4D8]" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:max-w-xl">
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                <CheckCircle size={28} className="text-[#00B4D8]" />
                 <p className="text-white text-xs font-semibold">Verified Students</p>
                 <p className="text-white/60 text-xs">University email verification</p>
               </Card>
 
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
-                <Shield size={24} className="text-[#00B4D8]" />
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                <Shield size={28} className="text-[#00B4D8]" />
                 <p className="text-white text-xs font-semibold">Safe & Private</p>
                 <p className="text-white/60 text-xs">In-app messaging keeps you safe</p>
               </Card>
 
-              <Card variant="glass" className="flex flex-col items-center text-center gap-2">
-                <DollarSign size={24} className="text-[#00B4D8]" />
+              <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
+                <DollarSign size={28} className="text-[#00B4D8]" />
                 <p className="text-white text-xs font-semibold">Save Money</p>
                 <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
               </Card>
