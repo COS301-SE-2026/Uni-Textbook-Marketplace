@@ -31,9 +31,14 @@ const adminNavLinks = [
 export default function NavBar() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const pathname = usePathname()
+
+  const isLandingPage = pathname === '/'
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false);
+  
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
       const id = requestAnimationFrame(() => {
@@ -43,20 +48,33 @@ export default function NavBar() {
       return () => cancelAnimationFrame(id);
   }, []);
 
+  useEffect(() => {
+    if (!isLandingPage) return;
+
+    const handleScroll = () => setScrolled (window.scrollY > 50);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isLandingPage]);
+
+  const isTransparent = isLandingPage && !scrolled;
+
 if (!mounted) return null;
 
   if (isLoading) {
     return (
-      <nav className="w-full bg-white border-b border-[#dddddd] sticky top-0 z-50">
+      <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
+        isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
+      }`}>
         <div className="container-content">
           <div className="flex items-center justify-between h-[70px]">
             <Link href="/" className="flex items-center gap-2 no-underline">
-              <BookOpen size={24} className="text-[#00B4D8]" aria-hidden="true" />
+              <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
               <div className="leading-tight">
-                <span className="block text-xs font-semibold text-[#00B4D8] tracking-widest uppercase">
+                <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                   Uni Textbook
                 </span>
-                <span className="block text-lg font-bold text-[#000f2b] leading-none">
+                <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white': 'text-[#000f2b]'}`}>
                   Marketplace
                 </span>
               </div>
@@ -72,7 +90,7 @@ if (!mounted) return null;
   const navLinks = isAdmin ? adminNavLinks : authNavLinks;
 
   return (
-    <nav className="w-full bg-[var(--nav-bg)] border-b border-white dark:border-[#374151] sticky top-0 z-50 transition-colors duration-300">
+    <nav className="w-full bg-[var(--nav-bg)] border-b border-[var(--nav-border)] sticky top-0 z-50 transition-colors duration-300">
       <div className="container-content">
         <div className="flex items-center justify-between h-[70px]">
 
@@ -111,11 +129,12 @@ if (!mounted) return null;
           {/* RIGHT: Actions (desktop only) */}
           <div className="hidden md:flex items-center gap-3">
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
-
             {isAuthenticated && user ? (
               <>
+
+                {/* Theme Toggle */}
+                <ThemeToggle />
+
                 {/* Notification bell */}
                 <button
                   aria-label="Notifications"
