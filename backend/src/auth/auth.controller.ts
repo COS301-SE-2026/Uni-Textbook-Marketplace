@@ -92,8 +92,7 @@ export class AuthController {
     });
 
     return { 
-      message: 'Login successful.', 
-      accessToken: tokens.accessToken, 
+      message: 'Login successful.' 
     };
   }
 
