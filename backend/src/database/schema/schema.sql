@@ -50,7 +50,7 @@ CREATE TABLE modules (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR NOT NULL,
-    faculty VARCHAR,
+    faculty_id UUID REFERENCES faculties(id) ON DELETE SET NULL,
     semester SMALLINT,
     university_id UUID REFERENCES universities(id) ON DELETE CASCADE
 );

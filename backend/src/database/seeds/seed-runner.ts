@@ -1,16 +1,15 @@
 import { AppDataSource } from '../../data-source';
 import { seedUniversities } from './university.seed';
 import { seedFaculties } from './faculty.seed';
+import { seedModules } from './module.seed';
 import { seedStudents } from './student.seed';
 import { seedAdmins } from './admin.seed';
-import { seedModules } from './module.seed';
 import { seedBooks } from './book.seed';
 import { seedListings } from './listing.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
 
-  
   await AppDataSource.synchronize(false); // false means don't drop data
 
   const queryRunner = AppDataSource.createQueryRunner();
@@ -24,9 +23,9 @@ async function runSeeds() {
 
     await seedUniversities(manager);
     await seedFaculties(manager);
+    await seedModules(manager);
     await seedStudents(manager);
     await seedAdmins(manager);
-    await seedModules(manager);
     await seedBooks(manager);
     await seedListings(manager);
 
