@@ -1,7 +1,16 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign } from 'lucide-react'
+import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
+
+
+const UNIVERSITY_FACULTIES = [
+  { name: 'EBIT (Engineering & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
+  { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]"/>},
+  { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
+  { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
+  { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
+]
 
 export default function LandingPage() {
   return (
@@ -129,6 +138,19 @@ export default function LandingPage() {
               </p>
 
               {/* Hexagon Shapes */}
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {UNIVERSITY_FACULTIES.map((fac, idx) => (
+                  <Link key = {idx}
+                        href={`/listings?faculty=${encodeURIComponent(fac.name)}`}
+                        
+                        className="group flex flex-col items-center justify-center mb-3 group-hover:bg-[#00B4D8]/20 transition-colors">
+                    <div className="w-12 h-12 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-3 group-hover:bg-[#00B4D8]/20 transition-colors">
+                      {fac.icon}
+                    </div>
+                  </Link>
+                ))}
+              </div>
 
             </div>
         </div>
