@@ -52,7 +52,7 @@ export class ListingsController {
   @Get()
   async getAll(@Query() query: ListingFiltersDto) {
     const [listings, total] = await this.listingsService.getAllApproved(query);
-  return { listings, total };
+    return { listings, total };
   }
 
   // my

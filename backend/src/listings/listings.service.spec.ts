@@ -17,7 +17,7 @@ describe('ListingsService', () => {
   let bookRepo: Repository<Book>;
   let moduleRepo: Repository<ModuleEntity>;
 
-  // Mock data
+  
   const mockUser = {
     id: 'user-1',
     email: 'test@tuks.ac.za',
@@ -38,7 +38,7 @@ describe('ListingsService', () => {
     name: 'Imperative Programming',
   };
 
-  // Valid UUIDs for testing
+  
   const validUuid = '123e4567-e89b-12d3-a456-426614174000';
   const validUuid2 = '223e4567-e89b-12d3-a456-426614174001';
 
@@ -70,12 +70,14 @@ describe('ListingsService', () => {
     status: ListingStatus.PENDING,
   };
 
-  const qbMock = {
+  
+  const createQueryBuilderMock = () => ({
     leftJoinAndSelect: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
-    getMany: jest.fn(),
-  };
+    getMany: jest.fn().mockResolvedValue([]),
+    getManyAndCount: jest.fn().mockResolvedValue([[], 0]), 
+  });
 
   const mockListingRepository = {
     create: jest.fn(),
@@ -83,7 +85,7 @@ describe('ListingsService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     findOneBy: jest.fn(),
-    createQueryBuilder: jest.fn(() => qbMock),
+    createQueryBuilder: jest.fn().mockReturnValue(createQueryBuilderMock()),
   };
 
   const mockUserRepository = {
@@ -99,6 +101,12 @@ describe('ListingsService', () => {
   };
 
   beforeEach(async () => {
+    
+    jest.clearAllMocks();
+    
+    
+    mockListingRepository.createQueryBuilder.mockReturnValue(createQueryBuilderMock());
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListingsService,
@@ -126,8 +134,6 @@ describe('ListingsService', () => {
     userRepo = module.get<Repository<User>>(getRepositoryToken(User));
     bookRepo = module.get<Repository<Book>>(getRepositoryToken(Book));
     moduleRepo = module.get<Repository<ModuleEntity>>(getRepositoryToken(ModuleEntity));
-
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -245,31 +251,85 @@ describe('ListingsService', () => {
         mockApprovedListing,
         { ...mockApprovedListing, id: validUuid2 },
       ];
+      const mockTotal = 2;
 
-      qbMock.getMany.mockResolvedValue(approvedListings);
+      
+      const qb = mockListingRepository.createQueryBuilder();
+      
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([approvedListings, mockTotal]);
 
       const result = await service.getAllApproved();
 
-      expect(result).toEqual(approvedListings);
+    
+      expect(result[0]).toEqual(approvedListings);
+      expect(result[1]).toBe(mockTotal);
       expect(mockListingRepository.createQueryBuilder).toHaveBeenCalledWith('listing');
-      expect(qbMock.getMany).toHaveBeenCalled();
+      expect(qb.getManyAndCount).toHaveBeenCalled();
     });
 
     it('should return empty array when no approved listings exist', async () => {
-      qbMock.getMany.mockResolvedValue([]);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
 
-      const result = await service.getAllApproved();
+      const [listings, total] = await service.getAllApproved();
 
-      expect(result).toEqual([]);
+      expect(listings).toEqual([]);
+      expect(total).toBe(0);
     });
 
     it('should not return PENDING or REJECTED listings', async () => {
-      qbMock.getMany.mockResolvedValue([mockApprovedListing]);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[mockApprovedListing], 1]);
 
-      const result = await service.getAllApproved();
+      const [listings] = await service.getAllApproved();
 
-      expect(result).toHaveLength(1);
-      expect(result[0][0].status).toBe(ListingStatus.APPROVED);
+      expect(listings).toHaveLength(1);
+      expect(listings[0].status).toBe(ListingStatus.APPROVED);
+      expect(listings[0].status).not.toBe(ListingStatus.PENDING);
+      expect(listings[0].status).not.toBe(ListingStatus.REJECTED);
+    });
+
+    it('should filter by moduleCode with ILIKE', async () => {
+      const query = { moduleCode: 'CS101' };
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      await service.getAllApproved(query);
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'module.code ILIKE :moduleCode',
+        { moduleCode: '%CS101%' }
+      );
+    });
+
+    it('should filter by price range', async () => {
+      const query = { priceMin: 20, priceMax: 100 };
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      await service.getAllApproved(query);
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'listing.price >= :priceMin',
+        { priceMin: 20 }
+      );
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'listing.price <= :priceMax',
+        { priceMax: 100 }
+      );
+    });
+
+    it('should handle empty query object', async () => {
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      await service.getAllApproved({});
+
+      expect(qb.where).toHaveBeenCalledWith('listing.status = :status', {
+        status: ListingStatus.APPROVED,
+      });
+      
+      expect(qb.andWhere).not.toHaveBeenCalled();
     });
   });
 
