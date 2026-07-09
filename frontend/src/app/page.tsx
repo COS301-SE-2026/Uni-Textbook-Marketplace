@@ -95,7 +95,7 @@ export default function LandingPage() {
           </div>
 
         </div>
-          {/* Search bar*/}
+          {/* Search bar
             <div className="flex justify-center mt-8">
               <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
                 <div className="flex-1 flex items-center gap-2 px-4 py-2">
@@ -111,7 +111,7 @@ export default function LandingPage() {
                   SEARCH
                 </button>
               </div>
-            </div>
+            </div>*/}
         </div>
       </section>
 
