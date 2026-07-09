@@ -269,7 +269,7 @@ describe('ListingsService', () => {
       const result = await service.getAllApproved();
 
       expect(result).toHaveLength(1);
-      expect(result[0].status).toBe(ListingStatus.APPROVED);
+      expect(result[0][0].status).toBe(ListingStatus.APPROVED);
     });
   });
 

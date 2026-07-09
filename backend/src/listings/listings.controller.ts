@@ -50,8 +50,9 @@ export class ListingsController {
 
   //get approved
   @Get()
-  getAll(@Query() query: ListingFiltersDto) {
-    return this.listingsService.getAllApproved(query);
+  async getAll(@Query() query: ListingFiltersDto) {
+    const [listings, total] = await this.listingsService.getAllApproved(query);
+  return { listings, total };
   }
 
   // my
