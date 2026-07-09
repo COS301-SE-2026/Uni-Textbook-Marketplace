@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
+import ListingCard, { Listing } from '@/components/listings/listingCard'
 
 
 const UNIVERSITY_FACULTIES = [
@@ -10,6 +11,34 @@ const UNIVERSITY_FACULTIES = [
   { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
   { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
   { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
+]
+
+const MOCK_FEATURED_BOOKS: Listing[] = [
+  {
+    id: '1',
+    title: 'Introduction to Algorithms',
+    price: 450,
+    condition: 'good',
+    annotation_level: 'light',
+    status: 'APPROVED',
+    photo_urls: ['/books/cormen-algorithms.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 3,
+      author: 'Thomas H. Cormen',
+      isbn: '978-026033848',
+      title: 'Introduction to Algorithms',
+    },
+    module: {
+      code: 'COS212',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'John',
+      last_name: 'Doe',
+      is_verified: true,
+    },
+  },
 ]
 
 export default function LandingPage() {
@@ -148,6 +177,9 @@ export default function LandingPage() {
                     <div className="w-12 h-12 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-3 group-hover:bg-[#00B4D8]/20 transition-colors">
                       {fac.icon}
                     </div>
+                    <span className="text-xs font-bold text-[#000f2b] text-center group-hover:text-[#00B4D8] transition-colors">
+                      {fac.name}
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -156,6 +188,21 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Featured Books */}
+      <section className="py-16 bg-[#F8FAFC]">
+        <div className="container-content">
+
+
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
+              FEATURED TEXTBOOKS
+            </h2>
+          </div>
+
+          
+        </div>
+        
+      </section>
       
     </>
   )
