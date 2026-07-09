@@ -3,7 +3,6 @@ import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, S
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
-import ListingDetailPage from './listings/[id]/page'
 
 
 const UNIVERSITY_FACULTIES = [
@@ -331,9 +330,9 @@ export default function LandingPage() {
       </section>
 
       {/* Section 2: Find a variety of textbooks */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="container-content">
-            <div className="text-center mb-12">
+            <div className="text-center mb-14">
               
               <h2 className="text-3xl md:text-4xl fint-extrabold text-[#000f2b] tracking tight">
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
@@ -343,26 +342,27 @@ export default function LandingPage() {
                 Search by title, author, ISBN or even directly for your faculty module codes.
               </p>
 
-              {/* Hexagon Shapes */}
+            </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {/* Faculty Grid */}
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-2">
                 {UNIVERSITY_FACULTIES.map((fac, idx) => (
-                  <Link key = {idx}
-                        href={`/listings?faculty=${encodeURIComponent(fac.name)}`}
+                  <div key = {idx}
                         
-                        className="group flex flex-col items-center justify-center mb-3 group-hover:bg-[#00B4D8]/20 transition-colors">
-                    <div className="w-12 h-12 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-3 group-hover:bg-[#00B4D8]/20 transition-colors">
+                    className="group flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                       {fac.icon}
                     </div>
-                    <span className="text-xs font-bold text-[#000f2b] text-center group-hover:text-[#00B4D8] transition-colors">
+                    <span className="text-xs font-bold text-[#000f2b] text-center px-1">
                       {fac.name}
                     </span>
-                  </Link>
+                  </div>
                 ))}
               </div>
 
             </div>
-        </div>
+        
       </section>
 
       {/* Featured Books */}
@@ -378,8 +378,17 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {MOCK_FEATURED_BOOKS.map((listing, index) => (
-              <ListingCard key={index} listing={listing}/>
+              <ListingCard key={index} listing={listing} removeClick={true}/>
             ))}
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center mt-12 mb-6">
+            <p className="text-slate-500 font-bold text-sm tracking-wide">
+                Would you like to view more Listings? {''}
+                REGISTER or LOGIN above
+                {''} to browse all active textbook listings.
+            </p>
           </div>
         </div>
       
