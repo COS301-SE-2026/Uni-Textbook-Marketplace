@@ -89,6 +89,56 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       is_verified: true,
     },
   },
+  {
+    id: '4',
+    title: 'Calculate Early Transcendentals',
+    price: 600,
+    condition: 'good',
+    annotation_level: 'light',
+    status: 'APPROVED',
+    photo_urls: ['/books/calculus.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 8,
+      author: 'James Stewart',
+      isbn: '978-1119456339',
+      title: 'Calculus Early Transcendentals',
+    },
+    module: {
+      code: 'WTW258',
+      faculty: 'Natural Sciences',
+    },
+    seller: {
+      first_name: 'Emily',
+      last_name: 'Brown',
+      is_verified: true,
+    },
+  },
+  {
+    id: '5',
+    title: 'The C Programming Language',
+    price: 280,
+    condition: 'fair',
+    annotation_level: 'heavy',
+    status: 'APPROVED',
+    photo_urls: ['/books/c-programming.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 2,
+      author: 'Brian W. Kernighan',
+      isbn: '978-0131103627',
+      title: 'The C Programming Language',
+    },
+    module: {
+      code: 'COS132',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'David',
+      last_name: 'Wilson',
+      is_verified: true,
+    },
+  },
 ]
 
 export default function LandingPage() {
