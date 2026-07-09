@@ -3,6 +3,7 @@ import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, S
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
+import ListingDetailPage from './listings/[id]/page'
 
 
 const UNIVERSITY_FACULTIES = [
@@ -91,7 +92,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
   },
   {
     id: '4',
-    title: 'Calculate Early Transcendentals',
+    title: 'Calculus Early Transcendentals',
     price: 600,
     condition: 'good',
     annotation_level: 'light',
@@ -188,8 +189,34 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       last_name: 'Martinez',
       is_verified: true,
     },
-  }
-]
+  },
+  {
+    id: '8',
+    title: 'Introduction to Probability',
+    price: 380,
+    condition: 'good',
+    annotation_level: 'heavy',
+    status: 'APPROVED',
+    photo_urls: ['/books/probability.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 2,
+      author: 'Dimitri Bertsekas',
+      isbn: '978-0199535569',
+      title: 'Introduction to Probability',
+    },
+    module: {
+        code: 'WTW152',
+        faculty: 'Natural Sciences',
+      },
+    seller: {
+      first_name: 'Anna',
+      last_name: 'Kim',
+      is_verified: true,
+    },
+  },
+
+];
 
 export default function LandingPage() {
   return (
