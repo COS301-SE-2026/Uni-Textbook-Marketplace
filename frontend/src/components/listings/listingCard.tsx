@@ -1,8 +1,7 @@
-'use client'
-
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
+// import { GoHeart } from "react-icons/go";
 
 export type ListingStatus =
   | 'APPROVED'| 'PENDING'| 'REJECTED'| 'SOFT_DELETED'
@@ -71,7 +70,7 @@ export default function ListingCard({
     return (
         <div
         onClick={handleClick}
-        className="card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3"
+        className="card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 relative"
         >
         {/* Image */}
         <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
@@ -121,9 +120,7 @@ export default function ListingCard({
             R{parseFloat(String(listing.price)).toFixed(2)}
             </span>
 
-            <span className="text-xs text-gray-500">
-            {CONDITION_LABEL[listing.condition]}
-            </span>
+            
         </div>
 
         {/* Seller badge */}
@@ -133,6 +130,13 @@ export default function ListingCard({
             {listing.seller.is_verified && ' • Verified'}
         </div>
         )}
+
+        {/* condition */}
+        <div className="absolute right-0 top-0">
+            <Badge variant='approved'>
+            {CONDITION_LABEL[listing.condition]}
+            </Badge>
+        </div>
 
         {/* Status badge */}
         {showStatus && listing.status !== 'APPROVED' && (
@@ -147,4 +151,5 @@ export default function ListingCard({
         )}
         </div>
     )
+
 }
