@@ -139,6 +139,56 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       is_verified: true,
     },
   },
+  {
+    id: '6',
+    title: 'Computer Networking: A Top-Down Approach',
+    price: 490,
+    condition: 'new',
+    annotation_level: 'none',
+    status: 'APPROVED',
+    photo_urls: ['/books/networking.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 7,
+      author: 'James F. Kurose',
+      isbn: '978-0133594140',
+      title: 'Computer Networking: A Top-Down Approach',
+    },
+    module: {
+      code: 'COS216',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'Lisa',
+      last_name: 'Taylor',
+      is_verified: true,
+    },
+  },
+  {
+    id: '7',
+    title: 'Designing Data-Intensive Applications',
+    price: 520,
+    condition: 'good',
+    annotation_level: 'light',
+    status: 'APPROVED',
+    photo_urls: ['/books/data-intensive.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 1,
+      author: 'Martin Kleppmann',
+      isbn: '978-1492056355',
+      title: 'Designing Data-Intensive Applications',
+    },
+    module: {
+      code: 'COS341',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'Alex',
+      last_name: 'Martinez',
+      is_verified: true,
+    },
+  }
 ]
 
 export default function LandingPage() {
