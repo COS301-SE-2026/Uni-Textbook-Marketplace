@@ -35,7 +35,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     },
     seller: {
       first_name: 'John',
-      last_name: 'Doe',
+      last_name: 'Vasques',
       is_verified: true,
     },
   },
@@ -84,8 +84,8 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       faculty: 'EBIT',
     },
     seller: {
-      first_name: 'Mike',
-      last_name: 'Johnson',
+      first_name: 'Rethabile',
+      last_name: 'Zwide',
       is_verified: true,
     },
   },
@@ -159,8 +159,8 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       faculty: 'EBIT',
     },
     seller: {
-      first_name: 'Lisa',
-      last_name: 'Taylor',
+      first_name: 'Novuka',
+      last_name: 'Mtembu',
       is_verified: true,
     },
   },
@@ -184,8 +184,8 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       faculty: 'EBIT',
     },
     seller: {
-      first_name: 'Alex',
-      last_name: 'Martinez',
+      first_name: 'Teboho',
+      last_name: 'Modise',
       is_verified: true,
     },
   },
@@ -209,8 +209,8 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
         faculty: 'Natural Sciences',
       },
     seller: {
-      first_name: 'Anna',
-      last_name: 'Kim',
+      first_name: 'Chuku',
+      last_name: 'Obioha',
       is_verified: true,
     },
   },
@@ -276,7 +276,7 @@ export default function LandingPage() {
               {/* Partnership */}
               <div className="flex items-center gap-5 mt-4">
                 <span className="text-white text-xl uppercase tracking-wider">
-                  In partership with
+                  In partnership with
                 </span>
 
                 <Image
@@ -326,6 +326,29 @@ export default function LandingPage() {
                 </button>
               </div>
             </div>*/}
+        </div>
+      </section>
+
+      {/* Section 2: How it works */}
+      <section className="py-24 bg-white border-b border-slate-100">
+        <div className="container-content">
+
+
+          <div className="text-center mb-16">
+            <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full">
+              How it works
+            </span>
+            <p className="text-slate-500 mt-4 max-w-sm mx-auto text-sm leading-relaxed">
+              Buy and sell used textbooks with other students on campus in three steps.
+            </p>
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100">
+              
+            </div>
+          </div>
         </div>
       </section>
 
