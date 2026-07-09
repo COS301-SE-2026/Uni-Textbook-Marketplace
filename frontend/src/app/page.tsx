@@ -39,6 +39,56 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       is_verified: true,
     },
   },
+  {
+    id: '2',
+    title: 'Clean code: A Handbook of Agile Software Craftsmanship',
+    price: 350,
+    condition: 'new',
+    annotation_level: 'none',
+    status: 'APPROVED',
+    photo_urls: ['/books/clean-code.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 1,
+      author: 'Robert C. Martin',
+      isbn: '978-0132350884',
+      title: 'Clean Code',
+    },
+    module: {
+      code: 'COS301',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'Sarah',
+      last_name: 'Smith',
+      is_verified: true,
+    },
+  },
+  {
+    id: '3',
+    title: 'Database System Concepts',
+    price: 550,
+    condition: 'good',
+    annotation_level: 'heavy',
+    status: 'APPROVED',
+    photo_urls: ['/books/database-systems.jpg'],
+    created_at: new Date().toISOString(),
+    book: {
+      edition: 6,
+      author: 'Abraham Silberschatz',
+      isbn: '978-0078022159',
+      title: 'Database System Concepts',
+    },
+    module: {
+      code: 'COS221',
+      faculty: 'EBIT',
+    },
+    seller: {
+      first_name: 'Mike',
+      last_name: 'Johnson',
+      is_verified: true,
+    },
+  },
 ]
 
 export default function LandingPage() {
@@ -199,9 +249,13 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {MOCK_FEATURED_BOOKS.map((listing, index) => (
+              <ListingCard key={index} listing={listing}/>
+            ))}
+          </div>
         </div>
-        
+      
       </section>
       
     </>
