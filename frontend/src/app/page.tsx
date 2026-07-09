@@ -73,22 +73,22 @@ export default function LandingPage() {
                 />
               </div>
 
-              <div className="grid grd-cols-1 md:grid-cols-3 gap-5 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
                   <CheckCircle size={28} className="text-[#00B4D8]" />
-                  <p className="text-white text-xs font-semibold">Verified Students</p>
-                  <p className="text-white/60 text-xs">University email verification</p>
+                  <p className="text-white text-sm font-semibold">Verified Students</p>
+                  <p className="text-white/60 text-xs">Requires university email verification</p>
                 </Card>
 
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
                   <Shield size={28} className="text-[#00B4D8]" />
-                  <p className="text-white text-xs font-semibold">Safe & Private</p>
-                  <p className="text-white/60 text-xs">In-app messaging keeps you safe</p>
+                  <p className="text-white text-sm font-semibold">Safe Swaps</p>
+                  <p className="text-white/60 text-xs">In-app messaging keeps your details secure</p>
                 </Card>
 
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
                   <DollarSign size={28} className="text-[#00B4D8]" />
-                  <p className="text-white text-xs font-semibold">Save Money</p>
+                  <p className="text-white text-sm font-semibold">Save Money</p>
                   <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
                 </Card>
             </div>
@@ -112,6 +112,25 @@ export default function LandingPage() {
                 </button>
               </div>
             </div>*/}
+        </div>
+      </section>
+
+      {/* Section 2: Find a variety of textbooks */}
+      <section className="py-16 bg-white">
+        <div className="container-content">
+            <div className="text-center mb-12">
+              
+              <h2 className="text-3xl md:text-4xl fint-extrabold text-[#000f2b] tracking tight">
+                FIND TEXTBOOKS FOR YOUR EXACT MODULES
+              </h2>
+
+              <p className="text-gray-500 mt-2 max-w-md mx-auto text-sm">
+                Search by title, author, ISBN or even directly for your faculty module codes.
+              </p>
+
+              {/* Hexagon Shapes */}
+
+            </div>
         </div>
       </section>
 
