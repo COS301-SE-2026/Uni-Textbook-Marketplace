@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
-// import { GoHeart } from "react-icons/go";
+import Heartbutton from '../icons/Heartbutton'
 
 export type ListingStatus =
   | 'APPROVED'| 'PENDING'| 'REJECTED'| 'SOFT_DELETED'
@@ -114,12 +114,13 @@ export default function ListingCard({
             </p>
         </div>
 
-        {/* Price + condition */}
+        {/* Price + like button */}
         <div className="flex items-center justify-between mt-auto">
             <span className="font-bold text-base">
             R{parseFloat(String(listing.price)).toFixed(2)}
             </span>
 
+            <Heartbutton/>
             
         </div>
 
