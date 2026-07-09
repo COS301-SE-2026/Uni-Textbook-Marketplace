@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope } from 'lucide-react'
+import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, MessageCircle, User } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -11,7 +11,30 @@ const UNIVERSITY_FACULTIES = [
   { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
   { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
   { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
-]
+];
+
+
+const PLATFORM_STEPS = [
+  {
+    num: '01',
+    icon: <UserPlus className="w-6 h-6 text-[#00B4D8]" />,
+    title: 'Create an Account',
+    desc: 'Register using your university email. We check this to make sure only actual students are trading on the platform.',
+    
+  },
+  {
+    num: '02',
+    icon: <SearchIcon className="w-6 h-6 text-[#00B4D8]" />,
+    title: 'Find or Post Books',
+    desc: 'Search for textbooks by module code (e.g., COS 132) or list your own extra module books for sale in under 2 minutes.',
+  },
+  {
+    num: '03',
+    icon: <MessageCircle className="w-6 h-6 text-[#00B4D8]" />,
+    title: 'Meet up on campus',
+    desc: 'Chat directly with sellers inside the app. Arrange to meet safely on campus to inspect the book and finalize the transaction.',
+  },
+];
 
 const MOCK_FEATURED_BOOKS: Listing[] = [
   {
@@ -296,7 +319,7 @@ export default function LandingPage() {
 
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
                   <Shield size={28} className="text-[#00B4D8]" />
-                  <p className="text-white text-sm font-semibold">Safe Swaps</p>
+                  <p className="text-white text-sm font-semibold">Secure & Private</p>
                   <p className="text-white/60 text-xs">In-app messaging keeps your details secure</p>
                 </Card>
 
@@ -335,10 +358,10 @@ export default function LandingPage() {
 
 
           <div className="text-center mb-16">
-            <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full">
+            <span className="text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
             </span>
-            <p className="text-slate-500 mt-4 max-w-sm mx-auto text-sm leading-relaxed">
+            <p className="text-slate-500 mt-4 max-w-xl mx-auto text-xl leading-relaxed">
               Buy and sell used textbooks with other students on campus in three steps.
             </p>
           </div>
@@ -346,7 +369,16 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100">
-              
+
+              {PLATFORM_STEPS.map((item, idx) => (
+                <div key={idx} className="relative flex flex-col items-center text-center px-4">
+                  <div className="relative z-10 w-14 h-14 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
+
+                  {item.num}
+                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
+                    {item.num}
+                  </span>
+              ))}
             </div>
           </div>
         </div>
