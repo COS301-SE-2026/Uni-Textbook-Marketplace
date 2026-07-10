@@ -33,8 +33,8 @@ const FOOTER_DIVISIONS = [
   {
     title: 'Product',
     links: [
-      { label: 'Browse Listing', href: '/auth/login'},
-      { label: 'Sell a Textbook', href: '/auth/login'},
+      { label: 'Browse Listing', href: '/listings'},
+      { label: 'Sell a Textbook', href: '/listings/create'},
       { label: 'My Listings', href: '/auth/login'},
     ],
   },
@@ -42,17 +42,17 @@ const FOOTER_DIVISIONS = [
     title: 'Support',
     links: [
       { label: 'Help & FAQs', href: '/help' },
-      { label: 'Contact Us', href: '#' },
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Terms of Service', href: '#' },
+      { label: 'Contact Us', href: '/contact' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
     ],
   },
   {
     title: 'University',
     links: [
-      { label: 'About Us', href: '#' },
-      { label: 'Our Partners', href: '#' },
-      { label: 'Careers', href: '#' },
+      { label: 'About Us', href: '/about' },
+      { label: 'Our Partners', href: '/partners' },
+      { label: 'Careers', href: '/careers' },
     ],
   },
 
@@ -84,7 +84,7 @@ export default function Footer() {
                 height={60}
               />
             </div>
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-9 mt-6">
               {SOCIAL_ICONS.map((item, idx) => {
                 const Icon = item.icon;
                 return(
@@ -92,17 +92,50 @@ export default function Footer() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#00B4D8] transition-colors flex items-center
+                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#00B4D8] transition-colors flex items-center
                       justify-center text-gray-400 hover:text-[#000f2b]"
                     aria-label={item.name}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-8 h-8" />
                     </a>
                 );
               })}
             </div>
           </div>
+
+          {/* Footer */}
+          {FOOTER_DIVISIONS.map((section) => (
+            <div key={section.title}>
+              <h4 className="font-bold text-sm mb-4 tracking-wide text-[#333333]/90">{section.title}</h4>
+                <ul className="space-y-2.5">
+                  {section.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="text-gray-400 hover:text-[#00B4D8] text-sm transition-colors no underline">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {/* Contact */}
+            <div>
+              <h4 className="font bold text-sm mb-4 tracking-wide text-[#333333]/90">Contact</h4>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2 text-gray-400 text-xs">
+                  <Mail className="w-6 h-6 text-[#00B4D8] flex-shrink-0 mt-0.5" />
+                  <span className="break-all">nexusdev.cos301@gmail.com</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400 text-xs">
+                  <MapPin className="w-6 h-6 text-[#00B4D8] flex-shrink-0" />
+                  <span>University of Pretoria</span>
+                </div>
+              </div>
+            </div>
         </div>
+
+
       </div>
     </footer>
   )
