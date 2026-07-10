@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, 
-  MessageCircle, Microscope } from 'lucide-react'
-import TrustSection from '@/components/landing/TrustSection'
+  MessageCircle, Microscope, MessageSquare, Mail } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -37,6 +36,20 @@ const PLATFORM_STEPS = [
     title: 'Meet up on campus',
     desc: 'Chat directly with sellers inside the app. Arrange to meet safely on campus to inspect the book and finalize the transaction.',
   },
+];
+
+const CAMPUS_SECURITY = [
+    {
+        icon: <Mail className="w-5 h-5 text-white" />,
+        title: 'University Email Verification',
+        desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
+    },
+    {
+        icon: <MessageSquare className="w-h h-5 text-white" />,
+        title: 'In-app Handshakes',
+        desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
+
+    },
 ];
 
 const MOCK_FEATURED_BOOKS: Listing[] = [
@@ -437,7 +450,7 @@ export default function LandingPage() {
       </section>
 
       {/* Section 4: Trust & Safety */}
-      <TrustSection />
+      
       {/* Featured Books */}
       <section className="py-16 bg-[#F5F5F5]">
         <div className="container-content">
