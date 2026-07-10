@@ -394,7 +394,7 @@ export default function LandingPage() {
                 <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
                   {item.title}
                 </h3>
-                <p className="text-slate-500 text-l max-w-[240px] leading-relaxed">
+                <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -412,7 +412,7 @@ export default function LandingPage() {
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
               </h2>
 
-              <p className="text-gray-500 mt-2 max-w-md mx-auto text-l">
+              <p className="text-gray-500 mt-2 max-w-md mx-auto text-lg">
                 Search by title, author, ISBN or even directly for your faculty module codes.
               </p>
 
@@ -440,10 +440,10 @@ export default function LandingPage() {
         <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-                <div>
-                    <span className="text-white font-bold text-l tracking-wider uppercase bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
-                        Campus Safety
-                    </span>
+              <div>
+                  <span className="text-white font-bold text-lg tracking-wider uppercase bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
+                      Campus Safety
+                  </span>
                     <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
                         Built for Safe, On-Campus Exchanges
                     </h2>
@@ -452,26 +452,35 @@ export default function LandingPage() {
                     </p>
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-                        {CAMPUS_SECURITY.map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                {item.icon}
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-bold text-sm">
-                                        {item.title}
-                                    </h4>
-                                    <p className="text-white font-bold text-sm">
-                                        {item.desc}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                      {CAMPUS_SECURITY.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                            {item.icon}
+                          </div>
+                          <div>
+                            <h4 className="text-white font-bold text-sm">
+                              {item.title}
+                            </h4>
+                            <p className="text-white font-bold text-sm">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </div>
+                  ))}
+              </div>
+            </div>
+            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl">
+              <Image 
+                src="/students-sitting.jpg"
+                alt="Students meeting on campus"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
       {/* Featured Books */}
       <section className="py-16 bg-[#F5F5F5]">
@@ -489,7 +498,7 @@ export default function LandingPage() {
           </div>
           {/* Call to Action */}
           <div className="text-center mt-12">
-            <p className="text-slate-500 font-bold text-l tracking-wide">
+            <p className="text-slate-500 font-bold text-lg tracking-wide">
                 Would you like to view the listings & more? {''}
             </p>
             <Link href="/auth/register"
