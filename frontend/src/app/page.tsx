@@ -1,5 +1,7 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, MessageCircle, Microscope } from 'lucide-react'
+import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, 
+  MessageCircle, Microscope } from 'lucide-react'
+import TrustSection from '@/components/landing/TrustSection'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -397,6 +399,7 @@ export default function LandingPage() {
         
       </section>
 
+
       {/* Section 3: Find a variety of textbooks */}
       <section className="py-20 bg-white">
         <div className="container-content">
@@ -433,6 +436,8 @@ export default function LandingPage() {
         
       </section>
 
+      {/* Section 4: Trust & Safety */}
+      <TrustSection />
       {/* Featured Books */}
       <section className="py-16 bg-[#F5F5F5]">
         <div className="container-content">
@@ -440,7 +445,7 @@ export default function LandingPage() {
 
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
-              FEATURED TEXTBOOKS
+              A SNEAK-PEAK INTO SOME OF THE TEXTBOOKS FEATURED 
             </h2>
           </div>
 
@@ -451,12 +456,16 @@ export default function LandingPage() {
           </div>
 
           {/* Call to Action */}
-          <div className="text-center mt-12 mb-6">
+          <div className="text-center mt-12">
             <p className="text-slate-500 font-bold text-l tracking-wide">
-                Would you like to view more Listings? {''}
-                REGISTER or LOGIN above
-                {''} to browse all active textbook listings.
+                Would you like to view the listings & more? {''}
             </p>
+            <Link href="/auth/register"
+                  className="px-6 py-3 bg-[#00B4D8] text-sm font-bold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 inline-flex items-center gap-2 shadow-sm">
+                    <UserPlus size={16} />
+                    JOIN THE COMMUNITY
+                  </Link>
+                
           </div>
         </div>
       
