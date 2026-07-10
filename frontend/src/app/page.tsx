@@ -5,7 +5,6 @@ import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 
-
 const UNIVERSITY_FACULTIES = [
   { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
   { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]"/>},
@@ -308,7 +307,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-
             {/* RIGHT — feature cards */}
             <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
 
@@ -346,7 +344,6 @@ export default function LandingPage() {
                 </Card>
             </div>
           </div>
-
         </div>
           {/* Search bar
             <div className="flex justify-center mt-8">
@@ -372,7 +369,6 @@ export default function LandingPage() {
       <section className="py-24 bg-white border-b border-slate-100">
         <div className="container-content">
 
-
           <div className="text-center mb-16">
             <span className="text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
@@ -381,7 +377,6 @@ export default function LandingPage() {
               Buy and sell used textbooks with other students on campus in three steps.
             </p>
           </div>
-
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
@@ -395,9 +390,7 @@ export default function LandingPage() {
                     {item.num}
                   </span>
                 </div>
-
                 {/* Content */}
-                
                 <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
                   {item.title}
                 </h3>
@@ -407,11 +400,8 @@ export default function LandingPage() {
               </div>
               ))}
             </div>
-
           </div>
-        
       </section>
-
 
       {/* Section 3: Find a variety of textbooks */}
       <section className="py-20 bg-white">
@@ -427,9 +417,7 @@ export default function LandingPage() {
               </p>
 
             </div>
-
               {/* Faculty Grid */}
-
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
                 {UNIVERSITY_FACULTIES.map((fac, idx) => (
                   <div key = {idx}
@@ -444,30 +432,61 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-
             </div>
-        
       </section>
 
       {/* Section 4: Trust & Safety */}
-      
+      <section className="py-20 bg-[#00B4D8]">
+        <div className="container-content">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+                <div>
+                    <span className="text-white font-bold text-l tracking-wider uppercase bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
+                        Campus Safety
+                    </span>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                        Built for Safe, On-Campus Exchanges
+                    </h2>
+                    <p className="text-white/90 text-sm mt-3 max-w-md leading-relaxed">
+                        This platform is built specifically to handle face-to-face transactions around campus. We prioritize internal student verification to keep the trading pool trusted.
+                    </p>
+                    {/* Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                        {CAMPUS_SECURITY.map((item, idx) => (
+                            <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                                {item.icon}
+                                </div>
+                                <div>
+                                    <h4 className="text-white font-bold text-sm">
+                                        {item.title}
+                                    </h4>
+                                    <p className="text-white font-bold text-sm">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+          </div>
+        </section>
+
       {/* Featured Books */}
       <section className="py-16 bg-[#F5F5F5]">
         <div className="container-content">
-
 
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
               A SNEAK-PEAK INTO SOME OF THE TEXTBOOKS FEATURED 
             </h2>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {MOCK_FEATURED_BOOKS.map((listing, index) => (
               <ListingCard key={index} listing={listing} removeClick={true}/>
             ))}
           </div>
-
           {/* Call to Action */}
           <div className="text-center mt-12">
             <p className="text-slate-500 font-bold text-l tracking-wide">
@@ -478,12 +497,9 @@ export default function LandingPage() {
                     <UserPlus size={16} />
                     JOIN THE COMMUNITY
                   </Link>
-                
           </div>
         </div>
-      
       </section>
-      
     </>
   )
 }
