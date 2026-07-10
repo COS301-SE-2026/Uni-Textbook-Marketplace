@@ -1,16 +1,17 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, MessageCircle, User } from 'lucide-react'
+import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, MessageCircle, Microscope } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 
 
 const UNIVERSITY_FACULTIES = [
-  { name: 'EBIT (Engineering & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
+  { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
   { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]"/>},
   { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
   { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
   { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
+  { name: 'NAS (Natural & Agricultural Sciences)', icon: <Microscope className="w-6 h-6 text-[#00B4D8]" />}
 ];
 
 
@@ -368,23 +369,35 @@ export default function LandingPage() {
 
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100">
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
 
               {PLATFORM_STEPS.map((item, idx) => (
                 <div key={idx} className="relative flex flex-col items-center text-center px-4">
-                  <div className="relative z-10 w-14 h-14 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
+                  <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
-                  {item.num}
-                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
+                  {item.icon}
+                  <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
                     {item.num}
                   </span>
+                </div>
+
+                {/* Content */}
+                
+                <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
+                  {item.title}
+                </h3>
+                <p className="text-slate-500 text-l max-w-[240px] leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
               ))}
             </div>
+
           </div>
-        </div>
+        
       </section>
 
-      {/* Section 2: Find a variety of textbooks */}
+      {/* Section 3: Find a variety of textbooks */}
       <section className="py-20 bg-white">
         <div className="container-content">
             <div className="text-center mb-14">
@@ -393,7 +406,7 @@ export default function LandingPage() {
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
               </h2>
 
-              <p className="text-gray-500 mt-2 max-w-md mx-auto text-sm">
+              <p className="text-gray-500 mt-2 max-w-md mx-auto text-l">
                 Search by title, author, ISBN or even directly for your faculty module codes.
               </p>
 
@@ -401,15 +414,15 @@ export default function LandingPage() {
 
               {/* Faculty Grid */}
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
                 {UNIVERSITY_FACULTIES.map((fac, idx) => (
                   <div key = {idx}
                         
-                    className="group flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
+                    className="flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                       {fac.icon}
                     </div>
-                    <span className="text-xs font-bold text-[#000f2b] text-center px-1">
+                    <span className="text-xs font-bold text-[#000f2b] text-center px-2">
                       {fac.name}
                     </span>
                   </div>
@@ -421,7 +434,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Books */}
-      <section className="py-16 bg-[#F8FAFC]">
+      <section className="py-16 bg-[#F5F5F5]">
         <div className="container-content">
 
 
@@ -439,7 +452,7 @@ export default function LandingPage() {
 
           {/* Call to Action */}
           <div className="text-center mt-12 mb-6">
-            <p className="text-slate-500 font-bold text-sm tracking-wide">
+            <p className="text-slate-500 font-bold text-l tracking-wide">
                 Would you like to view more Listings? {''}
                 REGISTER or LOGIN above
                 {''} to browse all active textbook listings.
