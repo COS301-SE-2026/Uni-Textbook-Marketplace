@@ -26,4 +26,35 @@ const FOOTER_DIVISIONS = [
 
 ]
 
-export default function Footer() {}
+export default function Footer() {
+  return (
+    <footer className="bg=[#000f2b] text-white">
+      <div className="container-content pt-16 pb-8">
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Brand Panel */}
+
+          <div className="lg:col-span-2">
+            <Link href="/" className="flex items-center gap-2 no-underline mb-4">
+              <BookOpen size={28} className="text-[#00B4D8]" />
+              <div className="leading-tight">
+                <span className="block text-xs font-bold text-[#00B4D8] tracking-widest uppercase">Uni Textbook</span>
+                <span className="block text-lg font-extrabold text-white leading-none">Marketplace</span>
+
+              </div>
+            </Link>
+            <p className="text-gray-400 text-xs font-medium">Built in partnership with</p>
+            <div className="mt-3">
+              <Image src="/"
+                alt="Agile Bridge Logo"
+                width={160}
+                height={50}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
