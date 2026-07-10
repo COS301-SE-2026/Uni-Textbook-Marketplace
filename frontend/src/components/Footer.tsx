@@ -82,6 +82,7 @@ export default function Footer() {
                 alt="Agile Bridge Logo"
                 width={180}
                 height={60}
+                className="w-auto h-auto"
               />
             </div>
             <div className="flex gap-9 mt-6">
@@ -135,7 +136,11 @@ export default function Footer() {
             </div>
         </div>
 
-
+        
+        {/* Bottom bar */}
+        <div className="border-t border-white/5 mt-12 pt-6">
+            <p className="text-gray-500 text-xs text-center max-w-4xl mx-auto">© {new Date().getFullYear()} Uni-Textbook Marketplace. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   )

@@ -322,6 +322,7 @@ export default function LandingPage() {
                   alt="Agile Bridge"
                   width={250}
                   height={200}
+                  className="w-auto h-auto"
                 />
               </div>
 
@@ -475,6 +476,7 @@ export default function LandingPage() {
                 src="/students-sitting.jpg"
                 alt="Students meeting on campus"
                 fill
+                sizes="100vw"
                 className="object-cover"
                 priority
               />
