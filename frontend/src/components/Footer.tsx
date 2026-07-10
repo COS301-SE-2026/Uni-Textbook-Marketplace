@@ -2,25 +2,40 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { BookOpen, Mail, MapPin } from 'lucide-react'
+import { BookOpen, Mail, MapPin, Facebook, Instagram, Github } from 'lucide-react'
+
+
+const SOCIAL_ICONS = [
+  { icon: Facebook, href: '#' },
+  { icon: Instagram, href: '#' },
+  { icon: Github, href: 'https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace' },
+]
 
 const FOOTER_DIVISIONS = [
+
+  {
+    title: 'Product',
+    links: [
+      { label: 'Browse Listing', href: '/auth/login'},
+      { label: 'Sell a Textbook', href: '/auth/login'},
+      { label: 'My Listings', href: '/auth/login'},
+    ],
+  },
   {
     title: 'Support',
     links: [
       { label: 'Help & FAQs', href: '/help' },
-      { label: 'Contact Us', href: '/contact' },
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Contact Us', href: '#' },
+      { label: 'Privacy Policy', href: '#' },
+      { label: 'Terms of Service', href: '#' },
     ],
   },
   {
     title: 'University',
     links: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Our Partners', href: '/partners' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Blog', href: '/blog' },
+      { label: 'About Us', href: '#' },
+      { label: 'Our Partners', href: '#' },
+      { label: 'Careers', href: '#' },
     ],
   },
 
@@ -51,6 +66,13 @@ export default function Footer() {
                 width={160}
                 height={50}
               />
+            </div>
+            <div className="flex gap-3 mt-6">
+              {SOCIAL_ICONS.map(({ icon: Icon, href }, idx) => (
+                <a key={idx} href={href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#00B4D8] transition-colors flex items-center justify-center text-gray-400 hover:text-[#000f2b]">
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
             </div>
           </div>
         </div>
