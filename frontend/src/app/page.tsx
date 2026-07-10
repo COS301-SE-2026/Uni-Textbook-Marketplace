@@ -4,6 +4,7 @@ import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, S
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
+import Footer from '@/components/Footer'
 
 const UNIVERSITY_FACULTIES = [
   { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
@@ -509,6 +510,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      <Footer />
     </>
   )
 }
