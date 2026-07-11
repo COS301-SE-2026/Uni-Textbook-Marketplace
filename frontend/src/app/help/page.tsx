@@ -80,7 +80,7 @@ export default function HelpPage() {
                                 <div key={idx} className="bg-white rounded-2xl border border-slate-100 shadow-sm transition-all duration-200 hover:shadow-md overflow-hidden">
                                     <details className="group">
                                         <summary className="flex items-center justify-between w-full px-6 py-5 cursor-pointer list-none select-none">
-                                            <span className="font-bold text-[#000f2b] text-sm tracking-tight">
+                                            <span className="font-bold text-[#000f2b] text-lg tracking-tight">
                                                 {item.question}
                                             </span>
                                             <span className="text-[#00B4D8] group-open:rotate-180 transition-transform duration-200 flex-shrink-0 ml-4">
@@ -90,7 +90,7 @@ export default function HelpPage() {
                                             </span>
                                         </summary>
 
-                                        <div className="px-6 pb-5 text-slate-600 text-xs leading-relaxed border-t border-slate-50 pt-4 font-normal">
+                                        <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-50 pt-4 font-normal">
                                             {item.answer}
                                         </div>
                                     </details>
@@ -98,9 +98,35 @@ export default function HelpPage() {
                             ))}
                         </div>
                     </div>
-                    
+
                 </div>
             </section>
+
+
+            {/* Manual Support Contact */}
+
+            <section className="py-20 bg-[#EEEEEE]">
+
+                <div className="container-content">
+                    <div className="max-w-xl mx-auto text-center">
+                        <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mx-auto mb-5">
+                            <MessageCircle size={24} className="text-[#00B4D8]" />
+
+                        </div>
+                        <h3 className="text-lg font-bold text-[#000f2b] tracking-tight">Still Stuck?</h3>
+                        <p className="text-slate-500 text-sm mt-3 leading-relaxed">
+                            If you are facing an activation issue or listing bug, reach out directly. Our student admin team will review your ticket within 24 hours.
+                        </p>
+                        <Link href="/contact"
+                        className="inline-flex items-center gap-2 mt-6 px-5 py-3 bg-[#00B4D8] text-[#000f2b] text-xs font-bold rounded-lg hover:bg-[#0096B4] transition-colors no-underline shadow-sm">
+                            <Mail size={24} />
+                            Contact Support
+                        </Link>
+                    </div>
+
+                </div>
+            </section>
+            <Footer />
         </>
     )
 }
