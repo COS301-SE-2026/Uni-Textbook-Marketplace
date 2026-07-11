@@ -30,4 +30,33 @@ const HIERARCHY_FAQS = [
     },
 ]
 
-export default function HelpPage() {}
+export default function HelpPage() {
+    return (
+        <>
+            {/* Hero section */}
+            <section className="relative py-20 bg-[#000f2b] overflow-hidden">
+                <div className="absolute inset-0 opacity-5">
+                    <Image src="/help-bg.jpg"
+                        alt="Help Hero Section"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
+                <div className="container-content relative z-10 text-center text-white">
+                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-semibold mb-5 tracking-wide uppercase">
+                        <HelpCircle size={16} className="text-[#00B4D8]" />
+                        <span>Support Desk</span>
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight max-w-2xl mx-auto leading-tight">
+                        How can we help you out?
+                    </h1>
+                    <p className="text-slate-300 text-sm max-w-md mx-auto mt-4 leading-relaxed">
+                        Browse through common troubleshooting questions regarding listings, student verification profiles, and campus trade protocols.
+                    </p>
+                </div>
+
+            </section>
+        </>
+    )
+}

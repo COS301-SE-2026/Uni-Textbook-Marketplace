@@ -8,7 +8,8 @@ const RESTRICTED_ROUTES = [
     '/admin/review',
     '/auth/login',
     '/auth/register',
-    '/auth/resetpassword'
+    '/auth/resetpassword',
+    '/help'
 ]
 
 export default function HelpMenuWrapper() {
