@@ -486,12 +486,12 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Books */}
-      <section className="py-16 bg-[#F5F5F5]">
+      <section className="py-16 bg-white">
         <div className="container-content">
 
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
-              A SNEAK-PEAK INTO SOME OF THE TEXTBOOKS FEATURED 
+              A SAMPLE OF OUR INTERFACE
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -499,16 +499,39 @@ export default function LandingPage() {
               <ListingCard key={index} listing={listing} removeClick={true}/>
             ))}
           </div>
-          {/* Call to Action */}
-          <div className="text-center mt-12">
-            <p className="text-slate-500 font-bold text-lg tracking-wide">
-                Would you like to view the listings & more? {''}
-            </p>
-            <Link href="/auth/register"
-                  className="px-6 py-3 bg-[#00B4D8] text-sm font-bold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 inline-flex items-center gap-2 shadow-sm">
-                    <UserPlus size={16} />
-                    JOIN THE COMMUNITY
-                  </Link>
+
+        </div>
+      </section>
+
+      {/* Call To Action */}
+      <section className="py-24 bg-slate-50">
+        <div className="container-content">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+             <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+              <Image src="/students-sitting-2.jpg"
+                alt="Students socialising"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                quality={90}
+                className="object-cover"
+                priority
+              />
+             </div>
+
+             <div className="px-2">
+              <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
+                Get Started
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#000f2b] tracking-tight leading-tight">
+                Ready to find your textbooks or sell a few?
+              </h2>
+              <Link href='/auth/register'
+                className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#00B4D8] text-lg font-extrabold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 shadow-sm uppercase tracking-wider">
+                  <UserPlus size={15} />
+                  REGISTER
+                </Link>
+             </div>
           </div>
         </div>
       </section>
