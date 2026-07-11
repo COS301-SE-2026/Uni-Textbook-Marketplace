@@ -1,25 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import type { MouseEvent } from "react";
 import { Heart } from "lucide-react";
 
-export default function Heartbutton (){
+type HeartButtonProps = {
+    onClick?: (liked: boolean) => void;
+    liked?: boolean;
+};
 
-    const [isliked, setIsliked] = useState(false);
+export default function Heartbutton({ onClick, liked = false }: HeartButtonProps) {
+    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        onClick?.(!liked);
+    };
 
-    const handleClick = () => {
-        setIsliked(true);
-    }
-
-    return(
+    return (
         <button
+            type="button"
             onClick={handleClick}
             className="p-3 rounded-full transition duration-200 ease-in-out hover:bg-gray-100 focus:outline-none"
-            aria-label="Like"
+            aria-label={liked ? "Unlike" : "Like"}
+            aria-pressed={liked}
         >
             <Heart
-                className={`transition colors duration-300 ${isliked ? 'fill-[00B4D8]' : 'text-gray-400'}`}
+                className={`transition-colors duration-300 ${liked ? "fill-[#00B4D8] text-[#00B4D8]" : "text-gray-400"}`}
             />
         </button>
-    )
+    );
 }
