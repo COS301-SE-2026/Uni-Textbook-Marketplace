@@ -16,16 +16,13 @@ export class AdminController {
   async rejectListing(
     @Param('id') id: string,
     @Body('reason') reason: string,
-    @Req() req: RequestWithUser, 
+    @Req() req: RequestWithUser,
   ) {
     return await this.adminService.rejectListing(id, req.user, reason);
   }
 
   @Post(':id/approve')
-  async approveListing(
-    @Param('id') id: string,
-    @Req() req: RequestWithUser, 
-  ) {
+  async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
     return await this.adminService.approveListing(id, req.user);
   }
 }
