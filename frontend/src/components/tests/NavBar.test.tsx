@@ -105,6 +105,20 @@ describe('transparent navbar', () => {
         expect(container.querySelector('nav')).toHaveClass('bg-[var(--nav-bg)]');
     });
 
-    
+    it('is opaque on non-landing pages', () => {
+        const { container } = renderNav('/listings', 0);
+        expect(container.querySelector('nav')).not.toHaveClass('bg-transparent');
+    });
 
-})
+    it('shows white text on transparent navbar', () => {
+        const { container } = renderNav('/', 0);
+        expect(container.querySelector('.leading-tight span:last-child')).toHaveClass('text-white');
+
+    });
+
+    it('shows dark text on opaque navbar', () => {
+        const { container } = renderNav('/', 100);
+        expect(container.querySelector('.leading-tight span:last-child')).not.toHaveClass('text-white');
+    });
+
+});
