@@ -50,9 +50,9 @@ const FOOTER_DIVISIONS = [
   {
     title: 'University',
     links: [
+      { label: 'Brand Style Guide', href: '/brand' },
       { label: 'About Us', href: '/about' },
-      { label: 'Our Partners', href: '/partners' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'Our Partners', href: 'https://www2.agilebridge.co.za/our-company/' },
     ],
   },
 

@@ -41,8 +41,8 @@ export default function BrandPage() {
             <header className="bg-[#000f2b] py-16 border-b border-slate-800">
                 <div className="container-content">
 
-                    <span className="text-xs font-bold tracking-widest uppercase text-[#00B4D8] block mb-2">
-                        Design Style Guide
+                    <span className="text-sm font-bold tracking-widest uppercase text-[#00B4D8] block mb-2">
+                        Brand Style Guide
                     </span>
                     <h1 className="text-white font-extrabold text-4xl md:text-5xl tracking-tight">
                         Brand Tokens & UI System
@@ -59,12 +59,12 @@ export default function BrandPage() {
                         <h2 id="story-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-4">
                             Evolution from Demo 1
                         </h2>
-                        <div className="space-y-4 max-w-3xl text-xs text-slate-600 leading-relaxed">
+                        <div className="space-y-4 max-w-3xl text-sm text-slate-600 leading-relaxed">
                             <p>
-                                Our design guide started out as basic values pulled directly from marketing concepts. While those choices worked well for structural layouts in Demo 1, building live functional views quickly exposed accessibility issues.
+                                Our Brand style guide started out as basic values pulled directly from marketing concepts. While those choices worked well for structural layouts in Demo 1, building live functional views quickly exposed accessibility issues.
                             </p>
                             <p>
-                                Specifivally, our primary brand cyan (<span className="font-mono-brand text-[11px] bg-slate-100 px-1 py-0.5 rounded">#00B4D8</span>) caused severe text visibilty issues on white panels. To address this for WCAG AA compliance, we split it to include a deeper secondary cyan (<span className="font-mono-brand text-[11px] bg-slate-100 px-1 py-0.5 rounded">#006D8A</span>) to safely handle text elements, navigation references, and links.
+                                Specifically, our primary brand cyan (<span className="font-mono-brand text-[14px] bg-slate-100 px-1 py-0.5 rounded">#00B4D8</span>) caused severe text visibilty issues on white panels. To address this for WCAG AA compliance, we split it to include a deeper secondary cyan (<span className="font-mono-brand text-[11px] bg-slate-100 px-1 py-0.5 rounded">#006D8A</span>) to safely handle text elements, navigation references, and links.
                             </p>
                             <p>
                                 The landing page layout also went through multiple structural iterations. Initial ideas favored complex serif display patterns, highlighting overlays, and stacked sample cards. To keep production assets clean, the final shipped hero uses a full-bleed campus photo with clean Montserrat text layers, emphasizing our slogan: <strong>&ldquo;Made for Students, by Students&rdquo;</strong>. Deploying this documentation page directly within the app pipeline allows us to track visual consistency across components in real-time.
@@ -76,27 +76,61 @@ export default function BrandPage() {
                     
                     <section aria-labelledby="colour-heading">
                         <h2 id="colour-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Colour Palette</h2>
-                        <p className="text-slate-500 text-xs mb-6">
+                        <p className="text-slate-500 text-sm mb-6">
                             Core tokens carried over from the initial design sprint,along with text compliance fixes. Contrast mappings are documented inside <code className="font-mono-brand text-xs text-[#006D8A]">globals.css</code>.
 
                         </p>
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Core Base</h3>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Core Base</h3>
                         <div className="grid grid-cols md:grid-cols-4 gap-4 mb-10">
                             {MAIN_TOKENS.map((item) => (
                                 <div key={item.name} className="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white">
                                     <div className="h-16 w-full" style={{ backgroundColor: item.hex }} />
                                     <div className="p-3">
 
-                                        <p className="text-xs font-bold text-[#000f2b]">{item.name}</p>
-                                        <p className="font-mono-brand text-[11px] text-slate-400 mt-1">{item.hex}</p>
+                                        <p className="text-sm font-bold text-[#000f2b]">{item.name}</p>
+                                        <p className="font-mono-brand text-[14px] text-slate-400 mt-1">{item.hex}</p>
                                         <p className="text-[11px] text-slate-500 mt-1 leading-snug">{item.usage}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        
+
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">
+                            Refined Validation Badges (WCAG AA Compliance)
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {PERFECTED_TOKENS.map((item) => (
+                                <div key={item.name} className="border border-slate-100 rounded-xl p-4 flex items-center gap-4 bg-white shadow-sm">
+                                    <div className="w-10 h-10 rounded-lg shrink-0 border border-slate-200"
+                                        style={{ backgroundColor: item.hex.split(' / ')[0] }}
+                                    />
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-bold text-[#000f2b]">{item.name}</p>
+                                        <p className="font-mono-brand text-[11px] text-slate-400">{item.hex}</p>
+                                        <p className="text-[14px] text-slate-500">{item.usage}</p>
+
+                                        <span className="inline-block bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-0.5 rounded-full mt-1">
+                                            Ratio: {item.ratio}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </section>
+
+                    {/* Token Drift Alerts */}
+
+                    <div className="border-l-4 border-rose-500 bg-rose-50/50 p-4 rounded-r-l-xl space-y-3">
+                            
+                            <div>
+                                <p className="text-sm font-bold text-rose-900 mb-1"> Token Drift Warning: globals.css overrides</p>
+                                <p className="text-[14px] text-rose-700 leading-relaxed">
+                                    Headings currently resolve to <span className="font-mono-brand text-sm">#171717</span> via root configuration variables instead of using the designated brand Dark Navy colour. Additionally, layout grid dividers reference standard tailwind gray variants instead of our declared background borders. This mismatch will be updated in the next dev synchronisation pass.
+                                </p>
+                            </div>
+                    </div>
             </main>
             <Footer />
         </div>
