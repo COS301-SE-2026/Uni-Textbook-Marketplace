@@ -1,4 +1,4 @@
-import { render, screen } from '@/test-utils';
+import { render } from '@/test-utils';
 import NavBar from '../NavBar';
 
 global.requestAnimationFrame = (callback: FrameRequestCallback) => {
@@ -19,6 +19,7 @@ jest.mock('@/context/AuthContext', () => ({
 }));
 
 const mockUseAuth = require('@/context/AuthContext').useAuth;
+const mockUsePathname = require('next/navigation').usePathname;
 
 describe('NavBar', () => {
     beforeEach(() => {
@@ -75,4 +76,35 @@ describe('NavBar', () => {
         expect(container).not.toHaveTextContent(/Register/);
         expect(container).not.toHaveTextContent(/Login/);
     });
+
 });
+
+describe('transparent navbar', () => {
+    beforeEach(() => {
+        Object.defineProperty(window, 'scrollY', { value: 0, writable: true });
+        window.dispatchEvent(new Event('scroll'));
+        mockUseAuth.mockReturnValue({ user: null, isAuthenticated: false, isLoading: false, logout: jest.fn() });
+
+    });
+
+    const renderNav = (path: string, scroll: number) => {
+        mockUsePathname.mockReturnValue(path);
+        Object.defineProperty(window, 'scrollY', { value: scroll, writable: true});
+        
+        window.dispatchEvent(new Event('scroll'));
+        return render(<NavBar />);
+    };
+
+    it('is transparent on landing page at hero section', () => {
+        const { container } = renderNav('/', 0);
+        expect(container.querySelector('nav')).toHaveClass('bg-transparent');
+    });
+
+    it('is opaque on landing page on scroll', () => {
+        const { container } = renderNav('/', 100);
+        expect(container.querySelector('nav')).toHaveClass('bg-[var(--nav-bg)]');
+    });
+
+    
+
+})
