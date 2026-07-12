@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { ListingsModule } from './listings/listings.module';
 import { ModuleModule } from './modules/module.module';
+import {MessagingModule} from './messaging/messaging.module';
 
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
