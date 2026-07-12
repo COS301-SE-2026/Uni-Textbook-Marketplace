@@ -22,16 +22,16 @@
   /* Light mode (default)*/
   :root {
     --background: #ffffff;
-    --foreground: #171717;
+    --foreground: #000f2b;
     --card-bg: #ffffff;
-    --card-border: #e5e7eb;
+    --card-border: #dddddd;
     --nav-bg: #ffffff;
     --nav-border: #ffffff;
   }
 
   /* Dark mode */
   .dark {
-    --background: #171717;
+    --background: #000f2b;
     --foreground: #ededed;
     --card-bg: #1a1a1a;
     --card-border: #374151;
