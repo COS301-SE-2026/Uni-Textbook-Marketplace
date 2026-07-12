@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { randomUUID } from 'crypto';
 
@@ -9,19 +9,21 @@ export class AzureService {
   private readonly accountName: string;
 
   constructor() {
+
     const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
     this.accountName =
       process.env.AZURE_STORAGE_ACCOUNT_NAME || 'blobpocnexusdev';
     this.containerName =
       process.env.AZURE_STORAGE_CONTAINER_NAME || 'nexusdevimages';
 
-    if (sasToken) {
+      if (!sasToken) {
+        throw new Error('Azure SAS Token is missing from .env');
+      }
+
       this.blobServiceClient = new BlobServiceClient(
         `https://${this.accountName}.blob.core.windows.net?${sasToken}`,
       );
-    } else {
-      throw new Error('Azure storage credentials not configured');
-    }
+
   }
 
   async uploadImage(file: Express.Multer.File): Promise<string> {
@@ -29,30 +31,34 @@ export class AzureService {
       throw new BadRequestException('No file provided');
     }
 
-    const allowedMimeTypes = [
+    const correctMIMETypes = [
       'image/jpeg',
       'image/png',
       'image/webp',
       'image/gif',
     ];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
+    if (!correctMIMETypes.includes(file.mimetype)) {
       throw new BadRequestException(
-        'Only image files (JPEG, PNG, WEBP, GIF) are allowed',
+        'Only correct image files (JPEG, PNG, WEBP, GIF) are accepted'
       );
     }
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      throw new BadRequestException('File size exceeds 5MB limit');
+    const highestBytes = 5 * 1024 * 1024;
+
+    if (file.size > highestBytes) {
+      throw new BadRequestException('File size exceeds 5MB');
     }
 
     const containerClient = this.blobServiceClient.getContainerClient(
-      this.containerName,
+      this.containerName
     );
     
-    const extension = file.originalname.split('.').pop();
-    const blobName = `${randomUUID()}.${extension}`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const extSections = file.originalname.split('.');
+
+    const fileExtens = extSections.length > 1 ? extSections[extSections.length - 1] : 'png';
+
+    const blobContName = `${randomUUID()}.${fileExtens}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobContName);
 
     await blockBlobClient.uploadData(file.buffer, {
       blobHTTPHeaders: {
@@ -67,33 +73,40 @@ export class AzureService {
     const containerClient = this.blobServiceClient.getContainerClient(
       this.containerName,
     );
-    const blobs: { name: string; url: string }[] = [];
+    const blobGroupList: { name: string; url: string }[] = [];
 
     for await (const blob of containerClient.listBlobsFlat()) {
       const blobClient = containerClient.getBlockBlobClient(blob.name);
-      blobs.push({
+      blobGroupList.push({
         name: blob.name,
         url: blobClient.url,
       });
     }
-    return blobs;
+    return blobGroupList;
   }
 
   async deleteImage(imageUrl: string): Promise<void> {
+
+    if (!imageUrl) return;
+
     try {
       const containerClient = this.blobServiceClient.getContainerClient(
-        this.containerName,
+        this.containerName
       );
-      const urlParts = new URL(imageUrl);
-      const pathParts = urlParts.pathname.split('/');
-      const blobName = pathParts.at(1);
+      const urlRead = new URL(imageUrl);
+      const pathUrls = urlRead.pathname.split('/');
+      const specificBlob = pathUrls[pathUrls.length - 1];
 
-      if (blobName) {
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        await blockBlobClient.deleteIfExists();
+      if (!specificBlob) {
+        
+        throw new BadRequestException('Couldnt find blob path');
       }
-    } catch (error) {
-      console.error('Error deleting image:', error);
+      const blockBlobClient = containerClient.getBlockBlobClient(specificBlob);
+      await blockBlobClient.deleteIfExists();
+    } catch {
+      throw new InternalServerErrorException(
+        'Azure operation failed during removal'
+      );
     }
   }
 }
