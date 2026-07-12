@@ -1,9 +1,7 @@
 import { api } from './api';
 
 export interface WishlistItem {
-    id?: string;
-    listingId?: string;
-    listings_id?: string;
+    listings_id: string;
 }
 
 export async function save(listingId:string): Promise<void> {

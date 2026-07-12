@@ -7,6 +7,7 @@ import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
 import {getListings} from '@/lib/listings.api'
+import { mylist } from '@/lib/wishlist.api'
 
 
 // Filter state
@@ -40,6 +41,7 @@ export default function BrowseListingsPage() {
     const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
     const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS)
     const [total, setTotal] = useState(0)
+    const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
     
     const fetchListings = useCallback(async (f: Filters) => {
@@ -82,6 +84,20 @@ export default function BrowseListingsPage() {
         }
         loadListings()
     }, [applied, fetchListings])
+
+    useEffect(() =>{
+        const loadWishlist = async () => {
+            
+            try {
+                const items = await mylist()
+                const ids = items.map((item) => item.listings_id)
+                setLikedIds(new Set(ids))
+            } catch (error) {
+                console.error('failed to fetch wishlist',error)
+            }
+        }
+        loadWishlist()
+    },[])
 
     // Handlers
 
@@ -305,7 +321,7 @@ export default function BrowseListingsPage() {
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {listings.map(listing => (
-                                    <ListingCard key={listing.id} listing={listing} />
+                                    <ListingCard key={listing.id} listing={listing} isLiked={likedIds.has(listing.id)} />
                                 ))}
                             </div>
                         )}
