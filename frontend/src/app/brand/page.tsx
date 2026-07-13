@@ -171,6 +171,57 @@ export default function BrandPage() {
                         </table>
                     </div>
                 </section>
+
+                {/* Component Demos */}
+                <section aria-labelledby="components-heading">
+                    <h2 id="components-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Component Preview Library</h2>
+                    <p className="text-slate-500 text-sm mb-6">Live element examples rendered with our global layout styling classes.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Action Actions</h3>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button className="px-4 py-2 bg-[#00B4D8] hover:bg-[#0096B4] text-[#000f2b] text-sm font-bold rounded-md transition-colors">Primary</button>
+                                <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-md transition-colors">Secondary</button>
+                                <button className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-md transition-colors">Danger</button>
+                            </div>
+                        </div>
+
+                        <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Queue Status Badges</h3>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0F7] text-[#004F66]">Pending</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0DC] text-[#155E2E]">Approved</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#FDE8E8] text-[#7F1D1D]">Rejected</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Accessibility & Compliance */}
+                <section aria-labelledby="a11y-heading" className="border-t border-slate-100 pt-10">
+                    <h2 id="a11y-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-3">Accessibility Framework</h2>
+                    <ul className="text-sm text-slate-600 space-y-2 list-disc pl-5 max-w-2xl">
+                        <li>Compliance Target: <strong>WCAG 2.2 AA</strong> interface baseline across all routes.</li>
+                        <li>Interactive elements utilize high-visibility focus rings (<code className="font-mono-brand text-[11px]">rgba(0,180,216,.15)</code>).</li>
+                        <li>Tap target sizing maintains a 44x44px safety boundary for mobile viewports.</li>
+
+                    </ul>
+
+                    <div className="mt-4 flex items-center gap-3">
+                        <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-md transition-colors
+                            onClick={() => setReducedMotion((v) => !v)}">
+                                {reducedMotion ? 'Reduced Motion Active' : 'Default Motion On'}
+                            </button>
+                    
+                    <div className="w-6 h-6 rounded-full bg-[#00B4D8]"
+                        style={{
+                            transition: reducedMotion ? 'none' : 'transform 0.5s ease',
+                            transform: reducedMotion ? 'none' : 'rotate(360deg)',
+                        }} />
+                    </div>
+                </section>
+
             </main>
 
             
