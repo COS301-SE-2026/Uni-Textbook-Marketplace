@@ -21,6 +21,8 @@ import { BooksModule } from './books/books.module';
 import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 
+import { AzureModule } from './azure/azure.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -56,6 +58,7 @@ import { Wishlist } from './database/entities/wishlist.entity';
     ModuleModule,
     BooksModule,
     WishlistModule,
+    AzureModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

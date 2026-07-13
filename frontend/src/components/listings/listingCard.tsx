@@ -43,6 +43,7 @@ interface ListingCardProps {
     listing: Listing
     showStatus?: boolean
     isLiked?: boolean
+    removeClick? : boolean
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -57,6 +58,8 @@ export default function ListingCard({
     showStatus = false,
     isLiked: initialIsliked = false
 }: ListingCardProps) {
+    removeClick = false,
+    }: ListingCardProps) {
     const router = useRouter()
     const [isLiked, setIsLiked] = useState(initialIsliked)
 
@@ -65,6 +68,8 @@ export default function ListingCard({
     }, [initialIsliked])
 
     const handleClick = () => {
+        if(removeClick) return
+        
         router.push(`/listings/${listing.id}`)
     }
 
@@ -96,6 +101,10 @@ export default function ListingCard({
         <div
             onClick={handleClick}
             className="card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 relative"
+        onClick={handleClick}
+        className={`card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 ${
+            !removeClick ? 'cursor-pointer' : ''
+        }`}
         >
             {/* Image */}
             <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">

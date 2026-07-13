@@ -1,10 +1,10 @@
-# ─── Node ───────────────────────────────
+# Node
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# ─── Environment variables ───────────────
+# Environment variables
 .env
 .env.local
 .env.development
@@ -13,37 +13,38 @@ yarn-error.log*
 *.env
 *.test
 
-# ─── Next.js ────────────────────────────
+# Next.js
 frontend/.next/
 frontend/out/
 frontend/build/
 
-# ─── NestJS / Backend ───────────────────
+# NestJS / Backend 
 backend/dist/
 
-# ─── Coverage reports ───────────────────
+# Coverage reports 
 coverage/
 *.lcov
 
-# ─── Database ───────────────────────────
+# Database 
 *.sql.bak
 
-# ─── OS files ───────────────────────────
+# OS files 
 .DS_Store
 Thumbs.db
 
-# ─── IDE ────────────────────────────────
+# IDE 
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# ─── Docker ─────────────────────────────
+# Docker 
 docker-compose.override.yml
 
-# ─── Logs ───────────────────────────────
+# Logs
 logs/
 *.log
 
 #please don't remove this
 development/
+BlobPOC/

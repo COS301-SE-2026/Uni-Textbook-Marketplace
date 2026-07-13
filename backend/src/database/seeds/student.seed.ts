@@ -8,9 +8,7 @@ export async function seedStudents(manager: EntityManager) {
   const facultyRepository = manager.getRepository(Faculty);
   const hashedPassword = await bcrypt.hash('Password123', 10);
 
-  
   const faculties = await facultyRepository.find();
-
 
   const getFaculty = (name: string) => {
     const faculty = faculties.find((f) => f.name === name);
