@@ -28,6 +28,14 @@ const PERFECTED_TOKENS = [
     { name: 'Badge, Rejected', hex: '#FDE8E8 / #7F1D1D', usage: 'Moderator rejection badge state', ratio: '8.1:1'},
 ]
 
+const TYPE_LEVEL = [
+    { tag: 'H1', font: 'Montserrat', size: '50px / 3.125rem', weight: '700', lh: '1.2' },
+    { tag: 'H2', font: 'Montserrat', size: '28px / 1.75rem', weight: '700', lh: '1.3' },
+    { tag: 'H3', font: 'Montserrat', size: '22px / 1.375rem', weight: '600', lh: '1.3' },
+    { tag: 'H4', font: 'Montserrat', size: '18px / 1.125rem', weight: '600', lh: '1.3' },
+    { tag: 'Body', font: 'Montserrat', size: '16px / 1rem', weight: '400', lh: '1.6' },
+]
+
 export default function BrandPage() {
 
     const [reducedMotion, setReducedMotion] = useState(false)
@@ -131,7 +139,41 @@ export default function BrandPage() {
                                 </p>
                             </div>
                     </div>
+
+                {/* Typography */}
+                <section aria-labelledby="type-heading">
+                    <h2 id="type-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Typography System</h2>
+                    <p className="text-slate-500 text-lg mb-6">
+                        Our application interface relies entirely on the <strong>Montserrat</strong> font family for authenticated views, forms, and core navigation systems.
+                    </p>
+
+
+                    <div className="overflow-x-auto border border-slate-100 rounded-xl bg-white shadow-sm">
+                        <table className="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                                    <th className="p-3">Element</th>
+                                    <th className="p-3">Size</th>
+                                    <th className="p-3">Weight</th>
+                                    <th className="p-3">Line Height</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {TYPE_LEVEL.map((row) => (
+                                    <tr key={row.tag} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/30">
+                                        <td className="p-3 font-bold text-[#000f2b]">{row.tag}</td>
+                                        <td className="p-3 font-mono-brand text-slate-500">{row.size}</td>
+                                        <td className="p-3 text-slate-500">{row.weight}</td>
+                                        <td className="p-3 text-slate-500">{row.lh}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </main>
+
+            
             <Footer />
         </div>
     )
