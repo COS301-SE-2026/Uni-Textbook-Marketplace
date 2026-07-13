@@ -69,4 +69,15 @@ export class WishlistService {
             user_id: userId,
         });
     }
+
+    async mywishlist(userId: string) {
+        
+        const wishlistIteams = await this.wishlistRepository.find({
+            where: { user_id: userId},
+            relations: ['listing', 'listing.book', 'listing.module'],
+            order: { created_at: 'DESC'},
+        });
+
+        return wishlistIteams.map(item => item.listing);
+    }
 }

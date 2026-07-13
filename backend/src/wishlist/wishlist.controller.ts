@@ -6,7 +6,6 @@ import { Request as ExpressRequest } from "express";
 interface AuthenticatedRequest extends ExpressRequest {
     user: {
         id: string;
-        email?: string;
     };
 }
 
@@ -31,6 +30,12 @@ export class WishlistController {
     @UseGuards(JwtAuthGuard)
     async mylist(@Req() req: AuthenticatedRequest) {
         return this.wishlistService.mylist(req.user.id);
+    }
+
+    @Get('mywishlist')
+    @UseGuards(JwtAuthGuard)
+    async mywishlist(@Req() req: AuthenticatedRequest){
+        return this.wishlistService.mywishlist(req.user.id);
     }
 }
 
