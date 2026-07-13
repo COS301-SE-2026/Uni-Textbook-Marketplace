@@ -40,6 +40,7 @@ export interface Listing {
 interface ListingCardProps {
     listing: Listing
     showStatus?: boolean
+    removeClick? : boolean
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -52,10 +53,13 @@ const CONDITION_LABEL: Record<Listing['condition'], string> = {
 export default function ListingCard({
     listing,
     showStatus = false,
+    removeClick = false,
     }: ListingCardProps) {
     const router = useRouter()
 
     const handleClick = () => {
+        if(removeClick) return
+        
         router.push(`/listings/${listing.id}`)
     }
 
@@ -71,7 +75,9 @@ export default function ListingCard({
     return (
         <div
         onClick={handleClick}
-        className="card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3"
+        className={`card cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 ${
+            !removeClick ? 'cursor-pointer' : ''
+        }`}
         >
         {/* Image */}
         <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">

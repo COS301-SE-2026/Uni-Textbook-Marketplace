@@ -55,8 +55,42 @@ export async function createModule(data: CreateModuleData): Promise<Module> {
 }
 
 export async function uploadImages(files: File[]): Promise<{ urls: string[] }> {
-    console.log(`${files.length} images selected but upload not yet configured`)
-    return { urls: [] }
+
+    
+    if (!files || files.length === 0) {
+      return { urls: []};
+    }
+    const formData = new FormData();
+    files.forEach((file) => {
+
+      formData.append('images', file);
+    });
+
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+    const  response = await fetch(`${BASE_URL}/images/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+
+    if (!response.ok) {
+
+      const error = await response.json();
+
+      throw new Error(error.message || 'Upload failed');
+
+    }
+
+    const responseInfo = await response.json();
+
+    if (responseInfo.url) {
+
+      return { urls: [responseInfo.url] };
+    }
+
+    return { urls: responseInfo.urls || [] };
+    
 }
 
 export async function createListing(data: CreateListingData) {

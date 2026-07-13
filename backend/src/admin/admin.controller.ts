@@ -15,8 +15,8 @@ export class AdminController {
   @Post(':id/reject')
   async rejectListing(
     @Param('id') id: string,
-    @Body('reason') reason: string,
-    @Req() req: RequestWithUser,
+    //@Body('reason') reason: string,
+    @Req() req: RequestWithUser, 
   ) {
     return await this.adminService.rejectListing(id, req.user);
   }
