@@ -17,9 +17,7 @@ export class InitialSchema1778577459718 implements MigrationInterface {
 
       `CREATE TYPE "public"."listings_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'SOFT_DELETED')`,
 
-      `CREATE TYPE "public"."listings_listing_status_enum" AS ENUM('AVAILABLE','RESERVED','SOLD','WITHDRAWN')`,
-
-      `CREATE TABLE "listings" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying(200), "condition" "public"."listings_condition_enum" NOT NULL, "annotation_level" "public"."listings_annotation_level_enum" NOT NULL, "price" numeric(10,2) NOT NULL, "reviewed_at" TIMESTAMP WITH TIME ZONE, "photo_urls" text array NOT NULL DEFAULT '{}', "status" "public"."listings_status_enum" NOT NULL DEFAULT 'PENDING',"listing_status" "public"."listings_listing_status_enum" NOT NULL DEFAULT 'APPROVED', "has_notes" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "seller_id" uuid, "book_id" uuid, "module_id" uuid, "reviewed_by" uuid, CONSTRAINT "PK_520ecac6c99ec90bcf5a603cdcb" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "listings" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying(200), "condition" "public"."listings_condition_enum" NOT NULL, "annotation_level" "public"."listings_annotation_level_enum" NOT NULL, "price" numeric(10,2) NOT NULL, "reviewed_at" TIMESTAMP WITH TIME ZONE, "photo_urls" text array NOT NULL DEFAULT '{}', "status" "public"."listings_status_enum" NOT NULL DEFAULT 'PENDING', "has_notes" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "seller_id" uuid, "book_id" uuid, "module_id" uuid, "reviewed_by" uuid, CONSTRAINT "PK_520ecac6c99ec90bcf5a603cdcb" PRIMARY KEY ("id"))`,
 
       `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password_hash" character varying NOT NULL, "first_name" character varying NOT NULL, "last_name" character varying NOT NULL, "faculty" character varying, "is_verified" boolean NOT NULL DEFAULT false, "role" character varying NOT NULL DEFAULT 'student', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "university_id" uuid, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
 
@@ -27,12 +25,6 @@ export class InitialSchema1778577459718 implements MigrationInterface {
 
       `CREATE TABLE "audit_log" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "entity_type" character varying NOT NULL, "entity_id" uuid NOT NULL, "action" character varying NOT NULL, "performed_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "notes" text, "performed_by" uuid, CONSTRAINT "PK_07fefa57f7f5ab8fc3f52b3ed0b" PRIMARY KEY ("id"))`,
 
-      `CREATE TABLE "wishlist" ("user_id" uuid NOT NULL, "listings_id" uuid NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_wishlist_user_listings" PRIMARY KEY ("user_id", "listings_id"))`,
-
-      `ALTER TABLE "wishlist" ADD CONSTRAINT "FK_wishlist_user" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-
-      `ALTER TABLE "wishlist" ADD CONSTRAINT "FK_wishlist_listing" FOREIGN KEY ("listings_id") REFERENCES "listings"("id") ON DELETE CASCADE ON UPDATE NO ACTION`, 
-      
       `ALTER TABLE "modules" ADD CONSTRAINT "FK_90b86c74d4f5e30f1847e5b2120" FOREIGN KEY ("university_id") REFERENCES "universities"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
 
       `ALTER TABLE "listings" ADD CONSTRAINT "FK_6d2846ee6b337ce5225c8c7286b" FOREIGN KEY ("seller_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -69,13 +61,7 @@ export class InitialSchema1778577459718 implements MigrationInterface {
 
       `ALTER TABLE "modules" DROP CONSTRAINT "FK_90b86c74d4f5e30f1847e5b2120"`,
 
-      `ALTER TABLE "wishlist" DROP CONSTRAINT "FK_wishlist_listing"`,
-
-      `ALTER TABLE "wishlist" DROP CONSTRAINT "FK_wishlist_user"`,
-
       `DROP TABLE "audit_log"`,
-
-      `DROP TABLE "wishlist"`,
 
       `DROP TABLE "otps"`,
 
@@ -84,8 +70,6 @@ export class InitialSchema1778577459718 implements MigrationInterface {
       `DROP TABLE "listings"`,
 
       `DROP TYPE "public"."listings_status_enum"`,
-
-      `DROP TYPE "pulic".listings_listing_status_enum"`,
 
       `DROP TYPE "public"."listings_annotation_level_enum"`,
 

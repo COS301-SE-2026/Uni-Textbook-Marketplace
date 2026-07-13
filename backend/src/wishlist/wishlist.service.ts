@@ -36,7 +36,7 @@ export class WishlistService {
             },
         });
 
-        if (existing) throw new BadRequestException('Listing already in wishlist');
+        if (existing) return existing;
 
         const savelist = this.wishlistRepository.create({
             user_id: userId,
@@ -52,12 +52,6 @@ export class WishlistService {
             user_id: userId,
             listings_id: listingId
         });
-
-        if (result.affected === 0) {
-            throw new NotFoundException(
-                'Wishlist item not found',
-            );
-        }
 
         return result;
 

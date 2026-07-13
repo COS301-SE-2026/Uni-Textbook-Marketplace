@@ -107,7 +107,7 @@ CREATE TABLE listings (
 
     --these are for the listing lifecycle
     listing_status VARCHAR(10) DEFAULT 'AVAILABLE'
-        CHECK (listing_status IN ('AVAILABLE','RESERVED','SOLD','WITHDRAWN'))
+        CHECK (listing_status IN ('AVAILABLE','RESERVED','SOLD','WITHDRAWN')),
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
 

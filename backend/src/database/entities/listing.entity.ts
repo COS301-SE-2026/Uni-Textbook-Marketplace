@@ -20,6 +20,13 @@ export enum ListingStatus {
   SOFT_DELETED = 'SOFT_DELETED',
 }
 
+export enum ListingsStatus{
+  AVAILABLE = 'AVAILABLE',
+  RESERVED = 'RESERVED',
+  SOLD = 'SOLD',
+  WITHDRAWN = 'WITHDRAWN'
+}
+
 @Entity('listings')
 export class Listing {
   @PrimaryGeneratedColumn('uuid')
@@ -91,6 +98,13 @@ export class Listing {
     default: ListingStatus.PENDING,
   })
   status!: ListingStatus;
+
+  @Column({
+    type: 'enum',
+    enum: ListingsStatus,
+    default: ListingsStatus.AVAILABLE
+  })
+  listing_status!:ListingsStatus;
 
   @Column({
     default: false,

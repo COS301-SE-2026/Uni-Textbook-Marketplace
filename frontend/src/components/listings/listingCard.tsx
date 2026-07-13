@@ -15,6 +15,7 @@ export interface Listing {
     condition: 'new' | 'good' | 'fair' | 'poor'
     annotation_level: 'none' | 'light' | 'heavy'
     status: 'APPROVED' | 'PENDING' | 'REJECTED' | 'SOFT_DELETED'
+    listing_status: 'AVAILABLE' | 'RESERVED' | 'SOLD' | 'WITHDRAWN'
 
     photo_urls: string[]
     created_at: string
