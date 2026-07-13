@@ -38,7 +38,7 @@ const TYPE_LEVEL = [
 
 export default function BrandPage() {
 
-    const [reducedMotion, setReducedMotion] = useState(false)
+    const [reducedMotion] = useState(false)
 
     return (
         <div className="min-h-screen bg-white text-slate-800">
