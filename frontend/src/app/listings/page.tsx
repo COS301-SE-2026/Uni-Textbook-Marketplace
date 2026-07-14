@@ -7,6 +7,7 @@ import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
 import {getListings} from '@/lib/listings.api'
+import { Search } from 'lucide-react'
 
 
 // Filter state
@@ -130,7 +131,7 @@ export default function BrowseListingsPage() {
                                 <h3 className="text-base font-semibold">Filters</h3>
                                 <button
                                     onClick={handleClear}
-                                    className="text-xs text-blue-600 hover:underline"
+                                    className="text-sm font-bold text-blue-600 hover:underline"
                                 >
                                     clear all
                                 </button>
@@ -254,6 +255,25 @@ export default function BrowseListingsPage() {
 
                     {/* Listing grid*/}
                     <main className="flex-1">
+
+                        {/*
+                        <div className="flex justify-center mt-8">
+                            <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
+                                <div className="flex-1 flex items-center gap-2 px-4 py-2">
+                                <Search size={18} className="text-[#4B4F58] flex-shrink-0" />
+                                <input
+                                    type="text"
+                                    placeholder="Search by title, author, ISBN, or module..."
+                                    className="w-full text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
+                                            border-none outline-none bg-transparent py-1.5"
+                                />
+                                </div>
+                                <button className="bg-[#00B4D8] text-[#000f2b] font-semibold text-sm px-6 py-2.5 hover:bg-[#0096B4] transition-colors h-full">
+                                SEARCH
+                                </button>
+                            </div>
+                        </div>
+                        */}
 
                         {/* Result count */}
                         {!loading && (
