@@ -4,6 +4,7 @@ import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, S
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
+import ScrollAnimation from '@/components/ScrollAnimation'
 import Footer from '@/components/Footer'
 
 const UNIVERSITY_FACULTIES = [
@@ -316,7 +317,7 @@ export default function LandingPage() {
               {/* Partnership */}
               <div className="flex items-center gap-5 mt-4">
                 <span className="text-white text-xl uppercase tracking-wider">
-                  In partnership with
+                  In collaboration with
                 </span>
 
                 <Image
@@ -386,7 +387,8 @@ export default function LandingPage() {
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
 
               {PLATFORM_STEPS.map((item, idx) => (
-                <div key={idx} className="relative flex flex-col items-center text-center px-4">
+                <ScrollAnimation key={idx} delay={idx * 550}>
+                <div className="relative flex flex-col items-center text-center px-4">
                   <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
                   {item.icon}
@@ -403,13 +405,16 @@ export default function LandingPage() {
                   {item.desc}
                 </p>
               </div>
+              </ScrollAnimation>
               ))}
             </div>
 
           </div>
       </section>
+      
 
       {/* Section 3: Find a variety of textbooks */}
+      <ScrollAnimation delay={450}>
       <section className="py-20 bg-white">
         <div className="container-content">
             <div className="text-center mb-14">
@@ -440,8 +445,10 @@ export default function LandingPage() {
               </div>
             </div>
       </section>
+      </ScrollAnimation>
 
       {/* Section 4: Trust & Safety */}
+      <ScrollAnimation delay={400}>
       <section className="py-20 bg-[#00B4D8]">
         <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -489,8 +496,10 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </ScrollAnimation>
 
       {/* Featured Books */}
+      <ScrollAnimation delay={400}>
       <section className="py-16 bg-white">
         <div className="container-content">
 
@@ -508,20 +517,22 @@ export default function LandingPage() {
 
         </div>
       </section>
+      </ScrollAnimation>
 
       {/* Call To Action */}
+      <ScrollAnimation delay={450}>
       <section className="py-24 bg-slate-50">
         <div className="container-content">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
              <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
-              <Image src="/students-sitting-2.jpg"
-                alt="Students socialising"
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                quality={90}
-                className="object-cover"
-                priority
+              <video src="/Woman_Reading.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                poster="/students-sitting-2.jpg"
               />
 
              </div>
@@ -545,6 +556,7 @@ export default function LandingPage() {
 
         </div>
       </section>
+      </ScrollAnimation>
       <Footer />
     </>
   )

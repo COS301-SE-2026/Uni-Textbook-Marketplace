@@ -15,38 +15,47 @@ export default function ScrollAnimation({
     children,
     className = '',
     delay = 0
-}: ScrollAnimationProps) {
+}: {
+    children: ReactNode; className?: string; delay?: number }) {
+
+
 
     const animeREF = useRef<HTMLDivElement>(null)
 
 
     useEffect(() => {
+
+        const validScrollItem = animeREF.current
+
+        if(!validScrollItem) return
+
         const checkPageIntersect = new IntersectionObserver(
 
             ([enterSection]) => {
 
                 if (enterSection.isIntersecting) {
-                    enterSection.target.classList.add('animate-it-in')
+
+                    validScrollItem.classList.add('animate-it-in')
+                    checkPageIntersect.unobserve(validScrollItem)
                 }
 
             },
 
             {
-                threshold: 0.1,
-                triggerOnce: true
+                threshold: 0.1
             }
         )
 
-        if (animeREF.current) {
-            checkPageIntersect.observe(animeREF.current)
-        }
+        checkPageIntersect.observe(validScrollItem)
+            
+        
         return () => checkPageIntersect.disconnect()
     }, [])
 
     return (
         <div ref={animeREF}
             className={`opacity-0 translate-y-8 transition-all duration-700 ease-out ${className}`}
-            style={{ msTransitionDelay: `${delay}ms` }} >
+            style={{ transitionDelay: `${delay}ms` }} >
 
                 {children}
 
