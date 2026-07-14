@@ -8,6 +8,7 @@ import {
   UploadedFiles,
   BadRequestException,
   Body,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AzureService } from './azure.service';
@@ -25,13 +26,18 @@ export class AzureController {
       throw new BadRequestException('No files uploaded');
     }
 
-    const urls: string[] = [];
-    for (const file of files) {
-      const url = await this.azureService.uploadImage(file);
-      urls.push(url);
+    const urlUpload: string[] = [];
+
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const urlRes = await this.azureService.uploadImage(file);
+
+      urlUpload.push(urlRes);
     }
 
-    return { urls };
+    return { urls: urlUpload };
+
   }
 
   @Get('list')
@@ -41,12 +47,26 @@ export class AzureController {
 
   @Get('test')
   test() {
-    return { message: 'Test endpoint is working' };
+    return { status: 'ok', msg: 'azure controller online' };
   }
 
   @Delete('delete')
-  async deleteImage(@Body('url') url: string) {
-    await this.azureService.deleteImage(url);
-    return { message: 'Image deleted successfully' };
+  async deleteImage(@Body('url') imageUrl: string) {
+    if (!imageUrl) {
+      throw new BadRequestException('No image url passed in');
+    }
+
+    try {
+
+      await this.azureService.deleteImage(imageUrl);
+      return { success: true, message: 'Blob removed' };
+      
+    } catch {
+
+      throw new InternalServerErrorException(
+        'Failed to remove image from Azure container',
+      );
+    }
+
   }
 }

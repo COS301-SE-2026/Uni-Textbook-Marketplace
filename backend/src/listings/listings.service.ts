@@ -103,7 +103,8 @@ export class ListingsService {
         edition: query.edition,
       });
     }
-    return qb.getMany();
+      const [listings, total] = await qb.getManyAndCount();
+  return [listings, total];
   }
   //get listings specific to the user
   async getMyListings(userId: string) {
