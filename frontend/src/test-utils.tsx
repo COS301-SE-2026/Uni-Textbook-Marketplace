@@ -31,6 +31,7 @@ jest.mock('lucide-react', () => ({
     ChevronDown: () => <svg data-testid="chevron-down-icon" />,
     BookOpen: () => <svg data-testid="book-open-icon" />,
     Check: () => <svg data-testid="check-icon" />,
+    Heart: () => <svg data-testid="heart-icon" />,
 }));
 
 jest.mock('next/navigation', () => ({
