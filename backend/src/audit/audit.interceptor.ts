@@ -23,10 +23,7 @@ export class AuditInterceptor implements NestInterceptor {
     private readonly reflector: Reflector,
   ) {}
 
-  intercept<T>(
-    context: ExecutionContext,
-    next: CallHandler<T>,
-  ): Observable<T> {
+  intercept<T>(context: ExecutionContext, next: CallHandler<T>): Observable<T> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const user = request.user;
@@ -36,12 +33,8 @@ export class AuditInterceptor implements NestInterceptor {
       context.getHandler(),
     );
 
-    const action = this.reflector.get<string>(
-      'action',
-      context.getHandler(),
-    );
+    const action = this.reflector.get<string>('action', context.getHandler());
 
-   
     if (
       user?.role !== 'admin' ||
       !entityType ||

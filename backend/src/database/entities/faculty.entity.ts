@@ -20,7 +20,6 @@ export class Faculty {
   })
   name!: string;
 
-
   @ManyToOne(() => University, {
     nullable: false,
     onDelete: 'CASCADE',

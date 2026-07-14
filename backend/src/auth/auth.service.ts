@@ -35,7 +35,7 @@ export class AuthService {
     @InjectRepository(University)
     private readonly universityRepository: Repository<University>,
 
-    @InjectRepository(Faculty) 
+    @InjectRepository(Faculty)
     private readonly facultyRepository: Repository<Faculty>, // ADD THIS
 
     private readonly otpService: OtpService,

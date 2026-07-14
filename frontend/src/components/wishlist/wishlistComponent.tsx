@@ -17,7 +17,7 @@ const TABS: { label: string; value: Tab }[] = [
     { label: 'Withdrawn', value: 'WITHDRAWN' },
 ]
 
-export default function wishlistComponent() {
+export default function WishlistComponent() {
 
     const router = useRouter
     const [loading, setLoading] = useState(true)

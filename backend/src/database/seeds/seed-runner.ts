@@ -10,7 +10,6 @@ import { seedListings } from './listing.seed';
 async function runSeeds() {
   await AppDataSource.initialize();
 
-  
   await AppDataSource.synchronize(false); // false means don't drop data
 
   const queryRunner = AppDataSource.createQueryRunner();

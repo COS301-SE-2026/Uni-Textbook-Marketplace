@@ -20,11 +20,11 @@ export enum ListingStatus {
   SOFT_DELETED = 'SOFT_DELETED',
 }
 
-export enum ListingsStatus{
+export enum ListingsStatus {
   AVAILABLE = 'AVAILABLE',
   RESERVED = 'RESERVED',
   SOLD = 'SOLD',
-  WITHDRAWN = 'WITHDRAWN'
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 @Entity('listings')
@@ -102,9 +102,9 @@ export class Listing {
   @Column({
     type: 'enum',
     enum: ListingsStatus,
-    default: ListingsStatus.AVAILABLE
+    default: ListingsStatus.AVAILABLE,
   })
-  listing_status!:ListingsStatus;
+  listing_status!: ListingsStatus;
 
   @Column({
     default: false,

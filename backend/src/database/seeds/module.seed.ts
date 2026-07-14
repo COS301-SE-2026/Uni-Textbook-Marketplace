@@ -24,25 +24,16 @@ export async function seedModules(manager: EntityManager) {
     throw new Error('University of Pretoria not found');
   }
 
-  const jsonPath = path.join(
-    __dirname,
-    '..',
-    '..',
-    '..',
-    'modules-data.json',
-  );
+  const jsonPath = path.join(__dirname, '..', '..', '..', 'modules-data.json');
 
   let modulesData: ModuleData[] = [];
 
   try {
     const fileContent = fs.readFileSync(jsonPath, 'utf-8');
 
-    
     modulesData = JSON.parse(fileContent) as ModuleData[];
 
-    console.log(
-      `Loaded ${modulesData.length} modules from modules-data.json`,
-    );
+    console.log(`Loaded ${modulesData.length} modules from modules-data.json`);
     console.log(`File path: ${jsonPath}`);
   } catch (error) {
     console.error('Failed to read modules-data.json:', error);
@@ -84,9 +75,7 @@ export async function seedModules(manager: EntityManager) {
     const semester = determineSemester(data.code);
 
     const facultyName =
-      data.faculty ||
-      facultyMapping[data.facultyCode] ||
-      'Unknown Faculty';
+      data.faculty || facultyMapping[data.facultyCode] || 'Unknown Faculty';
 
     const module = moduleRepository.create({
       code: data.code,

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Heartbutton from '../icons/Heartbutton'
@@ -59,10 +59,12 @@ export default function ListingCard({
 }: ListingCardProps) {
     const router = useRouter()
     const [isLiked, setIsLiked] = useState(initialIsliked)
+    const [prevInitialIsliked, setPrevInitialIsliked] = useState(initialIsliked)
 
-    useEffect(() => {
+    if (initialIsliked !== prevInitialIsliked){
+        setPrevInitialIsliked(initialIsliked)
         setIsLiked(initialIsliked)
-    }, [initialIsliked])
+    }
 
     const handleClick = () => {
         router.push(`/listings/${listing.id}`)

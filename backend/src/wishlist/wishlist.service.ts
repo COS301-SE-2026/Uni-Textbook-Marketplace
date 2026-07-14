@@ -1,77 +1,73 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from "typeorm";
+import { Repository } from 'typeorm';
 
-import { Wishlist } from "../database/entities/wishlist.entity";
-import { Listing } from "../database/entities/listing.entity";
-import { User } from "../database/entities/users.entity";
+import { Wishlist } from '../database/entities/wishlist.entity';
+import { Listing } from '../database/entities/listing.entity';
+import { User } from '../database/entities/users.entity';
 
 @Injectable()
 export class WishlistService {
+  constructor(
+    @InjectRepository(Wishlist)
+    private readonly wishlistRepository: Repository<Wishlist>,
 
-    constructor(
-        @InjectRepository(Wishlist)
-        private readonly wishlistRepository: Repository<Wishlist>,
+    @InjectRepository(Listing)
+    private readonly listingRepository: Repository<Listing>,
 
-        @InjectRepository(Listing)
-        private readonly listingRepository: Repository<Listing>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>
-    ) { }
+  async save(userId: string, listingId: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('User not found');
 
-    async save(userId: string, listingId: string) {
+    const listing = await this.listingRepository.findOne({
+      where: { id: listingId },
+    });
+    if (!listing) throw new NotFoundException('listing not found');
 
-        const user = await this.userRepository.findOneBy({ id: userId });
-        if (!user) throw new NotFoundException('User not found');
+    const existing = await this.wishlistRepository.findOne({
+      where: {
+        user_id: userId,
+        listings_id: listingId,
+      },
+    });
 
-        const listing = await this.listingRepository.findOne({ where: { id: listingId } });
-        if (!listing) throw new NotFoundException('listing not found');
+    if (existing) return existing;
 
-        const existing = await this.wishlistRepository.findOne({
-            where: {
-                user_id: userId,
-                listings_id: listingId,
-            },
-        });
+    const savelist = this.wishlistRepository.create({
+      user_id: userId,
+      listings_id: listingId,
+    });
 
-        if (existing) return existing;
+    return this.wishlistRepository.save(savelist);
+  }
 
-        const savelist = this.wishlistRepository.create({
-            user_id: userId,
-            listings_id: listingId,
-        });
+  async remove(userId: string, listingId: string) {
+    const result = await this.wishlistRepository.delete({
+      user_id: userId,
+      listings_id: listingId,
+    });
 
-        return this.wishlistRepository.save(savelist);
-    }
+    return result;
+  }
 
-    async remove(userId: string, listingId: string) {
+  async mylist(userId: string) {
+    return this.wishlistRepository.findBy({
+      user_id: userId,
+    });
+  }
 
-        const result = await this.wishlistRepository.delete({
-            user_id: userId,
-            listings_id: listingId
-        });
+  async mywishlist(userId: string) {
+    const wishlistIteams = await this.wishlistRepository.find({
+      where: { user_id: userId },
+      relations: ['listing', 'listing.book', 'listing.module'],
+      order: { created_at: 'DESC' },
+    });
 
-        return result;
-
-    }
-
-    async mylist(userId: string) {
-
-        return this.wishlistRepository.findBy({
-            user_id: userId,
-        });
-    }
-
-    async mywishlist(userId: string) {
-        
-        const wishlistIteams = await this.wishlistRepository.find({
-            where: { user_id: userId},
-            relations: ['listing', 'listing.book', 'listing.module'],
-            order: { created_at: 'DESC'},
-        });
-
-        return wishlistIteams.map(item => item.listing);
-    }
+    return wishlistIteams.map((item) => item.listing);
+  }
 }
