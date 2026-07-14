@@ -56,7 +56,6 @@ const FOOTER_DIVISIONS = [
     links: [
       { label: 'About Us', href: '/about' },
       { label: 'Our Collaborators', href: '/https://www2.agilebridge.co.za/our-company/' },
-      { label: 'Careers', href: '/careers' },
     ],
   },
 
