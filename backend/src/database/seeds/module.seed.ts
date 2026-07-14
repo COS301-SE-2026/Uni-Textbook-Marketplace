@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm';
 import { Module } from '../entities/module.entity';
 import { University } from '../entities/university.entity';
+import { Faculty } from '../entities/faculty.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -15,6 +16,7 @@ interface ModuleData {
 export async function seedModules(manager: EntityManager) {
   const moduleRepository = manager.getRepository(Module);
   const universityRepository = manager.getRepository(University);
+  const facultyRepository = manager.getRepository(Faculty); // ← ADD THIS
 
   const university = await universityRepository.findOne({
     where: { name: 'University of Pretoria' },
@@ -24,15 +26,42 @@ export async function seedModules(manager: EntityManager) {
     throw new Error('University of Pretoria not found');
   }
 
+  const faculties = await facultyRepository.find();
+
+  const getFacultyByName = (name: string): Faculty | null => {
+    let faculty = faculties.find((f) => f.name === name);
+
+    if (!faculty) {
+      const facultyMapping: Record<string, string> = {
+        SCI: 'Natural and Agricultural Sciences',
+        EBIT: 'Engineering, Built Environment and IT',
+        EMS: 'Economic and Management Sciences',
+        EDU: 'Education',
+        MED: 'Health Sciences',
+        HLT: 'Health Sciences',
+        HUM: 'Humanities',
+        LAW: 'Law',
+        THEO: 'Theology and Religion',
+        VET: 'Veterinary Sciences',
+        GIBS: 'Gordon Institute of Business Science',
+      };
+
+      const mappedName = facultyMapping[name];
+      if (mappedName) {
+        faculty = faculties.find((f) => f.name === mappedName);
+      }
+    }
+
+    return faculty || null;
+  };
+
   const jsonPath = path.join(__dirname, '..', '..', '..', 'modules-data.json');
 
   let modulesData: ModuleData[] = [];
 
   try {
     const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-
     modulesData = JSON.parse(fileContent) as ModuleData[];
-
     console.log(`Loaded ${modulesData.length} modules from modules-data.json`);
     console.log(`File path: ${jsonPath}`);
   } catch (error) {
@@ -41,22 +70,9 @@ export async function seedModules(manager: EntityManager) {
     modulesData = getFallbackModules();
   }
 
-  const facultyMapping: Record<string, string> = {
-    SCI: 'Natural and Agricultural Sciences',
-    EBIT: 'Engineering, Built Environment and IT',
-    EMS: 'Economic and Management Sciences',
-    EDU: 'Education',
-    MED: 'Health Sciences',
-    HLT: 'Health Sciences',
-    HUM: 'Humanities',
-    LAW: 'Law',
-    THEO: 'Theology and Religion',
-    VET: 'Veterinary Sciences',
-    GIBS: 'Gordon Institute of Business Science',
-  };
-
   let createdCount = 0;
   let skippedCount = 0;
+  let noFacultyCount = 0;
 
   for (const data of modulesData) {
     const existing = await moduleRepository.findOne({
@@ -74,25 +90,33 @@ export async function seedModules(manager: EntityManager) {
 
     const semester = determineSemester(data.code);
 
-    const facultyName =
-      data.faculty || facultyMapping[data.facultyCode] || 'Unknown Faculty';
+    const facultyName = data.faculty || data.facultyCode;
+    const faculty = getFacultyByName(facultyName);
+
+    if (!faculty) {
+      console.log(
+        `Warning: Faculty not found for module ${data.code} (${data.name}), faculty: ${facultyName}`,
+      );
+      noFacultyCount++;
+      continue; // Skip this module if faculty not found
+    }
 
     const module = moduleRepository.create({
       code: data.code,
       name: data.name,
-      faculty: facultyName,
+      faculty: faculty,
       semester,
       university,
     });
 
     await moduleRepository.save(module);
 
-    console.log(`Created: ${data.code} - ${data.name}`);
+    console.log(`Created: ${data.code} - ${data.name} (${faculty.name})`);
     createdCount++;
   }
 
   console.log(
-    `Modules seeded: ${createdCount} created, ${skippedCount} skipped`,
+    `Modules seeded: ${createdCount} created, ${skippedCount} skipped, ${noFacultyCount} skipped (no faculty found)`,
   );
 }
 

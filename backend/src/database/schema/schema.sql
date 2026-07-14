@@ -50,7 +50,7 @@ CREATE TABLE modules (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR NOT NULL,
-    faculty VARCHAR,
+    faculty_id UUID REFERENCES faculties(id) ON DELETE SET NULL,
     semester SMALLINT,
     university_id UUID REFERENCES universities(id) ON DELETE CASCADE
 );
@@ -166,6 +166,9 @@ ON listings(annotation_level);
 CREATE INDEX idx_books_isbn 
 ON books(isbn);
 
+
+CREATE INDEX idx_books_author_title ON books(author, title)
+
 CREATE INDEX idx_books_edition 
 ON books(edition);
 
@@ -185,5 +188,12 @@ ON listings(reviewed_by);
 CREATE INDEX idx_books_title 
 ON books(title);
 
+-- filter by faculty and sort by price 
+CREATE INDEX idx_listings_faculty_price ON listings(faculty_id, price);
+
+-- index for recently created listings
+CREATE INDEX idx_listings_created_at ON listings(created_at DESC);
 
 
+-- index to query audit logs by date range
+CREATE INDEX idx_audit_created_at ON audit_log(created_at DESC);

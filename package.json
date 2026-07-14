@@ -26,6 +26,7 @@
   "author": "NexusDev",
   "license": "ISC",
   "dependencies": {
+    "@azure/storage-blob": "12.33.0",
     "@hookform/resolvers": "5.2.2",
     "dotenv": "17.4.2",
     "react-hook-form": "7.75.0",
@@ -33,6 +34,8 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.1"
+    "@types/multer": "2.2.0",
+    "@types/node": "25.9.1",
+    "semver": "7.8.4"
   }
 }

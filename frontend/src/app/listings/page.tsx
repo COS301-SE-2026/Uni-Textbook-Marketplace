@@ -163,7 +163,7 @@ export default function BrowseListingsPage() {
                                 >
                                     <option value="">Select Faculty</option>
                                     <option value="ENG">Engineering</option>
-                                    <option value="EBIT">EBIT</option>
+                                    <option value="EBIT">EBIT - Engineering, Built-Environment & IT</option>
                                     <option value="LAW">Law</option>
                                     <option value="HUM">Humanities</option>
                                     <option value="MED">Health Sciences</option>
@@ -211,7 +211,7 @@ export default function BrowseListingsPage() {
                                         name="priceMin"
                                         value={filters.priceMin}
                                         onChange={handleFilterChange}
-                                        placeholder="R Min"
+                                        placeholder="R (Min)"
                                         type="number"
                                     />
                                     <span className="text-gray-400">–</span>
@@ -219,7 +219,7 @@ export default function BrowseListingsPage() {
                                         name="priceMax"
                                         value={filters.priceMax}
                                         onChange={handleFilterChange}
-                                        placeholder="R Max"
+                                        placeholder="R (Max)"
                                         type="number"
                                     />
                                 </div>
