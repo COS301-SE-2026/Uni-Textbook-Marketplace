@@ -61,6 +61,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'good',
     annotation_level: 'light',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/cormen-algorithms.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -86,6 +87,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'new',
     annotation_level: 'none',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/clean-code.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -111,6 +113,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'good',
     annotation_level: 'heavy',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/database-systems.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -136,6 +139,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'good',
     annotation_level: 'light',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/calculus.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -161,6 +165,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'fair',
     annotation_level: 'heavy',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/c-programming.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -186,6 +191,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'new',
     annotation_level: 'none',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/networking.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -211,6 +217,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'good',
     annotation_level: 'light',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/data-intensive.jpg'],
     created_at: new Date().toISOString(),
     book: {
@@ -236,6 +243,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     condition: 'good',
     annotation_level: 'heavy',
     status: 'APPROVED',
+    listing_status: 'AVAILABLE',
     photo_urls: ['/books/probability.jpg'],
     created_at: new Date().toISOString(),
     book: {

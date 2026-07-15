@@ -14,6 +14,7 @@ const mockListing = {
     condition: 'good' as const,
     annotation_level: 'light' as const,
     status: 'APPROVED' as const,
+    listing_status: 'AVAILABLE' as const,
     photo_urls: ['/image1.jpg'],
     created_at: '2026-06-18T10:00:00Z',
     book: {

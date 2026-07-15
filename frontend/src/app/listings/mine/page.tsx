@@ -119,6 +119,7 @@ export default function MyListingsPage() {
                 ))}
             </div>
 
+
             {/* Content */}
             {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -206,6 +207,7 @@ export default function MyListingsPage() {
                     ))}
                 </div>
             )}
+
 
             {/* Delete confirmation modal*/}
             <Modal

@@ -1,5 +1,3 @@
-"use client";
-
 import ResetPassword from "@/components/auth/resetpassword/ResetPasswrd";
 
 export default function Page(){
