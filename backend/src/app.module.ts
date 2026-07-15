@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { ListingsModule } from './listings/listings.module';
 import { ModuleModule } from './modules/module.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
@@ -18,6 +19,7 @@ import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
 import { BooksModule } from './books/books.module';
 import { Faculty } from './database/entities/faculty.entity';
+import { Wishlist } from './database/entities/wishlist.entity';
 
 import { AzureModule } from './azure/azure.module';
 
@@ -44,6 +46,7 @@ import { AzureModule } from './azure/azure.module';
           OTP,
           AuditLog,
           Faculty,
+          Wishlist,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -54,6 +57,7 @@ import { AzureModule } from './azure/azure.module';
     ListingsModule,
     ModuleModule,
     BooksModule,
+    WishlistModule,
     AzureModule,
   ],
   controllers: [AppController],
