@@ -272,25 +272,6 @@ export default function BrowseListingsPage() {
                     {/* Listing grid*/}
                     <main className="flex-1">
 
-                        {/*
-                        <div className="flex justify-center mt-8">
-                            <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
-                                <div className="flex-1 flex items-center gap-2 px-4 py-2">
-                                <Search size={18} className="text-[#4B4F58] flex-shrink-0" />
-                                <input
-                                    type="text"
-                                    placeholder="Search by title, author, ISBN, or module..."
-                                    className="w-full text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
-                                            border-none outline-none bg-transparent py-1.5"
-                                />
-                                </div>
-                                <button className="bg-[#00B4D8] text-[#000f2b] font-semibold text-sm px-6 py-2.5 hover:bg-[#0096B4] transition-colors h-full">
-                                SEARCH
-                                </button>
-                            </div>
-                        </div>
-                        */}
-
                         {/* Result count */}
                         {!loading && (
                             <p className="text-sm text-gray-500 mb-4">
