@@ -1,6 +1,22 @@
 import { EntityManager } from 'typeorm';
 import { Module } from '../entities/module.entity';
 import { University } from '../entities/university.entity';
+import { Faculty } from '../entities/faculty.entity';
+
+async function getOrCreateFaculty(
+  manager: EntityManager,
+  name: string,
+): Promise<Faculty> {
+  const facultyRepository = manager.getRepository(Faculty);
+  let faculty = await facultyRepository.findOne({ where: { name } });
+
+  if (!faculty) {
+    faculty = facultyRepository.create({ name });
+    await facultyRepository.save(faculty);
+  }
+
+  return faculty;
+}
 
 export async function seedModules(manager: EntityManager) {
   const moduleRepository = manager.getRepository(Module);
@@ -13,6 +29,16 @@ export async function seedModules(manager: EntityManager) {
   if (!university) {
     throw new Error('University of Pretoria not found');
   }
+
+  // Get or create faculties
+  const engineeringFaculty = await getOrCreateFaculty(
+    manager,
+    'Engineering, Built Environment and IT',
+  );
+  const scienceFaculty = await getOrCreateFaculty(
+    manager,
+    'Natural and Agricultural Sciences',
+  );
 
   const modulesData = [
     { code: 'COS132', name: 'Imperative Programming', semester: 1 },
@@ -31,19 +57,19 @@ export async function seedModules(manager: EntityManager) {
     { code: 'INF214', name: 'Informatics', semester: 2 },
   ];
 
-  const faculty = 'Engineering, Built Environment and IT';
-  const scienceFaculty = 'Natural and Agricultural Sciences';
+  const modules = modulesData.map((data) => {
+    const isScienceModule =
+      data.code.startsWith('WTW') || data.code === 'STK110';
+    const faculty = isScienceModule ? scienceFaculty : engineeringFaculty;
 
-  const modules = modulesData.map((data) =>
-    moduleRepository.create({
-      ...data,
-      faculty:
-        data.code.startsWith('WTW') || data.code === 'STK110'
-          ? scienceFaculty
-          : faculty,
-      university,
-    }),
-  );
+    return moduleRepository.create({
+      code: data.code,
+      name: data.name,
+      semester: data.semester,
+      faculty: faculty,
+      university: university,
+    });
+  });
 
   await moduleRepository.save(modules);
   console.log(`${modules.length} modules seeded`);

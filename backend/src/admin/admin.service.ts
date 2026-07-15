@@ -13,10 +13,20 @@ export class AdminService {
     private entityManager: EntityManager,
   ) {}
 
-  async approveListing(id: string, admin: User) {
+  async approveListing(id: string, userId: string) {
     return await this.entityManager.transaction(async (manager) => {
       const listingRepository = manager.getRepository(Listing);
       const auditLogRepository = manager.getRepository(AuditLog);
+      const userRepository = manager.getRepository(User);
+
+      // Get the admin user
+      const admin = await userRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!admin) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
 
       const listing = await listingRepository.findOne({
         where: { id },
@@ -45,10 +55,20 @@ export class AdminService {
     });
   }
 
-  async rejectListing(id: string, admin: User) {
+  async rejectListing(id: string, userId: string) {
     return await this.entityManager.transaction(async (manager) => {
       const listingRepository = manager.getRepository(Listing);
       const auditLogRepository = manager.getRepository(AuditLog);
+      const userRepository = manager.getRepository(User);
+
+      // Get the admin user
+      const admin = await userRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!admin) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
 
       const listing = await listingRepository.findOne({
         where: { id },
@@ -58,14 +78,12 @@ export class AdminService {
         throw new NotFoundException(`Listing with ID ${id} not found`);
       }
 
-      // Update listing status
       listing.status = ListingStatus.REJECTED;
       listing.reviewer = admin;
       listing.reviewed_at = new Date();
 
       await listingRepository.save(listing);
 
-      // Log the rejection
       const auditLog = auditLogRepository.create({
         entity_type: 'listing',
         entity_id: listing.id,

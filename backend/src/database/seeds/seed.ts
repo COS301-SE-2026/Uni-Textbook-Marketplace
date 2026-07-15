@@ -1,9 +1,9 @@
 import { AppDataSource } from '../../data-source';
-
 import { User } from '../entities/users.entity';
 import { Book } from '../entities/book.entity';
 import { Module } from '../entities/module.entity';
 import { Listing, ListingStatus } from '../entities/listing.entity';
+import { Faculty } from '../entities/faculty.entity';
 
 async function seed() {
   await AppDataSource.initialize();
@@ -14,6 +14,20 @@ async function seed() {
   const bookRepo = AppDataSource.getRepository(Book);
   const moduleRepo = AppDataSource.getRepository(Module);
   const listingRepo = AppDataSource.getRepository(Listing);
+  const facultyRepo = AppDataSource.getRepository(Faculty);
+
+  // First, get or create the Faculty
+  let faculty = await facultyRepo.findOne({
+    where: { name: 'Engineering' },
+  });
+
+  if (!faculty) {
+    faculty = facultyRepo.create({
+      name: 'Engineering',
+    });
+    await facultyRepo.save(faculty);
+    console.log('Faculty created');
+  }
 
   // create users
   const user = await userRepo.save(
@@ -27,7 +41,7 @@ async function seed() {
     }),
   );
 
-  //create books
+  // create books
   const book = await bookRepo.save(
     bookRepo.create({
       isbn: '9781234567890',
@@ -38,23 +52,23 @@ async function seed() {
     }),
   );
 
-  //add modules
+  // add modules - now using Faculty entity
   const module = await moduleRepo.save(
     moduleRepo.create({
       code: 'COS301',
       name: 'Databases',
-      faculty: 'Engineering',
+      faculty: faculty, 
       semester: 2,
     }),
   );
 
-  //list
+  // create listings
   await listingRepo.save([
     listingRepo.create({
       title: 'COS301 DB Textbook - Excellent Condition',
       seller: user,
-      book,
-      module,
+      book: book,
+      module: module,
       condition: 'good',
       annotation_level: 'light',
       price: 250,
@@ -65,8 +79,8 @@ async function seed() {
     listingRepo.create({
       title: 'Old DB textbook (urgent sale)',
       seller: user,
-      book,
-      module,
+      book: book,
+      module: module,
       condition: 'fair',
       annotation_level: 'none',
       price: 120,

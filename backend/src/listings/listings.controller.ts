@@ -9,19 +9,15 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { ListingsService } from './listings.service';
-
+import { AdminService } from '../admin/admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
-
 import { CreateListingDto } from './dto/create-listing.dto';
-
-import { Request } from 'express';
-
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 
 interface AuthenticatedUser {
@@ -37,9 +33,11 @@ interface RequestWithUser extends Request {
 @ApiTags('Listings')
 @Controller('listings')
 export class ListingsController {
-  constructor(private readonly listingsService: ListingsService) {}
+  constructor(
+    private readonly listingsService: ListingsService,
+    private readonly adminService: AdminService, // ✅ Inject AdminService
+  ) {}
 
-  //create
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create listing' })
@@ -47,46 +45,40 @@ export class ListingsController {
     return this.listingsService.createListing(req.user.id, dto);
   }
 
-  //get appro
   @Get()
   getAll(@Query() query: ListingFiltersDto) {
     return this.listingsService.getAllApproved(query);
   }
 
-  // my
   @Get('mine')
   @UseGuards(JwtAuthGuard)
   getMine(@Req() req: RequestWithUser) {
     return this.listingsService.getMyListings(req.user.id);
   }
 
-  // search by ID
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.listingsService.getListingById(id);
   }
 
-  // admins only
   @Get('admin/pending')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   getPending() {
-    return this.listingsService.getPendingListings();
+    return this.adminService.getPendingListings();
   }
 
-  // admins only
   @Patch('admin/:id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   approve(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.listingsService.approveListing(id, req.user.id);
+    return this.adminService.approveListing(id, req.user.id);
   }
 
-  // admins only
   @Patch('admin/:id/reject')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   reject(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.listingsService.rejectListing(id, req.user.id);
+    return this.adminService.rejectListing(id, req.user.id);
   }
 }

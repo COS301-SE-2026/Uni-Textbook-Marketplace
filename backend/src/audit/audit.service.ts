@@ -23,7 +23,7 @@ export class AuditService {
       entity_type: entityType,
       entity_id: entityId,
       action,
-      notes: notes , 
+      notes: notes,
     });
 
     return await this.auditLogRepository.save(auditLog);
@@ -42,7 +42,7 @@ export class AuditService {
       entity_type: entityType,
       entity_id: entityId,
       action,
-      notes: notes ,
+      notes: notes,
     });
 
     return await manager.save(auditLog);
