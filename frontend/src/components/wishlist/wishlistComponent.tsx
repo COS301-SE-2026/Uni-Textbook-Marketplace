@@ -1,15 +1,14 @@
-"use client";
+'use client'
 
 import ListingCard, { Listing } from "@/components/listings/listingCard";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Link from "next/link";
 
-//filters tabs
+//filters LISTTABS
 type Tab = 'ALL' | 'AVAILABLE' | 'RESERVED' | 'SOLD' | 'WITHDRAWN'
 
-const TABS: { label: string; value: Tab }[] = [
+const LISTTABS: { label: string; value: Tab }[] = [
     { label: 'ALL', value: 'ALL' },
     { label: 'Available', value: 'AVAILABLE' },
     { label: 'Reserved', value: 'RESERVED' },
@@ -19,10 +18,9 @@ const TABS: { label: string; value: Tab }[] = [
 
 export default function WishlistComponent() {
 
-    const router = useRouter
     const [loading, setLoading] = useState(true)
     const [listings, setListings] = useState<Listing[]>([])
-    const [activeTab, setActiveTab] = useState<Tab>('ALL')
+    const [listactiveTab, setlistactiveTab] = useState<Tab>('ALL')
 
     useEffect(() => {
 
@@ -43,9 +41,9 @@ export default function WishlistComponent() {
         fetchMywishlist()
     }, [])
 
-    const filters = activeTab == 'ALL' ? listings : listings.filter(lis => lis.listing_status === activeTab)
+    const filters = listactiveTab == 'ALL' ? listings : listings.filter(lis => lis.listing_status === listactiveTab)
 
-    const counts: Record<Tab, number> = {
+    const listnum: Record<Tab, number> = {
         ALL: listings.length,
         AVAILABLE: listings.filter(lis => lis.listing_status === 'AVAILABLE').length,
         RESERVED: listings.filter(lis => lis.listing_status === 'RESERVED').length,
@@ -62,24 +60,24 @@ export default function WishlistComponent() {
                 </p>
             </div>
 
-            {/* tabs */}
+            {/* LISTTABS */}
             <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
-                {TABS.map(tab => (
+                {LISTTABS.map(tab => (
                     <button
                         key={tab.value}
-                        onClick={() => setActiveTab(tab.value)}
-                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.value
+                        onClick={() => setlistactiveTab(tab.value)}
+                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${listactiveTab === tab.value
                             ? 'border-blue-600 text-blue-600'
                             : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         {tab.label}
-                        {counts[tab.value] > 0 && (
-                            <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${activeTab === tab.value
+                        {listnum[tab.value] > 0 && (
+                            <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${listactiveTab === tab.value
                                 ? 'bg-blue-100 text-blue-700'
                                 : 'bg-gray-100 text-gray-500'
                                 }`}>
-                                {counts[tab.value]}
+                                {listnum[tab.value]}
                             </span>
                         )}
                     </button>
@@ -120,11 +118,11 @@ export default function WishlistComponent() {
                         />
                     </svg>
                     <p className="text-sm">
-                        {activeTab === 'ALL'
+                        {listactiveTab === 'ALL'
                             ? "You do not have favourites yet."
-                            : `No ${activeTab.toLowerCase()} listings.`}
+                            : `No ${listactiveTab.toLowerCase()} listings.`}
                     </p>
-                    {activeTab === 'ALL' && (
+                    {listactiveTab === 'ALL' && (
                         <Link href="/listings">
                             <button className="btn-primary mt-4">
                                 Browse our listings to find your favourite listing

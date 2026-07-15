@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -63,12 +63,12 @@ export default function ListingCard({
 }: ListingCardProps) {
     const router = useRouter()
     const [isLiked, setIsLiked] = useState(initialIsliked)
-    const [prevInitialIsliked, setPrevInitialIsliked] = useState(initialIsliked)
+    /* const [prevInitialIsliked, setPrevInitialIsliked] = useState(initialIsliked)
 
     if (prevInitialIsliked !== initialIsliked){
         setPrevInitialIsliked(initialIsliked)
         setIsLiked(initialIsliked)
-    }
+    } */
 
     const handleClick = () => {
         if(removeClick) return
