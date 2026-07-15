@@ -5,6 +5,7 @@ import { Module } from '../entities/module.entity';
 import { Listing, ListingStatus } from '../entities/listing.entity';
 import { Faculty } from '../entities/faculty.entity';
 
+
 async function seed() {
   await AppDataSource.initialize();
 
@@ -29,15 +30,15 @@ async function seed() {
     console.log('Faculty created');
   }
 
-  // create users
   const user = await userRepo.save(
     userRepo.create({
-      email: 'student@test.com',
+      email: 'student@up.ac.za',
       password_hash: 'hashed-password',
       first_name: 'Test',
       last_name: 'User',
       role: 'student',
       is_verified: true,
+      university: university,
     }),
   );
 

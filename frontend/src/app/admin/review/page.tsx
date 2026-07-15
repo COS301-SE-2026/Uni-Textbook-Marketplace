@@ -233,11 +233,11 @@ function ListingRow({
 
 function ToastList({ toasts }: { toasts: Toast[] }) {
     return (
-        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
             {toasts.map(t => (
                 <div
                     key={t.id}
-                    className={`px-4 py-2 rounded text-white text-sm ${t.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}
+                    className={`px-4 py-2 rounded text-white text-sm animate in slide-in-from-right-5 ${t.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}
                 >
                     {t.message}
                 </div>

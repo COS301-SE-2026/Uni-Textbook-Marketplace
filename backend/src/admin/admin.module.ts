@@ -6,11 +6,9 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([AuditLog]), 
-  ],
+  imports: [TypeOrmModule.forFeature([AuditLog])],
   controllers: [AdminController],
-  providers: [AdminService, AuditService], 
-  exports: [AuditService], 
+  providers: [AdminService, AuditService],
+  exports: [AuditService],
 })
 export class AdminModule {}

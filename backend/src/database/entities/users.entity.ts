@@ -40,9 +40,6 @@ export class User {
   })
   role!: string;
 
-  /*
-    university_id UUID REFERENCES universities(id)
-  */
   @ManyToOne(() => University, {
     nullable: true,
     onDelete: 'SET NULL',
@@ -57,9 +54,6 @@ export class User {
   @JoinColumn({ name: 'faculty_id' })
   faculty!: Faculty | null;
 
-  /*
-    listings sold by this user
-  */
   @OneToMany(() => Listing, (listing: Listing) => listing.seller)
   listings!: Listing[];
 
