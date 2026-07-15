@@ -33,9 +33,9 @@
   .dark {
     --background: #000f2b;
     --foreground: #ededed;
-    --card-bg: #1a1a1a;
+    --card-bg: #000f2b;
     --card-border: #374151;
-    --nav-bg: #1a1a1a;
+    --nav-bg: #000f2b;
     --nav-border: #374151;
   }
 
