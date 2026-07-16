@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -38,7 +38,7 @@ const EMPTY_FILTERS: Filters = {
 
 // Page 
 
-export default function BrowseListingsPage() {
+function BrowseListingsContent() {
 
     const boundSearches = useSearchParams()
 
@@ -368,4 +368,25 @@ export default function BrowseListingsPage() {
             </div>
         </ProtectedRoute>
     )
+}
+
+export default function BrowseListingsPage() {
+
+  return (
+    <Suspense fallback={
+
+      <div className="container-content py-8">
+        <div className="mb-6">
+
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+
+          <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mt-2" />
+        </div>
+
+        
+      </div>
+    }>
+      <BrowseListingsContent />
+    </Suspense>
+  )
 }
