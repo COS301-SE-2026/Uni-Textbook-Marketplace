@@ -68,6 +68,7 @@ export default function BrowseListingsPage() {
         try {
             const params = new URLSearchParams()
 
+            if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
             if (f.moduleCode) params.set('moduleCode', f.moduleCode)
             if (f.edition) params.set('edition', f.edition)

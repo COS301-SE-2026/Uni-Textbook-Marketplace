@@ -38,21 +38,82 @@ export default function SearchBar({
     const referenceBounceTimer = useRef<NodeJS.Timeout | null>(null)
     const rendersItemFirst = useRef(true)
 
-    
+    useEffect(() => {
+        return () => {
+
+            if (referenceBounceTimer.current) {
+
+                clearTimeout(referenceBounceTimer.current)
+
+            }
+        }
+    }, [])
 
     useEffect(() => {
 
         const paramSQuery = searchParam?.get('search') ?? ''
 
-        if (paramSQuery !== query) {
+        if (paramSQuery !== query && !rendersItemFirst.current) {
 
             Promise.resolve().then(() => setQuery(paramSQuery))
         }
     }, [searchParam, query])
 
 
+    const bouncedFEAT = useCallback((searchQuery: string) => {
+
+        if (referenceBounceTimer.current) {
+
+            clearTimeout(referenceBounceTimer.current) 
+        }
+        referenceBounceTimer.current = setTimeout(() => {
+
+            const cutQueryBounds = searchQuery.trim()
+
+            if(onSearch) {
+                onSearch(cutQueryBounds)
+
+                return 
+            }
+            const restrictions = new URLSearchParams(searchParam?.toString() || '')
+            
+            if (cutQueryBounds) {
+                restrictions.set('search', cutQueryBounds)
+
+            } else {
+                restrictions.delete('search')
+            }
+
+            const nextURL = `${window.location.pathname}?${restrictions.toString()}`
+
+            routerAttr.push(nextURL, { scroll: false })
+
+
+        }, delayedBounceFEAT) 
+    }, [onSearch, routerAttr, searchParam, delayedBounceFEAT]) 
+
+
+    const inputDynamics = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        const nextQry = e.target.value
+            setQuery(nextQry)
+
+            if(rendersItemFirst.current) {
+                return
+
+            }
+
+            bouncedFEAT(nextQry)
+    }
+
 
     const searchHandler = useCallback(() => {
+
+        if(referenceBounceTimer.current) {
+
+            clearTimeout(referenceBounceTimer.current)
+
+        }
         const cutQueryParam = query.trim()
 
         if(onSearch) {
@@ -81,6 +142,11 @@ export default function SearchBar({
     const searchClear = useCallback(() => {
         setQuery('')
 
+        if (referenceBounceTimer.current) {
+            clearTimeout(referenceBounceTimer.current)
+
+        }
+
         if (refInsert.current) {
 
             refInsert.current.focus()
@@ -104,6 +170,10 @@ export default function SearchBar({
 
         if(e.key === 'Enter') {
             e.preventDefault()
+            if(referenceBounceTimer.current) {
+
+                clearTimeout(referenceBounceTimer.current)
+            }
 
             searchHandler()
         }
@@ -123,7 +193,7 @@ export default function SearchBar({
                         <input ref={refInsert}
                             type="text"
                             value={query}
-                            onChange={(e) => setQuery(e.target.value)}
+                            onChange={inputDynamics}
                             onKeyDown={searchKEY}
                             onFocus={() => setIsFocusedOn(true)}
                             onBlur={() => setIsFocusedOn(false)}
