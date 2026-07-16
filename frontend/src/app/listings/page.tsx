@@ -7,8 +7,9 @@ import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
 import {getListings} from '@/lib/listings.api'
-import { Search } from 'lucide-react'
+import SearchBar  from '@/components/SearchBar'
 import { mylist } from '@/lib/wishlist.api'
+import { useSearchParams } from 'next/navigation'
 
 
 // Filter state
@@ -21,6 +22,7 @@ interface Filters {
     priceMax: string
     condition: string
     annotationLevel: string
+    search: string
 }
 
 const EMPTY_FILTERS: Filters = {
@@ -31,16 +33,32 @@ const EMPTY_FILTERS: Filters = {
     priceMax: '',
     condition: '',
     annotationLevel: '',
+    search: '',
 }
 
 // Page 
 
 export default function BrowseListingsPage() {
 
+    const boundSearches = useSearchParams()
+
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
-    const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
-    const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS)
+    const [filters, setFilters] = useState<Filters>(() => {
+        
+        
+        const search = boundSearches?.get('search') || ''
+        return { ...EMPTY_FILTERS, search }
+    })
+
+
+    const [applied, setApplied] = useState<Filters>(() => {
+
+        const search = boundSearches?.get('search') || ''
+
+        return { ...EMPTY_FILTERS, search }
+    })
+
     const [total, setTotal] = useState(0)
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
@@ -100,6 +118,16 @@ export default function BrowseListingsPage() {
         loadWishlist()
     },[])
 
+    useEffect(() => {
+
+        const searchFeat = boundSearches?.get('search') || ''
+
+        if (searchFeat !== filters.search) {
+
+            setFilters(prev => ({ ...prev, searchFeat}))
+            setApplied(prev => ({ ...prev, searchFeat}))
+        }
+    }, [boundSearches])
     // Handlers
 
     const handleFilterChange = (
@@ -107,6 +135,11 @@ export default function BrowseListingsPage() {
     ) => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
+    }
+
+    const searchApplicte = (query: string) => {
+        setFilters(prev => ({ ...prev, searchFeat: query }))
+        setApplied(prev => ({ ...prev, searchFeat: query }))
     }
 
     const handleApply = () => setApplied(filters)
@@ -137,6 +170,13 @@ export default function BrowseListingsPage() {
                     </p>
                 </div>
 
+                {/* Search Bar */}
+
+                <SearchBar onSearch={searchApplicte}
+                    initialQuery={filters.search}
+                    className="mb-6"
+                    />
+                    
                 <div className="flex flex-col md:flex-row gap-6">
 
                     {/* Sidebar filterslet  */}
