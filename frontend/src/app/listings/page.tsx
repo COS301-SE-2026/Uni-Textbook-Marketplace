@@ -44,20 +44,21 @@ export default function BrowseListingsPage() {
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
-    const [filters, setFilters] = useState<Filters>(() => {
-        
-        
-        const search = boundSearches?.get('search') || ''
-        return { ...EMPTY_FILTERS, search }
-    })
+
+    const firstSearch = boundSearches?.get('search') || ''
+    
+    const [filters, setFilters] = useState<Filters>(() => ({
+        ...EMPTY_FILTERS,
+        search: firstSearch,
+    
+    }))
 
 
-    const [applied, setApplied] = useState<Filters>(() => {
+    const [applied, setApplied] = useState<Filters>(() => ({
 
-        const search = boundSearches?.get('search') || ''
-
-        return { ...EMPTY_FILTERS, search }
-    })
+       ...EMPTY_FILTERS,
+        search: firstSearch,
+    }))
 
     const [total, setTotal] = useState(0)
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
@@ -118,16 +119,7 @@ export default function BrowseListingsPage() {
         loadWishlist()
     },[])
 
-    useEffect(() => {
 
-        const searchFeat = boundSearches?.get('search') || ''
-
-        if (searchFeat !== filters.search) {
-
-            setFilters(prev => ({ ...prev, searchFeat}))
-            setApplied(prev => ({ ...prev, searchFeat}))
-        }
-    }, [boundSearches])
     // Handlers
 
     const handleFilterChange = (
@@ -138,8 +130,8 @@ export default function BrowseListingsPage() {
     }
 
     const searchApplicte = (query: string) => {
-        setFilters(prev => ({ ...prev, searchFeat: query }))
-        setApplied(prev => ({ ...prev, searchFeat: query }))
+        setFilters(prev => ({ ...prev, search: query }))
+        setApplied(prev => ({ ...prev, search: query }))
     }
 
     const handleApply = () => setApplied(filters)
@@ -177,6 +169,7 @@ export default function BrowseListingsPage() {
                     className="mb-6"
                     />
                     
+
                 <div className="flex flex-col md:flex-row gap-6">
 
                     {/* Sidebar filterslet  */}

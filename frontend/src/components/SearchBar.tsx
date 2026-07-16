@@ -10,6 +10,7 @@ interface SearchBarProperts {
     initialQuery?: string
     placeholder?: string
     className?: string
+    delayedBounceFEAT?: number
 
 }
 
@@ -21,15 +22,23 @@ export default function SearchBar({
     placeholder = 'Search by title, author, ISBN, or module...',
     className = '',
 
+    delayedBounceFEAT = 300,
+
 }: SearchBarProperts) {
 
     const routerAttr = useRouter()
+
     const searchParam = useSearchParams()
 
     const [query, setQuery] = useState(initialQuery || searchParam?.get('search') || '')
     
     const [isFocusedOn, setIsFocusedOn] = useState(false)
     const refInsert = useRef<HTMLInputElement>(null)
+
+    const referenceBounceTimer = useRef<NodeJS.Timeout | null>(null)
+    const rendersItemFirst = useRef(true)
+
+    
 
     useEffect(() => {
 
@@ -40,6 +49,8 @@ export default function SearchBar({
             Promise.resolve().then(() => setQuery(paramSQuery))
         }
     }, [searchParam, query])
+
+
 
     const searchHandler = useCallback(() => {
         const cutQueryParam = query.trim()
@@ -63,12 +74,15 @@ export default function SearchBar({
         const updatedURL = `${window.location.pathname}?${bounds.toString()}`
 
         routerAttr.push(updatedURL, { scroll: false })
+
+
     }, [query, onSearch, routerAttr, searchParam])
 
     const searchClear = useCallback(() => {
         setQuery('')
 
         if (refInsert.current) {
+
             refInsert.current.focus()
 
         }
@@ -78,6 +92,8 @@ export default function SearchBar({
             const boundsForSearch = new URLSearchParams(searchParam?.toString() || '')
 
             boundsForSearch.delete('search')
+
+
             const nextURL = `${window.location.pathname}?${boundsForSearch.toString()}`
 
             routerAttr.push(nextURL, { scroll: false })
@@ -97,6 +113,8 @@ export default function SearchBar({
         <div className={`flex justify-center ${className}`}>
 
             <div className={`flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg transition-shadow duration-200 ${
+
+
                 isFocusedOn ? 'ring-2 ring-[#00B4D8] ring-offset-1' : ''}`}>
 
                     <div className="flex-1 flex items-center gap-2 px-4 py-2">
@@ -130,6 +148,7 @@ export default function SearchBar({
 
                         className="bg-[#00B4D8] text-[#000f2b] font-semi-bold text-sm px-6 py-2.5
                             hover:bg-[#0096B4] transition-colors h-full whitespace-nowrap">
+
                                 SEARCH
                             </button>
                 </div>
