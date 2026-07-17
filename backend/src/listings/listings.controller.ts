@@ -8,7 +8,6 @@ import {
   Req,
   UseGuards,
   Query,
-  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -36,7 +35,7 @@ interface RequestWithUser extends Request {
 export class ListingsController {
   constructor(
     private readonly listingsService: ListingsService,
-    private readonly adminService: AdminService, 
+    private readonly adminService: AdminService,
   ) {}
 
   @Post()

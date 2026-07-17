@@ -4,7 +4,7 @@ import { Book } from '../entities/book.entity';
 import { Module } from '../entities/module.entity';
 import { Listing, ListingStatus } from '../entities/listing.entity';
 import { Faculty } from '../entities/faculty.entity';
-
+import { University } from '../entities/university.entity';
 
 async function seed() {
   await AppDataSource.initialize();
@@ -16,8 +16,21 @@ async function seed() {
   const moduleRepo = AppDataSource.getRepository(Module);
   const listingRepo = AppDataSource.getRepository(Listing);
   const facultyRepo = AppDataSource.getRepository(Faculty);
+  const universityRepo = AppDataSource.getRepository(University);
 
-  // First, get or create the Faculty
+  let university = await universityRepo.findOne({
+    where: { email_domain: 'up.ac.za' },
+  });
+
+  if (!university) {
+    university = universityRepo.create({
+      name: 'University of Pretoria',
+      email_domain: 'up.ac.za',
+    });
+    await universityRepo.save(university);
+  }
+
+  // get or create the Faculty
   let faculty = await facultyRepo.findOne({
     where: { name: 'Engineering' },
   });
@@ -58,7 +71,7 @@ async function seed() {
     moduleRepo.create({
       code: 'COS301',
       name: 'Databases',
-      faculty: faculty, 
+      faculty: faculty,
       semester: 2,
     }),
   );

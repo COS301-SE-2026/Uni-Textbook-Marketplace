@@ -14,7 +14,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Module({
   imports: [TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity])],
   controllers: [ListingsController],
-  providers: [ListingsService, AdminService,RolesGuard,JwtAuthGuard]
-  
+  providers: [ListingsService, AdminService, RolesGuard, JwtAuthGuard],
 })
 export class ListingsModule {}

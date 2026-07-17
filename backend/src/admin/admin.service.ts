@@ -13,7 +13,6 @@ export class AdminService {
     private entityManager: EntityManager,
   ) {}
 
-  
   private async updateListingStatus(
     id: string,
     userId: string,
@@ -50,7 +49,8 @@ export class AdminService {
       await listingRepository.save(listing);
 
       // Create audit log
-      const actionVerb = status === ListingStatus.APPROVED ? 'approved' : 'rejected';
+      const actionVerb =
+        status === ListingStatus.APPROVED ? 'approved' : 'rejected';
       const auditLog = auditLogRepository.create({
         entity_type: 'listing',
         entity_id: listing.id,
@@ -65,13 +65,22 @@ export class AdminService {
     });
   }
 
-
   async approveListing(id: string, userId: string) {
-    return this.updateListingStatus(id, userId, ListingStatus.APPROVED, 'APPROVE_LISTING');
+    return this.updateListingStatus(
+      id,
+      userId,
+      ListingStatus.APPROVED,
+      'APPROVE_LISTING',
+    );
   }
 
   async rejectListing(id: string, userId: string) {
-    return this.updateListingStatus(id, userId, ListingStatus.REJECTED, 'REJECT_LISTING');
+    return this.updateListingStatus(
+      id,
+      userId,
+      ListingStatus.REJECTED,
+      'REJECT_LISTING',
+    );
   }
 
   // ... rest of the methods remain the same
@@ -107,7 +116,6 @@ export class AdminService {
     });
   }
 
-  
   async getAuditLog(filters: AuditLogFiltersDto) {
     const {
       performedBy,

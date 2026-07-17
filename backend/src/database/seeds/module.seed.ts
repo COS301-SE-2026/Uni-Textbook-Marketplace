@@ -2,20 +2,6 @@ import { EntityManager } from 'typeorm';
 import { Module } from '../entities/module.entity';
 import { University } from '../entities/university.entity';
 import { Faculty } from '../entities/faculty.entity';
-
-async function getOrCreateFaculty(
-  manager: EntityManager,
-  name: string,
-): Promise<Faculty> {
-  const facultyRepository = manager.getRepository(Faculty);
-  let faculty = await facultyRepository.findOne({ where: { name } });
-
-  if (!faculty) {
-    faculty = facultyRepository.create({ name });
-    await facultyRepository.save(faculty);
-  }
-
-  return faculty;
 import * as fs from 'fs';
 import * as path from 'path';
 
