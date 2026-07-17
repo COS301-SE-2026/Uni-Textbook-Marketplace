@@ -35,7 +35,7 @@ interface RequestWithUser extends Request {
 export class ListingsController {
   constructor(
     private readonly listingsService: ListingsService,
-    private readonly adminService: AdminService, // ✅ Inject AdminService
+    private readonly adminService: AdminService, 
   ) {}
 
   @Post()

@@ -51,7 +51,7 @@ export class ModuleService {
       throw new BadRequestException('faculty_id is required');
     }
 
-    // Fetch and validate faculty
+    // Fetch and validate the faculty
     const faculty = await this.facultyRepo.findOne({
       where: { id: dto.faculty_id },
     });
