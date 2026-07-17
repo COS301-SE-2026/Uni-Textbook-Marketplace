@@ -23,9 +23,12 @@ export class Module {
   @Column()
   name!: string;
 
-  @ManyToOne(() => Faculty, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Faculty, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'faculty_id' })
-  faculty!: Faculty | null;
+  faculty!: Faculty;
 
   @Column({
     nullable: true,
