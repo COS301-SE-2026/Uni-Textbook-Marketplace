@@ -1,14 +1,15 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
 import {getListings} from '@/lib/listings.api'
-import { Search } from 'lucide-react'
+import SearchBar  from '@/components/SearchBar'
 import { mylist } from '@/lib/wishlist.api'
+import { useSearchParams } from 'next/navigation'
 
 
 // Filter state
@@ -21,6 +22,7 @@ interface Filters {
     priceMax: string
     condition: string
     annotationLevel: string
+    search: string
 }
 
 const EMPTY_FILTERS: Filters = {
@@ -31,16 +33,33 @@ const EMPTY_FILTERS: Filters = {
     priceMax: '',
     condition: '',
     annotationLevel: '',
+    search: '',
 }
 
 // Page 
 
-export default function BrowseListingsPage() {
+function BrowseListingsContent() {
+
+    const boundSearches = useSearchParams()
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
-    const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
-    const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS)
+
+    const firstSearch = boundSearches?.get('search') || ''
+    
+    const [filters, setFilters] = useState<Filters>(() => ({
+        ...EMPTY_FILTERS,
+        search: firstSearch,
+    
+    }))
+
+
+    const [applied, setApplied] = useState<Filters>(() => ({
+
+       ...EMPTY_FILTERS,
+        search: firstSearch,
+    }))
+
     const [total, setTotal] = useState(0)
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
@@ -49,6 +68,7 @@ export default function BrowseListingsPage() {
         try {
             const params = new URLSearchParams()
 
+            if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
             if (f.moduleCode) params.set('moduleCode', f.moduleCode)
             if (f.edition) params.set('edition', f.edition)
@@ -100,6 +120,7 @@ export default function BrowseListingsPage() {
         loadWishlist()
     },[])
 
+
     // Handlers
 
     const handleFilterChange = (
@@ -107,6 +128,11 @@ export default function BrowseListingsPage() {
     ) => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
+    }
+
+    const searchApplicte = (query: string) => {
+        setFilters(prev => ({ ...prev, search: query }))
+        setApplied(prev => ({ ...prev, search: query }))
     }
 
     const handleApply = () => setApplied(filters)
@@ -136,6 +162,14 @@ export default function BrowseListingsPage() {
                         Find the right textbook for your module
                     </p>
                 </div>
+
+                {/* Search Bar */}
+
+                <SearchBar onSearch={searchApplicte}
+                    initialQuery={filters.search}
+                    className="mb-6"
+                    />
+                    
 
                 <div className="flex flex-col md:flex-row gap-6">
 
@@ -272,25 +306,6 @@ export default function BrowseListingsPage() {
                     {/* Listing grid*/}
                     <main className="flex-1">
 
-                        {/*
-                        <div className="flex justify-center mt-8">
-                            <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
-                                <div className="flex-1 flex items-center gap-2 px-4 py-2">
-                                <Search size={18} className="text-[#4B4F58] flex-shrink-0" />
-                                <input
-                                    type="text"
-                                    placeholder="Search by title, author, ISBN, or module..."
-                                    className="w-full text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
-                                            border-none outline-none bg-transparent py-1.5"
-                                />
-                                </div>
-                                <button className="bg-[#00B4D8] text-[#000f2b] font-semibold text-sm px-6 py-2.5 hover:bg-[#0096B4] transition-colors h-full">
-                                SEARCH
-                                </button>
-                            </div>
-                        </div>
-                        */}
-
                         {/* Result count */}
                         {!loading && (
                             <p className="text-sm text-gray-500 mb-4">
@@ -353,4 +368,57 @@ export default function BrowseListingsPage() {
             </div>
         </ProtectedRoute>
     )
+}
+
+export default function BrowseListingsPage() {
+
+  return (
+    <Suspense fallback={
+
+      <div className="container-content py-8">
+        <div className="mb-6">
+
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+
+          <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mt-2" />
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6">
+
+          <div className="w-full md:w-56 flex-shrink-0">
+
+            <div className="card flex flex-col gap-4">
+
+              <div className="h-6 w-20 bg-gray-200 rounded animate-pulse" />
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+
+                <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
+              ))}
+            </div>
+
+          </div>
+          
+          <div className="flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+
+                <div key={i} className="card animate-pulse flex flex-col gap-3">
+                  <div className="h-40 bg-gray-200 rounded" />
+
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+                  <div className="h-3 bg-gray-100 rounded w-1/2" />
+                  
+                  <div className="h-4 bg-gray-200 rounded w-1/4" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <BrowseListingsContent />
+    </Suspense>
+  )
 }
