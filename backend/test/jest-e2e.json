@@ -2,8 +2,18 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
-  "testRegex": ".e2e-spec.ts$",
+  "testRegex": ".*\\.(e2e-spec|integration\\.spec)\\.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "testPathIgnorePatterns": ["/node_modules", "/dist/"],
+  "testTimeout": 60000,
+  "forceExit": true,
+  "detectOpenHandles": true,
+  "verbose": true,
+  "setupFiles": ["<rootDir>/setup.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/setup.ts"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/../src/$1"
   }
 }

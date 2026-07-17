@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import { Module as ModuleEntity } from '../database/entities/module.entity';
+import { Faculty } from '../database/entities/faculty.entity';
+import { University } from '../database/entities/university.entity';
 import { CreateModuleDto } from '../modules/dto/create.module.dto';
 import { Faculty } from '../database/entities/faculty.entity';
 import { University } from '../database/entities/university.entity';

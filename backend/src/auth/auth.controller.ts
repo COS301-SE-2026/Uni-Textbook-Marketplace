@@ -91,7 +91,9 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { message: 'Login successful.' };
+    return { 
+      message: 'Login successful.' 
+    };
   }
 
   @Get('universities')

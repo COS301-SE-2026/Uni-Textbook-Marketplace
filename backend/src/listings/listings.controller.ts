@@ -8,6 +8,7 @@ import {
   Req,
   UseGuards,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -46,8 +47,9 @@ export class ListingsController {
   }
 
   @Get()
-  getAll(@Query() query: ListingFiltersDto) {
-    return this.listingsService.getAllApproved(query);
+  async getAll(@Query() query: ListingFiltersDto) {
+    const [listings, total] = await this.listingsService.getAllApproved(query);
+    return { listings, total };
   }
 
   @Get('mine')

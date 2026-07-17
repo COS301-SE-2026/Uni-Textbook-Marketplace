@@ -4,6 +4,7 @@ import './globals.css'
 import NavBar from '@/components/NavBar'
 import { AuthProvider } from '@/context/AuthContext'
 import ThemeProvider from '@/providers/ThemeProvider'
+import HelpMenuWrapper from '@/components/HelpMenuWrapper'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -30,6 +31,7 @@ export default function RootLayout({
             <main>
               {children}
             </main>
+            <HelpMenuWrapper />
           </AuthProvider>
         </ThemeProvider>
       </body>

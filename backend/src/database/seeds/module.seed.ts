@@ -16,11 +16,21 @@ async function getOrCreateFaculty(
   }
 
   return faculty;
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface ModuleData {
+  code: string;
+  name: string;
+  faculty: string;
+  facultyCode: string;
+  url: string;
 }
 
 export async function seedModules(manager: EntityManager) {
   const moduleRepository = manager.getRepository(Module);
   const universityRepository = manager.getRepository(University);
+  const facultyRepository = manager.getRepository(Faculty); // ← ADD THIS
 
   const university = await universityRepository.findOne({
     where: { name: 'University of Pretoria' },
@@ -30,47 +40,187 @@ export async function seedModules(manager: EntityManager) {
     throw new Error('University of Pretoria not found');
   }
 
-  // Get or create faculties
-  const engineeringFaculty = await getOrCreateFaculty(
-    manager,
-    'Engineering, Built Environment and IT',
-  );
-  const scienceFaculty = await getOrCreateFaculty(
-    manager,
-    'Natural and Agricultural Sciences',
-  );
+  const faculties = await facultyRepository.find();
 
-  const modulesData = [
-    { code: 'COS132', name: 'Imperative Programming', semester: 1 },
-    { code: 'COS151', name: 'Introduction to Computer Science', semester: 1 },
-    { code: 'COS212', name: 'Data Structures and Algorithms', semester: 1 },
-    { code: 'COS214', name: 'Software Modelling', semester: 1 },
-    { code: 'COS216', name: 'Netcentric Computer Systems', semester: 1 },
+  const getFacultyByName = (name: string): Faculty | null => {
+    let faculty = faculties.find((f) => f.name === name);
+
+    if (!faculty) {
+      const facultyMapping: Record<string, string> = {
+        SCI: 'Natural and Agricultural Sciences',
+        EBIT: 'Engineering, Built Environment and IT',
+        EMS: 'Economic and Management Sciences',
+        EDU: 'Education',
+        MED: 'Health Sciences',
+        HLT: 'Health Sciences',
+        HUM: 'Humanities',
+        LAW: 'Law',
+        THEO: 'Theology and Religion',
+        VET: 'Veterinary Sciences',
+        GIBS: 'Gordon Institute of Business Science',
+      };
+
+      const mappedName = facultyMapping[name];
+      if (mappedName) {
+        faculty = faculties.find((f) => f.name === mappedName);
+      }
+    }
+
+    return faculty || null;
+  };
+
+  const jsonPath = path.join(__dirname, '..', '..', '..', 'modules-data.json');
+
+  let modulesData: ModuleData[] = [];
+
+  try {
+    const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+    modulesData = JSON.parse(fileContent) as ModuleData[];
+    console.log(`Loaded ${modulesData.length} modules from modules-data.json`);
+    console.log(`File path: ${jsonPath}`);
+  } catch (error) {
+    console.error('Failed to read modules-data.json:', error);
+    console.log('Falling back to hardcoded module data...');
+    modulesData = getFallbackModules();
+  }
+
+  let createdCount = 0;
+  let skippedCount = 0;
+  let noFacultyCount = 0;
+
+  for (const data of modulesData) {
+    const existing = await moduleRepository.findOne({
+      where: {
+        code: data.code,
+        university: { id: university.id },
+      },
+    });
+
+    if (existing) {
+      console.log(`Skipped (already exists): ${data.code} - ${data.name}`);
+      skippedCount++;
+      continue;
+    }
+
+    const semester = determineSemester(data.code);
+
+    const facultyName = data.faculty || data.facultyCode;
+    const faculty = getFacultyByName(facultyName);
+
+    if (!faculty) {
+      console.log(
+        `Warning: Faculty not found for module ${data.code} (${data.name}), faculty: ${facultyName}`,
+      );
+      noFacultyCount++;
+      continue; // Skip this module if faculty not found
+    }
+
+    const module = moduleRepository.create({
+      code: data.code,
+      name: data.name,
+      faculty: faculty,
+      semester,
+      university,
+    });
+
+    await moduleRepository.save(module);
+
+    console.log(`Created: ${data.code} - ${data.name} (${faculty.name})`);
+    createdCount++;
+  }
+
+  console.log(
+    `Modules seeded: ${createdCount} created, ${skippedCount} skipped, ${noFacultyCount} skipped (no faculty found)`,
+  );
+}
+
+function determineSemester(code: string): number {
+  const lastTwoDigits = parseInt(code.slice(-2));
+
+  if (lastTwoDigits >= 10 && lastTwoDigits <= 19) {
+    return 1;
+  } else if (lastTwoDigits >= 20 && lastTwoDigits <= 29) {
+    return 2;
+  } else if (lastTwoDigits >= 110 && lastTwoDigits <= 119) {
+    return 1;
+  } else if (lastTwoDigits >= 120 && lastTwoDigits <= 129) {
+    return 2;
+  }
+
+  return 1;
+}
+
+function getFallbackModules(): ModuleData[] {
+  return [
+    {
+      code: 'COS132',
+      name: 'Imperative Programming',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
+    {
+      code: 'COS151',
+      name: 'Introduction to Computer Science',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
+    {
+      code: 'COS212',
+      name: 'Data Structures and Algorithms',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
+    {
+      code: 'COS214',
+      name: 'Software Modelling',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
+    {
+      code: 'COS216',
+      name: 'Netcentric Computer Systems',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
     {
       code: 'COS284',
       name: 'Computer Organisation and Architecture',
-      semester: 2,
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
     },
-    { code: 'WTW114', name: 'Calculus', semester: 1 },
-    { code: 'WTW124', name: 'Mathematics', semester: 2 },
-    { code: 'STK110', name: 'Statistics', semester: 1 },
-    { code: 'INF214', name: 'Informatics', semester: 2 },
+    {
+      code: 'WTW114',
+      name: 'Calculus',
+      faculty: 'Natural and Agricultural Sciences',
+      facultyCode: 'SCI',
+      url: '',
+    },
+    {
+      code: 'WTW124',
+      name: 'Mathematics',
+      faculty: 'Natural and Agricultural Sciences',
+      facultyCode: 'SCI',
+      url: '',
+    },
+    {
+      code: 'STK110',
+      name: 'Statistics',
+      faculty: 'Natural and Agricultural Sciences',
+      facultyCode: 'SCI',
+      url: '',
+    },
+    {
+      code: 'INF214',
+      name: 'Informatics',
+      faculty: 'Engineering, Built Environment and IT',
+      facultyCode: 'EBIT',
+      url: '',
+    },
   ];
-
-  const modules = modulesData.map((data) => {
-    const isScienceModule =
-      data.code.startsWith('WTW') || data.code === 'STK110';
-    const faculty = isScienceModule ? scienceFaculty : engineeringFaculty;
-
-    return moduleRepository.create({
-      code: data.code,
-      name: data.name,
-      semester: data.semester,
-      faculty: faculty,
-      university: university,
-    });
-  });
-
-  await moduleRepository.save(modules);
-  console.log(`${modules.length} modules seeded`);
 }

@@ -8,6 +8,7 @@ import { University } from '../database/entities/university.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ModuleEntity, Faculty, University])],
+  controllers: [ModuleController],
   providers: [ModuleService],
   controllers: [ModuleController],
   exports: [ModuleService],
