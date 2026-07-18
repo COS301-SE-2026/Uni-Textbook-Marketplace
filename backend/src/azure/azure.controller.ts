@@ -17,12 +17,17 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller('images')
 @UseGuards(JwtAuthGuard)
 export class AzureController {
+
   constructor(private readonly azureService: AzureService) {}
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('images', 5))
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+
+
+
     if (!files || files.length === 0) {
+
       throw new BadRequestException('No files uploaded');
     }
 
@@ -30,11 +35,14 @@ export class AzureController {
 
 
     for (let i = 0; i < files.length; i++) {
+
+
       const file = files[i];
       const urlRes = await this.azureService.uploadImage(file);
 
       urlUpload.push(urlRes);
     }
+
 
     return { urls: urlUpload };
 
@@ -42,6 +50,8 @@ export class AzureController {
 
   @Get('list')
   async listImages() {
+
+
     return this.azureService.listBlobs();
   }
 
@@ -52,6 +62,8 @@ export class AzureController {
 
   @Delete('delete')
   async deleteImage(@Body('url') imageUrl: string) {
+
+
     if (!imageUrl) {
       throw new BadRequestException('No image url passed in');
     }
@@ -59,6 +71,7 @@ export class AzureController {
     try {
 
       await this.azureService.deleteImage(imageUrl);
+      
       return { success: true, message: 'Blob removed' };
       
     } catch {
