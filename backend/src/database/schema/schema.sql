@@ -176,8 +176,8 @@ ON books(title);
 CREATE INDEX idx_listings_faculty_price ON listings(faculty_id, price);
 
 -- index for recently created listings
-CREATE INDEX idx_listings_created_at ON listings(created_at DESC);
+CREATE INDEX idx_listings_performed_at ON listings(performed_at DESC);
 
 
 -- index to query audit logs by date range
-CREATE INDEX idx_audit_created_at ON audit_log(created_at DESC);
+CREATE INDEX idx_audit_performed_at ON audit_log(performed_at DESC);
