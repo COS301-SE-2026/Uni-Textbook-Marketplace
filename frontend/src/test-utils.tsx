@@ -1,38 +1,45 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
+//import { string } from 'zod';
 
-// @ts-nocheck
+
 Object.defineProperty(window, 'matchMedia', {
 
 
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
+    //@ts-ignore
+    value: jest.fn().mockImplementation((query: string) => ({
         matches: false,
 
         media:query,
         onchange: null,
 
-
+        //@ts-ignore
         addListener: jest.fn(),
+        //@ts-ignore
         removeListener: jest.fn(),
-
+        //@ts-ignore
         addEventListener: jest.fn(),
+        //@ts-ignore
         removeEventListener: jest.fn(),
-
+        //@ts-ignore
         dispatchEvent: jest.fn(),
     })),
 });
 
+//@ts-ignore
 jest.mock('next-themes', () => ({
 
-
+    //@ts-ignore
     useTheme: jest.fn(() => ({
         theme: 'light',
 
+        //@ts-ignore
         setTheme: jest.fn(),
     })),
 }));
 
+//@ts-ignore
 jest.mock('lucide-react', () => ({
     Moon: () => <svg data-testid="moon-icon" />,
     Sun: () => <svg data-testid="sun-icon" />,
@@ -49,16 +56,21 @@ jest.mock('lucide-react', () => ({
     Heart: () => <svg data-testid="heart-icon" />,
 }));
 
+//@ts-ignore
 jest.mock('next/navigation', () => ({
 
+    //@ts-ignore
     usePathname: jest.fn(() => '/'),
+    //@ts-ignore
     useRouter: jest.fn(() => ({
 
+        //@ts-ignore
         push: jest.fn(),
+        //@ts-ignore
         back: jest.fn(),
     })),
 }));
-
+//@ts-ignore
 jest.mock('next/image', () => ({
 
     __esModule: true,
