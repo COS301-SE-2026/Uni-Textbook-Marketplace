@@ -75,9 +75,15 @@ CREATE TABLE faculties(
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+--create saved_searches table 
+CREATE TABLE saved_searches(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    filter_json JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- listings
-
 CREATE TABLE listings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -124,7 +130,16 @@ CREATE TABLE audit_log (
     entity_type VARCHAR NOT NULL,  
     entity_id UUID NOT NULL,
 
-    action VARCHAR NOT NULL,       
+    action VARCHAR NOT NULL,  
+     CHECK (action IN (
+            'CREATE',
+            'UPDATE',
+            'DELETE',
+            'LOGIN',
+            'LOGOUT',
+            'SOLD',
+            'WITHDRAWN'
+        )),     
 
     performed_by UUID REFERENCES users(id) ON DELETE SET NULL,
     performed_at TIMESTAMPTZ DEFAULT NOW(),
@@ -150,6 +165,15 @@ ON listings(annotation_level);
 CREATE INDEX idx_books_isbn 
 ON books(isbn);
 
+CREATE INDEX idx_books_isbn 
+ON books(isbn);
+
+CREATE INDEX idx_saved_search_user 
+ON saved_searches(user_id);
+
+
+CREATE INDEX idx_saved_search_created_at
+ON saved_searches(created_at);
 
 CREATE INDEX idx_books_author_title ON books(author, title)
 
