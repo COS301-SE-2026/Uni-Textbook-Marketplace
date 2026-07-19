@@ -45,31 +45,53 @@ export class ModuleService {
       return existing;
     }
 
-    // Validate faculty_id is provided
-    if (!dto.faculty_id) {
-      throw new BadRequestException('faculty_id is required');
+    let university: University | null = null;
+
+    if (dto.university) {
+      university = await this.universityRepo.findOne({
+        where: { name: dto.university },
+      });
+      if (!university) {
+        university = this.universityRepo.create({ name: dto.university });
+        await this.universityRepo.save(university);
+      }
+    } else {
+      university = await this.universityRepo.findOne({
+        where: { name: 'University of Pretoria' },
+      });
+      if (!university) {
+        university = this.universityRepo.create({
+          name: 'University of Pretoria',
+        });
+        await this.universityRepo.save(university);
+      }
     }
 
-    // Fetch and validate the faculty
-    const faculty = await this.facultyRepo.findOne({
-      where: { id: dto.faculty_id },
-    });
+    let faculty: Faculty | null = null;
+
+    if (dto.faculty) {
+      faculty = await this.facultyRepo.findOne({
+        where: { name: dto.faculty },
+      });
+      if (!faculty) {
+        faculty = this.facultyRepo.create({
+          name: dto.faculty,
+          university: university,
+        });
+        await this.facultyRepo.save(faculty);
+      }
+    } else if (dto.faculty_id) {
+      faculty = await this.facultyRepo.findOne({
+        where: { id: dto.faculty_id },
+      });
+      if (!faculty) {
+        throw new NotFoundException(`
+          Faculty with ID ${dto.faculty_id} not found`);
+      }
+    }
 
     if (!faculty) {
-      throw new NotFoundException(
-        `Faculty with ID ${dto.faculty_id} not found`,
-      );
-    }
-
-    // Fetch and validate university
-    const university = await this.universityRepo.findOne({
-      where: { id: dto.university_id },
-    });
-
-    if (!university) {
-      throw new NotFoundException(
-        `University with ID ${dto.university_id} not found`,
-      );
+      throw new BadRequestException('faculty or faculty_id is required');
     }
 
     // Create the module with required relations
