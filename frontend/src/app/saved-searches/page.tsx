@@ -240,7 +240,63 @@ export default function SavedSearchesPage() {
         ) : (
           <div className="space-y-3">
 
-            
+            {searches.map((search) => (
+
+              <div
+                key={search.id}
+                className="card hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => searchPerform(search.filter_json)}
+
+              >
+                <div className="flex items-center justify-between">
+
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+
+
+                      <Bookmark size={16} className="text-blue-500 flex-shrink-0" />
+                      <p className="font-medium text-sm truncate">
+                        {filterPackaged(search.filter_json)}
+                      </p>
+                    </div>
+
+                    <p className="text-xs text-gray-400 mt-1">
+                      Saved {dateStandard(search.created_at)}
+                    </p>
+                  </div>
+
+
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+
+                    <span className="text-xs text-blue-600 hover:underline">
+                      Apply
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteApplic(search.id)
+                      }}
+                      disabled={deleting === search.id}
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                      aria-label="Delete saved search"
+                    >
+
+
+                      {deleting === search.id ? (
+                        <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
+                    </button>
+
+                  </div>
+
+                </div>
+              </div>
+
+            ))}
           </div>
         )}
       </div>
