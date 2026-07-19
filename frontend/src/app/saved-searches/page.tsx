@@ -282,8 +282,6 @@ export default function SavedSearchesPage() {
                       className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
                       aria-label="Delete saved search"
                     >
-
-
                       {deleting === search.id ? (
                         <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
                       ) : (

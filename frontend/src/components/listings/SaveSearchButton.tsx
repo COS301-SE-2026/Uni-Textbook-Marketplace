@@ -23,10 +23,8 @@ export default function SaveSearchButton({
 }: SaveSearchButtonProps) {
 
   const [savingFilter, setIsSavFilter] = useState(false)
-
   const [isFilterSaved, setFilterSave] = useState(false)
-
-
+  
   const [error, setError] = useState<string | null>(null)
 
 
@@ -82,9 +80,7 @@ export default function SaveSearchButton({
 
       <button
         onClick={performFilterSave}
-
         disabled={savingFilter || isFilterSaved}
-
         className={`flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
           isFilterSaved
             ? 'bg-green-100 text-green-700 border border-green-300'
@@ -93,11 +89,8 @@ export default function SaveSearchButton({
             : 'bg-gray-100 text-gray-400 cursor-not-allowed'
         } ${className}`}
       >
-
-
         {savingFilter ? (
           <>
-
             <Loader2 size={16} className="animate-spin" />
             Saving...
           </>
@@ -106,14 +99,11 @@ export default function SaveSearchButton({
             <BookmarkCheck size={16} />
             Saved!
           </>
-
         ) : (
           <>
             <Bookmark size={16} />
             Save this search
           </>
-
-
         )}
       </button>
       

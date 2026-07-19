@@ -27,8 +27,6 @@ export default function HelpMenu() {
 
                 className="fixed bottom-6 right-6 z-50 p-4 bg-[#00B4D8] text-white rounded-full shadow-lg hover:bg-[#0090B0] transition-colors" aria-label="Help">
                     <HelpCircle size={27} />
-
-
             </button>
 
             {/* Modal */}
@@ -49,8 +47,7 @@ export default function HelpMenu() {
                                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
 
                                     <X size={24} className="text-[var(--foreground)]" />
-
-                                </button>
+                            </button>
                         </div>
 
                         <div className="p-4 space-y-4">
