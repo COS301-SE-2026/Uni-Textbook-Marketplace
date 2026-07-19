@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller('images')
 @UseGuards(JwtAuthGuard)
 export class AzureController {
+
   constructor(private readonly azureService: AzureService) {}
 
   @Post('upload')
@@ -28,16 +29,12 @@ export class AzureController {
 
     const urlUpload: string[] = [];
 
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const urlRes = await this.azureService.uploadImage(file);
-
       urlUpload.push(urlRes);
     }
-
     return { urls: urlUpload };
-
   }
 
   @Get('list')
@@ -57,16 +54,12 @@ export class AzureController {
     }
 
     try {
-
       await this.azureService.deleteImage(imageUrl);
       return { success: true, message: 'Blob removed' };
-      
     } catch {
-
       throw new InternalServerErrorException(
         'Failed to remove image from Azure container',
       );
     }
-
   }
 }
