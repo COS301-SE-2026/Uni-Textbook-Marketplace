@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+
+import { Trash2, Bookmark, Search, ArrowLeft } from 'lucide-react'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { getSavedSearches, deleteSavedSearch, SavedSearch, Filters } from '@/lib/saved-searches.api'
 
 export default function SavedSearchesPage() {
@@ -62,6 +65,27 @@ export default function SavedSearchesPage() {
     }
   }
 
+  const searchPerform = (filters: Filters) => {
+
+    const params = new URLSearchParams()
+    
+    if (filters.search) params.set('search', filters.search)
+
+    if (filters.faculty) params.set('faculty', filters.faculty)
+    if (filters.moduleCode) params.set('moduleCode', filters.moduleCode)
+
+    if (filters.edition) params.set('edition', filters.edition)
+
+    if (filters.priceMin) params.set('priceMin', filters.priceMin)
+
+    if (filters.priceMax) params.set('priceMax', filters.priceMax)
+
+    if (filters.condition) params.set('condition', filters.condition)
+    if (filters.annotationLevel) params.set('annotationLevel', filters.annotationLevel)
+
+    routAttr.push(`/listings?${params.toString()}`)
+  }
+
   const dateStandard = (dateString: string) => {
 
     const date = new Date(dateString)
@@ -77,6 +101,40 @@ export default function SavedSearchesPage() {
 
     }).format(date)
 
+  }
+
+  const filterPackaged = (filters: Filters): string => {
+
+    const parts: string[] = []
+
+    if (filters.search) parts.push(`"${filters.search}"`)
+    if (filters.faculty) parts.push(`Faculty: ${filters.faculty}`)
+
+
+    if (filters.moduleCode) parts.push(`Module: ${filters.moduleCode}`)
+      
+    if (filters.edition) parts.push(`Edition: ${filters.edition}`)
+
+    if (filters.priceMin || filters.priceMax) {
+
+      const price = []
+      if (filters.priceMin) price.push(`R${filters.priceMin}`)
+
+
+      if (filters.priceMax) price.push(`R${filters.priceMax}`)
+
+      parts.push(`Price: ${price.join(' - ')}`)
+
+    }
+
+
+    if (filters.condition) parts.push(`Condition: ${filters.condition}`)
+
+    if (filters.annotationLevel) parts.push(`Annotations: ${filters.annotationLevel}`)
+
+
+    
+    return parts.length > 0 ? parts.join(' • ') : 'All textbooks'
   }
 
   return ()
