@@ -35,7 +35,23 @@ export default function SavedSearchesPage() {
   }
 
   useEffect(() => {
-    loadSearches()
+    let loadOnbourd = true
+
+    
+    const id = setTimeout(() => {
+
+
+      if (!loadOnbourd) return
+
+      loadSearches()
+    }, 0)
+
+    return () => {
+
+      loadOnbourd = false
+
+      clearTimeout(id)
+    }
   }, [])
 
 
@@ -112,7 +128,7 @@ export default function SavedSearchesPage() {
 
 
     if (filters.moduleCode) parts.push(`Module: ${filters.moduleCode}`)
-      
+
     if (filters.edition) parts.push(`Edition: ${filters.edition}`)
 
     if (filters.priceMin || filters.priceMax) {
@@ -137,5 +153,53 @@ export default function SavedSearchesPage() {
     return parts.length > 0 ? parts.join(' • ') : 'All textbooks'
   }
 
-  return ()
+  return (
+
+    <ProtectedRoute>
+
+
+      <div className="container-content py-8">
+        <div className="mb-6">
+
+          <button
+            onClick={() => routAttr.back()}
+
+
+            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-2"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+
+
+          <div className="flex items-center justify-between">
+            <div>
+
+              <h1>Saved Searches</h1>
+
+              <p className="text-gray-500 text-sm">
+                Your saved filter combinations for quick access
+              </p>
+            </div>
+
+
+            <button
+              onClick={() => routAttr.push('/listings')}
+              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            >
+              <Search size={16} />
+              New Search
+            </button>
+
+
+          </div>
+
+        </div>
+
+        
+      </div>
+
+
+    </ProtectedRoute>
+  )
 }
