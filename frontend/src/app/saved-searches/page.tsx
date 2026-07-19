@@ -196,7 +196,53 @@ export default function SavedSearchesPage() {
 
         </div>
 
-        
+        {loading ? (
+
+          <div className="space-y-4">
+
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card animate-pulse">
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2 flex-1">
+
+                    <div className="h-5 bg-gray-200 rounded w-3/4" />
+                    
+                    <div className="h-4 bg-gray-100 rounded w-1/2" />
+
+                  </div>
+
+                  <div className="h-8 w-8 bg-gray-200 rounded" />
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+        ) : searches.length === 0 ? (
+
+          <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+            <Bookmark size={48} className="mb-4" strokeWidth={1} />
+
+            <p className="text-lg font-medium">No saved searches</p>
+            <p className="text-sm mt-1">
+              Apply filters on the browse page and click SAVE THIS SEARCH
+            </p>
+
+            <button
+              onClick={() => routAttr.push('/listings')}
+              className="mt-4 text-blue-600 hover:underline text-sm"
+            >
+              Go to Browse
+            </button>
+
+          </div>
+        ) : (
+          <div className="space-y-3">
+
+            
+          </div>
+        )}
       </div>
 
 
