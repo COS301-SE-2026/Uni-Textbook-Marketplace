@@ -23,35 +23,22 @@ export class AzureController {
   @Post('upload')
   @UseInterceptors(FilesInterceptor('images', 5))
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
-
-
-
     if (!files || files.length === 0) {
-
       throw new BadRequestException('No files uploaded');
     }
 
     const urlUpload: string[] = [];
 
-
     for (let i = 0; i < files.length; i++) {
-
-
       const file = files[i];
       const urlRes = await this.azureService.uploadImage(file);
-
       urlUpload.push(urlRes);
     }
-
-
     return { urls: urlUpload };
-
   }
 
   @Get('list')
   async listImages() {
-
-
     return this.azureService.listBlobs();
   }
 
@@ -62,24 +49,17 @@ export class AzureController {
 
   @Delete('delete')
   async deleteImage(@Body('url') imageUrl: string) {
-
-
     if (!imageUrl) {
       throw new BadRequestException('No image url passed in');
     }
 
     try {
-
       await this.azureService.deleteImage(imageUrl);
-      
       return { success: true, message: 'Blob removed' };
-      
     } catch {
-
       throw new InternalServerErrorException(
         'Failed to remove image from Azure container',
       );
     }
-
   }
 }
