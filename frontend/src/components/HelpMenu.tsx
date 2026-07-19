@@ -23,6 +23,7 @@ export default function HelpMenu() {
         <>
             {/* Help Button */}
             <button
+                type="button"
                 onClick={() => setIsOpen(true)}
 
                 className="fixed bottom-6 right-6 z-50 p-4 bg-[#00B4D8] text-white rounded-full shadow-lg hover:bg-[#0090B0] transition-colors" aria-label="Help">

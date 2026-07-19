@@ -79,6 +79,7 @@ export default function SaveSearchButton({
 
 
       <button
+        type="button"
         onClick={performFilterSave}
         disabled={savingFilter || isFilterSaved}
         className={`flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${

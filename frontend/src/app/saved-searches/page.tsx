@@ -162,6 +162,7 @@ export default function SavedSearchesPage() {
         <div className="mb-6">
 
           <button
+            type="button"
             onClick={() => routAttr.back()}
 
 
@@ -184,6 +185,7 @@ export default function SavedSearchesPage() {
 
 
             <button
+              type="button"
               onClick={() => routAttr.push('/listings')}
               className="text-sm text-blue-600 hover:underline flex items-center gap-1"
             >
@@ -230,6 +232,7 @@ export default function SavedSearchesPage() {
             </p>
 
             <button
+              type="button"
               onClick={() => routAttr.push('/listings')}
               className="mt-4 text-blue-600 hover:underline text-sm"
             >
@@ -274,6 +277,7 @@ export default function SavedSearchesPage() {
                     </span>
 
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation()
                         deleteApplic(search.id)
