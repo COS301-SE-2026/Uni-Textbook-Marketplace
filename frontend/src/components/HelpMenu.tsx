@@ -43,6 +43,7 @@ export default function HelpMenu() {
                             <h2 className="text-xl font-bold text-[var(--foreground)]">Help & FAQs</h2>
 
                             <button
+                                type="button"
                                 onClick={() => setIsOpen(false)}
 
                                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
