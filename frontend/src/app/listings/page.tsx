@@ -11,6 +11,9 @@ import SearchBar  from '@/components/SearchBar'
 import { mylist } from '@/lib/wishlist.api'
 import { useSearchParams } from 'next/navigation'
 
+import SaveSearchButton from '@/components/listings/SaveSearchButton'
+import Link from 'next/link'
+import { Bookmark } from 'lucide-react'
 
 // Filter state
 
@@ -49,6 +52,7 @@ function BrowseListingsContent() {
     
     const [filters, setFilters] = useState<Filters>(() => ({
         ...EMPTY_FILTERS,
+
         search: firstSearch,
     
     }))
@@ -58,14 +62,17 @@ function BrowseListingsContent() {
 
        ...EMPTY_FILTERS,
         search: firstSearch,
+
     }))
 
     const [total, setTotal] = useState(0)
+
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
+
             const params = new URLSearchParams()
 
             if (f.search) params.set('search', f.search)
@@ -85,10 +92,13 @@ function BrowseListingsContent() {
             const total = typeof response.total === 'number' ? response.total : listings.length;
             
             return {
+
+
                 listings: listings.map(mapListing),
                 total: total,
             }
         } catch (err) {
+
             console.error('Failed to fetch listings', err)
             return { listings: [], total: 0 }
         }
@@ -124,14 +134,20 @@ function BrowseListingsContent() {
     // Handlers
 
     const handleFilterChange = (
+
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
+
+
+
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
     }
 
     const searchApplicte = (query: string) => {
+
         setFilters(prev => ({ ...prev, search: query }))
+
         setApplied(prev => ({ ...prev, search: query }))
     }
 
@@ -156,13 +172,24 @@ function BrowseListingsContent() {
             <div className="container-content py-8">
 
                 {/* Header */}
-                <div className="mb-6">
+                <div className="mb-6 flex-center justify-between">
+
+                    <div>
                     <h1>Browse Textbooks</h1>
                     <p className="text-gray-500 text-sm">
                         Find the right textbook for your module
                     </p>
                 </div>
 
+                <Link href="/saved-searches"
+                    className="text-lg text-blue hover:underline flex items-center gap-1">
+
+                        <Bookmark size={20} />
+
+                        Saved Searches
+                    </Link>
+
+                </div>
                 {/* Search Bar */}
 
                 <SearchBar onSearch={searchApplicte}
@@ -299,6 +326,17 @@ function BrowseListingsContent() {
                             >
                                 APPLY FILTERS
                             </button>
+
+
+                            {/* Save Search */}
+                            <div className="border-t border-gray-200 pt-4 mt-2">
+
+                                <SaveSearchButton filters={applied}
+
+                                    onSave={() => console.log('Search saved!')}
+
+                                    />
+                            </div>
 
                         </div>
                     </aside>
