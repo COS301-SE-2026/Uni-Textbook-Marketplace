@@ -18,19 +18,30 @@ async function seed() {
   const facultyRepo = AppDataSource.getRepository(Faculty);
   const universityRepo = AppDataSource.getRepository(University);
 
-  const university = await universityRepo.save(
-    universityRepo.create({
+  let university = await universityRepo.findOne({
+    where: { email_domain: 'up.ac.za' },
+  });
+
+  if (!university) {
+    university = universityRepo.create({
       name: 'University of Pretoria',
       email_domain: 'up.ac.za',
-    }),
-  );
+    });
+    await universityRepo.save(university);
+  }
 
-  const faculty = await facultyRepo.save(
-    facultyRepo.create({
-      name: 'Engineering, Built Environment and Information Technology',
-      university: university,
-    }),
-  );
+  // get or create the Faculty
+  let faculty = await facultyRepo.findOne({
+    where: { name: 'Engineering' },
+  });
+
+  if (!faculty) {
+    faculty = facultyRepo.create({
+      name: 'Engineering',
+    });
+    await facultyRepo.save(faculty);
+    console.log('Faculty created');
+  }
 
   const user = await userRepo.save(
     userRepo.create({
@@ -44,6 +55,7 @@ async function seed() {
     }),
   );
 
+  // create books
   const book = await bookRepo.save(
     bookRepo.create({
       isbn: '9781234567890',
@@ -54,16 +66,17 @@ async function seed() {
     }),
   );
 
+  // add modules - now using Faculty entity
   const module = await moduleRepo.save(
     moduleRepo.create({
       code: 'COS301',
       name: 'Databases',
       faculty: faculty,
-      university: university,
       semester: 2,
     }),
   );
 
+  // create listings
   await listingRepo.save([
     listingRepo.create({
       title: 'COS301 DB Textbook - Excellent Condition',

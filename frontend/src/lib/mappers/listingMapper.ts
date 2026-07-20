@@ -14,6 +14,8 @@ export function mapListing(apiListing: any): Listing {
 
         status: apiListing.status,
 
+        listing_status: apiListing.listing_status,
+
         photo_urls: apiListing.photo_urls || [],
 
         created_at: apiListing.created_at,
