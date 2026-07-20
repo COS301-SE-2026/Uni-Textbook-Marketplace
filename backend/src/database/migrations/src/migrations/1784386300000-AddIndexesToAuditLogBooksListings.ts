@@ -46,12 +46,6 @@ export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
       ON "books" ("edition")
     `);
 
-    // Index for title (for title search)
-    await queryRunner.query(`
-      CREATE INDEX IF NOT EXISTS "idx_books_title" 
-      ON "books" ("title")
-    `);
-
     // Index for module and price (for filtering by module and sorting by price)
     await queryRunner.query(`
       CREATE INDEX IF NOT EXISTS "idx_listings_module_price" 
@@ -114,9 +108,6 @@ export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
     `);
     await queryRunner.query(`
       DROP INDEX IF EXISTS "idx_books_edition"
-    `);
-    await queryRunner.query(`
-      DROP INDEX IF EXISTS "idx_books_title"
     `);
 
     await queryRunner.query(`
