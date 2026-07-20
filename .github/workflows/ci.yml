@@ -37,7 +37,7 @@ jobs:
             cache: 'npm'
 
         - name: Install deps
-          run: npm ci
+          run: npm ci --ignore-scripts
 
         - name: Lint & Test
           working-directory: backend
@@ -70,7 +70,7 @@ jobs:
             cache: 'npm'
 
         - name: Install deps
-          run: npm ci
+          run: npm ci --ignore-scripts
 
         - name: Verification & Build
           working-directory: frontend
