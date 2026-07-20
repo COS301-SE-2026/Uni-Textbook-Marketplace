@@ -5,6 +5,8 @@ npm-debug.log
 # Ignore version control
 .git
 .gitignore
+.next
+.env.local
 
 node_modules
 npm-debug.log*

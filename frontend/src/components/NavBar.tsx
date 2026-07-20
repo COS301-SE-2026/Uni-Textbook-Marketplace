@@ -18,7 +18,7 @@ const authNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Sell', href: '/listings/create' },
   { label: 'Messages', href: '/messages' },
-  { label: 'Favourites', href: '/favourites' },
+  { label: 'Favourites', href: '/wishlist' },
 ]
 
 const adminNavLinks = [

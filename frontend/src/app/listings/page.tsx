@@ -1,13 +1,19 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { mapListing } from '@/lib/mappers/listingMapper'
 import {getListings} from '@/lib/listings.api'
+import SearchBar  from '@/components/SearchBar'
+import { mylist } from '@/lib/wishlist.api'
+import { useSearchParams } from 'next/navigation'
 
+import SaveSearchButton from '@/components/listings/SaveSearchButton'
+import Link from 'next/link'
+import { Bookmark } from 'lucide-react'
 
 // Filter state
 
@@ -19,6 +25,7 @@ interface Filters {
     priceMax: string
     condition: string
     annotationLevel: string
+    search: string
 }
 
 const EMPTY_FILTERS: Filters = {
@@ -29,23 +36,46 @@ const EMPTY_FILTERS: Filters = {
     priceMax: '',
     condition: '',
     annotationLevel: '',
+    search: '',
 }
 
 // Page 
 
-export default function BrowseListingsPage() {
+function BrowseListingsContent() {
+
+    const boundSearches = useSearchParams()
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
-    const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
-    const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS)
+
+    const firstSearch = boundSearches?.get('search') || ''
+    
+    const [filters, setFilters] = useState<Filters>(() => ({
+        ...EMPTY_FILTERS,
+
+        search: firstSearch,
+    
+    }))
+
+
+    const [applied, setApplied] = useState<Filters>(() => ({
+
+       ...EMPTY_FILTERS,
+        search: firstSearch,
+
+    }))
+
     const [total, setTotal] = useState(0)
+
+    const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
     
     const fetchListings = useCallback(async (f: Filters) => {
         try {
+
             const params = new URLSearchParams()
 
+            if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
             if (f.moduleCode) params.set('moduleCode', f.moduleCode)
             if (f.edition) params.set('edition', f.edition)
@@ -62,10 +92,13 @@ export default function BrowseListingsPage() {
             const total = typeof response.total === 'number' ? response.total : listings.length;
             
             return {
+
+
                 listings: listings.map(mapListing),
                 total: total,
             }
         } catch (err) {
+
             console.error('Failed to fetch listings', err)
             return { listings: [], total: 0 }
         }
@@ -83,13 +116,39 @@ export default function BrowseListingsPage() {
         loadListings()
     }, [applied, fetchListings])
 
+    useEffect(() =>{
+        const loadWishlist = async () => {
+            
+            try {
+                const items = await mylist()
+                const ids = items.map((item) => item.listings_id)
+                setLikedIds(new Set(ids))
+            } catch (error) {
+                console.error('failed to fetch wishlist',error)
+            }
+        }
+        loadWishlist()
+    },[])
+
+
     // Handlers
 
     const handleFilterChange = (
+
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
+
+
+
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
+    }
+
+    const searchApplicte = (query: string) => {
+
+        setFilters(prev => ({ ...prev, search: query }))
+
+        setApplied(prev => ({ ...prev, search: query }))
     }
 
     const handleApply = () => setApplied(filters)
@@ -113,12 +172,31 @@ export default function BrowseListingsPage() {
             <div className="container-content py-8">
 
                 {/* Header */}
-                <div className="mb-6">
+                <div className="mb-6 flex-center justify-between">
+
+                    <div>
                     <h1>Browse Textbooks</h1>
                     <p className="text-gray-500 text-sm">
                         Find the right textbook for your module
                     </p>
                 </div>
+
+                <Link href="/saved-searches"
+                    className="text-lg text-blue hover:underline flex items-center gap-1">
+
+                        <Bookmark size={20} />
+
+                        Saved Searches
+                    </Link>
+
+                </div>
+                {/* Search Bar */}
+
+                <SearchBar onSearch={searchApplicte}
+                    initialQuery={filters.search}
+                    className="mb-6"
+                    />
+                    
 
                 <div className="flex flex-col md:flex-row gap-6">
 
@@ -130,7 +208,7 @@ export default function BrowseListingsPage() {
                                 <h3 className="text-base font-semibold">Filters</h3>
                                 <button
                                     onClick={handleClear}
-                                    className="text-xs text-blue-600 hover:underline"
+                                    className="text-sm font-bold text-blue-600 hover:underline"
                                 >
                                     clear all
                                 </button>
@@ -249,6 +327,17 @@ export default function BrowseListingsPage() {
                                 APPLY FILTERS
                             </button>
 
+
+                            {/* Save Search */}
+                            <div className="border-t border-gray-200 pt-4 mt-2">
+
+                                <SaveSearchButton filters={applied}
+
+                                    onSave={() => console.log('Search saved!')}
+
+                                    />
+                            </div>
+
                         </div>
                     </aside>
 
@@ -305,7 +394,7 @@ export default function BrowseListingsPage() {
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {listings.map(listing => (
-                                    <ListingCard key={listing.id} listing={listing} />
+                                    <ListingCard key={listing.id} listing={listing} isLiked={likedIds.has(listing.id)} />
                                 ))}
                             </div>
                         )}
@@ -317,4 +406,57 @@ export default function BrowseListingsPage() {
             </div>
         </ProtectedRoute>
     )
+}
+
+export default function BrowseListingsPage() {
+
+  return (
+    <Suspense fallback={
+
+      <div className="container-content py-8">
+        <div className="mb-6">
+
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+
+          <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mt-2" />
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6">
+
+          <div className="w-full md:w-56 flex-shrink-0">
+
+            <div className="card flex flex-col gap-4">
+
+              <div className="h-6 w-20 bg-gray-200 rounded animate-pulse" />
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+
+                <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
+              ))}
+            </div>
+
+          </div>
+          
+          <div className="flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+
+                <div key={i} className="card animate-pulse flex flex-col gap-3">
+                  <div className="h-40 bg-gray-200 rounded" />
+
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+                  <div className="h-3 bg-gray-100 rounded w-1/2" />
+                  
+                  <div className="h-4 bg-gray-200 rounded w-1/4" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <BrowseListingsContent />
+    </Suspense>
+  )
 }

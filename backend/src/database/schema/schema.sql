@@ -107,8 +107,13 @@ CREATE TABLE listings (
 
     photo_urls TEXT[] DEFAULT '{}', 
 
+    --these status are for admin use
     status VARCHAR(15) DEFAULT 'PENDING'
         CHECK (status IN ('PENDING','APPROVED','REJECTED','SOFT_DELETED')),
+
+    --these are for the listing lifecycle
+    listing_status VARCHAR(10) DEFAULT 'AVAILABLE'
+        CHECK (listing_status IN ('AVAILABLE','RESERVED','SOLD','WITHDRAWN')),
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
@@ -145,6 +150,17 @@ CREATE TABLE audit_log (
     performed_at TIMESTAMPTZ DEFAULT NOW(),
 
     notes TEXT
+);
+
+-- wishlist
+
+CREATE TABLE wishlist (
+
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    listings_id UUID NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+   
+    PRIMARY KEY (user_id, listings_id)
 );
 
 
