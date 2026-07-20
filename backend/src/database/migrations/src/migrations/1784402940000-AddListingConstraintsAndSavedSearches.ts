@@ -3,47 +3,72 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddListingConstraintsAndSavedSearches implements MigrationInterface {
   name = 'AddListingConstraintsAndSavedSearches';
 
+  private async addCheckConstraint(
+    queryRunner: QueryRunner,
+    table: string,
+    constraint: string,
+    check: string,
+  ): Promise<void> {
+    await queryRunner.query(`
+      ALTER TABLE "${table}" DROP CONSTRAINT IF EXISTS "${constraint}"
+    `);
+    await queryRunner.query(`
+      ALTER TABLE "${table}" 
+      ADD CONSTRAINT "${constraint}" 
+      CHECK (${check})
+    `);
+  }
+
+  private async dropCheckConstraint(
+    queryRunner: QueryRunner,
+    table: string,
+    constraint: string,
+  ): Promise<void> {
+    await queryRunner.query(`
+      ALTER TABLE "${table}" DROP CONSTRAINT IF EXISTS "${constraint}"
+    `);
+  }
+
+  private async createIndex(
+    queryRunner: QueryRunner,
+    name: string,
+    table: string,
+    columns: string[],
+  ): Promise<void> {
+    await queryRunner.query(`
+      CREATE INDEX IF NOT EXISTS "${name}" 
+      ON "${table}" (${columns.join(', ')})
+    `);
+  }
+
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Add CHECK constraint for condition
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_condition_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" 
-      ADD CONSTRAINT "listings_condition_check" 
-      CHECK ("condition" IN ('new', 'good', 'fair', 'poor'))
-    `);
+    // Add CHECK constraints for listings
+    await this.addCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_condition_check',
+      "\"condition\" IN ('new', 'good', 'fair', 'poor')",
+    );
+    await this.addCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_annotation_level_check',
+      "\"annotation_level\" IN ('none', 'light', 'heavy')",
+    );
+    await this.addCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_price_check',
+      '"price" >= 0',
+    );
+    await this.addCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_status_check',
+      "\"status\" IN ('PENDING', 'APPROVED', 'REJECTED', 'SOFT_DELETED')",
+    );
 
-    // Add CHECK constraint for annotation_level
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_annotation_level_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" 
-      ADD CONSTRAINT "listings_annotation_level_check" 
-      CHECK ("annotation_level" IN ('none', 'light', 'heavy'))
-    `);
-
-    // Add CHECK constraint for price >= 0
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_price_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" 
-      ADD CONSTRAINT "listings_price_check" 
-      CHECK ("price" >= 0)
-    `);
-
-    // Add CHECK constraint for status
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_status_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" 
-      ADD CONSTRAINT "listings_status_check" 
-      CHECK ("status" IN ('PENDING', 'APPROVED', 'REJECTED', 'SOFT_DELETED'))
-    `);
-
+    // Create saved_searches table
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "saved_searches" (
         "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -54,15 +79,18 @@ export class AddListingConstraintsAndSavedSearches implements MigrationInterface
     `);
 
     // Create indexes for saved_searches
-    await queryRunner.query(`
-      CREATE INDEX IF NOT EXISTS "idx_saved_search_user" 
-      ON "saved_searches" ("user_id")
-    `);
-
-    await queryRunner.query(`
-      CREATE INDEX IF NOT EXISTS "idx_saved_search_created_at" 
-      ON "saved_searches" ("created_at")
-    `);
+    await this.createIndex(
+      queryRunner,
+      'idx_saved_search_user',
+      'saved_searches',
+      ['user_id'],
+    );
+    await this.createIndex(
+      queryRunner,
+      'idx_saved_search_created_at',
+      'saved_searches',
+      ['created_at'],
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -70,17 +98,25 @@ export class AddListingConstraintsAndSavedSearches implements MigrationInterface
       DROP TABLE IF EXISTS "saved_searches"
     `);
 
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_condition_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_annotation_level_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_price_check"
-    `);
-    await queryRunner.query(`
-      ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_status_check"
-    `);
+    await this.dropCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_condition_check',
+    );
+    await this.dropCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_annotation_level_check',
+    );
+    await this.dropCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_price_check',
+    );
+    await this.dropCheckConstraint(
+      queryRunner,
+      'listings',
+      'listings_status_check',
+    );
   }
 }
