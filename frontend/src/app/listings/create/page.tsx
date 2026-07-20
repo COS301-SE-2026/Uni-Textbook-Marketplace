@@ -17,7 +17,7 @@ type FormErrors = Partial<Record<keyof ListingFormData, string>>
 
 function validateBookDetails(form: ListingFormData): FormErrors {
     const errors: FormErrors = {}
-    if (!form.title.trim())     errors.title     = 'Title is required'
+    if (!form.bookName.trim())     errors.bookName     = 'Book name is required'
     if (!form.author.trim())    errors.author    = 'Author is required'
     if (!form.edition.trim())   errors.edition   = 'Edition is required'
     if (!form.publisher.trim()) errors.publisher = 'Publisher is required'
@@ -35,6 +35,7 @@ function validateModuleDetails(form: ListingFormData): FormErrors {
     const errors: FormErrors = {}
     if (!form.code.trim()) errors.code    = 'Module code is required'
     if (!form.name.trim()) errors.name    = 'Module name is required'
+    if (!form.semester.trim()) errors.name = 'Semester is required'
     if (!form.faculty)     errors.faculty = 'Faculty is required'
     return errors
 }
@@ -86,7 +87,7 @@ export default function CreateListingPage() {
 
     const [form, setForm] = useState<ListingFormData>({
         // Book
-        title: '',
+        bookName: '',
         author: '',
         edition: '',
         isbn: '',
@@ -95,11 +96,14 @@ export default function CreateListingPage() {
         code: '',
         name: '',
         faculty: '',
+        semester: '',
         // Listing
+        listingTitle: '',
         condition: '',
         annotationLevel: '',
         price: '',
         description: '',
+        has_notes: false,
         // Images
         images: [],
     })
@@ -152,31 +156,33 @@ export default function CreateListingPage() {
 
         try {
             const book = await createBook({
-                title: form.title,
+                title: form.bookName,
                 author: form.author,
-                edition: form.edition ? Number(form.edition) : undefined,
-                isbn: form.isbn || undefined,
-                publisher: form.publisher || undefined,
+                edition: Number(form.edition),
+                isbn: form.isbn,
+                publisher: form.publisher,
             })
 
             const createdModule = await createModule({
                 code: form.code,
                 name: form.name,
-                faculty: form.faculty || undefined,
+                faculty_id: form.faculty,
+                semester: Number(form.semester),
             })
 
             const { urls } = await uploadImages(form.images)
             
 
             await createListing({
-                title: form.title,
+                title: form.listingTitle,
                 bookId: book.id,
                 moduleId: createdModule.id,
                 condition: form.condition as CreateListingData['condition'],
                 annotationLevel: form.annotationLevel as CreateListingData['annotationLevel'],
                 price: Number(form.price),
-                hasNotes: false,
+                has_notes: form.has_notes,
                 photoUrls: urls,
+                description: form.description,
             })
 
             setShowSuccess(true)
@@ -186,7 +192,6 @@ export default function CreateListingPage() {
 
             if (err instanceof Error) {
                 console.error('Error:', err.message)
-                console.error('Stack error:', err.stack)
                 alert(`Error: ${err.message}`)
             } else {
                 alert('Something went wrong. Please try again.')
@@ -205,7 +210,7 @@ export default function CreateListingPage() {
                 <h4>Fill in the details below</h4>
 
                 {/* Step tabs */}
-                <div className="flex gap-3 my-8">
+                <div className="flex gap-3 my-8 justify-between">
                     {STEP_LABELS.map((label, i) => (
                         <button
                             key={label}
@@ -242,7 +247,7 @@ export default function CreateListingPage() {
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} variant="secondary">Next</Button>
+                        <Button onClick={nextStep} variant="primary">Next</Button>
                     ) : (
                         <Button onClick={handleSubmit} variant="secondary" disabled={loading}>
                             {loading ? 'Posting...' : 'POST LISTING'}
