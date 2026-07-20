@@ -3,13 +3,13 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { join } from 'path';
 
 const serviceAccount = require(join(
-  process.cwd(),
-  'firebase',
-  'serviceAccountKey.json',
+    process.cwd(),
+    'firebase',
+    'serviceAccountKey.json',
 ));
 
 initializeApp({
-  credential: cert(serviceAccount),
+    credential: cert(serviceAccount),
 });
 
 const db = getFirestore();
