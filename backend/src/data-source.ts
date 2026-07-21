@@ -20,6 +20,17 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   synchronize: false,
   logging: true,
-  entities: [Faculty, User, Listing, Book, Module, University, OTP, AuditLog, SavedSearch, Wishlist],
+  entities: [
+    Faculty,
+    User,
+    Listing,
+    Book,
+    Module,
+    University,
+    OTP,
+    AuditLog,
+    SavedSearch,
+    Wishlist,
+  ],
   migrations: ['src/database/migrations/*.ts'],
 });

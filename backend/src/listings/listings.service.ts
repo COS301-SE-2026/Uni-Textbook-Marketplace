@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,6 +15,7 @@ import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
+import { SavedSearchesService } from '../saved_search/saved_search.service';
 
 @Injectable()
 export class ListingsService {
@@ -29,6 +32,9 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private moduleRepo: Repository<ModuleEntity>,
+
+    @Inject(forwardRef(() => SavedSearchesService))
+    private savedSearchesService: SavedSearchesService,
   ) {}
 
   //Create
@@ -56,7 +62,54 @@ export class ListingsService {
       has_notes: dto.hasNotes ?? false,
     });
 
-    return this.listingRepo.save(listing);
+    const savedListing = await this.listingRepo.save(listing);
+
+    this.checkSavedSearchMatches(savedListing.id).catch((error) => {
+      console.error('Error checking saved search matches:', error);
+    });
+
+    return savedListing;
+  }
+
+  private async checkSavedSearchMatches(listingId: string): Promise<void> {
+    try {
+      const matches =
+        await this.savedSearchesService.findMatchingSavedSearches(listingId);
+
+      if (matches.length === 0) {
+        console.log(`No saved search matches found for listing ${listingId}`);
+
+        return;
+      }
+      console.log(
+        `Found ${matches.length} saved search matches for listing ${listingId}`,
+      );
+
+      for (const match of matches) {
+        console.log(
+          `User ${match.userId} has a saved search match for listing ${listingId}`,
+        );
+
+        // i'll uncomment this when the notification service is ready:
+
+        // await this.notificationService.createNotification({
+
+        //   userId: match.userId,
+
+        //   type: 'NEW_MATCH',
+
+        //   listingId: listingId,
+
+        //   message: `New listing matches your saved search`,
+
+        // });
+      }
+    } catch (error) {
+      console.error(
+        `Error checking saved search matches for listing ${listingId}:`,
+        error,
+      );
+    }
   }
 
   //get the validated ones
@@ -68,12 +121,11 @@ export class ListingsService {
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
 
-      if (query?.search) {
+    if (query?.search) {
+      const itemSearched = `%${query.search}%`;
 
-        const itemSearched = `%${query.search}%`;
-
-        qb.andWhere(
-          `(
+      qb.andWhere(
+        `(
           listing.title ILIKE :itemSearched OR
           book.title ILIKE :itemSearched OR
           book.author ILIKE :itemSearched OR
@@ -81,12 +133,9 @@ export class ListingsService {
           module.code ILIKE :itemSearched
           )`,
 
-
-          { itemSearched }
-          
-        );
-
-      }
+        { itemSearched },
+      );
+    }
     //optional query filters
     if (query?.moduleCode) {
       qb.andWhere('module.code ILIKE :moduleCode', {
