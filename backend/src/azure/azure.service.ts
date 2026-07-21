@@ -4,6 +4,8 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AzureService {
+
+
   private readonly blobServiceClient: BlobServiceClient;
   private readonly containerName: string;
   private readonly accountName: string;
@@ -11,8 +13,11 @@ export class AzureService {
   constructor() {
 
     const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
+
+
     this.accountName =
       process.env.AZURE_STORAGE_ACCOUNT_NAME || 'blobpocnexusdev';
+
     this.containerName =
       process.env.AZURE_STORAGE_CONTAINER_NAME || 'nexusdevimages';
 
@@ -52,14 +57,11 @@ export class AzureService {
     const containerClient = this.blobServiceClient.getContainerClient(
       this.containerName
     );
-    
     const extSections = file.originalname.split('.');
-
     const fileExtens = extSections.length > 1 ? extSections[extSections.length - 1] : 'png';
 
     const blobContName = `${randomUUID()}.${fileExtens}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobContName);
-
     await blockBlobClient.uploadData(file.buffer, {
       blobHTTPHeaders: {
         blobContentType: file.mimetype,
@@ -86,7 +88,6 @@ export class AzureService {
   }
 
   async deleteImage(imageUrl: string): Promise<void> {
-
     if (!imageUrl) return;
 
     try {
@@ -98,8 +99,8 @@ export class AzureService {
       const specificBlob = pathUrls[pathUrls.length - 1];
 
       if (!specificBlob) {
-        
         throw new BadRequestException('Couldnt find blob path');
+
       }
       const blockBlobClient = containerClient.getBlockBlobClient(specificBlob);
       await blockBlobClient.deleteIfExists();

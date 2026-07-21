@@ -5,11 +5,18 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  Index,
+  Check,
 } from 'typeorm';
 
 import { User } from './users.entity';
 
 @Entity('audit_log')
+@Index('idx_audit_entity', ['entity_type', 'entity_id'])
+@Index('idx_audit_created_at', ['performed_at'])
+@Check(
+  `action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN')`,
+)
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

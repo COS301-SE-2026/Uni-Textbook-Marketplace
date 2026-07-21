@@ -42,11 +42,17 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  private getCookieOptions(maxAge: number) {
+  private getCookieOptions(maxAge: number): {
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: 'none' | 'lax';
+    maxAge: number;
+  } {
+    const isInProduct = process.env.NODE_ENV === 'production';
     return {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax' as const,
+      secure: isInProduct,
+      sameSite: isInProduct ? 'none' : 'lax',
       maxAge,
     };
   }
@@ -84,23 +90,19 @@ export class AuthController {
   ) {
     const tokens = await this.authService.login(dto);
 
-    res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 15 * 60 * 1000,
-    });
+    res.cookie(
+      'access_token',
+      tokens.accessToken,
+      this.getCookieOptions(15 * 60 * 1000),
+    );
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie(
+      'refresh_token',
+      tokens.refreshToken,
+      this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
+    );
 
-    return { 
-      message: 'Login successful.' 
-    };
+    return { message: 'Login successful.' };
   }
 
   @Get('universities')

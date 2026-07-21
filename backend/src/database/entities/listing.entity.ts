@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 import { User } from './users.entity';
@@ -28,6 +29,13 @@ export enum ListingsStatus {
 }
 
 @Entity('listings')
+@Index('idx_listings_module_price', ['module', 'price'])
+@Index('idx_listings_condition', ['condition'])
+@Index('idx_listings_annotation', ['annotation_level'])
+@Index('idx_listing_status', ['status'])
+@Index('idx_listing_seller', ['seller'])
+@Index('idx_listing_reviewed_by', ['reviewer'])
+@Index('idx_listings_created_at', ['created_at'])
 export class Listing {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

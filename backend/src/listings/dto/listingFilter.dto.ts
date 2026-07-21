@@ -32,4 +32,8 @@ export class ListingFiltersDto {
   @Type(() => Number)
   @IsNumber()
   edition?: number;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

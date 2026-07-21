@@ -69,6 +69,26 @@ export class ListingsService {
       .leftJoinAndSelect('listing.module', 'module')
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
+
+      if (query?.search) {
+
+        const itemSearched = `%${query.search}%`;
+
+        qb.andWhere(
+          `(
+          listing.title ILIKE :itemSearched OR
+          book.title ILIKE :itemSearched OR
+          book.author ILIKE :itemSearched OR
+          book.isbn ILIKE :itemSearched OR
+          module.code ILIKE :itemSearched
+          )`,
+
+
+          { itemSearched }
+          
+        );
+
+      }
     //optional query filters
     if (query?.moduleCode) {
       qb.andWhere('module.code ILIKE :moduleCode', {

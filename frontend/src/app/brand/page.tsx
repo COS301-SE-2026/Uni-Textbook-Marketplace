@@ -41,29 +41,39 @@ export default function BrandPage() {
     const [reducedMotion] = useState(false)
 
     return (
+
         <div className="min-h-screen bg-white text-slate-800">
+
             <style>{`@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
             .font-mono-brand { font-family: 'IBM Plex Mono', monospace;}`}</style>
 
             {/* Header */}
             <header className="bg-[#000f2b] py-16 border-b border-slate-800">
+
+
                 <div className="container-content">
 
                     <span className="text-sm font-bold tracking-widest uppercase text-[#00B4D8] block mb-2">
                         Brand Style Guide
                     </span>
+
                     <h1 className="text-white font-extrabold text-4xl md:text-5xl tracking-tight">
                         Brand Tokens & UI System
                     </h1>
+
+
                     <p className="text-slate-400 text-sm max-w-xl mt-3 leading-relaxed">
                         Live source of truth for the Uni Textbook Marketplace project. The styling classes and color tokens mapped out below directly correspond to our global CSS configuration.
                     </p>
+
                 </div>
             </header>
 
             <main className="container-content py-16 space-y-16">
 
                     <section aria-labelledby="story-heading">
+
+
                         <h2 id="story-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-4">
                             Evolution from Demo 1
                         </h2>
@@ -78,21 +88,29 @@ export default function BrandPage() {
                                 The landing page layout also went through multiple structural iterations. Initial ideas favored complex serif display patterns, highlighting overlays, and stacked sample cards. To keep production assets clean, the final shipped hero uses a full-bleed campus photo with clean Montserrat text layers, emphasizing our slogan: <strong>&ldquo;Made for Students, by Students&rdquo;</strong>. Deploying this documentation page directly within the app pipeline allows us to track visual consistency across components in real-time.
                             </p>
                         </div>
+
                     </section>
 
                     {/* Swatches */}
                     
                     <section aria-labelledby="colour-heading">
+
                         <h2 id="colour-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Colour Palette</h2>
+
                         <p className="text-slate-500 text-sm mb-6">
                             Core tokens carried over from the initial design sprint,along with text compliance fixes. Contrast mappings are documented inside <code className="font-mono-brand text-xs text-[#006D8A]">globals.css</code>.
 
                         </p>
                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Core Base</h3>
                         <div className="grid grid-cols md:grid-cols-4 gap-4 mb-10">
+
+
                             {MAIN_TOKENS.map((item) => (
+
                                 <div key={item.name} className="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white">
                                     <div className="h-16 w-full" style={{ backgroundColor: item.hex }} />
+
+
                                     <div className="p-3">
 
                                         <p className="text-sm font-bold text-[#000f2b]">{item.name}</p>
@@ -100,6 +118,7 @@ export default function BrandPage() {
                                         <p className="text-[11px] text-slate-500 mt-1 leading-snug">{item.usage}</p>
                                     </div>
                                 </div>
+
                             ))}
                         </div>
 
@@ -110,12 +129,16 @@ export default function BrandPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {PERFECTED_TOKENS.map((item) => (
+
                                 <div key={item.name} className="border border-slate-100 rounded-xl p-4 flex items-center gap-4 bg-white shadow-sm">
                                     <div className="w-10 h-10 rounded-lg shrink-0 border border-slate-200"
                                         style={{ backgroundColor: item.hex.split(' / ')[0] }}
                                     />
                                     <div className="space-y-1">
+
+
                                         <p className="text-sm font-bold text-[#000f2b]">{item.name}</p>
+
                                         <p className="font-mono-brand text-[11px] text-slate-400">{item.hex}</p>
                                         <p className="text-[14px] text-slate-500">{item.usage}</p>
 
@@ -123,6 +146,7 @@ export default function BrandPage() {
                                             Ratio: {item.ratio}
                                         </span>
                                     </div>
+
                                 </div>
                             ))}
                         </div>
@@ -142,16 +166,22 @@ export default function BrandPage() {
 
                 {/* Typography */}
                 <section aria-labelledby="type-heading">
+
+
                     <h2 id="type-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Typography System</h2>
+
                     <p className="text-slate-500 text-lg mb-6">
                         Our application interface relies entirely on the <strong>Montserrat</strong> font family for authenticated views, forms, and core navigation systems.
                     </p>
 
 
                     <div className="overflow-x-auto border border-slate-100 rounded-xl bg-white shadow-sm">
+
+
                         <table className="w-full text-sm text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+
                                     <th className="p-3">Element</th>
                                     <th className="p-3">Size</th>
                                     <th className="p-3">Weight</th>
@@ -160,11 +190,13 @@ export default function BrandPage() {
                             </thead>
                             <tbody>
                                 {TYPE_LEVEL.map((row) => (
+
                                     <tr key={row.tag} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/30">
                                         <td className="p-3 font-bold text-[#000f2b]">{row.tag}</td>
                                         <td className="p-3 font-mono-brand text-slate-500">{row.size}</td>
                                         <td className="p-3 text-slate-500">{row.weight}</td>
                                         <td className="p-3 text-slate-500">{row.lh}</td>
+
                                     </tr>
                                 ))}
                             </tbody>
@@ -174,13 +206,20 @@ export default function BrandPage() {
 
                 {/* Component Demos */}
                 <section aria-labelledby="components-heading">
+
                     <h2 id="components-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-2">Component Preview Library</h2>
                     <p className="text-slate-500 text-sm mb-6">Live element examples rendered with our global layout styling classes.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
                         <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Action Actions</h3>
+
+
                             <div className="flex flex-wrap items-center gap-3">
+
+
                                 <button className="px-4 py-2 bg-[#00B4D8] hover:bg-[#0096B4] text-[#000f2b] text-sm font-bold rounded-md transition-colors">Primary</button>
                                 <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-md transition-colors">Secondary</button>
                                 <button className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-md transition-colors">Danger</button>
@@ -188,19 +227,29 @@ export default function BrandPage() {
                         </div>
 
                         <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
+
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Queue Status Badges</h3>
+
+
                             <div className="flex flex-wrap items-center gap-2">
+
+
                                 <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0F7] text-[#004F66]">Pending</span>
                                 <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0DC] text-[#155E2E]">Approved</span>
                                 <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#FDE8E8] text-[#7F1D1D]">Rejected</span>
                             </div>
                         </div>
+
                     </div>
                 </section>
 
                 {/* Accessibility & Compliance */}
                 <section aria-labelledby="a11y-heading" className="border-t border-slate-100 pt-10">
+
+                    
                     <h2 id="a11y-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-3">Accessibility Framework</h2>
+
+
                     <ul className="text-sm text-slate-600 space-y-2 list-disc pl-5 max-w-2xl">
                         <li>Compliance Target: <strong>WCAG 2.2 AA</strong> interface baseline across all routes.</li>
                         <li>Interactive elements utilize high-visibility focus rings (<code className="font-mono-brand text-[11px]">rgba(0,180,216,.15)</code>).</li>
@@ -209,6 +258,8 @@ export default function BrandPage() {
                     </ul>
 
                     <div className="mt-4 flex items-center gap-3">
+
+
                         <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-md transition-colors
                             onClick={() => setReducedMotion((v) => !v)}">
                                 {reducedMotion ? 'Reduced Motion Active' : 'Default Motion On'}

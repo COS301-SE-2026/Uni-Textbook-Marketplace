@@ -10,6 +10,7 @@ import { Module } from './database/entities/module.entity';
 import { University } from './database/entities/university.entity';
 import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
+import { SavedSearch } from './database/entities/saved_search.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 
 dotenv.config();
@@ -19,6 +20,6 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   synchronize: false,
   logging: true,
-  entities: [Faculty, User, Listing, Book, Module, University, OTP, AuditLog,Wishlist],
+  entities: [Faculty, User, Listing, Book, Module, University, OTP, AuditLog, SavedSearch, Wishlist],
   migrations: ['src/database/migrations/*.ts'],
 });
