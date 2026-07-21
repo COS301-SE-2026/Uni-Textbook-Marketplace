@@ -65,8 +65,6 @@ export default function ListingDetailPage() {
     const [showMessageModal, setShowMessageModal] = useState(false)
     const [message, setMessage] = useState('')
     const [messageSent, setMessageSent] = useState(false)
-    const [saving, setSaving] = useState(false)
-    const [saved, setSaved] = useState(false)
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: false,
         moduleDetails: false,
@@ -217,7 +215,7 @@ export default function ListingDetailPage() {
                             {[
                                 ['Condition', CONDITION_LABEL[listing.condition]],
                                 ['Annotations', ANNOTATION_LABEL[listing.annotation_level]],
-                                ['Listing status', <Badge variant='approved'>{LISTING_LABEL[listing.listing_status]}</Badge>],
+                                ['Listing status', <Badge key="listing-status" variant='approved'>{LISTING_LABEL[listing.listing_status]}</Badge>],
                                 ['Listed', timeAgo(listing.created_at)],
                             ].map(([label, value], index) => (
                                 <tr key={`detail-row-${index}`} className="border-b border-gray-100">

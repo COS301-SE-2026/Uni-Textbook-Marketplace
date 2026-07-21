@@ -8,5 +8,5 @@ export class CreateListingDto {
   price!: number;
   photoUrls?: string[];
   hasNotes?: boolean;
-  description:string;
+  description: string;
 }

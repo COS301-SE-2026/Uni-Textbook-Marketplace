@@ -30,7 +30,7 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private moduleRepo: Repository<ModuleEntity>,
-  ) { }
+  ) {}
 
   //Create
   async createListing(userId: string, dto: CreateListingDto) {
@@ -70,12 +70,11 @@ export class ListingsService {
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
 
-      if (query?.search) {
+    if (query?.search) {
+      const itemSearched = `%${query.search}%`;
 
-        const itemSearched = `%${query.search}%`;
-
-        qb.andWhere(
-          `(
+      qb.andWhere(
+        `(
           listing.title ILIKE :itemSearched OR
           book.title ILIKE :itemSearched OR
           book.author ILIKE :itemSearched OR
@@ -83,12 +82,9 @@ export class ListingsService {
           module.code ILIKE :itemSearched
           )`,
 
-
-          { itemSearched }
-          
-        );
-
-      }
+        { itemSearched },
+      );
+    }
     //optional query filters
     if (query?.moduleCode) {
       qb.andWhere('module.code ILIKE :moduleCode', {
@@ -134,7 +130,7 @@ export class ListingsService {
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module','seller','seller.university'],
+      relations: ['book', 'module', 'seller', 'seller.university'],
     });
   }
 
@@ -146,7 +142,7 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller','seller.university'],
+      relations: ['book', 'module', 'seller', 'seller.university'],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
@@ -195,10 +191,9 @@ export class ListingsService {
   }
 
   async editlisting(dto: EditListingDto) {
-
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
-    })
+    });
 
     if (!listing) throw new NotFoundException('listing not found');
 

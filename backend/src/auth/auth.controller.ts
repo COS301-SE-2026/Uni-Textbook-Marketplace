@@ -29,7 +29,7 @@ interface AuthenticatedRequest extends ExpressRequest {
 interface RequestWithCookies extends ExpressRequest {
   cookies: {
     refresh_token?: string;
-  }
+  };
 }
 
 @Controller('auth')
@@ -141,11 +141,14 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(200)
-  async refresh(@Request() req: RequestWithCookies, @Res({passthrough: true}) res: Response){
-    
+  async refresh(
+    @Request() req: RequestWithCookies,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const refreshToken = req.cookies?.refresh_token;
 
-    if (!refreshToken) throw new UnauthorizedException('No refresh token provided');
+    if (!refreshToken)
+      throw new UnauthorizedException('No refresh token provided');
 
     const tokens = await this.authService.refreshTokens(refreshToken);
 
@@ -163,6 +166,6 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { message : 'Token refreshed'}
+    return { message: 'Token refreshed' };
   }
 }

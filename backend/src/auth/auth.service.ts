@@ -21,7 +21,7 @@ import { EMAIL_SERVICE } from '../email/email.interface';
 
 import { User } from '../database/entities/users.entity';
 import { University } from '../database/entities/university.entity';
-import { Faculty } from '../database/entities/faculty.entity'; 
+import { Faculty } from '../database/entities/faculty.entity';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class AuthService {
     private readonly universityRepository: Repository<University>,
 
     @InjectRepository(Faculty)
-    private readonly facultyRepository: Repository<Faculty>, 
+    private readonly facultyRepository: Repository<Faculty>,
 
     private readonly otpService: OtpService,
 
@@ -312,41 +312,40 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string) {
-    
     let payload: {
       sub: string;
       email: string;
       role: string;
-    }
+    };
 
-    try{
+    try {
       payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
-    } catch{
+    } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
     const user = await this.userRepository.findOne({
       where: {
         id: payload.sub,
-        deleted_at: IsNull()
+        deleted_at: IsNull(),
       },
       select: {
         id: true,
         email: true,
-        role: true
-      }
+        role: true,
+      },
     });
 
-    if (!user){
-      throw new UnauthorizedException('user not found')
+    if (!user) {
+      throw new UnauthorizedException('user not found');
     }
 
     return this.issueTokens({
       id: user.id,
       email: user.email,
       role: user.role,
-    })
+    });
   }
 }

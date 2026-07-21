@@ -86,9 +86,9 @@ export class ListingsController {
 
   //for student to edit listings
   @Patch('editlist')
-  @UseGuards(JwtAuthGuard,RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('student')
-  async editlisting(@Body() dto: EditListingDto){
+  async editlisting(@Body() dto: EditListingDto) {
     return this.listingsService.editlisting(dto);
   }
 }

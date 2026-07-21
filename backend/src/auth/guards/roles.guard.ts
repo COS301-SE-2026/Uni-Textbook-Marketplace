@@ -35,7 +35,6 @@ export class RolesGuard implements CanActivate {
     } else if (Array.isArray(rolesMetadata)) {
       requiredRoles = rolesMetadata;
     } else {
-      
       return true;
     }
 
