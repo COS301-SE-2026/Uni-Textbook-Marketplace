@@ -13,7 +13,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://localhost:3001',
-      'https://FRONTEND_FQDN_HERE',
+      'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
