@@ -18,7 +18,7 @@ jobs:
           image: postgres:15
           env:
             POSTGRES_USER: nexusdev
-            POSTGRES_PASSWORD: nexusdev_test
+            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD}}
             POSTGRES_DB: textbook_marketplace_test
           ports:
             - 5432:5432
@@ -45,8 +45,8 @@ jobs:
             npm run lint
             npm run test:cov
           env:
-            DATABASE_URL: postgresql://nexusdev:nexusdev_test@localhost:5432/textbook_marketplace_test
-            JWT_ACCESS_SECRET: ci_test_secret
+            DATABASE_URL: postgresql://nexusdev:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/textbook_marketplace_test
+            JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
             NODE_ENV: test
 
         - name: Upload Report
