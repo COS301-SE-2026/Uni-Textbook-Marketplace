@@ -7,6 +7,7 @@ import {
   HttpCode,
   UseGuards,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response, Request as ExpressRequest } from 'express';
@@ -23,6 +24,12 @@ interface AuthenticatedRequest extends ExpressRequest {
     id: string;
     email?: string;
   };
+}
+
+interface RequestWithCookies extends ExpressRequest {
+  cookies: {
+    refresh_token?: string;
+  }
 }
 
 @Controller('auth')
@@ -128,5 +135,32 @@ export class AuthController {
   @HttpCode(200)
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
+  }
+
+  @Post('refresh')
+  @HttpCode(200)
+  async refresh(@Request() req: RequestWithCookies, @Res({passthrough: true}) res: Response){
+    
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) throw new UnauthorizedException('No refresh token provided');
+
+    const tokens = await this.authService.refreshTokens(refreshToken);
+
+    res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return { message : 'Token refreshed'}
   }
 }

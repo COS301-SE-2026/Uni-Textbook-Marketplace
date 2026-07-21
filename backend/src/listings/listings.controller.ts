@@ -24,6 +24,7 @@ import { CreateListingDto } from './dto/create-listing.dto';
 import { Request } from 'express';
 
 import { ListingFiltersDto } from './dto/listingFilter.dto';
+import { EditListingDto } from './dto/editListing.dtos';
 
 interface AuthenticatedUser {
   id: string;
@@ -113,5 +114,13 @@ export class ListingsController {
       }
       throw new NotFoundException(`Listing with ID ${id} not found`);
     }
+  }
+
+  //for student to edit listings
+  @Patch('editlist')
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @Roles('student')
+  async editlisting(@Body() dto: EditListingDto){
+    return this.listingsService.editlisting(dto);
   }
 }

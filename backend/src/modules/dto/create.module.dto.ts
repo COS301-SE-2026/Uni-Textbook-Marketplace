@@ -2,6 +2,6 @@ export class CreateModuleDto {
   code: string;
   name: string;
   faculty_id: string;
-  semester?: number;
+  semester: number;
   university_id: string;
 }

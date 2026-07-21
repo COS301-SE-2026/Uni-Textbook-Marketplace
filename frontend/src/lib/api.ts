@@ -1,5 +1,3 @@
-// This is the BASE API client, one file that knows how to talk to our backend
-// Every other API file (auth.api.ts, listings.api.ts, etc.) will builds on top of this
 
 export interface ApiError {
     message: string;
@@ -13,26 +11,35 @@ if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
 export default BASE_URL;
-//Temp Helper
 function getAuthToken(): string | null {
     if (typeof globalThis.window === 'undefined') return null;
     return localStorage.getItem('token');
+}
+
+async function tryRefresh(): Promise<boolean> {
+    
+    try {
+        const res = await fetch(`${BASE_URL}/auth/refresh`,{
+            method: 'POST',
+            credentials: 'include',
+        });
+        return res.ok;
+    } catch {
+        return false;
+    }
 }
 
 async function request<T>(
     method: string,
     path: string,
     body?: unknown,
+    isRetry = false
 ): Promise<T> {
-    const token = getAuthToken();
 
     const headers: HeadersInit = {
         'Content-type': 'application/json',
     };
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     const response = await fetch(`${BASE_URL}${path}`, {
         method,
         headers,
@@ -54,6 +61,18 @@ async function request<T>(
         const message = Array.isArray(errorData?.message)
             ? errorData.message.join(', ')
             : errorData?.message ?? 'Something went wrong. Please try again.';
+
+        if(response.status === 401 && !isRetry && path !== '/auth/refresh' && path !== '/auth/login'){
+            const refreshed = await tryRefresh();
+
+            if(refreshed){
+                return request<T>(method,path,body,true);
+            }
+
+           if(typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
+                window.location.href = '/auth/login';
+           }
+        }
 
         const error: ApiError = {
             message,

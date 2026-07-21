@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
 import { api } from '@/lib/api'
+import EditPage from '@/components/listings/editpage'
+import { Button } from '@/components/ui'
 
 // Filter tabs
 
@@ -26,8 +28,10 @@ export default function MyListingsPage() {
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<Tab>('ALL')
-    const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
-    const [deleting, setDeleting] = useState(false)
+    const [selectedListingId, setSelectedListingId] = useState<string | null>(null)
+    // const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+    // const [deleting, setDeleting] = useState(false)
+    const [EditPanel, setEditPanel] = useState(false)
 
     // Fetch
 
@@ -36,7 +40,7 @@ export default function MyListingsPage() {
             setLoading(true)
             try {
                 const data = await api.get<Listing[]>('/listings/mine')
-                setListings(data ?? [])
+                setListings(data)
             } catch (err) {
                 console.error('Failed to load listings', err)
             } finally {
@@ -48,37 +52,44 @@ export default function MyListingsPage() {
 
     // Derived 
 
+    const listingSafe = Array.isArray(listings) ? listings : []
+
     const filtered = activeTab === 'ALL'
-        ? listings
-        : listings.filter(l => l.status === activeTab)
+        ? listingSafe
+        : listingSafe.filter(l => l.status === activeTab)
 
     const counts: Record<Tab, number> = {
-        ALL: listings.length,
-        APPROVED: listings.filter(l => l.status === 'APPROVED').length,
-        PENDING: listings.filter(l => l.status === 'PENDING').length,
-        REJECTED: listings.filter(l => l.status === 'REJECTED').length,
+        ALL: listingSafe.length,
+        APPROVED: listingSafe.filter(l => l.status === 'APPROVED').length,
+        PENDING: listingSafe.filter(l => l.status === 'PENDING').length,
+        REJECTED: listingSafe.filter(l => l.status === 'REJECTED').length,
+    }
+
+    const closeEditPanel = () => {
+        setEditPanel(false)
+        setSelectedListingId(null)
     }
 
     // Delete 
 
-    const handleDelete = async () => {
-        if (!deleteTarget) return
-        setDeleting(true)
-        try {
-            await api.delete(`/listings/${deleteTarget}`)
-            setListings(prev => prev.filter(l => l.id !== deleteTarget))
-            setDeleteTarget(null)
-        } catch (err) {
-            console.error('Delete failed', err)
-        } finally {
-            setDeleting(false)
-        }
-    }
+    // const handleDelete = async () => {
+    //     if (!deleteTarget) return
+    //     setDeleting(true)
+    //     try {
+    //         await api.delete(`/listings/${deleteTarget}`)
+    //         setListings(prev => prev.filter(l => l.id !== deleteTarget))
+    //         setDeleteTarget(null)
+    //     } catch (err) {
+    //         console.error('Delete failed', err)
+    //     } finally {
+    //         setDeleting(false)
+    //     }
+    // }
 
     // Render 
 
     return (
-        <div className="container-content py-8">
+        <div className="container-content py-8 relative">
 
             {/* Header */}
             <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
@@ -172,26 +183,35 @@ export default function MyListingsPage() {
                     {filtered.map(listing => (
                         <div key={listing.id} className="relative group">
 
-                            <ListingCard listing={listing} showStatus />
+                            <ListingCard listing={listing} showStatus={false} />
 
                             {/* Action overlay */}
-                            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute top-2 left-2 gap-1 ">
 
-                                {/* Edit - only for PENDING or APPROVED */}
-                                {listing.status !== 'REJECTED' && (
-                                    <button
-                                        onClick={e => {
-                                            e.stopPropagation()
-                                            router.push(`/listings/${listing.id}/edit`)
+                                {/* Edit */}
+                                {listing.status === 'PENDING' && (
+                                    // <button
+                                    //     onClick={e => {
+                                    //         e.stopPropagation()
+                                    //         router.push(`/listings/${listing.id}/edit`)
+                                    //     }}
+                                    //     className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                                    // >
+                                    //     Edit
+                                    // </button>
+                                    <Button
+                                        variant='primary'
+                                        onClick={() => {
+                                            setSelectedListingId(listing.id)
+                                            setEditPanel(true)
                                         }}
-                                        className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Edit
-                                    </button>
+                                    </Button>
                                 )}
 
                                 {/* Delete */}
-                                <button
+                                {/* <button
                                     onClick={e => {
                                         e.stopPropagation()
                                         setDeleteTarget(listing.id)
@@ -199,7 +219,7 @@ export default function MyListingsPage() {
                                     className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
                                 >
                                     Delete
-                                </button>
+                                </button> */}
 
                             </div>
 
@@ -209,8 +229,23 @@ export default function MyListingsPage() {
             )}
 
 
+            {selectedListingId && (
+                <EditPage
+                    onClick={closeEditPanel}
+                    PanelStatus={EditPanel}
+                    listingId={selectedListingId}
+                />
+            )}
+
+
+            <div
+                onClick={closeEditPanel}
+                className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ease-in-out ${EditPanel ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            />
+
+
             {/* Delete confirmation modal*/}
-            <Modal
+            {/* <Modal
                 isOpen={!!deleteTarget}
                 onClose={() => setDeleteTarget(null)}
                 title="Delete Listing"
@@ -234,7 +269,7 @@ export default function MyListingsPage() {
                         {deleting ? 'Deleting...' : 'Delete'}
                     </button>
                 </div>
-            </Modal>
+            </Modal> */}
 
         </div>
     )

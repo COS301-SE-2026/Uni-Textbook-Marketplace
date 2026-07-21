@@ -248,6 +248,7 @@ export default function ListingDetailPage() {
                                             ['Edition', listing.book.edition?.toString() ?? 'N/A'],
                                             ['ISBN', listing.book.isbn ?? 'N/A'],
                                             ['Name of Author', listing.book.author ?? 'N/A'],
+                                            ['Name of Publisher', listing.book.publiser ?? 'N/A']
                                         ].map(([label, value], index) => (
                                             <tr key={`book-detail-${index}`} className="border-b border-gray-100">
                                                 <td className="py-2 text-gray-500 w-32">{label}</td>
