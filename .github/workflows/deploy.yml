@@ -30,3 +30,29 @@ jobs:
                  --name nexusdev-backend \
                  --resource-group NexusDev \
                  --image  nexusdevtukscos301.azurecr.io/nexusdev-backend:${{ github.sha }}
+
+    deploy-frontend:
+        name: Deploy Frontend
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Log in to Azure
+              uses: azure/login@v2
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - name: Build & Push Frontend Image
+              run: |
+                az acr build \
+                 --registry nexusdevtukscos301 \
+                 --image nexusdev-frontend:${{ github.sha }} \
+                 --build-arg NEXT_PUBLIC_API_URL=https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api \
+                 ./frontend
+
+            - name: Update Container App
+              run: |
+                az containerapp update \
+                 --name nexusdev-frontend \
+                 --image nexusdevtukscos301.azurecr.io/nexusdev-frontend:${{ github.sha }}
