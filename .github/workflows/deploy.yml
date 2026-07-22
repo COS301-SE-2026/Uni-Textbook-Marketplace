@@ -10,10 +10,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
             - name: Log in to Azure
-              uses: azure/login@v2
+              uses: azure/login@eec3c95657c1536435858eda1f3ff5437fee8474 #v2.3.0
               with:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -36,10 +36,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
             - name: Log in to Azure
-              uses: azure/login@v2
+              uses: azure/login@eec3c95657c1536435858eda1f3ff5437fee8474 #v2.3.0
               with:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
 
