@@ -1,0 +1,18 @@
+name: Deploy to Azure Container Apps
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    deploy-backend:
+        name: Deploy Backend
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Log in to Azure
+              uses: azure/login@v2
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
