@@ -443,19 +443,11 @@ export default function LandingPage() {
                 <div className="relative flex flex-col items-center text-center px-4">
                   <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
-                    {item.icon}
-                    <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
-                      {item.num}
+                  {item.icon}
+                  <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
+                    {item.num}
 
-                    </span>
-                  </div>
-                  {/* Content */}
-                  <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
-                    {item.desc}
-                  </p>
+                  </span>
                 </div>
                 {/* Content */}
                 <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
@@ -467,12 +459,12 @@ export default function LandingPage() {
                 </p>
               </div>
               </ScrollAnimation>
-            ))}
+              ))}
+            </div>
+
           </div>
-
-        </div>
       </section>
-
+      
 
       {/* Section 3: Find a variety of textbooks */}
       <ScrollAnimation delay={550}>
@@ -480,7 +472,7 @@ export default function LandingPage() {
 
         <div className="container-content">
             <div className="text-center mb-14">
-
+              
               <h2 className="text-3xl md:text-4xl fint-extrabold text-[#000f2b] tracking tight">
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
               </h2>
@@ -508,8 +500,7 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-          </div>
-        </section>
+      </section>
       </ScrollAnimation>
 
       {/* Section 4: Trust & Safety */}
@@ -549,7 +540,7 @@ export default function LandingPage() {
                         </div>
                         </ScrollAnimation>
                   ))}
-                </div>
+              </div>
 
             </div>
             <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
@@ -570,23 +561,23 @@ export default function LandingPage() {
 
       {/* Featured Books */}
       <ScrollAnimation delay={400}>
-        <section className="py-16 bg-white">
-          <div className="container-content">
+      <section className="py-16 bg-white">
+        <div className="container-content">
 
-            <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8">
 
-              <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
-                A SAMPLE OF OUR INTERFACE
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {MOCK_FEATURED_BOOKS.map((listing, index) => (
-                <ListingCard key={index} listing={listing} removeClick={true} />
-              ))}
-            </div>
-
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
+              A SAMPLE OF OUR INTERFACE
+            </h2>
           </div>
-        </section>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {MOCK_FEATURED_BOOKS.map((listing, index) => (
+              <ListingCard key={index} listing={listing} removeClick={true}/>
+            ))}
+          </div>
+
+        </div>
+      </section>
       </ScrollAnimation>
 
       {/* Call To Action */}
@@ -616,25 +607,17 @@ export default function LandingPage() {
                 Ready to find your textbooks or sell a few?
               </h2>
 
-              <div className="px-2">
-                <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
-                  Get Started
-                </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-[#000f2b] tracking-tight leading-tight">
-                  Ready to find your textbooks or sell a few?
-                </h2>
-
-                <Link href='/auth/register'
-                  className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#00B4D8] text-lg font-extrabold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 shadow-sm uppercase tracking-wider">
+              <Link href='/auth/register'
+                className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#00B4D8] text-lg font-extrabold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 shadow-sm uppercase tracking-wider">
                   <UserPlus size={15} />
                   REGISTER
                 </Link>
-              </div>
-            </div>
-
-
+             </div>
           </div>
-        </section>
+
+
+        </div>
+      </section>
       </ScrollAnimation>
       <Footer />
     </>

@@ -10,30 +10,16 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
+let OnUnauthorized: (() => void) | null = null;
 
-function getAuthToken(): string | null {
-    if (typeof globalThis.window === 'undefined') return null;
-    return localStorage.getItem('token');
-}
-
-async function tryRefresh(): Promise<boolean> {
-    
-    try {
-        const res = await fetch(`${BASE_URL}/auth/refresh`,{
-            method: 'POST',
-            credentials: 'include',
-        });
-        return res.ok;
-    } catch {
-        return false;
-    }
+export function setUnauthorizedHandle(handler: () => void){
+    OnUnauthorized = handler;
 }
 
 async function request<T>(
     method: string,
     path: string,
     body?: unknown,
-    isRetry = false
 ): Promise<T> {
 
     const headers: HeadersInit = {
@@ -62,16 +48,8 @@ async function request<T>(
             ? errorData.message.join(', ')
             : errorData?.message ?? 'Something went wrong. Please try again.';
 
-        if(response.status === 401 && !isRetry && path !== '/auth/refresh' && path !== '/auth/login'){
-            const refreshed = await tryRefresh();
-
-            if(refreshed){
-                return request<T>(method,path,body,true);
-            }
-
-           if(typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
-                window.location.href = '/auth/login';
-           }
+        if(response.status == 401){
+            OnUnauthorized?.();
         }
 
         const error: ApiError = {

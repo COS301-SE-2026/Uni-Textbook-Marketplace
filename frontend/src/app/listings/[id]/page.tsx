@@ -8,7 +8,7 @@ import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
-import BASE_URL from '@/lib/api';
+import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
 
 
@@ -75,14 +75,7 @@ export default function ListingDetailPage() {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${BASE_URL}/listings/${id}`, {
-                    headers: {
-                        'Authorization': token ? `Bearer ${token}` : '',
-                    },
-                })
-                if (!res.ok) throw new Error('Not found')
-                const data = await res.json()
+                const data = await api.get<Listing>(`/listings/${id}`);
                 setListing(data)
             } catch (err) {
                 console.error('Error fetching listing:', err)
