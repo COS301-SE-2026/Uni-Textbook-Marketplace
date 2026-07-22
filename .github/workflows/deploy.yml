@@ -33,6 +33,7 @@ jobs:
 
     deploy-frontend:
         name: Deploy Frontend
+        needs: deploy-backend
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Repository
@@ -55,4 +56,5 @@ jobs:
               run: |
                 az containerapp update \
                  --name nexusdev-frontend \
+                 --resource-group NexusDev \
                  --image nexusdevtukscos301.azurecr.io/nexusdev-frontend:${{ github.sha }}
