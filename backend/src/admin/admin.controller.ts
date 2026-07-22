@@ -14,18 +14,18 @@ export class AdminController {
   constructor(private adminService: AdminService) {}
 
   @Post(':id/approve')
-async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
-  return await this.adminService.approveListing(id, req.user.id);
-}
+  async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return await this.adminService.approveListing(id, req.user.id);
+  }
 
-@Post(':id/reject')
-async rejectListing(
-  @Param('id') id: string,
-  @Body('reason') reason: string,
-  @Req() req: RequestWithUser,
-) {
-  return await this.adminService.rejectListing(id, req.user.id);
-}
+  @Post(':id/reject')
+  async rejectListing(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @Req() req: RequestWithUser,
+  ) {
+    return await this.adminService.rejectListing(id, req.user.id);
+  }
 
   @Get('audit-log')
   async getAuditLog(@Query() filters: AuditLogFiltersDto) {

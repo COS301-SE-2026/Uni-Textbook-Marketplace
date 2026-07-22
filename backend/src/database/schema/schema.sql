@@ -120,6 +120,8 @@ CREATE TABLE listings (
 
     has_notes BOOLEAN DEFAULT FALSE,
 
+    description TEXT,
+
     updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)

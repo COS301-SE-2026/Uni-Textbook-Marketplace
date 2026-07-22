@@ -1,6 +1,8 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, 
-  MessageCircle, Microscope, MessageSquare, Mail } from 'lucide-react'
+import {
+  Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
+  MessageCircle, Microscope, MessageSquare, Mail
+} from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -8,12 +10,12 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import Footer from '@/components/Footer'
 
 const UNIVERSITY_FACULTIES = [
-  { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]"/>},
-  { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
-  { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'NAS (Natural & Agricultural Sciences)', icon: <Microscope className="w-6 h-6 text-[#00B4D8]" />}
+  { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'NAS (Natural & Agricultural Sciences)', icon: <Microscope className="w-6 h-6 text-[#00B4D8]" /> }
 ];
 
 
@@ -23,7 +25,7 @@ const PLATFORM_STEPS = [
     icon: <UserPlus className="w-6 h-6 text-[#00B4D8]" />,
     title: 'Create an Account',
     desc: 'Register using your university email. We check this to make sure only actual students are trading on the platform.',
-    
+
   },
   {
     num: '02',
@@ -40,17 +42,17 @@ const PLATFORM_STEPS = [
 ];
 
 const CAMPUS_SECURITY = [
-    {
-        icon: <Mail className="w-5 h-5 text-white" />,
-        title: 'University Email Verification',
-        desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
-    },
-    {
-        icon: <MessageSquare className="w-h h-5 text-white" />,
-        title: 'In-app Handshakes',
-        desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
+  {
+    icon: <Mail className="w-5 h-5 text-white" />,
+    title: 'University Email Verification',
+    desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
+  },
+  {
+    icon: <MessageSquare className="w-h h-5 text-white" />,
+    title: 'In-app Handshakes',
+    desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
 
-    },
+  },
 ];
 
 const MOCK_FEATURED_BOOKS: Listing[] = [
@@ -64,20 +66,29 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/cormen-algorithms.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 3,
       author: 'Thomas H. Cormen',
       isbn: '978-026033848',
       title: 'Introduction to Algorithms',
+      publiser: ''
     },
     module: {
       code: 'COS212',
-      faculty: 'EBIT',
+      name: "Data Structure's and algorithm",
+      semester: 2,
+      faculty: {
+        name: 'EBIT'
+      }
     },
     seller: {
       first_name: 'John',
       last_name: 'Vasques',
       is_verified: true,
+      university: {
+        name: 'UP'
+      }
     },
   },
   {
@@ -90,20 +101,26 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/clean-code.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 1,
       author: 'Robert C. Martin',
       isbn: '978-0132350884',
       title: 'Clean Code',
+      publiser: '',
     },
     module: {
       code: 'COS301',
-      faculty: 'EBIT',
+      name: 'Agile Craftsmanship',
+      semester: 2,
     },
     seller: {
       first_name: 'Sarah',
       last_name: 'Smith',
       is_verified: true,
+      university: {
+        name: ''
+      }
     },
   },
   {
@@ -116,20 +133,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/database-systems.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 6,
       author: 'Abraham Silberschatz',
       isbn: '978-0078022159',
       title: 'Database System Concepts',
+      publiser: ''
     },
     module: {
       code: 'COS221',
-      faculty: 'EBIT',
+      name: '',
+      semester: 2
     },
     seller: {
       first_name: 'Rethabile',
       last_name: 'Zwide',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -142,20 +163,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/calculus.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 8,
       author: 'James Stewart',
       isbn: '978-1119456339',
       title: 'Calculus Early Transcendentals',
+      publiser: '',
     },
     module: {
       code: 'WTW258',
-      faculty: 'Natural Sciences',
+      name: 'Natural Sciences',
+      semester: 2,
     },
     seller: {
       first_name: 'Emily',
       last_name: 'Brown',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -168,20 +193,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/c-programming.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 2,
       author: 'Brian W. Kernighan',
       isbn: '978-0131103627',
       title: 'The C Programming Language',
+      publiser: ''
     },
     module: {
       code: 'COS132',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 1,
     },
     seller: {
       first_name: 'David',
       last_name: 'Wilson',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -194,20 +223,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/networking.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 7,
       author: 'James F. Kurose',
       isbn: '978-0133594140',
       title: 'Computer Networking: A Top-Down Approach',
+      publiser: ''
     },
     module: {
       code: 'COS216',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 1
     },
     seller: {
       first_name: 'Novuka',
       last_name: 'Mtembu',
       is_verified: true,
+      university: { name: ''}
     },
   },
   {
@@ -220,20 +253,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/data-intensive.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 1,
       author: 'Martin Kleppmann',
       isbn: '978-1492056355',
       title: 'Designing Data-Intensive Applications',
+      publiser: ''
     },
     module: {
       code: 'COS341',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 2,
     },
     seller: {
       first_name: 'Teboho',
       last_name: 'Modise',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -246,20 +283,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/probability.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 2,
       author: 'Dimitri Bertsekas',
       isbn: '978-0199535569',
       title: 'Introduction to Probability',
+      publiser: '',
     },
     module: {
-        code: 'WTW152',
-        faculty: 'Natural Sciences',
-      },
+      code: 'WTW152',
+      name: 'Natural Sciences',
+      semester: 2,
+    },
     seller: {
       first_name: 'Chuku',
       last_name: 'Obioha',
       is_verified: true,
+      university: {name: ''}
     },
   },
 
@@ -272,7 +313,7 @@ export default function LandingPage() {
       <section className="relative h-screen w-full bg-[#000f2b] flex items-center overflow-hidden -mt-[70px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          
+
           <Image
             src="/hero-bg.png"
             alt="Books on campus"
@@ -313,8 +354,8 @@ export default function LandingPage() {
                   className="px-7 py-3 text-sm font-semibold text-white border-2
                       border-white/40 rounded hover:border-white
                       transition-all duration-200 no-underline">
-                        Sell
-                      </Link>
+                  Sell
+                </Link>
 
               </div>
             </div>
@@ -355,9 +396,9 @@ export default function LandingPage() {
                   <p className="text-white text-sm font-semibold">Save Money</p>
                   <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
                 </Card>
+              </div>
             </div>
           </div>
-        </div>
           {/* Search bar
             <div className="flex justify-center mt-8">
               <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">

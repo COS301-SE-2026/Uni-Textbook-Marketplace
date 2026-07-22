@@ -29,8 +29,10 @@ export default function WishlistComponent() {
 
             try {
                 const data = await api.get<Listing[]>('/wishlist/mywishlist')
+                console.log(data);
+                console.log(Array.isArray(data));
+
                 setListings(data)
-                console.log(data)
 
             } catch (err) {
                 console.error('Failed to load wishlists', err)
@@ -41,14 +43,15 @@ export default function WishlistComponent() {
         fetchMywishlist()
     }, [])
 
-    const filters = listactiveTab == 'ALL' ? listings : listings.filter(lis => lis.listing_status === listactiveTab)
+    const safelisting = Array.isArray(listings) ? listings : [];
+    const filters = listactiveTab == 'ALL' ? safelisting : safelisting.filter(lis => lis.listing_status === listactiveTab)
 
     const listnum: Record<Tab, number> = {
-        ALL: listings.length,
-        AVAILABLE: listings.filter(lis => lis.listing_status === 'AVAILABLE').length,
-        RESERVED: listings.filter(lis => lis.listing_status === 'RESERVED').length,
-        SOLD: listings.filter(lis => lis.listing_status === 'SOLD').length,
-        WITHDRAWN: listings.filter(lis => lis.listing_status === 'WITHDRAWN').length,
+        ALL: safelisting.length,
+        AVAILABLE: safelisting.filter(lis => lis.listing_status === 'AVAILABLE').length,
+        RESERVED: safelisting.filter(lis => lis.listing_status === 'RESERVED').length,
+        SOLD: safelisting.filter(lis => lis.listing_status === 'SOLD').length,
+        WITHDRAWN: safelisting.filter(lis => lis.listing_status === 'WITHDRAWN').length,
     }
 
     return (
