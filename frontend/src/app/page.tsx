@@ -282,13 +282,13 @@ export default function LandingPage() {
           />
         </div>
 
-        {/* Gradient overlay: darker on left for text, lighter on right to reveal image */}
+        {/* Gradient overlay*/}
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
 
         <div className="container-content relative z-20 py-16 w-full">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12 min-h-[80vh]">
 
-            {/* LEFT — text + buttons */}
+            {/* LEFT text + buttons */}
             <div className="max-w-lg">
               <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
                 Made for Students,{' '}
@@ -319,7 +319,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* RIGHT — feature cards */}
+            {/* RIGHT feature cards */}
             <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
 
               {/* Partnership */}
@@ -383,9 +383,11 @@ export default function LandingPage() {
         <div className="container-content">
 
           <div className="text-center mb-16">
+
             <span className="text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
             </span>
+
             <p className="text-slate-500 mt-4 max-w-xl mx-auto text-xl leading-relaxed">
               Buy and sell used textbooks with other students on campus in three steps.
             </p>
@@ -395,7 +397,8 @@ export default function LandingPage() {
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
 
               {PLATFORM_STEPS.map((item, idx) => (
-                <ScrollAnimation key={idx} delay={idx * 550}>
+                <ScrollAnimation key={idx} delay={idx * 650}>
+
                 <div className="relative flex flex-col items-center text-center px-4">
                   <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
@@ -409,6 +412,7 @@ export default function LandingPage() {
                 <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
                   {item.title}
                 </h3>
+
                 <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
                   {item.desc}
                 </p>
@@ -422,8 +426,9 @@ export default function LandingPage() {
       
 
       {/* Section 3: Find a variety of textbooks */}
-      <ScrollAnimation delay={450}>
+      <ScrollAnimation delay={550}>
       <section className="py-20 bg-white">
+
         <div className="container-content">
             <div className="text-center mb-14">
               
@@ -439,6 +444,7 @@ export default function LandingPage() {
               {/* Faculty Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
                 {UNIVERSITY_FACULTIES.map((fac, idx) => (
+                  <ScrollAnimation key={idx} delay={idx * 500}>
                   <div key = {idx}
                         
                     className="flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
@@ -449,6 +455,7 @@ export default function LandingPage() {
                       {fac.name}
                     </span>
                   </div>
+                  </ScrollAnimation>
                 ))}
               </div>
             </div>
@@ -456,9 +463,10 @@ export default function LandingPage() {
       </ScrollAnimation>
 
       {/* Section 4: Trust & Safety */}
-      <ScrollAnimation delay={400}>
+      <ScrollAnimation delay={700}>
       <section className="py-20 bg-[#00B4D8]">
         <div className="container-content">
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
               <div>
@@ -474,6 +482,7 @@ export default function LandingPage() {
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                       {CAMPUS_SECURITY.map((item, idx) => (
+                        <ScrollAnimation key={idx} delay={idx * 650}>
                         <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                             {item.icon}
@@ -486,22 +495,25 @@ export default function LandingPage() {
                               {item.desc}
                             </p>
                           </div>
+
                         </div>
+                        </ScrollAnimation>
                   ))}
               </div>
 
             </div>
-            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl">
-              <Image 
-                src="/students-sitting.jpg"
-                alt="Students meeting on campus"
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority
+            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+              <video src="/in-app-chat.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                poster="/students-sitting.jpg"
               />
             </div>
           </div>
+
         </div>
       </section>
       </ScrollAnimation>
@@ -530,6 +542,7 @@ export default function LandingPage() {
       {/* Call To Action */}
       <ScrollAnimation delay={450}>
       <section className="py-24 bg-slate-50">
+        
         <div className="container-content">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
