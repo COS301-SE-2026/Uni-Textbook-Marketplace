@@ -177,6 +177,7 @@ describe('ListingsService', () => {
         status: ListingStatus.PENDING,
         photo_urls: createListingDto.photoUrls,
         has_notes: createListingDto.hasNotes,
+        description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
     });
@@ -338,7 +339,7 @@ describe('ListingsService', () => {
   describe('getMyListings', () => {
     const userId = 'user-1';
     const userListings = [
-      { ...mockListing, id: validUuid, seller: { id: userId } },
+      { ...mockListing, id: validUuid, seller: { id: userId,  } },
       { ...mockListing, id: validUuid2, seller: { id: userId } },
     ];
 
@@ -350,7 +351,7 @@ describe('ListingsService', () => {
       expect(result).toEqual(userListings);
       expect(mockListingRepository.find).toHaveBeenCalledWith({
         where: { seller: { id: userId } },
-        relations: ['book', 'module'],
+        relations: ['book', 'module', 'seller', 'seller.university'],
       });
     });
 
@@ -382,7 +383,7 @@ describe('ListingsService', () => {
       expect(result).toEqual(mockListing);
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
         where: { id: validUuid },
-        relations: ['book', 'module', 'seller'],
+        relations: ['book', 'module', 'seller', 'seller.university'],
       });
     });
 
