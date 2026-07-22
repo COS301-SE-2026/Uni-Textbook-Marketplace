@@ -1,4 +1,5 @@
 import ListingFormEdit from "./listingFormEdit"
+import { Button } from "../ui"
 
 type EditPageProps = {
     onClick: () => void;
@@ -14,9 +15,9 @@ export default function EditPage({ onClick, PanelStatus = false, listingId }: Ed
 
             <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                 <h1 className="text-xl font-semibold mx-4">Editing listing</h1>
-                <button onClick={onClick} className="p-2 text-gray-500 rounded-md hover:bg-gray-100">
+                <Button onClick={onClick} variant="secondary" type="button">
                     X
-                </button>
+                </Button>
             </div>
 
             <div className="py-4">

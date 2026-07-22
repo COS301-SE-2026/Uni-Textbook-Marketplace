@@ -31,7 +31,6 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
-    const [fetchError, setFetchError] = useState<string | null>(null);
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -92,7 +91,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 }
             } catch (err) {
                 if (!cancelled) {
-                    setFetchError(err instanceof Error ? err.message : "Something went wrong");
+                    console.error('something went wrong',err)
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -159,7 +158,6 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
         setSaving(true);
         setErrors({});
-        setFetchError(null);
 
         try {
             let newUrls: string[] = [];
@@ -181,7 +179,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
             await editListing(diff);
         } catch (err) {
-            setFetchError(err instanceof Error ? err.message : "Something went wrong");
+            console.error('failed to edit',err);
         } finally {
             setSaving(false);
         }

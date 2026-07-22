@@ -29,8 +29,6 @@ export default function MyListingsPage() {
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<Tab>('ALL')
     const [selectedListingId, setSelectedListingId] = useState<string | null>(null)
-    // const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
-    // const [deleting, setDeleting] = useState(false)
     const [EditPanel, setEditPanel] = useState(false)
 
     // Fetch
@@ -69,24 +67,7 @@ export default function MyListingsPage() {
         setEditPanel(false)
         setSelectedListingId(null)
     }
-
-    // Delete 
-
-    // const handleDelete = async () => {
-    //     if (!deleteTarget) return
-    //     setDeleting(true)
-    //     try {
-    //         await api.delete(`/listings/${deleteTarget}`)
-    //         setListings(prev => prev.filter(l => l.id !== deleteTarget))
-    //         setDeleteTarget(null)
-    //     } catch (err) {
-    //         console.error('Delete failed', err)
-    //     } finally {
-    //         setDeleting(false)
-    //     }
-    // }
-
-    // Render 
+ 
 
     return (
         <div className="container-content py-8 relative">
@@ -190,15 +171,6 @@ export default function MyListingsPage() {
 
                                 {/* Edit */}
                                 {listing.status === 'PENDING' && (
-                                    // <button
-                                    //     onClick={e => {
-                                    //         e.stopPropagation()
-                                    //         router.push(`/listings/${listing.id}/edit`)
-                                    //     }}
-                                    //     className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                                    // >
-                                    //     Edit
-                                    // </button>
                                     <Button
                                         variant='primary'
                                         onClick={() => {
@@ -209,17 +181,6 @@ export default function MyListingsPage() {
                                         Edit
                                     </Button>
                                 )}
-
-                                {/* Delete */}
-                                {/* <button
-                                    onClick={e => {
-                                        e.stopPropagation()
-                                        setDeleteTarget(listing.id)
-                                    }}
-                                    className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
-                                >
-                                    Delete
-                                </button> */}
 
                             </div>
 
@@ -236,40 +197,6 @@ export default function MyListingsPage() {
                     listingId={selectedListingId}
                 />
             )}
-
-
-            <div
-                onClick={closeEditPanel}
-                className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ease-in-out ${EditPanel ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-            />
-
-
-            {/* Delete confirmation modal*/}
-            {/* <Modal
-                isOpen={!!deleteTarget}
-                onClose={() => setDeleteTarget(null)}
-                title="Delete Listing"
-            >
-                <p className="text-sm text-gray-600 mb-6">
-                    Are you sure you want to delete this listing? This action
-                    cannot be undone.
-                </p>
-                <div className="flex gap-3 justify-end">
-                    <button
-                        onClick={() => setDeleteTarget(null)}
-                        className="btn-secondary"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium disabled:opacity-50"
-                    >
-                        {deleting ? 'Deleting...' : 'Delete'}
-                    </button>
-                </div>
-            </Modal> */}
 
         </div>
     )
