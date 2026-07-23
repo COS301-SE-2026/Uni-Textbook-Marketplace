@@ -10,7 +10,6 @@ import { Listing } from '../database/entities/listing.entity';
 import { db } from '../firebase/firebase-admin';
 import {
     CollectionReference,
-    DocumentData,
     Timestamp,
 } from 'firebase-admin/firestore';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
@@ -32,9 +31,6 @@ interface MessageData {
     read: boolean;
 }
 
-interface ConversationResponse extends ConversationData {
-    conversationId: string;
-}
 @Injectable()
 export class MessagingService {
     constructor(
