@@ -3,12 +3,14 @@ import { Request } from 'express';
 import { AdminService } from './admin.service';
 import { User } from '../database/entities/users.entity';
 import { AuditLogFiltersDto } from '../audit/dto/audit-log-filters.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-// Define the request with user interface
+
 interface RequestWithUser extends Request {
-  user: User; // Make it required, not optional
+  user: User; 
 }
 
+@ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
   constructor(private adminService: AdminService) {}

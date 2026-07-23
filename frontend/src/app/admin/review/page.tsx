@@ -2,18 +2,21 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
-import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import Modal from '@/components/ui/Modal'
 import AdminRoute from '@/components/auth/AdminRoute'
 import {
     getPendingListings,
     approveListing,
     rejectListing,
     AdminListing,
+    getAllAdminListings,
 } from '@/lib/admin.api'
 
 import { normalizeImage } from '@/lib/image'
 import FiltersTabs from '@/components/admin/filtersTabs'
+import { useRouter } from 'next/navigation'
+import { getMe } from '@/lib/auth.api'
 
 
 interface Toast {
@@ -33,9 +36,9 @@ const FACULTY_LABEL: Record<string, string> = {
     EDU: 'Education',
 }
 
-const TABLE_HEADERS = ['Book', 'Module', 'Status', 'Price', 'Seller', 'Date', 'Actions']
+const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Actions']
 
-type FilterValue = 'PENDING' | 'APPROVED' | 'REJECTED'
+type FilterValue = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
 function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-ZA', {
@@ -47,10 +50,6 @@ function formatDate(dateString: string): string {
 
 function getFacultyLabel(faculty: string): string {
     return FACULTY_LABEL[faculty] ?? faculty
-}
-
-function getStatusBadgeVariant(status: string): 'approved' | 'rejected' {
-    return status === 'APPROVED' ? 'approved' : 'rejected'
 }
 
 
@@ -93,132 +92,71 @@ function ActionsCell({
     actionLoading,
     onApprove,
     onStartReject,
+    onViewDetails,
 }: Readonly<{
     listing: AdminListing
     actionLoading: string | null
     onApprove: (id: string) => void
     onStartReject: (id: string) => void
+    onViewDetails: (id: string) => void
 }>) {
     const isLoading = actionLoading === listing.id
-
-    if (listing.status !== 'PENDING') {
-        return (
-            <td className="px-4 py-3">
-                <Badge variant={getStatusBadgeVariant(listing.status)}><span>{listing.status}</span></Badge>
-            </td>
-        )
-    }
 
     return (
         <td className="px-4 py-3">
             <div className="flex gap-2">
-                <Button variant="primary" onClick={() => onApprove(listing.id)} disabled={isLoading}>
-                    {isLoading ? '...' : 'Approve'}
+                <Button variant="secondary" onClick={() => onViewDetails(listing.id)} disabled={isLoading}>
+                    {isLoading ? '...' : 'View'}
                 </Button>
-                <Button variant="danger" onClick={() => onStartReject(listing.id)} disabled={isLoading}>
-                    Reject
-                </Button>
+                {listing.status === 'PENDING' && (
+                    <>
+                        <Button variant="primary" onClick={() => onApprove(listing.id)} disabled={isLoading}>
+                            {isLoading ? '...' : 'Approve'}
+                        </Button>
+                        <Button variant="danger" onClick={() => onStartReject(listing.id)} disabled={isLoading}>
+                            Reject
+                        </Button>
+                    </>
+                )}
             </div>
         </td>
     )
 }
 
-function RejectionRow({
-    listingId,
-    reason,
-    setReason,
-    onConfirm,
-    onCancel,
-    loading,
-}: {
-    listingId: string
-    reason: string
-    setReason: (r: string) => void
-    onConfirm: (id: string) => void
-    onCancel: () => void
-    loading: boolean
-}) {
-    return (
-        <tr className="bg-red-50">
-            <td colSpan={7} className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                    <input
-                        type="text"
-                        value={reason}
-                        onChange={e => setReason(e.target.value)}
-                        placeholder="Enter rejection reason..."
-                        className="flex-1 text-sm border rounded px-2 py-1"
-                        autoFocus
-                    />
-                    <button
-                        onClick={() => onConfirm(listingId)}
-                        disabled={!reason.trim() || loading}
-                        className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700 disabled:opacity-50 whitespace-nowrap"
-                    >
-                        Confirm Reject
-                    </button>
-                    <button onClick={onCancel} className="text-xs text-gray-500 hover:text-gray-700">
-                        Cancel
-                    </button>
-                </div>
-            </td>
-        </tr>
-    )
-}
 
 function ListingRow({
     listing,
     actionLoading,
     onApprove,
     onStartReject,
-    isRejectOpen,
-    rejectionReason,
-    setRejectionReason,
-    onConfirmReject,
-    onCancelReject,
+    onViewDetails,
 }: {
     listing: AdminListing
     actionLoading: string | null
     onApprove: (id: string) => void
     onStartReject: (id: string) => void
-    isRejectOpen: boolean
-    rejectionReason: string
-    setRejectionReason: (r: string) => void
-    onConfirmReject: (id: string) => void
-    onCancelReject: () => void
+    onViewDetails: (id: string) => void
 }) {
     return (
-        <>
-            <tr className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                <BookCell listing={listing} />
-                <ModuleCell module={listing.module} />
-                <td className="px-4 py-3">
-                    <Badge variant={getStatusBadgeVariant(listing.status)}><span>{listing.status}</span></Badge>
-                </td>
-                <td className="px-4 py-3 font-semibold">R{listing.price}</td>
-                <td className="px-4 py-3">
-                    <p className="font-medium">{listing.seller.first_name} {listing.seller.last_name}</p>
-                    <p className="text-xs text-gray-400">{listing.seller.email}</p>
-                </td>
-                <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
-                <ActionsCell
-                    listing={listing}
-                    actionLoading={actionLoading}
-                    onApprove={onApprove}
-                    onStartReject={onStartReject}
-                />
-            </tr>
-            {isRejectOpen && (
-                <RejectionRow
-                    listingId={listing.id}
-                    reason={rejectionReason}
-                    setReason={setRejectionReason}
-                    onConfirm={onConfirmReject}
-                    onCancel={onCancelReject}
-                    loading={actionLoading === listing.id}
-                />
-            )}
-        </>
+
+        <tr className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+            <BookCell listing={listing} />
+            <ModuleCell module={listing.module} />
+            <td className="px-4 py-3 font-semibold">R{listing.price}</td>
+            <td className="px-4 py-3">
+                <p className="font-medium">{listing.seller.first_name} {listing.seller.last_name}</p>
+                <p className="text-xs text-gray-400">{listing.seller.email}</p>
+            </td>
+            <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
+            <ActionsCell
+                listing={listing}
+                actionLoading={actionLoading}
+                onApprove={onApprove}
+                onStartReject={onStartReject}
+                onViewDetails={onViewDetails}
+            />
+        </tr>
+
     )
 }
 
@@ -240,23 +178,15 @@ function ToastList({ toasts }: { toasts: Toast[] }) {
 function ListingsTable({
     listings,
     actionLoading,
-    rejectionTarget,
-    rejectionReason,
-    setRejectionReason,
     onApprove,
     onStartReject,
-    onConfirmReject,
-    onCancelReject,
+    onViewDetails,
 }: {
     listings: AdminListing[]
     actionLoading: string | null
-    rejectionTarget: string | null
-    rejectionReason: string
-    setRejectionReason: (r: string) => void
     onApprove: (id: string) => void
     onStartReject: (id: string) => void
-    onConfirmReject: (id: string) => void
-    onCancelReject: () => void
+    onViewDetails: (id: string) => void
 }) {
     return (
         <div className="card overflow-x-auto p-0">
@@ -278,11 +208,7 @@ function ListingsTable({
                             actionLoading={actionLoading}
                             onApprove={onApprove}
                             onStartReject={onStartReject}
-                            isRejectOpen={rejectionTarget === listing.id}
-                            rejectionReason={rejectionReason}
-                            setRejectionReason={setRejectionReason}
-                            onConfirmReject={onConfirmReject}
-                            onCancelReject={onCancelReject}
+                            onViewDetails={onViewDetails}
                         />
                     ))}
                 </tbody>
@@ -301,7 +227,55 @@ function LoadingSkeleton() {
     )
 }
 
+function RejectionModal({
+    listing,
+    reason,
+    setReason,
+    onConfirm,
+    onCancel,
+    loading,
+}: {
+    listing: AdminListing | undefined
+    reason: string
+    setReason: (r: string) => void
+    onConfirm: () => void
+    onCancel: () => void
+    loading: boolean
+}) {
+    return (
+        <Modal
+            isOpen={!!listing}
+            onClose={onCancel}
+            title={`Reject "${listing?.title ?? 'listing'}"`}
+        >
+            <div className='flex flex-col gap-4'>
+                <p className='text-sm text-gray-600'>
+                    Let the seller know why this listing doesn&apos;t meet the requirements
+                </p>
 
+                <textarea
+                    className="w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={4}
+                    placeholder="Enter reject reason..."
+                    value={reason}
+                    onChange={e => setReason(e.target.value)}
+                    autoFocus
+                />
+
+                <div className='flex justify-end gap-2'>
+                    <Button variant='secondary' onClick={onCancel}>
+                        Cancel
+                    </Button>
+
+                    <Button variant='danger' onClick={onConfirm} disabled={!reason.trim() || loading}>
+                        {loading ? 'Rejecting...' : 'Confirm Reject'}
+                    </Button>
+                </div>
+
+            </div>
+        </Modal>
+    )
+}
 function useToasts() {
     const [toasts, setToasts] = useState<Toast[]>([])
 
@@ -318,11 +292,9 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
     const [listings, setListings] = useState<AdminListing[]>([])
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
-    const [approvedCount, setApprovedCount] = useState(0)
-    const [rejectedCount, setRejectedCount] = useState(0)
 
     useEffect(() => {
-        getPendingListings()
+        getAllAdminListings()
             .then(data => {
                 setListings(data ?? [])
                 setLoading(false)
@@ -333,8 +305,10 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
             })
     }, [showToast])
 
-    const updateListingStatus = (id: string, status: string) => {
-        setListings(prev => prev.map(l => l.id === id ? { ...l, status } : l))
+    const updateListingStatus = (id: string, status: string, reviewerId?: string) => {
+        setListings(prev => prev.map(l =>
+            l.id === id ? { ...l, status, reviewer: reviewerId ? { id: reviewerId } : l.reviewer } : l
+        ))
     }
 
     const handleApprove = async (id: string) => {
@@ -342,7 +316,6 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
         try {
             await approveListing(id)
             updateListingStatus(id, 'APPROVED')
-            setApprovedCount(c => c + 1)
             showToast('Listing approved', 'success')
         } catch {
             showToast('Failed to approve listing', 'error')
@@ -356,7 +329,6 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
         try {
             await rejectListing(id, reason)
             updateListingStatus(id, 'REJECTED')
-            setRejectedCount(c => c + 1)
             showToast('Listing rejected', 'success')
         } catch {
             showToast('Failed to reject listing', 'error')
@@ -369,8 +341,6 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
         listings,
         loading,
         actionLoading,
-        approvedCount,
-        rejectedCount,
         handleApprove,
         handleReject,
     }
@@ -390,9 +360,9 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
         setRejectionReason('')
     }
 
-    const confirmReject = async (id: string) => {
-        if (!rejectionReason.trim()) return
-        await onReject(id, rejectionReason)
+    const confirmReject = async () => {
+        if (!rejectionTarget || !rejectionReason.trim()) return
+        await onReject(rejectionTarget, rejectionReason)
         cancelReject()
     }
 
@@ -401,25 +371,45 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
 
 
 export default function AdminReviewDashboard() {
-
-
-
+    const router = useRouter()
     const { toasts, showToast } = useToasts()
-    const { listings, loading, actionLoading, approvedCount, rejectedCount, handleApprove, handleReject } =
+    const { listings, loading, actionLoading, handleApprove, handleReject } =
         useListings(showToast)
     const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } =
         useRejection(handleReject)
+    const [currentAdminId, setCurrentAdminId] = useState<string | null>(null)
+
+    useEffect(() => {
+        getMe()
+            .then(user => setCurrentAdminId(user.id))
+            .catch(() => showToast('failed to load user','error'))
+    },[])
 
     const pendingCount = listings.filter(l => l.status === 'PENDING').length
+    const approveByMeCount = listings.filter(l => l.status === 'APPROVED' && l.reviewer?.id === currentAdminId).length
+    const rejectedByMeCount = listings.filter(l => l.status === 'REJECTED' && l.reviewer?.id === currentAdminId).length
 
     const [activeFilter, setActiveFilter] = useState<FilterValue>('PENDING')
     const counts: Record<FilterValue, number> = {
+        ALL: listings.length,
         PENDING: pendingCount,
-        APPROVED: approvedCount,
-        REJECTED: rejectedCount,
+        APPROVED: approveByMeCount,
+        REJECTED: rejectedByMeCount,
     }
 
-    const filtered = listings.filter(li => li.status === activeFilter) 
+    const filtered = activeFilter === 'ALL'
+        ? listings
+        : activeFilter === 'APPROVED'
+        ? listings.filter(l => l.status === 'APPROVED' && l.reviewer?.id === currentAdminId)
+        : activeFilter === 'REJECTED'
+        ? listings.filter(l => l.status === 'REJECTED' && l.reviewer?.id === currentAdminId)
+        : listings.filter(l => l.status === activeFilter)
+
+    const rejectionListing = listings.find(li => li.id === rejectionTarget)
+
+    const handleViewDetails = (id: string) => {
+        router.push(`/listings/${id}`)
+    }
 
 
     return (
@@ -437,15 +427,20 @@ export default function AdminReviewDashboard() {
                     <ListingsTable
                         listings={filtered}
                         actionLoading={actionLoading}
-                        rejectionTarget={rejectionTarget}
-                        rejectionReason={rejectionReason}
-                        setRejectionReason={setRejectionReason}
                         onApprove={handleApprove}
                         onStartReject={startReject}
-                        onConfirmReject={confirmReject}
-                        onCancelReject={cancelReject}
+                        onViewDetails={handleViewDetails}
                     />
                 )}
+
+                <RejectionModal
+                    listing={rejectionListing}
+                    reason={rejectionReason}
+                    setReason={setRejectionReason}
+                    onConfirm={confirmReject}
+                    onCancel={cancelReject}
+                    loading={actionLoading === rejectionTarget}
+                />
             </div>
         </AdminRoute>
     )

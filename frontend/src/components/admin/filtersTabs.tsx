@@ -1,5 +1,5 @@
 
-type FilterValue = 'PENDING' | 'APPROVED' | 'REJECTED'
+type FilterValue = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
 interface FilterTabsProps {
     activeFilter: FilterValue
@@ -8,6 +8,7 @@ interface FilterTabsProps {
 }
 
 const FILTER_TABS: Readonly<{ value: FilterValue; label: string }[]> = [
+    {label: 'All', value: 'ALL'},
     { label: 'Pending', value: 'PENDING' },
     { label: 'Approved', value: 'APPROVED' },
     { label: 'Rejected', value: 'REJECTED' },

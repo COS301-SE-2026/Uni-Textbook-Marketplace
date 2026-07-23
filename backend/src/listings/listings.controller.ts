@@ -91,4 +91,9 @@ export class ListingsController {
   async editlisting(@Body() dto: EditListingDto) {
     return this.listingsService.editlisting(dto);
   }
+
+  @Get('admin/all')
+  async getAllForAdmin() {
+    return this.listingsService.getAllListingsForAdmin();
+  }
 }
