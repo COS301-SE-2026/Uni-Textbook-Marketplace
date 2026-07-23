@@ -22,7 +22,6 @@ import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 
 import { AzureModule } from './azure/azure.module';
-import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
@@ -60,7 +59,6 @@ import { MessagingModule } from './messaging/messaging.module';
     BooksModule,
     WishlistModule,
     AzureModule,
-    MessagingModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

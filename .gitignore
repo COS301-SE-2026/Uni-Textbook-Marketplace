@@ -48,6 +48,3 @@ logs/
 #please don't remove this
 development/
 BlobPOC/
-
-#Services for firebase
-backend/firebase/*.json
