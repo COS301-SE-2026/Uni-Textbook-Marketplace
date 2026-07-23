@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
 import AdminRoute from '@/components/auth/AdminRoute'
 import {
     getPendingListings,
@@ -14,23 +13,14 @@ import {
 } from '@/lib/admin.api'
 
 import { normalizeImage } from '@/lib/image'
+import FiltersTabs from '@/components/admin/filtersTabs'
 
-
-type FilterTab = 'PENDING' | 'APPROVED' | 'REJECTED' | null
 
 interface Toast {
     id: string
     message: string
     type: 'success' | 'error'
 }
-
-interface StatConfig {
-    label: string
-    value: number
-    color: string
-    filter: FilterTab
-}
-
 
 const FACULTY_LABEL: Record<string, string> = {
     ENG: 'Engineering',
@@ -45,6 +35,7 @@ const FACULTY_LABEL: Record<string, string> = {
 
 const TABLE_HEADERS = ['Book', 'Module', 'Status', 'Price', 'Seller', 'Date', 'Actions']
 
+type FilterValue = 'PENDING' | 'APPROVED' | 'REJECTED'
 
 function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-ZA', {
@@ -246,31 +237,6 @@ function ToastList({ toasts }: { toasts: Toast[] }) {
     )
 }
 
-function StatCard({
-    stat,
-    isActive,
-    onClick,
-}: {
-    stat: StatConfig
-    isActive: boolean
-    onClick: () => void
-}) {
-    return (
-        <div
-            role="button"
-            tabIndex={0}
-            onClick={onClick}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
-            className={`cursor-pointer transition ${isActive ? 'ring-2 ring-offset-2' : ''}`}
-        >
-            <Card>
-                <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.label}</p>
-            </Card>
-        </div>
-    )
-}
-
 function ListingsTable({
     listings,
     actionLoading,
@@ -435,7 +401,8 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
 
 
 export default function AdminReviewDashboard() {
-    const [activeFilter, setActiveFilter] = useState<FilterTab>(null)
+
+
 
     const { toasts, showToast } = useToasts()
     const { listings, loading, actionLoading, approvedCount, rejectedCount, handleApprove, handleReject } =
@@ -444,16 +411,16 @@ export default function AdminReviewDashboard() {
         useRejection(handleReject)
 
     const pendingCount = listings.filter(l => l.status === 'PENDING').length
-    const filtered = listings.filter(l => l.status === (activeFilter ?? 'PENDING'))
 
-    const stats: StatConfig[] = [
-        { label: 'Pending Review', value: pendingCount, color: 'text-amber-600', filter: 'PENDING' },
-        { label: 'Approved', value: approvedCount, color: 'text-green-600', filter: 'APPROVED' },
-        { label: 'Rejected', value: rejectedCount, color: 'text-red-600', filter: 'REJECTED' },
-    ]
+    const [activeFilter, setActiveFilter] = useState<FilterValue>('PENDING')
+    const counts: Record<FilterValue, number> = {
+        PENDING: pendingCount,
+        APPROVED: approvedCount,
+        REJECTED: rejectedCount,
+    }
 
-    const toggleFilter = (filter: FilterTab) =>
-        setActiveFilter(prev => prev === filter ? null : filter)
+    const filtered = listings.filter(li => li.status === activeFilter) 
+
 
     return (
         <AdminRoute>
@@ -462,16 +429,7 @@ export default function AdminReviewDashboard() {
 
                 <h1 className="text-xl font-semibold">Admin Review Dashboard</h1>
 
-                <div className="grid grid-cols-3 gap-4 my-4">
-                    {stats.map(stat => (
-                        <StatCard
-                            key={stat.label}
-                            stat={stat}
-                            isActive={activeFilter === stat.filter}
-                            onClick={() => toggleFilter(stat.filter)}
-                        />
-                    ))}
-                </div>
+                <FiltersTabs activeFilter={activeFilter} counts={counts} onChange={setActiveFilter} />
 
                 {loading ? (
                     <LoadingSkeleton />
