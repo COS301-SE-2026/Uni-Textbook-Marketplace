@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Listing } from '../database/entities/listing.entity';
 import { db } from '../firebase/firebase-admin';
 import {
+    CollectionReference,
     DocumentData,
     Timestamp,
 } from 'firebase-admin/firestore';
@@ -96,19 +97,20 @@ export class MessagingService {
     }
 
     async getMyConversations(userId: string,): Promise<ConversationResponseDto[]> {
-        const buyerSnapshot = await db
-        .collection('conversations')
-        .where('buyerId', '==', userId)
-        .get();
+        const conversationsCollection =
+            db.collection('conversations') as CollectionReference<ConversationData>;
 
-        const sellerSnapshot = await db
-        .collection('conversations')
-        .where('sellerId', '==', userId)
-        .get();
+        const buyerSnapshot = await conversationsCollection
+            .where('buyerId', '==', userId)
+            .get();
 
-        const conversations = [
-        ...buyerSnapshot.docs,
-        ...sellerSnapshot.docs,
+        const sellerSnapshot = await conversationsCollection
+            .where('sellerId', '==', userId)
+            .get();
+
+        const conversations: FirebaseFirestore.QueryDocumentSnapshot<ConversationData>[] = [
+            ...buyerSnapshot.docs,
+            ...sellerSnapshot.docs,
         ];
 
         const uniqueConversations = new Map<string, ConversationResponseDto>();
@@ -122,7 +124,10 @@ export class MessagingService {
         });
         });
 
-        return Array.from(uniqueConversations.values()).sort((a, b) => {
+        const result: ConversationResponseDto[] =
+        Array.from(uniqueConversations.values());
+
+        result.sort((a, b) => {
         if (!a.updatedAt || !b.updatedAt) {
             return 0;
         }
@@ -132,6 +137,8 @@ export class MessagingService {
             a.updatedAt.toDate().getTime()
         );
         });
+
+        return result;
     }
 
     async getMessages(
