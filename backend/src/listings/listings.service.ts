@@ -201,4 +201,11 @@ export class ListingsService {
 
     return await this.listingRepo.save(listing);
   }
+
+  async getAllListingsForAdmin(){
+    return this.listingRepo.find({
+      relations:['book','module','seller','reviewer'],
+      order: { created_at: 'DESC'},
+    });
+  }
 }
