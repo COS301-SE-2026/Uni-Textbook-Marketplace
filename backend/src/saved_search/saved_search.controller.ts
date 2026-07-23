@@ -108,7 +108,6 @@ export class SavedSearchesController {
   //GET /saved-searches/me/email
   @Get('me/email')
   getCurrentUserEmail(@CurrentUser('email') email: string): { email: string } {
-    // No 'async' needed
     return { email };
   }
 

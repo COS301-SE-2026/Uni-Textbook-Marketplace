@@ -10,7 +10,7 @@ import { SavedSearch } from '../database/entities/saved_search.entity';
 import { User } from '../database/entities/users.entity';
 import { Listing } from '../database/entities/listing.entity';
 import { Book } from '../database/entities/book.entity';
-import { Module } from '../database/entities/module.entity';
+import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import {
   CreateSavedSearchDto,
@@ -29,16 +29,29 @@ export class SavedSearchesService {
     private listingRepository: Repository<Listing>,
     @InjectRepository(Book)
     private bookRepository: Repository<Book>,
-    @InjectRepository(Module)
-    private moduleRepository: Repository<Module>,
+    @InjectRepository(ModuleEntity)
+    private moduleRepository: Repository<ModuleEntity>,
   ) {}
+
+  private toNumber(value: string | number | undefined | null): number | null {
+    if (value === undefined || value === null || value === '') return null;
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? null : parsed;
+    }
+    return null;
+  }
+
+  private isString(value: unknown): value is string {
+    return typeof value === 'string';
+  }
 
   //Create a new saved search for a user
   async createSavedSearch(
     userId: string,
     data: CreateSavedSearchDto,
   ): Promise<SavedSearch> {
-    // Validate user exists
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -47,16 +60,14 @@ export class SavedSearchesService {
       throw new NotFoundException('User not found');
     }
 
-    // Validate filter structure
     const validation = this.validateFilter(data.filter_json);
     if (!validation.valid) {
       throw new BadRequestException(validation.errors);
     }
 
-    // Create the saved search
     const savedSearch = this.savedSearchRepository.create({
       user_id: userId,
-      filter_json: data.filter_json,
+      filter_json: data.filter_json as Record<string, any>,
     });
 
     return await this.savedSearchRepository.save(savedSearch);
@@ -95,7 +106,6 @@ export class SavedSearchesService {
 
   //Delete a saved search by ID
   async deleteSavedSearch(id: string, userId: string): Promise<void> {
-    // Find the saved search and ensure it belongs to the user
     const savedSearch = await this.savedSearchRepository.findOne({
       where: { id, user_id: userId },
     });
@@ -108,8 +118,7 @@ export class SavedSearchesService {
 
     await this.savedSearchRepository.delete(id);
   }
-
-  //Get a single saved search by ID (with ownership check)
+  //Get a single saved search by ID
   async getSavedSearchById(id: string, userId: string): Promise<SavedSearch> {
     const savedSearch = await this.savedSearchRepository.findOne({
       where: { id, user_id: userId },
@@ -125,36 +134,32 @@ export class SavedSearchesService {
   //Check if a listing matches a saved search filter
   matchesFilter(listing: Listing, filter: SavedSearchFiltersDto): boolean {
     // Module filter (by module code)
-    if (filter.module && listing.module?.code !== filter.module) {
+    if (filter.moduleCode && listing.module?.code !== filter.moduleCode) {
       return false;
     }
 
-    // Book title filter (case-insensitive partial match)
-    if (filter.book_title && listing.book?.title) {
-      const titleMatch = listing.book.title
+    // Faculty filter
+    if (filter.faculty && listing.module?.faculty?.name) {
+      const facultyMatch = listing.module.faculty.name
         .toLowerCase()
-        .includes(filter.book_title.toLowerCase());
-      if (!titleMatch) return false;
+        .includes(filter.faculty.toLowerCase());
+      if (!facultyMatch) return false;
     }
 
-    // Author filter (case-insensitive partial match)
-    if (filter.author && listing.book?.author) {
-      const authorMatch = listing.book.author
-        .toLowerCase()
-        .includes(filter.author.toLowerCase());
-      if (!authorMatch) return false;
-    }
-
-    // ISBN filter (exact match)
-    if (filter.isbn && listing.book?.isbn !== filter.isbn) {
-      return false;
+    // Edition filter
+    if (filter.edition && listing.book?.edition) {
+      const editionMatch = String(listing.book.edition) === filter.edition;
+      if (!editionMatch) return false;
     }
 
     // Price range filter
-    if (filter.price_min !== undefined && listing.price < filter.price_min) {
+    const priceMin = this.toNumber(filter.priceMin);
+    const priceMax = this.toNumber(filter.priceMax);
+
+    if (priceMin !== null && listing.price < priceMin) {
       return false;
     }
-    if (filter.price_max !== undefined && listing.price > filter.price_max) {
+    if (priceMax !== null && listing.price > priceMax) {
       return false;
     }
 
@@ -165,31 +170,27 @@ export class SavedSearchesService {
 
     // Annotation level filter
     if (
-      filter.annotation_level &&
-      listing.annotation_level !== filter.annotation_level
+      filter.annotationLevel &&
+      listing.annotation_level !== filter.annotationLevel
     ) {
       return false;
     }
 
-    // Module list filter (listing must be in one of the modules)
-    if (filter.modules && filter.modules.length > 0) {
-      if (!listing.module || !filter.modules.includes(listing.module.code)) {
-        return false;
-      }
-    }
+    // Search filter
+    if (filter.search) {
+      const searchLower = filter.search.toLowerCase();
+      const matchesSearch =
+        (listing.title && listing.title.toLowerCase().includes(searchLower)) ||
+        (listing.book?.title &&
+          listing.book.title.toLowerCase().includes(searchLower)) ||
+        (listing.book?.author &&
+          listing.book.author.toLowerCase().includes(searchLower)) ||
+        (listing.book?.isbn &&
+          listing.book.isbn.toLowerCase().includes(searchLower)) ||
+        (listing.module?.code &&
+          listing.module.code.toLowerCase().includes(searchLower));
 
-    // University filter (through module)
-    if (filter.university_id) {
-      if (listing.module?.university?.id !== filter.university_id) {
-        return false;
-      }
-    }
-
-    // Faculty filter (through module)
-    if (filter.faculty_id) {
-      if (listing.module?.faculty?.id !== filter.faculty_id) {
-        return false;
-      }
+      if (!matchesSearch) return false;
     }
 
     return true;
@@ -203,7 +204,6 @@ export class SavedSearchesService {
       filter: SavedSearchFiltersDto;
     }>
   > {
-    // Load the listing with all relations needed for matching
     const listing = await this.listingRepository.findOne({
       where: { id: listingId },
       relations: ['book', 'module', 'module.university', 'module.faculty'],
@@ -213,7 +213,6 @@ export class SavedSearchesService {
       throw new NotFoundException('Listing not found');
     }
 
-    // Get all saved searches
     const allSearches = await this.savedSearchRepository.find();
 
     const matches: Array<{
@@ -225,7 +224,6 @@ export class SavedSearchesService {
     for (const search of allSearches) {
       const filter = search.filter_json as SavedSearchFiltersDto;
 
-      // Check if the listing matches this saved search
       if (this.matchesFilter(listing, filter)) {
         matches.push({
           userId: search.user_id,
@@ -238,7 +236,139 @@ export class SavedSearchesService {
     return matches;
   }
 
-  //Get all saved searches (for admins)
+  //Validate filter structure
+  private validateFilter(filter: SavedSearchFiltersDto): {
+    valid: boolean;
+    errors?: string[];
+  } {
+    const errors: string[] = [];
+
+    // Check priceMin
+    if (
+      filter.priceMin !== undefined &&
+      filter.priceMin !== null &&
+      filter.priceMin !== ''
+    ) {
+      const num = this.toNumber(filter.priceMin);
+      if (num === null || num < 0) {
+        errors.push('priceMin must be a valid number >= 0');
+      }
+    }
+
+    // Check priceMax
+    if (
+      filter.priceMax !== undefined &&
+      filter.priceMax !== null &&
+      filter.priceMax !== ''
+    ) {
+      const num = this.toNumber(filter.priceMax);
+      if (num === null || num < 0) {
+        errors.push('priceMax must be a valid number >= 0');
+      }
+    }
+
+    // Check price range logic
+    const priceMinNum = this.toNumber(filter.priceMin);
+    const priceMaxNum = this.toNumber(filter.priceMax);
+    if (
+      priceMinNum !== null &&
+      priceMaxNum !== null &&
+      priceMinNum > priceMaxNum
+    ) {
+      errors.push('priceMin cannot be greater than priceMax');
+    }
+
+    // Check condition
+    if (
+      filter.condition !== undefined &&
+      filter.condition !== null &&
+      filter.condition !== ''
+    ) {
+      if (!this.isString(filter.condition)) {
+        errors.push('condition must be a string');
+      } else if (!['new', 'good', 'fair', 'poor'].includes(filter.condition)) {
+        errors.push('condition must be one of: new, good, fair, poor');
+      }
+    }
+
+    // Check annotationLevel
+    if (
+      filter.annotationLevel !== undefined &&
+      filter.annotationLevel !== null &&
+      filter.annotationLevel !== ''
+    ) {
+      if (!this.isString(filter.annotationLevel)) {
+        errors.push('annotationLevel must be a string');
+      } else if (!['none', 'light', 'heavy'].includes(filter.annotationLevel)) {
+        errors.push('annotationLevel must be one of: none, light, heavy');
+      }
+    }
+
+    // Check moduleCode
+    if (
+      filter.moduleCode !== undefined &&
+      filter.moduleCode !== null &&
+      filter.moduleCode !== ''
+    ) {
+      if (!this.isString(filter.moduleCode)) {
+        errors.push('moduleCode must be a string');
+      }
+    }
+
+    // Check faculty
+    if (
+      filter.faculty !== undefined &&
+      filter.faculty !== null &&
+      filter.faculty !== ''
+    ) {
+      if (!this.isString(filter.faculty)) {
+        errors.push('faculty must be a string');
+      }
+    }
+
+    // Check edition
+    if (
+      filter.edition !== undefined &&
+      filter.edition !== null &&
+      filter.edition !== ''
+    ) {
+      if (!this.isString(filter.edition)) {
+        errors.push('edition must be a string');
+      }
+    }
+
+    // Check search
+    if (
+      filter.search !== undefined &&
+      filter.search !== null &&
+      filter.search !== ''
+    ) {
+      if (!this.isString(filter.search)) {
+        errors.push('search must be a string');
+      }
+    }
+
+    // Check modules array
+    if (filter.modules !== undefined && filter.modules !== null) {
+      if (!Array.isArray(filter.modules)) {
+        errors.push('modules must be an array');
+      } else {
+        for (let i = 0; i < filter.modules.length; i++) {
+          if (!this.isString(filter.modules[i])) {
+            errors.push(`modules[${i}] must be a string`);
+            break;
+          }
+        }
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+    };
+  }
+
+  //Get all saved searches
   async getAllSavedSearches(): Promise<SavedSearch[]> {
     return await this.savedSearchRepository.find();
   }
@@ -248,86 +378,5 @@ export class SavedSearchesService {
     return await this.savedSearchRepository.find({
       where: { user_id: In(userIds) },
     });
-  }
-
-  //Validate filter structure
-  private validateFilter(filter: Record<string, any>): {
-    valid: boolean;
-    errors?: string[];
-  } {
-    const errors: string[] = [];
-
-    const isString = (value: any): value is string => typeof value === 'string';
-    const isNumber = (value: any): value is number => typeof value === 'number';
-
-    // Check price range
-    if (filter.price_min !== undefined) {
-      if (!isNumber(filter.price_min)) {
-        errors.push('price_min must be a number');
-      }
-    }
-
-    if (filter.price_max !== undefined) {
-      if (!isNumber(filter.price_max)) {
-        errors.push('price_max must be a number');
-      }
-    }
-
-    if (
-      filter.price_min !== undefined &&
-      filter.price_max !== undefined &&
-      isNumber(filter.price_min) &&
-      isNumber(filter.price_max) &&
-      filter.price_min > filter.price_max
-    ) {
-      errors.push('price_min cannot be greater than price_max');
-    }
-
-    // Check condition
-    if (filter.condition !== undefined) {
-      if (!isString(filter.condition)) {
-        errors.push('condition must be a string');
-      } else if (!['new', 'good', 'fair', 'poor'].includes(filter.condition)) {
-        errors.push('condition must be one of: new, good, fair, poor');
-      }
-    }
-
-    // Check annotation_level
-    if (filter.annotation_level !== undefined) {
-      if (!isString(filter.annotation_level)) {
-        errors.push('annotation_level must be a string');
-      } else if (
-        !['none', 'light', 'heavy'].includes(filter.annotation_level)
-      ) {
-        errors.push('annotation_level must be one of: none, light, heavy');
-      }
-    }
-
-    // Check modules array
-    if (filter.modules !== undefined) {
-      if (!Array.isArray(filter.modules)) {
-        errors.push('modules must be an array');
-      } else {
-        for (let i = 0; i < filter.modules.length; i++) {
-          if (!isString(filter.modules[i])) {
-            errors.push(`modules[${i}] must be a string`);
-            break;
-          }
-        }
-      }
-    }
-
-    // Check UUID fields
-    if (filter.university_id !== undefined && !isString(filter.university_id)) {
-      errors.push('university_id must be a string');
-    }
-    if (filter.faculty_id !== undefined && !isString(filter.faculty_id)) {
-      errors.push('faculty_id must be a string');
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined,
-    };
   }
 }

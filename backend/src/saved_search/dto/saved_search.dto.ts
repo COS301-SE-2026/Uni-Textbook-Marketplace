@@ -12,16 +12,38 @@ import {
 import { Type } from 'class-transformer';
 import { SavedSearch } from '../../database/entities/saved_search.entity';
 
-// Request DTOs
-export class CreateSavedSearchDto {
-  @IsObject()
-  filter_json!: Record<string, any>;
-}
-
 export class SavedSearchFiltersDto {
   @IsOptional()
   @IsString()
-  module?: string;
+  faculty?: string;
+
+  @IsOptional()
+  @IsString()
+  moduleCode?: string;
+
+  @IsOptional()
+  @IsString()
+  edition?: string;
+
+  @IsOptional()
+  @IsString()
+  priceMin?: string | number;
+
+  @IsOptional()
+  @IsString()
+  priceMax?: string | number;
+
+  @IsOptional()
+  @IsString()
+  condition?: string;
+
+  @IsOptional()
+  @IsString()
+  annotationLevel?: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 
   @IsOptional()
   @IsString()
@@ -36,26 +58,6 @@ export class SavedSearchFiltersDto {
   isbn?: string;
 
   @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  price_min?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  price_max?: number;
-
-  @IsOptional()
-  @IsString()
-  condition?: string;
-
-  @IsOptional()
-  @IsString()
-  annotation_level?: string;
-
-  @IsOptional()
   @IsUUID()
   university_id?: string;
 
@@ -67,6 +69,11 @@ export class SavedSearchFiltersDto {
   @IsArray()
   @IsString({ each: true })
   modules?: string[];
+}
+
+export class CreateSavedSearchDto {
+  @IsObject()
+  filter_json!: SavedSearchFiltersDto;
 }
 
 export class GetSavedSearchesQueryDto {
@@ -84,7 +91,6 @@ export class GetSavedSearchesQueryDto {
   limit?: number = 20;
 }
 
-// Response DTOs
 export class SavedSearchResponseDto {
   @IsUUID()
   id!: string;
