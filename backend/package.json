@@ -50,6 +50,7 @@
     "csv-writer": "1.6.0",
     "dotenv": "16.6.1",
     "ecdsa-sig-formatter": "1.0.11",
+    "firebase-admin": "14.2.0",
     "lodash.includes": "4.3.0",
     "next": "16.2.9",
     "nodemailer": "9.0.0",
