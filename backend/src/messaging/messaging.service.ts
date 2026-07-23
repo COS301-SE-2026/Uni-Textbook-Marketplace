@@ -1,14 +1,39 @@
 import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
+    Injectable,
+    NotFoundException,
+    ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Listing } from '../database/entities/listing.entity';
 import { db } from '../firebase/firebase-admin';
+import {
+    DocumentData,
+    Timestamp,
+} from 'firebase-admin/firestore';
+import { ConversationResponseDto } from './dto/conversation-response.dto';
 
+interface ConversationData {
+    buyerId: string;
+    sellerId: string;
+    listingId: string;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+    lastMessage: string | null;
+    lastSenderId: string | null;
+}
+
+interface MessageData {
+    senderId: string;
+    text: string;
+    sentAt: Timestamp;
+    read: boolean;
+}
+
+interface ConversationResponse extends ConversationData {
+    conversationId: string;
+}
 @Injectable()
 export class MessagingService {
     constructor(
@@ -70,7 +95,7 @@ export class MessagingService {
         };
     }
 
-    async getMyConversations(userId: string) {
+    async getMyConversations(userId: string,): Promise<ConversationResponseDto[]> {
         const buyerSnapshot = await db
         .collection('conversations')
         .where('buyerId', '==', userId)
@@ -86,27 +111,27 @@ export class MessagingService {
         ...sellerSnapshot.docs,
         ];
 
-        const uniqueConversations = new Map();
+        const uniqueConversations = new Map<string, ConversationResponseDto>();
 
         conversations.forEach((doc) => {
+        const data = doc.data() as ConversationData;
+
         uniqueConversations.set(doc.id, {
             conversationId: doc.id,
-            ...doc.data(),
+            ...data,
         });
         });
 
-        return Array.from(uniqueConversations.values()).sort(
-        (a: any, b: any) => {
-            if (!a.updatedAt || !b.updatedAt) {
+        return Array.from(uniqueConversations.values()).sort((a, b) => {
+        if (!a.updatedAt || !b.updatedAt) {
             return 0;
-            }
+        }
 
-            return (
+        return (
             b.updatedAt.toDate().getTime() -
             a.updatedAt.toDate().getTime()
-            );
-        },
         );
+        });
     }
 
     async getMessages(
@@ -123,7 +148,9 @@ export class MessagingService {
         throw new NotFoundException('Conversation not found.');
         }
 
-        const conversation = conversationSnapshot.data();
+        const conversation = conversationSnapshot.data() as
+            | ConversationData
+            | undefined;
 
         if (
         conversation?.buyerId !== userId &&
@@ -139,10 +166,14 @@ export class MessagingService {
         .orderBy('sentAt', 'asc')
         .get();
 
-        return messagesSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        }));
+        return messagesSnapshot.docs.map((doc) => {
+        const data = doc.data() as MessageData;
+
+        return {
+            id: doc.id,
+            ...data,
+        };
+        });
     }
 
     async sendMessage(
@@ -160,7 +191,9 @@ export class MessagingService {
         throw new NotFoundException('Conversation not found.');
         }
 
-        const conversation = conversationSnapshot.data();
+        const conversation = conversationSnapshot.data() as
+            | ConversationData
+            | undefined;
 
         if (
         conversation?.buyerId !== userId &&
