@@ -9,7 +9,7 @@ import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
-import { SavedSearchesService } from '../saved_search/saved_search.service'; 
+import { SavedSearchesService } from '../saved_search/saved_search.service';
 
 describe('ListingsService', () => {
   let service: ListingsService;
@@ -18,10 +18,9 @@ describe('ListingsService', () => {
   let bookRepo: Repository<Book>;
   let moduleRepo: Repository<ModuleEntity>;
 
- 
+  // Mock for SavedSearchesService
   const mockSavedSearchesService = {
     findMatchingSavedSearches: jest.fn().mockResolvedValue([]),
-    
     createSavedSearch: jest.fn().mockResolvedValue({}),
     getSavedSearches: jest.fn().mockResolvedValue([]),
     deleteSavedSearch: jest.fn().mockResolvedValue({}),
@@ -131,7 +130,6 @@ describe('ListingsService', () => {
           provide: getRepositoryToken(ModuleEntity),
           useValue: mockModuleRepository,
         },
-        
         {
           provide: SavedSearchesService,
           useValue: mockSavedSearchesService,
@@ -190,8 +188,6 @@ describe('ListingsService', () => {
         description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
-      
-      
       expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing.id);
     });
 
@@ -369,9 +365,10 @@ describe('ListingsService', () => {
       const result = await service.getMyListings(userId);
 
       expect(result).toEqual(userListings);
+      
       expect(mockListingRepository.find).toHaveBeenCalledWith({
         where: { seller: { id: userId } },
-        relations: ['book', 'module'],
+        relations: ['book', 'module', 'seller', 'seller.university'],
       });
     });
 
@@ -401,9 +398,10 @@ describe('ListingsService', () => {
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
+     
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
         where: { id: validUuid },
-        relations: ['book', 'module', 'seller'],
+        relations: ['book', 'module', 'seller', 'seller.university'],
       });
     });
 
