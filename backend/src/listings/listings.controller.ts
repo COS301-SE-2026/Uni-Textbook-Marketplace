@@ -19,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
+import { EditListingDto } from './dto/editListing.dtos';
 
 interface AuthenticatedUser {
   id: string;
@@ -81,5 +82,18 @@ export class ListingsController {
   @Roles('admin')
   reject(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.adminService.rejectListing(id, req.user.id);
+  }
+
+  //for student to edit listings
+  @Patch('editlist')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('student')
+  async editlisting(@Body() dto: EditListingDto) {
+    return this.listingsService.editlisting(dto);
+  }
+
+  @Get('admin/all')
+  async getAllForAdmin() {
+    return this.listingsService.getAllListingsForAdmin();
   }
 }

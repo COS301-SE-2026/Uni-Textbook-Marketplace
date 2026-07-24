@@ -10,7 +10,11 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://localhost:3001'],
+    origin: [
+      'http://localhost:3000',
+      'https://localhost:3001',
+      'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   });
