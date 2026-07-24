@@ -20,6 +20,33 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   synchronize: false,
   logging: true,
-  entities: [Faculty, User, Listing, Book, Module, University, OTP, AuditLog, SavedSearch, Wishlist],
+  entities: [
+    Faculty,
+    User,
+    Listing,
+    Book,
+    Module,
+    University,
+    OTP,
+    AuditLog,
+    SavedSearch,
+    Wishlist,
+  ],
   migrations: ['src/database/migrations/*.ts'],
 });
+
+console.log(
+  'Entity classes registered:',
+  [
+    Faculty,
+    User,
+    Listing,
+    Book,
+    Module,
+    University,
+    OTP,
+    AuditLog,
+    SavedSearch,
+    Wishlist,
+  ].map((e) => e?.name || 'undefined'),
+);

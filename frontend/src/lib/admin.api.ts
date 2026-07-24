@@ -29,6 +29,7 @@ export interface AdminListing {
         first_name: string
         last_name: string
     }
+    reviewer?: { id: string} | null
 }
 
 export async function getPendingListings(): Promise<AdminListing[]> {
@@ -41,4 +42,8 @@ export async function approveListing(id: string): Promise<void> {
 
 export async function rejectListing(id: string, reason: string): Promise<void> {
     return api.patch(`/listings/admin/${id}/reject`, { reason })
+}
+
+export async function getAllAdminListings(): Promise<AdminListing[]>{
+    return api.get<AdminListing[]>('/listings/admin/all');
 }

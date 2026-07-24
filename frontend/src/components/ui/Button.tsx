@@ -5,6 +5,7 @@ type ButtonProps = Readonly<{
     disabled?: boolean;
     onClick?: () => void;
     className?: string;
+    type?: "button" | "submit" | "reset";
 }>;
 
 const variants = {
@@ -17,11 +18,13 @@ export default function Button({
     children,
     variant = "primary",
     disabled = false,
+    type ,
     onClick,
     className = "",
 }: ButtonProps) {
     return (
         <button
+            type={type}
             onClick={onClick}
             disabled={disabled}
             className={`${variants[variant]} ${className}`}

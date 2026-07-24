@@ -5,9 +5,11 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import TextArea from '@/components/ui/TextArea'
 import ErrorText from '@/components/ui/ErrorText'
+import { useEffect, useState } from 'react'
+import { Faculties, getFaculties } from '@/lib/listings.api'
 
 export interface ListingFormData {
-    title: string
+    bookName: string
     author: string
     edition: string
     isbn: string
@@ -19,7 +21,10 @@ export interface ListingFormData {
     annotationLevel: string
     price: string
     description: string
+    has_notes: boolean 
     images: File[]
+    semester: string
+    listingTitle: string
 }
 
 interface ListingFormProps {
@@ -40,7 +45,22 @@ export default function ListingForm({
     onRemoveImage,
 }: ListingFormProps) {
 
-    // Step 1 : Book Details
+    const [faculties, setFaculties] = useState<Faculties[]>([])
+
+    useEffect(() => {
+        const loadFaculties = async () => {
+            try {
+                const data = await getFaculties()
+                setFaculties(data)
+            } catch (error) {
+                console.error('Failed to load faculties', error)
+            }
+        }
+
+        void loadFaculties()
+    }, [])
+
+    // Book Details
 
     if (step === 1) {
         return (
@@ -50,13 +70,13 @@ export default function ListingForm({
 
                 <div>
                     <Input
-                        label="Title *"
-                        name="title"
-                        value={form.title}
+                        label="Name of book *"
+                        name="bookName"
+                        value={form.bookName}
                         onChange={onChange}
                         placeholder="e.g. Software Engineering"
                     />
-                    {errors.title && <ErrorText>{errors.title}</ErrorText>}
+                    {errors.bookName && <ErrorText>{errors.bookName}</ErrorText>}
                 </div>
 
                 <div>
@@ -108,7 +128,7 @@ export default function ListingForm({
         )
     }
 
-    // Step 2 : Module Details
+    //Module Details
 
     if (step === 2) {
         return (
@@ -139,6 +159,18 @@ export default function ListingForm({
                 </div>
 
                 <div>
+                    <Input
+                        label="Semester *"
+                        name="semester"
+                        value={form.semester}
+                        onChange={onChange}
+                        placeholder="e.g. 1 or 2 & 3 for whole year"
+                        type="number"
+                    />
+                    {errors.semester && <ErrorText>{errors.semester}</ErrorText>}
+                </div>
+
+                <div>
                     <Select
                         label="Faculty *"
                         name="faculty"
@@ -146,28 +178,38 @@ export default function ListingForm({
                         onChange={onChange}
                     >
                         <option value="">Select Faculty</option>
-                        <option value="EBIT">EBIT</option>
-                        <option value="LAW">Law</option>
-                        <option value="HUM">Humanities</option>
-                        <option value="MED">Health Sciences</option>
-                        <option value="NAT">Natural Sciences</option>
-                        <option value="ECO">Economic Sciences</option>
-                        <option value="EDU">Education</option>
+                        {faculties.map((faculty) => (
+                            <option key={faculty.id} value={faculty.id}>
+                                {faculty.name}
+                            </option>
+                        ))}
                     </Select>
                     {errors.faculty && <ErrorText>{errors.faculty}</ErrorText>}
                 </div>
+
 
             </div>
         )
     }
 
-    // Step 3 : Listing Details
+    //Listing Details
 
     if (step === 3) {
         return (
             <div className="card flex flex-col gap-5">
 
                 <h3>Listing Details</h3>
+
+                <div>
+                    <Input
+                        label="Listing title *"
+                        name="listingTitle"
+                        value={form.listingTitle}
+                        onChange={onChange}
+                        placeholder="e.g. Title "
+                    />
+                    {errors.listingTitle && <ErrorText>{errors.listingTitle}</ErrorText>}
+                </div>
 
                 <div>
                     <Select
@@ -201,6 +243,21 @@ export default function ListingForm({
                 </div>
 
                 <div>
+                    <Select
+                        label="Did you write notes inside *"
+                        name="has_notes"
+                        value={form.has_notes ? "true" : "false"}
+                        onChange={onChange}
+                    >
+                        <option value="">Select Level</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+
+                    </Select>
+                    {errors.has_notes && <ErrorText>{errors.has_notes}</ErrorText>}
+                </div>
+
+                <div>
                     <Input
                         label="Price (R) *"
                         name="price"
@@ -228,7 +285,7 @@ export default function ListingForm({
         )
     }
 
-    // Step 4 : Upload Pictures
+    //Upload Pictures
 
     if (step === 4) {
         return (

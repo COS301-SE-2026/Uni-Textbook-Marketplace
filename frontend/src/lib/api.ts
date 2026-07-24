@@ -1,5 +1,3 @@
-// This is the BASE API client, one file that knows how to talk to our backend
-// Every other API file (auth.api.ts, listings.api.ts, etc.) will builds on top of this
 
 export interface ApiError {
     message: string;
@@ -12,11 +10,10 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!BASE_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not set in .env.local file');
 }
+let OnUnauthorized: (() => void) | null = null;
 
-//Temp Helper
-function getAuthToken(): string | null {
-    if (typeof globalThis.window === 'undefined') return null;
-    return localStorage.getItem('token');
+export function setUnauthorizedHandle(handler: () => void){
+    OnUnauthorized = handler;
 }
 
 async function request<T>(
@@ -24,15 +21,11 @@ async function request<T>(
     path: string,
     body?: unknown,
 ): Promise<T> {
-    const token = getAuthToken();
 
     const headers: HeadersInit = {
         'Content-type': 'application/json',
     };
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     const response = await fetch(`${BASE_URL}${path}`, {
         method,
         headers,
@@ -54,6 +47,10 @@ async function request<T>(
         const message = Array.isArray(errorData?.message)
             ? errorData.message.join(', ')
             : errorData?.message ?? 'Something went wrong. Please try again.';
+
+        if(response.status == 401){
+            OnUnauthorized?.();
+        }
 
         const error: ApiError = {
             message,

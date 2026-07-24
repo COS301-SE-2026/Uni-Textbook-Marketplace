@@ -2,48 +2,83 @@ import { api } from './api';
 
 export interface Book {
   id: string;
-  isbn?: string;
+  isbn: string;
   title: string;
-  author?: string;
-  edition?: number;
-  publisher?: string;
+  author: string;
+  edition: number;
+  publisher: string;
 }
 
 export interface Module {
   id: string;
   code: string;
   name: string;
-  faculty?: string;
+  faculty: string;
+  semester: number;
 }
 
 export interface CreateBookData {
-  isbn?: string;
+  isbn: string;
   title: string;
-  author?: string;
-  edition?: number;
-  publisher?: string;
+  author: string;
+  edition: number;
+  publisher: string;
 }
 
 export interface CreateModuleData {
   code: string;
   name: string;
-  faculty?: string;
+  faculty_id: string;
+  semester: number;
 }
 
 export interface CreateListingData {
-  title?: string
+  title: string
   bookId: string;
-  moduleId?: string;
+  moduleId: string;
   condition: 'new' | 'good' | 'fair' | 'poor';
   annotationLevel: 'none' | 'light' | 'heavy';
   price: number;
-  hasNotes: boolean;
+  has_notes: boolean;
   photoUrls: string[];
+  description: string
 }
 
+export interface EditListingData {
+  id: string;
+  title?: string;
+  condition?: 'new' | 'good' | 'fair' | 'poor';
+  annotation_level?: 'none' | 'light' | 'heavy';
+  price?: number;
+  photo_urls?: string[];
+  has_notes?: boolean;
+  description?: string;
+}
+
+export interface ListingDetailResponse {
+  id:string;
+  title?: string
+  condition?: 'new' | 'good' | 'fair' | 'poor';
+  annotationLevel?: 'none' | 'light' | 'heavy';
+  price?: number;
+  has_notes?: boolean;
+  photo_urls?: string[];
+  description?:string;
+  book : Book;
+  module?: Module;
+}
 export interface ListingResponse {
   listings: any[];
   total: number;
+}
+
+export interface Faculties {
+  id: string;
+  name: string;
+}
+
+export async function getFaculties(): Promise<Faculties[]> {
+  return api.get<Faculties[]>('/modules/faculties');
 }
 
 export async function createBook(data: CreateBookData): Promise<Book> {
@@ -97,6 +132,10 @@ export async function createListing(data: CreateListingData) {
   return api.post('/listings', data);
 }
 
+export async function editListing(data: EditListingData) {
+  return api.patch('/listings/editlist', data);
+}
+
 export async function getListings(queryParams?: string): Promise<{ listings: any[]; total: number }> {
   const url = queryParams ? `/listings?${queryParams}` : '/listings';
 
@@ -133,4 +172,8 @@ export async function getListings(queryParams?: string): Promise<{ listings: any
     listings: [],
     total: 0
   };
+}
+
+export async function getMyListings(id:string): Promise<ListingDetailResponse> {
+  return api.get<ListingDetailResponse>(`/listings/${id}`);
 }

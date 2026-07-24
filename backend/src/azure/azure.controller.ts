@@ -17,7 +17,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller('images')
 @UseGuards(JwtAuthGuard)
 export class AzureController {
-
   constructor(private readonly azureService: AzureService) {}
 
   @Post('upload')

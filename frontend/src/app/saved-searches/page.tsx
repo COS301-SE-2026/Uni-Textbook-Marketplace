@@ -23,8 +23,12 @@ export default function SavedSearchesPage() {
 
     try {
 
-      const data = await getSavedSearches()
-      setFilterSearches(data)
+      const data = await getSavedSearches();
+
+console.log("Returned from API:", data);
+console.log("Is array?", Array.isArray(data));
+
+setFilterSearches(data);
     } catch (error) {
 
       console.error('Failed to load saved searches', error)
