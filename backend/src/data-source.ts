@@ -34,3 +34,19 @@ export const AppDataSource = new DataSource({
   ],
   migrations: ['src/database/migrations/*.ts'],
 });
+
+console.log(
+  'Entity classes registered:',
+  [
+    Faculty,
+    User,
+    Listing,
+    Book,
+    Module,
+    University,
+    OTP,
+    AuditLog,
+    SavedSearch,
+    Wishlist,
+  ].map((e) => e?.name || 'undefined'),
+);

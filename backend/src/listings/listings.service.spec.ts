@@ -9,6 +9,7 @@ import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
+import { SavedSearchesService } from '../saved_search/saved_search.service';
 
 describe('ListingsService', () => {
   let service: ListingsService;
@@ -17,7 +18,14 @@ describe('ListingsService', () => {
   let bookRepo: Repository<Book>;
   let moduleRepo: Repository<ModuleEntity>;
 
-  
+  // Mock for SavedSearchesService
+  const mockSavedSearchesService = {
+    findMatchingSavedSearches: jest.fn().mockResolvedValue([]),
+    createSavedSearch: jest.fn().mockResolvedValue({}),
+    getSavedSearches: jest.fn().mockResolvedValue([]),
+    deleteSavedSearch: jest.fn().mockResolvedValue({}),
+  };
+
   const mockUser = {
     id: 'user-1',
     email: 'test@tuks.ac.za',
@@ -38,7 +46,6 @@ describe('ListingsService', () => {
     name: 'Imperative Programming',
   };
 
-  
   const validUuid = '123e4567-e89b-12d3-a456-426614174000';
   const validUuid2 = '223e4567-e89b-12d3-a456-426614174001';
 
@@ -70,13 +77,12 @@ describe('ListingsService', () => {
     status: ListingStatus.PENDING,
   };
 
-  
   const createQueryBuilderMock = () => ({
     leftJoinAndSelect: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
     getMany: jest.fn().mockResolvedValue([]),
-    getManyAndCount: jest.fn().mockResolvedValue([[], 0]), 
+    getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
   });
 
   const mockListingRepository = {
@@ -101,10 +107,8 @@ describe('ListingsService', () => {
   };
 
   beforeEach(async () => {
-    
     jest.clearAllMocks();
-    
-    
+
     mockListingRepository.createQueryBuilder.mockReturnValue(createQueryBuilderMock());
 
     const module: TestingModule = await Test.createTestingModule({
@@ -125,6 +129,10 @@ describe('ListingsService', () => {
         {
           provide: getRepositoryToken(ModuleEntity),
           useValue: mockModuleRepository,
+        },
+        {
+          provide: SavedSearchesService,
+          useValue: mockSavedSearchesService,
         },
       ],
     }).compile();
@@ -180,6 +188,7 @@ describe('ListingsService', () => {
         description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
+      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing.id);
     });
 
     it('should throw NotFoundException when user does not exist', async () => {
@@ -211,8 +220,8 @@ describe('ListingsService', () => {
 
       const result = await service.createListing('user-1', dtoWithoutModule);
 
-      // expect(result.module).toBeNull();
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
+      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalled();
     });
 
     it('should use default values for optional fields when not provided', async () => {
@@ -242,9 +251,19 @@ describe('ListingsService', () => {
 
       const result = await service.createListing('user-1', minimalDto);
 
-      // expect(result.photo_urls).toEqual([]);
-      // expect(result.has_notes).toBe(false);
-      // expect(result.module).toBeNull();
+      expect(mockListingRepository.create).toHaveBeenCalledWith({
+        title: minimalDto.title,
+        seller: mockUser,
+        book: mockBook,
+        module: null,
+        condition: minimalDto.condition,
+        annotation_level: minimalDto.annotationLevel,
+        price: minimalDto.price,
+        status: ListingStatus.PENDING,
+        photo_urls: [],
+        has_notes: false,
+        description: minimalDto.description,
+      });
     });
   });
 
@@ -256,14 +275,11 @@ describe('ListingsService', () => {
       ];
       const mockTotal = 2;
 
-      
       const qb = mockListingRepository.createQueryBuilder();
-      
       (qb.getManyAndCount as jest.Mock).mockResolvedValue([approvedListings, mockTotal]);
 
       const result = await service.getAllApproved();
 
-    
       expect(result[0]).toEqual(approvedListings);
       expect(result[1]).toBe(mockTotal);
       expect(mockListingRepository.createQueryBuilder).toHaveBeenCalledWith('listing');
@@ -339,7 +355,7 @@ describe('ListingsService', () => {
   describe('getMyListings', () => {
     const userId = 'user-1';
     const userListings = [
-      { ...mockListing, id: validUuid, seller: { id: userId,  } },
+      { ...mockListing, id: validUuid, seller: { id: userId } },
       { ...mockListing, id: validUuid2, seller: { id: userId } },
     ];
 
@@ -349,6 +365,7 @@ describe('ListingsService', () => {
       const result = await service.getMyListings(userId);
 
       expect(result).toEqual(userListings);
+      
       expect(mockListingRepository.find).toHaveBeenCalledWith({
         where: { seller: { id: userId } },
         relations: ['book', 'module', 'seller', 'seller.university'],
@@ -381,6 +398,7 @@ describe('ListingsService', () => {
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
+     
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
         where: { id: validUuid },
         relations: ['book', 'module', 'seller', 'seller.university'],
