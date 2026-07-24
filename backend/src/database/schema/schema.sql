@@ -120,6 +120,8 @@ CREATE TABLE listings (
 
     has_notes BOOLEAN DEFAULT FALSE,
 
+    description TEXT,
+
     updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)
@@ -161,6 +163,20 @@ CREATE TABLE wishlist (
     created_at TIMESTAMPTZ DEFAULT NOW(),
    
     PRIMARY KEY (user_id, listings_id)
+);
+
+-- notifications
+CREATE TABLE notifications(
+
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    notification_from UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    entity_type VARCHAR NOT NULL,
+    entity_id UUID NOT NULL REFERENCES listings(id) ON DELETE SET NULL,
+    message_info TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+
 );
 
 

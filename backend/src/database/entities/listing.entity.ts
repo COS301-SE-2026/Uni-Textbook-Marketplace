@@ -135,4 +135,7 @@ export class Listing {
     nullable: true,
   })
   deleted_at!: Date;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
 }

@@ -7,6 +7,7 @@ import {
   HttpCode,
   UseGuards,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response, Request as ExpressRequest } from 'express';
@@ -25,6 +26,12 @@ interface AuthenticatedRequest extends ExpressRequest {
   };
 }
 
+interface RequestWithCookies extends ExpressRequest {
+  cookies: {
+    refresh_token?: string;
+  };
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -35,11 +42,17 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  private getCookieOptions(maxAge: number) {
+  private getCookieOptions(maxAge: number): {
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: 'none' | 'lax';
+    maxAge: number;
+  } {
+    const isInProduct = process.env.NODE_ENV === 'production';
     return {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax' as const,
+      secure: isInProduct,
+      sameSite: isInProduct ? 'none' : 'lax',
       maxAge,
     };
   }
@@ -77,23 +90,19 @@ export class AuthController {
   ) {
     const tokens = await this.authService.login(dto);
 
-    res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 15 * 60 * 1000,
-    });
+    res.cookie(
+      'access_token',
+      tokens.accessToken,
+      this.getCookieOptions(15 * 60 * 1000),
+    );
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie(
+      'refresh_token',
+      tokens.refreshToken,
+      this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
+    );
 
-    return { 
-      message: 'Login successful.' 
-    };
+    return { message: 'Login successful.' };
   }
 
   @Get('universities')
@@ -128,5 +137,35 @@ export class AuthController {
   @HttpCode(200)
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
+  }
+
+  @Post('refresh')
+  @HttpCode(200)
+  async refresh(
+    @Request() req: RequestWithCookies,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken)
+      throw new UnauthorizedException('No refresh token provided');
+
+    const tokens = await this.authService.refreshTokens(refreshToken);
+
+    res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return { message: 'Token refreshed' };
   }
 }

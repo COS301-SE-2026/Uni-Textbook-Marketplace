@@ -11,10 +11,10 @@ export class MailtrapEmailProvider implements IEmailService {
 
   constructor(private readonly config: ConfigService) {
     this.transporter = nodemailer.createTransport({
-      host: 'sandbox.smtp.mailtrap.io',
-      port: 587,
+      host: this.config.getOrThrow<string>('MAIL_HOST'),
+      port: Number(this.config.getOrThrow('MAIL_PORT')),
       secure: false,
-      requireTLS: false, //This is temporary
+      requireTLS: true, 
       auth: {
         user: this.config.getOrThrow<string>('MAILTRAP_USER'),
         pass: this.config.getOrThrow<string>('MAILTRAP_PASS'),
@@ -25,15 +25,36 @@ export class MailtrapEmailProvider implements IEmailService {
   async sendOtp(to: string, otp: string): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: 'Uni Marketplace <noreply@unimarketplace.com>',
+        from: this.config.getOrThrow<string>('MAIL_FROM'),
         to,
         subject: 'Your Textbook Marketplace verification code',
         html: `
-          <h2>Your verification code</h2>
-          <p>Enter this code to verify your university email:</p>
-          <h1 style="letter-spacing: 8px; font-size: 36px;">${otp}</h1>
-          <p>This code expires in <strong>10 minutes</strong>.</p>
-          <p>If you didn't request this, ignore this email.</p>
+        <div style="max-width:500px; margin: auto; background:#fff; padding:30px; border-radius:12px; color:#333;">
+          <h2 style="color:#00f2b; text-align:center;">
+            Uni Textbook Marketplace
+          </h2>
+
+          <p>Welcome! Use the code below to verify your email and complete registration.</p>
+
+          <h1 style="text-align:center; background:#00B4D8; color:white; padding:15px; border-radius:8px; letter-spacing:8px;"> ${otp} </h1>
+
+          <p style="text-align:center;">This code expires in <strong>3 minutes</strong>.</p>
+          <p>if you didn't request this, please ignore this email</p>
+
+          <hr>
+
+          <p style="font-size:14px; text-align:center; color:#666;">
+            Thank you for being part of our community.
+            This is became possible due to the support of our Industry clients at
+            <strong>Agile Bridge </strong> and our lectures at <strong>UP</strong> Thank you.
+          </p>
+
+          <p style=" text-align:center;">
+            <strong>NexusDev</strong>.
+          </p>
+
+
+        </div>
         `,
       });
     } catch (error) {

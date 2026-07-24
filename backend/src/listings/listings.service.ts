@@ -53,14 +53,15 @@ export class ListingsService {
       title: dto.title,
       seller: user,
       book,
-      module: module ?? null,
+      module: module,
       condition: dto.condition,
       annotation_level: dto.annotationLevel,
       price: dto.price,
       status: ListingStatus.PENDING,
       photo_urls: dto.photoUrls ?? [],
-      has_notes: dto.hasNotes ?? false,
-    });
+      has_notes: dto.hasNotes,
+      description: dto.description,
+    } as any);
 
     const savedListing = await this.listingRepo.save(listing);
 
@@ -181,7 +182,7 @@ export class ListingsService {
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module'],
+      relations: ['book', 'module', 'seller', 'seller.university'],
     });
   }
 
@@ -193,7 +194,7 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller'],
+      relations: ['book', 'module', 'seller', 'seller.university'],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
@@ -239,5 +240,24 @@ export class ListingsService {
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
+  }
+
+  async editlisting(dto: EditListingDto) {
+    const listing = await this.listingRepo.findOne({
+      where: { id: dto.id },
+    });
+
+    if (!listing) throw new NotFoundException('listing not found');
+
+    Object.assign(listing, dto);
+
+    return await this.listingRepo.save(listing);
+  }
+
+  async getAllListingsForAdmin(){
+    return this.listingRepo.find({
+      relations:['book','module','seller','reviewer'],
+      order: { created_at: 'DESC'},
+    });
   }
 }

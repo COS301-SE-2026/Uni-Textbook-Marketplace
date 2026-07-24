@@ -21,23 +21,33 @@ export interface Listing {
 
     photo_urls: string[]
     created_at: string
+    description: string
 
     book: {
         edition: number
         author: string
         isbn: string
         title: string
+        publiser:string
     }
 
     module: {
+        name:string
         code: string
-        faculty?: string
+        semester: number
+        faculty?: {
+           name: string 
+        }
+
     }
 
     seller?: {
         first_name: string
         last_name: string
         is_verified: boolean
+        university : {
+            name: string
+        }
     }
 }
 
@@ -129,10 +139,10 @@ export default function ListingCard({
                             strokeLinejoin="round"
                             strokeWidth={1}
                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16
-                    16m-2-2l1.586-1.586a2 2 0 012.828
-                    0L20 14m-6-6h.01M6 20h12a2 2 0
-                    002-2V6a2 2 0 00-2-2H6a2 2 0
-                    00-2 2v12a2 2 0 002 2z"
+                                16m-2-2l1.586-1.586a2 2 0 012.828
+                                0L20 14m-6-6h.01M6 20h12a2 2 0
+                                002-2V6a2 2 0 00-2-2H6a2 2 0
+                                00-2 2v12a2 2 0 002 2z"
                         />
                     </svg>
                 )}
