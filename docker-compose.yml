@@ -36,8 +36,11 @@ services:
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
       MAILTRAP_USER: ${MAILTRAP_USER}
       MAILTRAP_PASS: ${MAILTRAP_PASS}
+      MAIL_FROM: ${MAIL_FROM}
 
   frontend:
     image: node:20
