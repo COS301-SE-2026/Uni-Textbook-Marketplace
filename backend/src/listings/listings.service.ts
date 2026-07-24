@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm'; // Added DeepPartial
 
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
@@ -37,7 +37,6 @@ export class ListingsService {
     private savedSearchesService: SavedSearchesService,
   ) {}
 
-  //Create
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
@@ -49,23 +48,29 @@ export class ListingsService {
       ? await this.moduleRepo.findOneBy({ id: dto.moduleId })
       : null;
 
-    const listing = this.listingRepo.create({
+    const listingData = {
       title: dto.title,
       seller: user,
-      book,
+      book: book,
       module: module ?? null,
       condition: dto.condition,
       annotation_level: dto.annotationLevel,
       price: dto.price,
-      status: ListingStatus.PENDING,
+      status: ListingStatus.PENDING as ListingStatus,
       photo_urls: dto.photoUrls ?? [],
       has_notes: dto.hasNotes ?? false,
-    });
+    };
+
+    const listing = this.listingRepo.create(
+      listingData as DeepPartial<Listing>,
+    );
 
     const savedListing = await this.listingRepo.save(listing);
 
-    this.checkSavedSearchMatches(savedListing.id).catch((error) => {
-      console.error('Error checking saved search matches:', error);
+    this.checkSavedSearchMatches(savedListing.id).catch((error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error('Error checking saved search matches:', errorMessage);
     });
 
     return savedListing;
@@ -78,7 +83,6 @@ export class ListingsService {
 
       if (matches.length === 0) {
         console.log(`No saved search matches found for listing ${listingId}`);
-
         return;
       }
       console.log(
@@ -89,25 +93,20 @@ export class ListingsService {
         console.log(
           `User ${match.userId} has a saved search match for listing ${listingId}`,
         );
-
         // i'll uncomment this when the notification service is ready:
-
         // await this.notificationService.createNotification({
-
         //   userId: match.userId,
-
         //   type: 'NEW_MATCH',
-
         //   listingId: listingId,
-
         //   message: `New listing matches your saved search`,
-
         // });
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       console.error(
         `Error checking saved search matches for listing ${listingId}:`,
-        error,
+        errorMessage,
       );
     }
   }
@@ -132,7 +131,6 @@ export class ListingsService {
           book.isbn ILIKE :itemSearched OR
           module.code ILIKE :itemSearched
           )`,
-
         { itemSearched },
       );
     }
@@ -175,6 +173,7 @@ export class ListingsService {
     const [listings, total] = await qb.getManyAndCount();
     return [listings, total];
   }
+
   //get listings specific to the user
   async getMyListings(userId: string) {
     return this.listingRepo.find({
@@ -217,19 +216,25 @@ export class ListingsService {
       throw new NotFoundException(`Listing with ID ${id} not found`);
     }
 
+    const reviewer = new User();
+    reviewer.id = adminId;
+
     listing.status = ListingStatus.APPROVED;
-    listing.reviewer = { id: adminId } as User;
+    listing.reviewer = reviewer;
     listing.reviewed_at = new Date();
 
     return this.listingRepo.save(listing);
   }
 
-  ///enrurer admin only access
+  //ensure admin only access
   async rejectListing(id: string, adminId: string) {
     const listing = await this.getListingById(id);
 
+    const reviewer = new User();
+    reviewer.id = adminId;
+
     listing.status = ListingStatus.REJECTED;
-    listing.reviewer = { id: adminId } as User;
+    listing.reviewer = reviewer;
     listing.reviewed_at = new Date();
 
     return this.listingRepo.save(listing);
