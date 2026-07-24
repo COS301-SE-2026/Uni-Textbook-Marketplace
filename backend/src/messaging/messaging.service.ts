@@ -13,6 +13,7 @@ import {
     Timestamp,
 } from 'firebase-admin/firestore';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
+import { timestamp } from 'rxjs';
 
 interface ConversationData {
     buyerId: string;
@@ -79,8 +80,8 @@ export class MessagingService {
         sellerId,
         listingId,
 
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
 
         lastMessage: null,
         lastSenderId: null,
@@ -212,7 +213,7 @@ export class MessagingService {
         .add({
             senderId: userId,
             text,
-            sentAt: new Date(),
+            sentAt: Timestamp.now(),
             read: false,
         });
 
