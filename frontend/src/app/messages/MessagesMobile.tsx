@@ -1,31 +1,45 @@
 'use client';
 
+import { useState } from 'react';
+
+import ConversationList from '../../components/messaging//ConversationList';
+import ChatHeader from '../../components/messaging//ChatHeader';
+import ChatWindow from '../../components/messaging//ChatWindow';
+import MessageInput from '../../components/messaging//MessageInput';
+
+
 export default function MessagesMobile() {
+    const [openChat, setOpenChat] = useState(false);
+
     return (
         <main className="min-h-screen bg-gray-50">
 
-            <header className="bg-white border-b px-4 py-4 sticky top-0 z-10">
-                <h1 className="text-xl font-semibold">
-                    Messages
-                </h1>
-            </header>
+            {!openChat ? (
+                <>
+                    <header className="
+                        bg-white 
+                        border-b 
+                        px-4 
+                        py-4
+                    ">
+                        <h1 className="text-xl font-semibold">
+                            Messages
+                        </h1>
+                    </header>
 
-            <section className="p-4">
+                    <ConversationList />
+                </>
+            ) : (
+                <div className="h-screen flex flex-col">
 
-                <div className="rounded-xl border bg-white p-6 text-center">
+                    <ChatHeader />
 
-                    <h2 className="text-lg font-semibold">
-                        No conversations yet
-                    </h2>
+                    <ChatWindow />
 
-                    <p className="mt-2 text-sm text-gray-500">
-                        Messages will show here when you start a conversation
-                    </p>
+                    <MessageInput />
 
                 </div>
-
-            </section>
-
+            )}
         </main>
     );
 }
