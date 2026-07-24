@@ -3,8 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, DataSource } from 'typeorm';
 
 import { SavedSearch } from '../database/entities/saved_search.entity';
 import { User } from '../database/entities/users.entity';
@@ -20,18 +19,19 @@ import {
 
 @Injectable()
 export class SavedSearchesService {
-  constructor(
-    @InjectRepository(SavedSearch)
-    private savedSearchRepository: Repository<SavedSearch>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Listing)
-    private listingRepository: Repository<Listing>,
-    @InjectRepository(Book)
-    private bookRepository: Repository<Book>,
-    @InjectRepository(ModuleEntity)
-    private moduleRepository: Repository<ModuleEntity>,
-  ) {}
+  private savedSearchRepository: Repository<SavedSearch>;
+  private userRepository: Repository<User>;
+  private listingRepository: Repository<Listing>;
+  private bookRepository: Repository<Book>;
+  private moduleRepository: Repository<ModuleEntity>;
+
+  constructor(private dataSource: DataSource) {
+    this.savedSearchRepository = this.dataSource.getRepository(SavedSearch);
+    this.userRepository = this.dataSource.getRepository(User);
+    this.listingRepository = this.dataSource.getRepository(Listing);
+    this.bookRepository = this.dataSource.getRepository(Book);
+    this.moduleRepository = this.dataSource.getRepository(ModuleEntity);
+  }
 
   private toNumber(value: string | number | undefined | null): number | null {
     if (value === undefined || value === null || value === '') return null;
@@ -47,7 +47,7 @@ export class SavedSearchesService {
     return typeof value === 'string';
   }
 
-  //Create a new saved search for a user
+  // Create a new saved search for a user
   async createSavedSearch(
     userId: string,
     data: CreateSavedSearchDto,
@@ -73,7 +73,7 @@ export class SavedSearchesService {
     return await this.savedSearchRepository.save(savedSearch);
   }
 
-  //Get all saved searches for a user with pagination
+  // Get all saved searches for a user with pagination
   async getUserSavedSearches(
     userId: string,
     query: GetSavedSearchesQueryDto,
@@ -104,7 +104,7 @@ export class SavedSearchesService {
     };
   }
 
-  //Delete a saved search by ID
+  // Delete a saved search by ID
   async deleteSavedSearch(id: string, userId: string): Promise<void> {
     const savedSearch = await this.savedSearchRepository.findOne({
       where: { id, user_id: userId },
@@ -118,7 +118,8 @@ export class SavedSearchesService {
 
     await this.savedSearchRepository.delete(id);
   }
-  //Get a single saved search by ID
+
+  // Get a single saved search by ID
   async getSavedSearchById(id: string, userId: string): Promise<SavedSearch> {
     const savedSearch = await this.savedSearchRepository.findOne({
       where: { id, user_id: userId },
@@ -131,7 +132,7 @@ export class SavedSearchesService {
     return savedSearch;
   }
 
-  //Check if a listing matches a saved search filter
+  // Check if a listing matches a saved search filter
   matchesFilter(listing: Listing, filter: SavedSearchFiltersDto): boolean {
     // Module filter (by module code)
     if (filter.moduleCode && listing.module?.code !== filter.moduleCode) {
@@ -196,7 +197,7 @@ export class SavedSearchesService {
     return true;
   }
 
-  //Find all users with saved searches that match a new listing
+  // Find all users with saved searches that match a new listing
   async findMatchingSavedSearches(listingId: string): Promise<
     Array<{
       userId: string;
@@ -236,7 +237,7 @@ export class SavedSearchesService {
     return matches;
   }
 
-  //Validate filter structure
+  // Validate filter structure
   private validateFilter(filter: SavedSearchFiltersDto): {
     valid: boolean;
     errors?: string[];
@@ -368,12 +369,12 @@ export class SavedSearchesService {
     };
   }
 
-  //Get all saved searches
+  // Get all saved searches
   async getAllSavedSearches(): Promise<SavedSearch[]> {
     return await this.savedSearchRepository.find();
   }
 
-  //Get saved searches by user IDs
+  // Get saved searches by user IDs
   async getSavedSearchesByUserIds(userIds: string[]): Promise<SavedSearch[]> {
     return await this.savedSearchRepository.find({
       where: { user_id: In(userIds) },
