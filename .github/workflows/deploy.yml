@@ -21,6 +21,7 @@ jobs:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
 
             - name: Set deploy target
+              id: target
               run: |
                if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                  echo "backend_app=nexusdev-backend" >> $GITHUB_OUTPUT
@@ -60,13 +61,14 @@ jobs:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
 
             - name: Set deploy target
+              id: target
               run: |
                if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                 echo "frontend_app=nexusdev-frontend" >> $GITHUB_OUTPUT
-                echo "API_URL="https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_ENV
+                echo "api_url="https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_ENV
                else
                 echo "frontend_app=nexusdev-backend-staging" >> $GITHUB_OUTPUT
-                echo "API_URL=https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_OUTPUT
+                echo "api_url=https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_OUTPUT
                fi
 
             - name: Build & Push Frontend Image
@@ -74,7 +76,7 @@ jobs:
                 az acr build \
                 --registry nexusdevtukscos301
                 --image nexusdev-frontend:${{ github.sha }} \
-                --build-arg NEXT_PUBLIC_API_URL=${{ env.API_URL }} \
+                --build-arg NEXT_PUBLIC_API_URL=${{ steps.target.outputs.api_url }} \
                 ./frontend
 
             - name: Update Container App
