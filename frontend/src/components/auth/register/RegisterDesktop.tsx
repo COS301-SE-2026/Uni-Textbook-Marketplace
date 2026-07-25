@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
 import { getMe } from '@/lib/auth.api';
 
-//  Types 
+
 
 interface FormData {
     fullName: string;
@@ -24,7 +24,7 @@ interface FormData {
     agreedToTerms: boolean;
 }
 
-//  Step Indicator 
+ 
 
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
@@ -92,7 +92,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     );
 }
 
-//  OTP Input 
+ 
 
 function OtpInput({
     value,
@@ -174,14 +174,14 @@ function OtpInput({
     );
 }
 
-//  Dot color helper (avoids nested ternary)
+//  Dot color helper
 function getDotColor(n: number, step: number): string {
     if (n === step) return "#ffffff";
     if (n < step) return "#00B4D8";
     return "#9ca3af";
 }
 
-//  Main Component 
+ 
 
 export default function RegisterDesktop() {
     const [step, setStep] = useState(1);
@@ -236,7 +236,7 @@ export default function RegisterDesktop() {
             .catch(() => setServerError('Could not load universities. Please refresh the page'));
     }, []);
 
-    //  Validation per step 
+     
 
     const validateStep1 = () => {
         const e: Record<string, string> = {};
@@ -283,7 +283,7 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
-    //  Navigation 
+     
 
     const handleNext = async () => {
         if (loading) return;
@@ -358,7 +358,7 @@ export default function RegisterDesktop() {
         }
     };
 
-    //  Step content 
+     
 
     const renderStepContent = () => {
         switch (step) {
@@ -464,7 +464,7 @@ export default function RegisterDesktop() {
                     </>
                 );
 
-            // Step 3 is now Password (previously step 4)
+            
             case 3:
                 return (
                     <>
@@ -574,7 +574,7 @@ export default function RegisterDesktop() {
                     </>
                 );
 
-            // Step 4 is now OTP Verification (previously step 3) — last step
+            
             case 4:
                 return (
                     <>
@@ -633,7 +633,7 @@ export default function RegisterDesktop() {
         }
     };
 
-    //  Layout 
+     
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">

@@ -1,0 +1,79 @@
+name: Deploy to Azure Container Apps
+
+on:
+    push:
+        branches: [main, develop]
+
+jobs:
+    deploy-backend:
+        name: Deploy Backend
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+
+            - name: Log in to Azure
+              uses: azure/login@eec3c95657c1536435858eda1f3ff5437fee8474 #v2.3.0
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - name: Set deploy target
+              run: |
+               if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+                 echo "backend_app=nexusdev-backend" >> $GITHUB_OUTPUT
+               else
+                 echo "backend_app=nexusdev-backend-staging" >> $GITHUB_OUTPUT
+               fi
+
+            - name: Build & Push Backend Image
+              run: |
+                az acr build \
+                --registry nexusdevtukscos301 \
+                --image nexusdev-backend:${{ github.sha }} \
+                ./backend
+
+            - name: Update Container App
+              run: |
+                az containerapp update \
+                --name ${{ steps.target.outputs.backend_app }} \
+                --resource-group NexusDev \
+                --image nexusdevtukscos301.azurecr.io/nexusdev-backend:${{ github.sha }}
+
+    deploy-frontend:
+        name: Deploy Frontend
+        needs: deploy-backend
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+
+            - name: Log in to Azure
+              uses: azure/login@eec3c95657c1536435858eda1f3ff5437fee8474 #v2.3.0
+
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - name: Set deploy target
+              run: |
+               if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+                echo "frontend_app=nexusdev-frontend" >> $GITHUB_OUTPUT
+                echo "API_URL="https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_ENV
+               else
+                echo "frontend_app=nexusdev-backend-staging" >> $GITHUB_OUTPUT
+                echo "API_URL=https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_OUTPUT
+               fi
+
+            - name: Build & Push Frontend Image
+              run: |
+                az acr build \
+                --registry nexusdevtukscos301
+                --image nexusdev-frontend:${{ github.sha }} \
+                --build-arg NEXT_PUBLIC_API_URL=${{ env.API_URL }} \
+                ./frontend
+
+            - name: Update Container App
+              run: | 
+                az containerapp update \
+                --name ${{ steps.target.outputs.frontend_app }} \
+                --resource-group NexusDev \
+                --image nexusdevtukscos301.azurecr.io/nexusdev-frontend:${{ github.sha }}

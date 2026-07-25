@@ -9,7 +9,9 @@ import { randomUUID } from 'crypto';
 @Injectable()
 export class AzureService {
   private readonly blobServiceClient: BlobServiceClient;
+
   private readonly containerName: string;
+
   private readonly accountName: string;
 
   constructor() {
@@ -57,11 +59,14 @@ export class AzureService {
       this.containerName,
     );
     const extSections = file.originalname.split('.');
+
     const fileExtens =
       extSections.length > 1 ? extSections[extSections.length - 1] : 'png';
 
     const blobContName = `${randomUUID()}.${fileExtens}`;
+
     const blockBlobClient = containerClient.getBlockBlobClient(blobContName);
+
     await blockBlobClient.uploadData(file.buffer, {
       blobHTTPHeaders: {
         blobContentType: file.mimetype,
@@ -95,13 +100,16 @@ export class AzureService {
         this.containerName,
       );
       const urlRead = new URL(imageUrl);
+
       const pathUrls = urlRead.pathname.split('/');
+
       const specificBlob = pathUrls[pathUrls.length - 1];
 
       if (!specificBlob) {
         throw new BadRequestException('Couldnt find blob path');
       }
       const blockBlobClient = containerClient.getBlockBlobClient(specificBlob);
+
       await blockBlobClient.deleteIfExists();
     } catch {
       throw new InternalServerErrorException(
