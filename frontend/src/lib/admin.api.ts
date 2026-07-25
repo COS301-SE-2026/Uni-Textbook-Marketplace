@@ -32,16 +32,12 @@ export interface AdminListing {
     reviewer?: { id: string} | null
 }
 
-export async function getPendingListings(): Promise<AdminListing[]> {
-    return api.get<AdminListing[]>('/listings/admin/pending')
-}
-
 export async function approveListing(id: string): Promise<void> {
-    return api.patch(`/listings/admin/${id}/approve`)
+    return api.patch(`/admin/${id}/approve`)
 }
 
 export async function rejectListing(id: string, reason: string): Promise<void> {
-    return api.patch(`/listings/admin/${id}/reject`, { reason })
+    return api.patch(`/admin/${id}/reject`, { reason })
 }
 
 export async function getAllAdminListings(): Promise<AdminListing[]>{
