@@ -8,6 +8,9 @@ jobs:
     deploy-backend:
         name: Deploy Backend
         runs-on: ubuntu-latest
+        environment:
+          name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          url: ${{ github.ref == 'refs/heads/main' && 'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io' || 'https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io'}}
         steps:
             - name: Checkout Repository
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
@@ -43,6 +46,9 @@ jobs:
         name: Deploy Frontend
         needs: deploy-backend
         runs-on: ubuntu-latest
+        environment:
+          name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          url: ${{ github.ref == 'refs/heads/main' && 'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io' || 'https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io'}}
         steps:
             - name: Checkout Repository
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
