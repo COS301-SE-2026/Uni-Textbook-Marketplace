@@ -54,6 +54,7 @@ export default function SaveSearchButton({
       )
     }
     if (isFilterSaved) {
+
       return (
         <>
           <BookmarkCheck size={16} />
@@ -66,6 +67,8 @@ export default function SaveSearchButton({
         <Bookmark size={16} />
         Save this search
       </>
+
+
     )
   }
 
@@ -75,6 +78,8 @@ export default function SaveSearchButton({
       setTimeout(() => setError(null), 3000)
       return
     }
+
+
     setIsSavFilter(true)
     setError(null)
     try {
@@ -93,6 +98,7 @@ export default function SaveSearchButton({
 
   return (
     <div className="space-y-1">
+
       <button
         type="button"
         onClick={performFilterSave}
@@ -112,5 +118,6 @@ export default function SaveSearchButton({
         </p>
       )}
     </div>
+    
   )
 }
