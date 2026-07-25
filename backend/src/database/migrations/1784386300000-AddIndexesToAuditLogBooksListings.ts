@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
-  name = 'AddIndexesToAuditLogBooksListings';
-
+export class AddIndexesToAuditLogBooksListings1784386300000 implements MigrationInterface {
   private async createIndex(
     queryRunner: QueryRunner,
     name: string,
@@ -59,7 +57,7 @@ export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
       queryRunner,
       'idx_listings_module_price',
       'listings',
-      ['module', 'price'],
+      ['module_id', 'price'],
     );
     await this.createIndex(queryRunner, 'idx_listings_condition', 'listings', [
       'condition',
