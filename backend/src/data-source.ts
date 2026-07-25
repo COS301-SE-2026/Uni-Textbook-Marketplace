@@ -12,6 +12,7 @@ import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
+import { Notifications } from './database/entities/notifications.entity';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ export const AppDataSource = new DataSource({
     AuditLog,
     SavedSearch,
     Wishlist,
+    Notifications,
   ],
   migrations: ['src/database/migrations/*.ts'],
 });

@@ -36,14 +36,26 @@ function getStoredUser(): AuthUser | null {
 
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
+  const [isLoading, setIsLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(() => {
-    return getStoredUser() === null;
-  });
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    const stored = getStoredUser();
+    
+    if(stored){
+      setUser(stored);
+      setIsLoading(false);
+    }
+    
+    setHydrated(true);
+  },[])
+
+  useEffect(() => {
+
+    if (!hydrated) return;
     if (user) return;
 
     getMe()
@@ -53,7 +65,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       })
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
-  }, [user]);
+  }, [hydrated,user]);
 
   useEffect(() => {
     if(isLoading) return;

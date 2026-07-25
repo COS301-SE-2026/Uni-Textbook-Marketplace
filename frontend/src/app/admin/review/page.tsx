@@ -6,7 +6,6 @@ import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import AdminRoute from '@/components/auth/AdminRoute'
 import {
-    getPendingListings,
     approveListing,
     rejectListing,
     AdminListing,
@@ -25,33 +24,18 @@ interface Toast {
     type: 'success' | 'error'
 }
 
-const FACULTY_LABEL: Record<string, string> = {
-    ENG: 'Engineering',
-    EBIT: 'EBIT',
-    LAW: 'Law',
-    HUM: 'Humanities',
-    MED: 'Health Sciences',
-    NAT: 'Natural Sciences',
-    ECO: 'Economic Sciences',
-    EDU: 'Education',
-}
-
 const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Actions']
 
 type FilterValue = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
 function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-ZA', {
+        timeZone: 'Africa/Johannesburg',
         day: '2-digit',
         month: 'short',
         year: 'numeric',
     })
 }
-
-function getFacultyLabel(faculty: string): string {
-    return FACULTY_LABEL[faculty] ?? faculty
-}
-
 
 function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
     return (
@@ -82,7 +66,6 @@ function ModuleCell({ module }: Readonly<{ module: AdminListing['module'] }>) {
     return (
         <td className="px-4 py-3">
             <p className="font-mono text-xs">{module.code}</p>
-            <p className="text-xs text-gray-400">{getFacultyLabel(module.faculty)}</p>
         </td>
     )
 }
@@ -288,7 +271,7 @@ function useToasts() {
     return { toasts, showToast }
 }
 
-function useListings(showToast: (msg: string, type: Toast['type']) => void) {
+function useListings(showToast: (msg: string, type: Toast['type']) => void, currentAdminId: string | null) {
     const [listings, setListings] = useState<AdminListing[]>([])
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -305,7 +288,7 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
             })
     }, [showToast])
 
-    const updateListingStatus = (id: string, status: string, reviewerId?: string) => {
+    const updateListingStatus = (id: string, status: string, reviewerId: string | null) => {
         setListings(prev => prev.map(l =>
             l.id === id ? { ...l, status, reviewer: reviewerId ? { id: reviewerId } : l.reviewer } : l
         ))
@@ -315,7 +298,7 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
         setActionLoading(id)
         try {
             await approveListing(id)
-            updateListingStatus(id, 'APPROVED')
+            updateListingStatus(id, 'APPROVED',currentAdminId)
             showToast('Listing approved', 'success')
         } catch {
             showToast('Failed to approve listing', 'error')
@@ -328,7 +311,7 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void) {
         setActionLoading(id)
         try {
             await rejectListing(id, reason)
-            updateListingStatus(id, 'REJECTED')
+            updateListingStatus(id, 'REJECTED',currentAdminId)
             showToast('Listing rejected', 'success')
         } catch {
             showToast('Failed to reject listing', 'error')
@@ -373,11 +356,10 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
 export default function AdminReviewDashboard() {
     const router = useRouter()
     const { toasts, showToast } = useToasts()
-    const { listings, loading, actionLoading, handleApprove, handleReject } =
-        useListings(showToast)
-    const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } =
-        useRejection(handleReject)
     const [currentAdminId, setCurrentAdminId] = useState<string | null>(null)
+    const { listings, loading, actionLoading, handleApprove, handleReject } = useListings(showToast,currentAdminId)
+    const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } = useRejection(handleReject)
+    
 
     useEffect(() => {
         getMe()
