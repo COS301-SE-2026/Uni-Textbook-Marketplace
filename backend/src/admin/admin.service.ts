@@ -18,13 +18,13 @@ export class AdminService {
     userId: string,
     status: ListingStatus,
     action: 'APPROVE_LISTING' | 'REJECT_LISTING',
+    reason?: string,
   ) {
     return await this.entityManager.transaction(async (manager) => {
       const listingRepository = manager.getRepository(Listing);
       const auditLogRepository = manager.getRepository(AuditLog);
       const userRepository = manager.getRepository(User);
 
-      // Get the admin user
       const admin = await userRepository.findOne({
         where: { id: userId },
       });
@@ -41,27 +41,25 @@ export class AdminService {
         throw new NotFoundException(`Listing with ID ${id} not found`);
       }
 
-      // Update listing status
       listing.status = status;
       listing.reviewer = admin;
       listing.reviewed_at = new Date();
 
-      await listingRepository.save(listing);
+      const savedlisting = await listingRepository.save(listing);
 
-      // Create audit log
-      const actionVerb =
-        status === ListingStatus.APPROVED ? 'approved' : 'rejected';
+      const actionVerb = status === ListingStatus.APPROVED ? 'approved' : 'rejected';
       const auditLog = auditLogRepository.create({
         entity_type: 'listing',
         entity_id: listing.id,
         action: action,
         performedBy: admin,
         notes: `Listing "${listing.title}" ${actionVerb} by ${admin.email}`,
+        reason: reason,
       });
 
       await auditLogRepository.save(auditLog);
 
-      return listing;
+      return savedlisting;
     });
   }
 
@@ -74,16 +72,16 @@ export class AdminService {
     );
   }
 
-  async rejectListing(id: string, userId: string) {
+  async rejectListing(id: string, userId: string,reason: string) {
     return this.updateListingStatus(
       id,
       userId,
       ListingStatus.REJECTED,
       'REJECT_LISTING',
+      reason,
     );
   }
 
-  // ... rest of the methods remain the same
   async getPendingListings() {
     const listingRepository = this.entityManager.getRepository(Listing);
     return await listingRepository.find({
