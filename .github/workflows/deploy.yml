@@ -65,7 +65,7 @@ jobs:
               run: |
                if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                 echo "frontend_app=nexusdev-frontend" >> $GITHUB_OUTPUT
-                echo "api_url="https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_ENV
+                echo "api_url=https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_ENV
                else
                 echo "frontend_app=nexusdev-backend-staging" >> $GITHUB_OUTPUT
                 echo "api_url=https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_OUTPUT
