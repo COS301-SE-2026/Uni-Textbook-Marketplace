@@ -74,7 +74,7 @@ jobs:
             - name: Build & Push Frontend Image
               run: |
                 az acr build \
-                --registry nexusdevtukscos301
+                --registry nexusdevtukscos301 \
                 --image nexusdev-frontend:${{ github.sha }} \
                 --build-arg NEXT_PUBLIC_API_URL=${{ steps.target.outputs.api_url }} \
                 ./frontend
