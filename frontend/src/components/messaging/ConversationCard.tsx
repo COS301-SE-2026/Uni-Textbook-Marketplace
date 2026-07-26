@@ -1,8 +1,9 @@
 export default function ConversationCard() {
     return (
-        <div className="cursor-pointer border-b p-4 hover:bg-gray-100">
+        <div className="cursor-pointer p-3 hover:bg-blue-100 border-black">
 
-            <h2 className="font-semibold">
+            <h2 className="font-semibold
+                            text-black">
                 John Smith
             </h2>
 

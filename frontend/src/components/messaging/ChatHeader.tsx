@@ -5,7 +5,7 @@ export default function ChatHeader() {
             bg-white 
             p-4
         ">
-            <h2 className="font-bold text-lg">
+            <h2 className="font-bold text-black">
                 John Smith
             </h2>
 

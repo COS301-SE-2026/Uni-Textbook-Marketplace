@@ -6,7 +6,8 @@ export default function ConversationList() {
 
         <aside className="
             w-80 
-            border-r 
+            border-2px
+            borderColor-black
             bg-white 
             overflow-y-auto
         ">
@@ -15,7 +16,7 @@ export default function ConversationList() {
                 border-b 
                 p-4 
                 font-bold 
-                text-lg
+                text-black
             ">
                 Conversations
             </div>

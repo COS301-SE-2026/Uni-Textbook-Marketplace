@@ -24,7 +24,7 @@ export default function MessageBubble({
                     ${
                         own
                         ? "bg-blue-500 text-white"
-                        : "bg-white border"
+                        : "bg-white border text-black"
                     }
                 `}
             >
