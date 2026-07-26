@@ -3,7 +3,7 @@
 # Uni Textbook Marketplace
 
  <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="50%" />
+    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="55%" />
 </p>
 
 <h1 align="center">Made for Students, by Students</h1>
@@ -99,51 +99,62 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 <div align = "center">
 
-## Documentation
+## Documentation Index
+
+---
+
+### DEMO 2 (Latest Documentation)
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specification (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Software_Requirements_Specifications.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Design_Specifications.pdf) |
-|  User Guide | *Coming soon* |
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf) |
+|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf) |
+|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf) |
+|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf) |
+|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf) |
+|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf) |
+|  Wireframes Document | [View Wireframes](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Wireframes.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
+|  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
+|  Issue Tracker | [GitHub Issues](../../issues) |
+| **Team Collaboration** | Overview of team structure, responsibilities, and collaboration tools. | [View Group Framework](https://www.notion.so) |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
-|  Demo 1 Slides | [View Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/NexusDev_Demo_1_Slides.pdf) |
+
+---
+
+### DEMO 1
+
+| Document | Link |
+|---|---|
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) |
+
+</div>
+
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
+
+<h2 align="center">Demo Video </h2>
+<div align="center">
+
+| Demo Video | Documentation |
+| --- | --- |
+|  Demo 1 Slides | [View Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 |  Demo 1 Video | [View Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) |
 
 </div>
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
-<div align = "center">
+## Project Structure
 
-## Project Board & CI Status
+```bash
 
-| Resource | Link |
-|---|---|
-|  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
-|  Issue Tracker | [GitHub Issues](../../issues) |
 
-</div>
-
----
-
-<div align = "center">
-
-## Build & Quality Badges
-
-[![NexusDev CI](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace/branch/main/graph/badge.svg)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2026_Uni-Textbook-Marketplace&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2026_Uni-Textbook-Marketplace)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2026_Uni-Textbook-Marketplace&metric=coverage)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2026_Uni-Textbook-Marketplace)
-[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-blue)](https://nodejs.org)
-![NestJS](https://img.shields.io/badge/backend-NestJS-red)
-![NextJS](https://img.shields.io/badge/frontend-NextJS-black)
-![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-336791)
-[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
-
-</div>
-
----
+```
 
 ## Getting Started
 
@@ -187,7 +198,9 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 ## Branching Strategy
 
@@ -206,7 +219,9 @@ All changes go through a **Pull Request** with at least one review before mergin
 
 > See [CONTRIBUTING.md](./CONTRIBUTING.md) for full branching rules and commit conventions.
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 ## Testing
 
@@ -231,7 +246,9 @@ npm run test:frontend
 npm run test:all
 ```
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 ## Architecture Overview
 
@@ -244,7 +261,10 @@ The system follows a **modular monolith** architecture for core features with an
 - **Hosting** : Azure Static Web Apps + Azure App Service
 - **CI/CD** : GitHub Actions
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
+
 <div align = "center">
 
 ## The Team
@@ -283,7 +303,9 @@ The system follows a **modular monolith** architecture for core features with an
 [![GitHub](https://img.shields.io/badge/GitHub-u23591732-181717?logo=github)](https://github.com/u23591732)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-0077B5?logo=linkedin)](https://www.linkedin.com/in/neo-bosoga-67167227a/)
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 <div align = "center">
 
@@ -297,10 +319,16 @@ The system follows a **modular monolith** architecture for core features with an
 
 </div>
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 <div align = "center">
 
 *© 2026 NexusDev - University of Pretoria COS 301 Capstone Project*
 
 </div>
+
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
