@@ -101,8 +101,6 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ## Documentation Index
 
----
-
 ### DEMO 2 (Latest Documentation)
 
 | Document | Link |
