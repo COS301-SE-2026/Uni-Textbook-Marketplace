@@ -3,7 +3,7 @@
 # Uni Textbook Marketplace
 
  <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="60%" />
+    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="50%" />
 </p>
 
 <h1 align="center">Made for Students, by Students</h1>
@@ -12,22 +12,26 @@
 
 <p align="center">
   <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="25" height="25" valign="middle"/>
+    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
     Explore Here
   </a>
 </p>
 
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
 <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
+</h2>
 
-<h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br />
-<img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%">
+<h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br/>
+<img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%" />
+</h2>
 
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 <div align="center">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="25" height="25" valign="middle"/>
-
-## Build & Quality Badges
+    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
+<h2 align="center">Build & Quality Badges</h2>
     
 [![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=codecov&logoColor=white&color=00B4D8)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
 [![Build](https://img.shields.io/github/actions/workflow/status/COS301-SE-2026/Uni-Textbook-Marketplace/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
@@ -46,7 +50,6 @@
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-
 <div align="center">
 
 ## Project Description
@@ -57,7 +60,42 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 </div>
 
----
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+<h2 align="center">Tech Stack</h2>
+
+<h3 align="center">Frontend: Considered User Experiences</h3>
+<p align="center">
+<img src="https://skillicons.dev/icons?i=react,tailwindcss,figma,typescript,nextjs" />
+</p>
+
+<h3 align="center">Backend: Stable Foundation</h3>
+<p align="center">
+<img src="https://skillicons.dev/icons?i=nestjs,postgres,typescript,firebase" /><br>
+</p>
+
+<h3 align="center">DevOps: Business-Smart Delivery</h3>
+<p align="center">
+<img src="https://skillicons.dev/icons?i=githubactions,docker,azure" />
+</p>
+
+<h3 align="center">Testing: For Smooth System Assurance</h3>
+<p align="center">
+<img src="https://skillicons.dev/icons?i=jest,cypress" />
+</p>
+
+<h3 align="center">Project Management: Via Modern Tech</h3>
+<p align="center">
+<img src="https://skillicons.dev/icons?i=github,notion,discord" />
+</p>
+</div>
+
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
 
 <div align = "center">
 
