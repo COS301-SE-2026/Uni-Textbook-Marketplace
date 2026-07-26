@@ -3,67 +3,47 @@
 # Uni Textbook Marketplace
 
  <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="80%" />
+    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="60%" />
 </p>
 
 <h1 align="center">Made for Students, by Students</h1>
 
 </div>
 
----
-
 <p align="center">
   <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="22" height="22" valign="middle"/>
+    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="25" height="25" valign="middle"/>
     Explore Here
   </a>
 </p>
 
----
-
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
 <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
-
----
 
 <h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br />
 <img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%">
 
----
 
-<p align="center">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="22" height="22" valign="middle"/>
-    <h2 align="center">Build & Quality Badges</h2>
-    <p align="center">
-    <!-- (a) Code Coverage — Codecov + SonarCloud -->
+<div align="center">
+    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="25" height="25" valign="middle"/>
 
+## Build & Quality Badges
+    
 [![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=codecov&logoColor=white&color=00B4D8)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
-[![SonarCloud Coverage](https://img.shields.io/sonar/coverage/COS301-SE-2026_Uni-Textbook-Marketplace?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarqube&logoColor=white&color=00B4D8)](https://sonarcloud.io/component_measures?id=COS301-SE-2026_Uni-Textbook-Marketplace&metric=coverage)
-
-<!-- (b) Build — GitHub Actions -->
 [![Build](https://img.shields.io/github/actions/workflow/status/COS301-SE-2026/Uni-Textbook-Marketplace/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
-
-
-<!-- Quality Gate -->
-[![Quality Gate](https://img.shields.io/sonar/quality_gate/COS301-SE-2026_Uni-Textbook-Marketplace?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarqube&logoColor=white)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2026_Uni-Textbook-Marketplace)
-
-<!-- Shields.io static badge -->
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-00B4D8?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
-
-<!-- Issue Tracking — GitHub Issues -->
 [![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
-
-<!-- Monitoring — Uptime Robot (needs a monitor set up first) -->
+[![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
+[![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
 [![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://stats.uptimerobot.com/YOUR_DASHBOARD_ID)
-
-<!-- Tech stack -->
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
-
-<!-- License -->
 [![License](https://img.shields.io/badge/license-MIT-00B4D8?style=for-the-badge)](./LICENSE)
-    </p>
+</div>
+
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
 
