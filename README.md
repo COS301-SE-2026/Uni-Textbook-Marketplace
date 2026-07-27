@@ -3,7 +3,8 @@
 # Uni Textbook Marketplace
 
 <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="500" height="500" />
+    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="150" height="150" /><br/>
+    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="400" height="400" />
 </p>
 
 <h1 align="center">Made for Students, by Students</h1>
