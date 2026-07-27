@@ -13,7 +13,7 @@ import {
     Timestamp,
 } from 'firebase-admin/firestore';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
-import { timestamp } from 'rxjs';
+import { User } from '../database/entities/users.entity';
 
 interface ConversationData {
     buyerId: string;
@@ -37,6 +37,9 @@ export class MessagingService {
     constructor(
         @InjectRepository(Listing)
         private readonly listingsRepository: Repository<Listing>,
+
+        @InjectRepository(User)
+        private readonly usersRepository: Repository<User>,
     ) {}
 
     async createConversation(
@@ -93,7 +96,10 @@ export class MessagingService {
         };
     }
 
-    async getMyConversations(userId: string,): Promise<ConversationResponseDto[]> {
+    async getMyConversations(
+        userId: string,
+    ): Promise<ConversationResponseDto[]> {
+
         const conversationsCollection =
             db.collection('conversations') as CollectionReference<ConversationData>;
 
@@ -105,37 +111,110 @@ export class MessagingService {
             .where('sellerId', '==', userId)
             .get();
 
-        const conversations: FirebaseFirestore.QueryDocumentSnapshot<ConversationData>[] = [
+        const conversations = [
             ...buyerSnapshot.docs,
             ...sellerSnapshot.docs,
         ];
 
-        const uniqueConversations = new Map<string, ConversationResponseDto>();
+        const result: ConversationResponseDto[] = [];
 
-        conversations.forEach((doc) => {
-        const data = doc.data() as ConversationData;
+        for (const doc of conversations) {
 
-        uniqueConversations.set(doc.id, {
-            conversationId: doc.id,
-            ...data,
-        });
-        });
+            const data = doc.data();
 
-        const result: ConversationResponseDto[] =
-        Array.from(uniqueConversations.values());
+            const listing = await this.listingsRepository.findOne({
+                where: {
+                    id: data.listingId,
+                },
+                relations: [
+                    'seller',
+                    'book',
+                ],
+            });
 
-        result.sort((a, b) => {
-        if (!a.updatedAt || !b.updatedAt) {
-            return 0;
+            if (!listing) {
+                continue;
+            }
+
+            const otherUserId =
+                userId === data.buyerId
+                    ? data.sellerId
+                    : data.buyerId;
+
+            let otherUser: User | null = null;
+
+            if (listing.seller.id === otherUserId) {
+
+                otherUser = listing.seller;
+
+            } else {
+
+                otherUser = await this.usersRepository.findOne({
+                    where: {
+                        id: otherUserId,
+                    },
+                });
+
+            }
+
+            if (!otherUser) {
+                continue;
+            }
+
+            result.push({
+
+                conversationId: doc.id,
+
+                buyerId: data.buyerId,
+
+                sellerId: data.sellerId,
+
+                createdAt: data.createdAt,
+
+                updatedAt: data.updatedAt,
+
+                lastMessage: data.lastMessage,
+
+                lastSenderId: data.lastSenderId,
+
+                listing: {
+
+                    id: listing.id,
+
+                    title:
+                        listing.title ||
+                        listing.book.title,
+
+                    photoUrl:
+                        listing.photo_urls.length > 0
+                            ? listing.photo_urls[0]
+                            : null,
+
+                },
+
+                otherUser: {
+
+                    id: otherUser.id,
+
+                    firstName:
+                        otherUser.first_name,
+
+                    lastName:
+                        otherUser.last_name,
+
+                },
+
+            });
+
         }
 
-        return (
+        result.sort((a, b) =>
             b.updatedAt.toDate().getTime() -
-            a.updatedAt.toDate().getTime()
+            a.updatedAt.toDate().getTime(),
         );
-        });
 
         return result;
+
     }
 
     async getMessages(

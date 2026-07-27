@@ -43,10 +43,20 @@ export default function MessagesDesktop() {
                                     Loading messages...
                                 </div>
                             ) : (
-                                <ChatWindow
-                                    messages={messages}
-                                    currentUserId={user?.id ?? ''}
-                                />
+                                <>
+                                    {messages.length > 0 ? (
+                                        <ChatWindow
+                                            messages={messages}
+                                            currentUserId={user?.id ?? ''}
+                                        />
+                                    ) : (
+                                        <div className="flex flex-1 items-center justify-center text-gray-500">
+                                            No messages yet.
+                                        </div>
+                                    )}
+
+                                    
+                                </>
                             )}
                             <MessageInput onSend={send} />
                         </>
