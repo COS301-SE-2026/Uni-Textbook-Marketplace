@@ -48,23 +48,6 @@ export class AdminController {
     return await this.adminService.getAuditLog(filters);
   }
 
-  @Get('audit-log/stats')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  async getAuditLogStats() {
-    return await this.adminService.getAuditLogStats();
-  }
-
-  @Get('audit-log/:entityType/:entityId')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  async getAuditLogByEntity(
-    @Param('entityType') entityType: string,
-    @Param('entityId') entityId: string,
-  ) {
-    return await this.adminService.getAuditLogByEntity(entityType, entityId);
-  }
-
   @Get('emails')
   async getadmin(){
     return await this.adminService.getusersAdmin();
