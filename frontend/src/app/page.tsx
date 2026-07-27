@@ -309,7 +309,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
 export default function LandingPage() {
   return (
     <>
-      {/* Hero section with background image */}
+      {/* Hero section */}
       <section className="relative h-screen w-full bg-[#000f2b] flex items-center overflow-hidden -mt-[70px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
@@ -323,7 +323,7 @@ export default function LandingPage() {
           />
         </div>
 
-        {/* Gradient overlay*/}
+        
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
 
         <div className="container-content relative z-20 py-16 w-full">
@@ -399,27 +399,11 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          {/* Search bar
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
-                <div className="flex-1 flex items-center gap-2 px-4 py-2">
-                  <Search size={18} className="text-[#4B4F58] flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Search by title, author, ISBN, or module..."
-                    className="w-full text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
-                              border-none outline-none bg-transparent py-1.5"
-                  />
-                </div>
-                <button className="bg-[#00B4D8] text-[#000f2b] font-semibold text-sm px-6 py-2.5 hover:bg-[#0096B4] transition-colors h-full">
-                  SEARCH
-                </button>
-              </div>
-            </div>*/}
+          
         </div>
       </section>
 
-      {/* Section 2: How it works */}
+      {/* How it works */}
       <section className="py-24 bg-white border-b border-slate-100">
         <div className="container-content">
 
@@ -466,7 +450,7 @@ export default function LandingPage() {
       </section>
       
 
-      {/* Section 3: Find a variety of textbooks */}
+      {/* Find a variety of textbooks */}
       <ScrollAnimation delay={550}>
       <section className="py-20 bg-white">
 
@@ -503,7 +487,7 @@ export default function LandingPage() {
       </section>
       </ScrollAnimation>
 
-      {/* Section 4: Trust & Safety */}
+      {/* Trust & Safety */}
       <ScrollAnimation delay={700}>
       <section className="py-20 bg-[#00B4D8]">
         <div className="container-content">

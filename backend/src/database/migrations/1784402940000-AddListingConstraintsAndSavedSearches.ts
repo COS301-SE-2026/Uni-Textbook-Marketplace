@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddListingConstraintsAndSavedSearches implements MigrationInterface {
-  name = 'AddListingConstraintsAndSavedSearches';
-
+export class AddListingConstraintsAndSavedSearches1784402940000 implements MigrationInterface {
   private async addCheckConstraint(
     queryRunner: QueryRunner,
     table: string,
