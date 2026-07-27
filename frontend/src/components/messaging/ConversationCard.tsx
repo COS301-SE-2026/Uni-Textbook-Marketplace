@@ -25,10 +25,11 @@ export default function ConversationCard({
             `}
         >
             <h2 className="font-semibold">
-                {conversation.listingId}
+                {conversation.otherUser.firstName} {conversation.otherUser.lastName}
             </h2>
+
             <p className="truncate text-sm text-gray-500">
-                {conversation.lastMessage ?? 'No messages yet'}
+                {conversation.lastMessage ?? conversation.listing.title}
             </p>
         </div>
     );

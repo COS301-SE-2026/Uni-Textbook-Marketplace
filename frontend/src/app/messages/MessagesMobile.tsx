@@ -58,18 +58,17 @@ export default function MessagesMobile() {
                     subtitle={selectedConversation?.listingId ?? ''}
                 />
             </div>
-            {messages.length > 0 ? (
+            {selectedConversation?.lastMessage ? (
                 <ChatWindow
-                    messages={messages}
-                    currentUserId={user?.id ?? ''}
-                />
-            ) : (
-                <div className="flex flex-1 items-center justify-center bg-gray-50 text-gray-500">
-                    No messages yet.
-                </div>
+                        messages={messages}
+                        currentUserId={user?.id ?? ''}
+                    />
+                ) : (
+                    <div className="flex flex-1 items-center justify-center bg-gray-50 text-gray-500">
+                        No messages yet.
+                    </div>
             )}
 
-            <MessageInput onSend={send} />
 
             <MessageInput onSend={send} />
         </main>
