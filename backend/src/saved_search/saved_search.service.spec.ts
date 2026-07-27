@@ -340,6 +340,169 @@ describe('SavedSearchesService', () => {
     });
   });
 
-  
+    //getUserSavedSearches
+
+  describe('getUserSavedSearches', () => {
+    const query: GetSavedSearchesQueryDto = {
+      page: 1,
+      limit: 10,
+    };
+
+    it('should return paginated saved searches for a user (happy path)', async () => {
+      // Arrange
+      const mockResult = [[mockSavedSearch], 1];
+      mockSavedSearchRepository.findAndCount.mockResolvedValue(mockResult);
+
+      // Act
+      const result = await service.getUserSavedSearches(validUuid, query);
+
+      // Assert
+      expect(result).toEqual({
+        data: [mockSavedSearch],
+        total: 1,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      });
+      expect(mockSavedSearchRepository.findAndCount).toHaveBeenCalledWith({
+        where: { user_id: validUuid },
+        order: { created_at: 'DESC' },
+        skip: 0,
+        take: 10,
+      });
+    });
+
+    it('should use default pagination values when not provided', async () => {
+      // Arrange
+      const emptyQuery: GetSavedSearchesQueryDto = {};
+      const mockResult = [[mockSavedSearch], 1];
+      mockSavedSearchRepository.findAndCount.mockResolvedValue(mockResult);
+
+      // Act
+      const result = await service.getUserSavedSearches(validUuid, emptyQuery);
+
+      // Assert
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+      expect(mockSavedSearchRepository.findAndCount).toHaveBeenCalledWith({
+        where: { user_id: validUuid },
+        order: { created_at: 'DESC' },
+        skip: 0,
+        take: 20,
+      });
+    });
+
+    it('should return empty array when user has no saved searches', async () => {
+      // Arrange
+      mockSavedSearchRepository.findAndCount.mockResolvedValue([[], 0]);
+
+      // Act
+      const result = await service.getUserSavedSearches(validUuid, query);
+
+      // Assert
+      expect(result.data).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.totalPages).toBe(0);
+    });
+
+    it('should handle pagination correctly for page 2', async () => {
+      // Arrange
+      const page2Query: GetSavedSearchesQueryDto = { page: 2, limit: 10 };
+      const mockResult = [[mockSavedSearch], 1];
+      mockSavedSearchRepository.findAndCount.mockResolvedValue(mockResult);
+
+      // Act
+      await service.getUserSavedSearches(validUuid, page2Query);
+
+      // Assert
+      expect(mockSavedSearchRepository.findAndCount).toHaveBeenCalledWith({
+        where: { user_id: validUuid },
+        order: { created_at: 'DESC' },
+        skip: 10,
+        take: 10,
+      });
+    });
+  });
+
+  // deleteSavedSearch 
+
+  describe('deleteSavedSearch', () => {
+    it('should delete a saved search successfully (happy path)', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(mockSavedSearch);
+      mockSavedSearchRepository.delete.mockResolvedValue({ affected: 1, raw: {} });
+
+      // Act
+      await service.deleteSavedSearch(validUuid3, validUuid);
+
+      // Assert
+      expect(mockSavedSearchRepository.findOne).toHaveBeenCalledWith({
+        where: { id: validUuid3, user_id: validUuid },
+      });
+      expect(mockSavedSearchRepository.delete).toHaveBeenCalledWith(validUuid3);
+    });
+
+    it('should throw NotFoundException when search does not exist', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.deleteSavedSearch('non-existent', validUuid)).rejects.toThrow(
+        new NotFoundException('Saved search not found or does not belong to user'),
+      );
+      expect(mockSavedSearchRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when search belongs to another user', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.deleteSavedSearch(validUuid3, 'other-user')).rejects.toThrow(
+        new NotFoundException('Saved search not found or does not belong to user'),
+      );
+      expect(mockSavedSearchRepository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  // getSavedSearchById 
+
+  describe('getSavedSearchById', () => {
+    it('should return a saved search by ID (happy path)', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(mockSavedSearch);
+
+      // Act
+      const result = await service.getSavedSearchById(validUuid3, validUuid);
+
+      // Assert
+      expect(result).toEqual(mockSavedSearch);
+      expect(mockSavedSearchRepository.findOne).toHaveBeenCalledWith({
+        where: { id: validUuid3, user_id: validUuid },
+      });
+    });
+
+    it('should throw NotFoundException when search does not exist', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.getSavedSearchById('non-existent', validUuid)).rejects.toThrow(
+        new NotFoundException('Saved search not found'),
+      );
+    });
+
+    it('should throw NotFoundException when search belongs to another user', async () => {
+      // Arrange
+      mockSavedSearchRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.getSavedSearchById(validUuid3, 'other-user')).rejects.toThrow(
+        new NotFoundException('Saved search not found'),
+      );
+    });
+  });
+
+ 
 
 });
