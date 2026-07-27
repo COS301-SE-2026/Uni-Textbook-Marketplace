@@ -223,7 +223,7 @@ describe('ListingsService', () => {
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
       expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalled();
     });
-
+     
     it('should use default values for optional fields when not provided', async () => {
       const minimalDto: CreateListingDto = {
         title: 'Minimal Listing',
