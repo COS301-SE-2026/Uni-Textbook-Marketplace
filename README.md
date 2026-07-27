@@ -3,7 +3,7 @@
 # Uni Textbook Marketplace
 
 <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="55%" />
+    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="100" height="100" />
 </p>
 
 <h1 align="center">Made for Students, by Students</h1>
@@ -138,8 +138,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Demo Video | Documentation |
 | --- | --- |
-| [<img src="](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing)[https://img.icons8.com/ios-filled/20/88BC46/play-button-circled.png](https://img.icons8.com/ios-filled/20/88BC46/play-button-circled.png)"/>
-Demo 1 Video | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
+| Demo 1 Video | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
 
@@ -273,12 +272,12 @@ The system follows a **modular monolith** architecture for core features with an
 
 <div align="center">
 
-| Photo | Team Member | Contributions | Connect |
-|:---:|---|---|:---:|
-| <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Tiego Mokwena"/> | **Tiego Mokwena**<br/>Project Manager & UI Engineer & DevOps | Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy. | [![GitHub](https://img.shields.io/badge/GitHub-tl21thebe-00B4D8?style=for-the-badge&logo=github&logoColor=white)](https://github.com/tl21thebe)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tiego%20Mokwena-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3) |
-| <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Josh Kretschmer"/> | **Josh Kretschmer**<br/>Services Engineer 1 & Integration Engineer 1 | Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup. | [![GitHub](https://img.shields.io/badge/GitHub-JoshKretschmer-00B4D8?style=for-the-badge&logo=github&logoColor=white)](https://github.com/JoshKretschmer)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Josh%20Kretschmer-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/josh-kretsch-754804401) |
-| <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Gift Mohuba"/> | **Gift Mohuba**<br/>Services Engineer 2 & Integration Engineer 2 | Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend. | [![GitHub](https://img.shields.io/badge/GitHub-GiftMHB-00B4D8?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GiftMHB)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Gift%20Mohuba-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gift-mohuba-67097b23b/) |
-| <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Neo Bosoga"/> | **Neo Bosoga**<br/>Data Engineer & Tester | PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests. | [![GitHub](https://img.shields.io/badge/GitHub-u23591732-00B4D8?style=for-the-badge&logo=github&logoColor=white)](https://github.com/u23591732)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/neo-bosoga-67167227a/) |
+| Photo | Team Member | Role | Contributions | Connect |
+|:---:|---|---|---|:---:|
+| <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Tiego Mokwena"/> | **Tiego Mokwena** | Project Manager, UI Engineer, DevOps | Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/tl21thebe) [<img src="https://cdn.simpleicons.org/linkedin/00B4D8" width="26" height="26" alt="LinkedIn"/>](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3) |
+| <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Josh Kretschmer"/> | **Josh Kretschmer** | Services Engineer 1, Integration Engineer 1 | Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/JoshKretschmer) [<img src="https://cdn.simpleicons.org/linkedin/00B4D8" width="26" height="26" alt="LinkedIn"/>](https://www.linkedin.com/in/josh-kretsch-754804401) |
+| <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Gift Mohuba"/> | **Gift Mohuba** | Services Engineer 2, Integration Engineer 2 | Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/GiftMHB) [<img src="https://cdn.simpleicons.org/linkedin/00B4D8" width="26" height="26" alt="LinkedIn"/>](https://www.linkedin.com/in/gift-mohuba-67097b23b/) |
+| <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Neo Bosoga"/> | **Neo Bosoga** | Data Engineer, Tester | PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/u23591732) [<img src="https://cdn.simpleicons.org/linkedin/00B4D8" width="26" height="26" alt="LinkedIn"/>](https://www.linkedin.com/in/neo-bosoga-67167227a/) |
 
 </div>
 
