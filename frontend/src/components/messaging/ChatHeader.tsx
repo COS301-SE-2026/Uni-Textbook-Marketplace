@@ -6,7 +6,7 @@ interface Props {
 export default function ChatHeader({
     title,
     subtitle,
-}: Props) {
+}: Readonly<Props>) {
 
     return (
         <header className="border-b bg-white p-4">

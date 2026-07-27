@@ -12,7 +12,7 @@ export default function ConversationList({
     conversations,
     selectedConversationId,
     onSelectConversation,
-}: Props) {
+}: Readonly<Props>) {
 
     return (
         <aside className="w-80 overflow-y-auto border-r bg-white">

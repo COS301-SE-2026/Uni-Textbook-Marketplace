@@ -8,7 +8,7 @@ interface Props {
 
 export default function MessageInput({
     onSend,
-}: Props) {
+}: Readonly<Props>) {
     const [text, setText] = useState('');
     const send = () => {
         if (!text.trim()) {

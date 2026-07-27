@@ -8,7 +8,7 @@ interface Props {
 export default function MessageBubble({
     message,
     own,
-}: Props) {
+}: Readonly<Props>) {
 
     return (
         <div

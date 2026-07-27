@@ -10,7 +10,7 @@ export default function ConversationCard({
     conversation,
     selected,
     onClick,
-}: Props) {
+}: Readonly<Props>) {
     
     return (
         <div
