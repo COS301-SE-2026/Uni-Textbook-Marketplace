@@ -13,7 +13,8 @@ export default function ConversationCard({
 }: Readonly<Props>) {
     
     return (
-        <div
+        <button
+            type = "button"
             onClick={onClick}
             className={`
                 cursor-pointer
@@ -31,6 +32,6 @@ export default function ConversationCard({
             <p className="truncate text-sm text-gray-500">
                 {conversation.lastMessage ?? conversation.listing.title}
             </p>
-        </div>
+        </button>
     );
 }
