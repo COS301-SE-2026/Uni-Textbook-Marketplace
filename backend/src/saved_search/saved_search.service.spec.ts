@@ -207,5 +207,139 @@ describe('SavedSearchesService', () => {
     expect(service).toBeDefined();
   });
 
+    
+
+  describe('createSavedSearch', () => {
+    const createDto: CreateSavedSearchDto = {
+      filter_json: {
+        moduleCode: 'COS301',
+        priceMin: 100,
+        priceMax: 500,
+        condition: 'good',
+      } as any,
+    };
+
+    it('should create a saved search successfully (happy path)', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      mockSavedSearchRepository.create.mockReturnValue(mockSavedSearch);
+      mockSavedSearchRepository.save.mockResolvedValue(mockSavedSearch);
+
+      // Act
+      const result = await service.createSavedSearch(validUuid, createDto);
+
+      // Assert
+      expect(result).toEqual(mockSavedSearch);
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { id: validUuid },
+      });
+      expect(mockSavedSearchRepository.create).toHaveBeenCalledWith({
+        user_id: validUuid,
+        filter_json: createDto.filter_json,
+      });
+      expect(mockSavedSearchRepository.save).toHaveBeenCalledWith(mockSavedSearch);
+    });
+
+    it('should throw NotFoundException when user does not exist', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.createSavedSearch('non-existent-user', createDto)).rejects.toThrow(
+        new NotFoundException('User not found'),
+      );
+      expect(mockSavedSearchRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when priceMin is greater than priceMax', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const invalidDto: CreateSavedSearchDto = {
+        filter_json: {
+          priceMin: 500,
+          priceMax: 100,
+        } as any,
+      };
+
+      // Act & Assert
+      await expect(service.createSavedSearch(validUuid, invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(mockSavedSearchRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid condition', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const invalidDto: CreateSavedSearchDto = {
+        filter_json: {
+          condition: 'invalid_condition',
+        } as any,
+      };
+
+      // Act & Assert
+      await expect(service.createSavedSearch(validUuid, invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(mockSavedSearchRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid annotationLevel', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const invalidDto: CreateSavedSearchDto = {
+        filter_json: {
+          annotationLevel: 'invalid_level',
+        } as any,
+      };
+
+      // Act & Assert
+      await expect(service.createSavedSearch(validUuid, invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(mockSavedSearchRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should handle priceMin as string', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const dtoWithStringPrice: CreateSavedSearchDto = {
+        filter_json: {
+          priceMin: '100',
+          priceMax: '500',
+        } as any,
+      };
+      mockSavedSearchRepository.create.mockReturnValue(mockSavedSearch);
+      mockSavedSearchRepository.save.mockResolvedValue(mockSavedSearch);
+
+      // Act
+      const result = await service.createSavedSearch(validUuid, dtoWithStringPrice);
+
+      // Assert
+      expect(result).toEqual(mockSavedSearch);
+      expect(mockSavedSearchRepository.create).toHaveBeenCalledWith({
+        user_id: validUuid,
+        filter_json: dtoWithStringPrice.filter_json,
+      });
+    });
+
+    it('should accept empty filter (matches all)', async () => {
+      // Arrange
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const emptyDto: CreateSavedSearchDto = {
+        filter_json: {} as any,
+      };
+      mockSavedSearchRepository.create.mockReturnValue(mockSavedSearch);
+      mockSavedSearchRepository.save.mockResolvedValue(mockSavedSearch);
+
+      // Act
+      const result = await service.createSavedSearch(validUuid, emptyDto);
+
+      // Assert
+      expect(result).toEqual(mockSavedSearch);
+    });
+  });
+
+  
 
 });
