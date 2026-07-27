@@ -82,7 +82,18 @@ export function useMessaging() {
     };
 
     useEffect(() => {
-        loadConversations();
+        const fetchConversations = async () => {
+            try {
+                setLoadingConversations(true);
+                const data = await getMyConversations();
+                setConversations(data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingConversations(false);
+            }
+        };
+        void fetchConversations();
     }, []);
 
     return {
