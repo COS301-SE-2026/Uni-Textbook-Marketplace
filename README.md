@@ -1,12 +1,17 @@
-<div align="center">
-
-# Uni Textbook Marketplace
-
- <p align="center">
-    <img src="./docs/images/Uni_Textbook_LOGO_2.gif" alt="Uni Textbook Marketplace Logo" width="55%" />
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-<h1 align="center">Made for Students, by Students</h1>
+<div align="center">
+<p align="center">
+    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="200" height="200" /><br/>
+    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="250" height="250" />
+    <br/>
+    <img src="./docs/images/Uni_Textbook.png" alt="Uni Textbook Word" width="40%" />
+    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="40%" />
+</p>
+
+<h2 align="center">Made for Students, by Students</h2>
 
 </div>
 
@@ -138,8 +143,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Demo Video | Documentation |
 | --- | --- |
-|  Demo 1 Slides | [View Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
-|  Demo 1 Video | [View Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) |
+| [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
 
@@ -271,35 +275,16 @@ The system follows a **modular monolith** architecture for core features with an
 
 </div>
 
-### Tiego Mokwena - Project Manager & UI Engineer & DevOps
-> Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy.
+<div align="center">
 
-[![GitHub](https://img.shields.io/badge/GitHub-tl21thebe-181717?logo=github)](https://github.com/tl21thebe)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tiego%20Mokwena-0077B5?logo=linkedin)](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3)
+| Photo | Team Member | Role | Contributions | Connect |
+|:---:|---|---|---|:---:|
+| <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Tiego Mokwena"/> | **Tiego Mokwena** | Project Manager + UI Engineer + DevOps | Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/tl21thebe)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tiego%20Mokwena-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3) |
+| <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Josh Kretschmer"/> | **Josh Kretschmer** | Services Engineer 1 + Integration Engineer 1 | Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/JoshKretschmer)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Josh%20Kretschmer-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/josh-kretsch-754804401) |
+| <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Gift Mohuba"/> | **Gift Mohuba** | Services Engineer 2 + Integration Engineer 2 | Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/GiftMHB)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Gift%20Mohuba-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gift-mohuba-67097b23b/) |
+| <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Neo Bosoga"/> | **Neo Bosoga** | Data Engineer + Test Engineer | PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/u23591732)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/neo-bosoga-67167227a/) |
 
----
-
-### Josh Kretschmer - Services Engineer 1 & Integration Engineer 1
-> Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup.
-
-[![GitHub](https://img.shields.io/badge/GitHub-JoshKretschmer-181717?logo=github)](https://github.com/JoshKretschmer)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Josh%20Kretschmer-0077B5?logo=linkedin)](https://www.linkedin.com/in/josh-kretsch-754804401)
-
----
-
-### Gift Mohuba - Services Engineer 2 & Integration Engineer 2
-> Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend.
-
-[![GitHub](https://img.shields.io/badge/GitHub-GiftMHB-181717?logo=github)](https://github.com/GiftMHB)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Gift%20Mohuba-0077B5?logo=linkedin)](https://www.linkedin.com/in/gift-mohuba-67097b23b/)
-
----
-
-### Neo Bosoga - Data Engineer & Tester
-> PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests.
-
-[![GitHub](https://img.shields.io/badge/GitHub-u23591732-181717?logo=github)](https://github.com/u23591732)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-0077B5?logo=linkedin)](https://www.linkedin.com/in/neo-bosoga-67167227a/)
+</div>
 
 <p align="center">
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
