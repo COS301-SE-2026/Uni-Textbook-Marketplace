@@ -8,7 +8,7 @@
     <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="250" height="250" />
     <br/>
     <img src="./docs/images/Uni_Textbook.png" alt="Uni Textbook Word" width="30%" />
-    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="45%" />
+    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="40%" />
 </p>
 
 <h2 align="center">Made for Students, by Students</h2>
