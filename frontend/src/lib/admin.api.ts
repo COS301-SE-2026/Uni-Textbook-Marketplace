@@ -1,4 +1,6 @@
 import { api } from './api';
+import { buildQuery } from './api';
+import { AuditLogEntry } from '@/components/admin/auditlogTable';
 
 export interface AdminListing {
     id: string
@@ -32,6 +34,33 @@ export interface AdminListing {
     reviewer?: { id: string} | null
 }
 
+export interface LogFilter {
+
+    performedBy?: string
+    action?: string
+    entityType?: string
+    entity?: string
+    entityid?: string
+    startDate?: string
+    endDate?: string
+    page?: number
+    limit?: number
+}
+
+interface AuditLogResponse {
+
+    logs: AuditLogEntry[]
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+}
+
+export interface AdminsEmail {
+    id: string
+    email: string
+}
+
 export async function approveListing(id: string): Promise<void> {
     return api.patch(`/admin/${id}/approve`)
 }
@@ -42,4 +71,13 @@ export async function rejectListing(id: string, reason: string): Promise<void> {
 
 export async function getAllAdminListings(): Promise<AdminListing[]>{
     return api.get<AdminListing[]>('/listings/admin/all');
+}
+
+export async function getAuditLog(filters: LogFilter) {
+    
+    return api.get<AuditLogResponse>(`/admin/audit-log?${buildQuery(filters)}`)
+}
+
+export async function getadmin(){
+    return api.get<AdminsEmail[]>('/admin/emails');
 }
