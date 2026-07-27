@@ -21,6 +21,34 @@ export default function MessagesDesktop() {
         send,
     } = useMessaging();
 
+    let emptyState;
+
+    if (loadingConversations) {
+        emptyState = <p>Loading conversations...</p>;
+    } else if (conversations.length === 0) {
+        emptyState = (
+            <div className="text-center">
+                <h2 className="text-2xl font-semibold">
+                    No conversations yet
+                </h2>
+                <p className="mt-2 text-gray-500">
+                    Start chatting from a listing.
+                </p>
+            </div>
+        );
+    } else {
+        emptyState = (
+            <div className="text-center">
+                <h2 className="text-2xl font-semibold">
+                    Select a conversation
+                </h2>
+                <p className="mt-2 text-gray-500">
+                    Choose a conversation from the left.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <main className="min-h-screen bg-gray-50 p-8">
             <div className="mx-auto flex h-[85vh] max-w-7xl overflow-hidden rounded-2xl border bg-white shadow">
@@ -56,18 +84,7 @@ export default function MessagesDesktop() {
                         </>
                     ) : (
                         <div className="flex flex-1 items-center justify-center">
-                            {loadingConversations ? (
-                                <p>Loading conversations...</p>
-                            ) : (
-                                <div className="text-center">
-                                    <h2 className="text-2xl font-semibold">
-                                        Select a conversation
-                                    </h2>
-                                    <p className="mt-2 text-gray-500">
-                                        Choose a conversation from the left.
-                                    </p>
-                                </div>
-                            )}
+                            {emptyState}
                         </div>
                     )}
                 </section>

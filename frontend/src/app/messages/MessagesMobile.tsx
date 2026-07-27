@@ -48,6 +48,7 @@ export default function MessagesMobile() {
         <main className="flex h-screen flex-col">
             <div className="border-b bg-white p-4">
                 <button
+                    type = "button"
                     onClick={() => setChatOpen(false)}
                     className="mb-2 text-sm text-blue-600"
                 >

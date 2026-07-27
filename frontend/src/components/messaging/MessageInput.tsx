@@ -30,6 +30,7 @@ export default function MessageInput({
                     placeholder="Type a message..."
                 />
                 <button
+                type = "button"
                     onClick={send}
                     className="rounded-lg bg-blue-500 px-6 text-white hover:bg-blue-600"
                 >
