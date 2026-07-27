@@ -55,8 +55,11 @@ export function useMessaging() {
                 conversation.conversationId,
             );
             setMessages(data);
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error('Error loading messages');
+            console.log(error);
+            console.log('status:', error?.status);
+            console.log('message:', error?.message);
         } finally {
             setLoadingMessages(false);
         }

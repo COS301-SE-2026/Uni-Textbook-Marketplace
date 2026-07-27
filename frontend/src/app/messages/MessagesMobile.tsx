@@ -54,8 +54,8 @@ export default function MessagesMobile() {
                     Back
                 </button>
                 <ChatHeader
-                    title={`Conversation ${selectedConversation?.conversationId}`}
-                    subtitle={selectedConversation?.listingId ?? ''}
+                    title={`Conversation ${selectedConversation?.otherUser.firstName ?? selectedConversation?.otherUser.lastName}`}
+                    subtitle={selectedConversation?.listing.title ?? ''}
                 />
             </div>
             {selectedConversation?.lastMessage ? (

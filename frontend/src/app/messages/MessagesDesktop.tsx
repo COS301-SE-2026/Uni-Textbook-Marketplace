@@ -35,8 +35,8 @@ export default function MessagesDesktop() {
                     {selectedConversation ? (
                         <>
                             <ChatHeader
-                                title={`Conversation ${selectedConversation.conversationId}`}
-                                subtitle={selectedConversation.listingId}
+                                title={`${selectedConversation.otherUser.firstName} ${selectedConversation.otherUser.lastName}`}
+                                subtitle={selectedConversation.listing.title}
                             />
                             {loadingMessages ? (
                                 <div className="flex flex-1 items-center justify-center">
