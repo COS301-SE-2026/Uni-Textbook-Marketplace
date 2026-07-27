@@ -1,10 +1,14 @@
-<div align="center">
-
-# Uni Textbook Marketplace
-
 <p align="center">
-    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="250" height="250" /><br/>
-    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="400" height="400" />
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+<p align="center">
+    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="300" height="300" />
+    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="300" height="300" />
+    <br/>
+    <img src="./docs/images/Uni_Textbook.png" alt="Uni Textbook Word" width="50%" />
+    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="50%" />
 </p>
 
 <h2 align="center">Made for Students, by Students</h2>
