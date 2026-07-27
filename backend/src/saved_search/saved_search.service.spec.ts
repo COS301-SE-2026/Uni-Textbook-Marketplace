@@ -503,6 +503,332 @@ describe('SavedSearchesService', () => {
     });
   });
 
+    // matchesFilter tests
+
+  describe('matchesFilter', () => {
+    it('should return true when listing matches all filters', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        moduleCode: 'COS301',
+        priceMin: 100,
+        priceMax: 500,
+        condition: 'good',
+        annotationLevel: 'light',
+        search: 'Test',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false when module code does not match', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        moduleCode: 'INVALID_MODULE',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false when price is below minimum', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        priceMin: 500,
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false when price is above maximum', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        priceMax: 100,
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false when condition does not match', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        condition: 'poor',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false when annotationLevel does not match', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        annotationLevel: 'heavy',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false when search text does not match', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        search: 'NonExistentText',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return true when filter has no filters (empty object)', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {} as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should handle priceMin and priceMax as strings', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        priceMin: '100',
+        priceMax: '500',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should handle invalid price strings gracefully', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        priceMin: 'invalid',
+        priceMax: 'invalid',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true when module matches but is case-insensitive for faculty', () => {
+      // Arrange
+      const listingWithFaculty = createMockListing();
+      listingWithFaculty.module = createMockModule();
+      const filter: SavedSearchFiltersDto = {
+        faculty: 'engineering',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(listingWithFaculty, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false when faculty does not match', () => {
+      // Arrange
+      const listingWithFaculty = createMockListing();
+      listingWithFaculty.module = createMockModule();
+      const filter: SavedSearchFiltersDto = {
+        faculty: 'Science',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(listingWithFaculty, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return true when edition matches', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        edition: '3',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false when edition does not match', () => {
+      // Arrange
+      const filter: SavedSearchFiltersDto = {
+        edition: '5',
+      } as any;
+
+      // Act
+      const result = service.matchesFilter(mockListing, filter);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  // findMatchingSavedSearches tests
+
+  describe('findMatchingSavedSearches', () => {
+    const matchingSearch = createMockSavedSearch();
+    const nonMatchingSearch = createMockSavedSearch();
+    nonMatchingSearch.id = 'non-matching-id';
+    nonMatchingSearch.filter_json = { moduleCode: 'INVALID' } as any;
+
+    it('should return matching saved searches for a listing (happy path)', async () => {
+      // Arrange
+      mockListingRepository.findOne.mockResolvedValue(mockListing);
+      mockSavedSearchRepository.find.mockResolvedValue([matchingSearch, nonMatchingSearch]);
+
+      // Act
+      const result = await service.findMatchingSavedSearches(validUuid2);
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].savedSearchId).toBe(validUuid3);
+      expect(result[0].userId).toBe(validUuid);
+      expect(mockListingRepository.findOne).toHaveBeenCalledWith({
+        where: { id: validUuid2 },
+        relations: ['book', 'module', 'module.university', 'module.faculty'],
+      });
+    });
+
+    it('should return empty array when no saved searches match', async () => {
+      // Arrange
+      mockListingRepository.findOne.mockResolvedValue(mockListing);
+      mockSavedSearchRepository.find.mockResolvedValue([nonMatchingSearch]);
+
+      // Act
+      const result = await service.findMatchingSavedSearches(validUuid2);
+
+      // Assert
+      expect(result).toHaveLength(0);
+    });
+
+    it('should throw NotFoundException when listing does not exist', async () => {
+      // Arrange
+      mockListingRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.findMatchingSavedSearches('non-existent')).rejects.toThrow(
+        new NotFoundException('Listing not found'),
+      );
+    });
+
+    it('should return empty array when no saved searches exist', async () => {
+      // Arrange
+      mockListingRepository.findOne.mockResolvedValue(mockListing);
+      mockSavedSearchRepository.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.findMatchingSavedSearches(validUuid2);
+
+      // Assert
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  // getAllSavedSearches tests
+
+  describe('getAllSavedSearches', () => {
+    it('should return all saved searches (happy path)', async () => {
+      // Arrange
+      const mockSearches = [mockSavedSearch];
+      mockSavedSearchRepository.find.mockResolvedValue(mockSearches);
+
+      // Act
+      const result = await service.getAllSavedSearches();
+
+      // Assert
+      expect(result).toEqual(mockSearches);
+      expect(mockSavedSearchRepository.find).toHaveBeenCalled();
+    });
+
+    it('should return empty array when no saved searches exist', async () => {
+      // Arrange
+      mockSavedSearchRepository.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.getAllSavedSearches();
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+  });
+
+  // getSavedSearchesByUserIds tests
+
+  describe('getSavedSearchesByUserIds', () => {
+    it('should return saved searches for multiple users (happy path)', async () => {
+      // Arrange
+      const userIds = [validUuid, 'other-user-id'];
+      const mockSearches = [mockSavedSearch];
+      mockSavedSearchRepository.find.mockResolvedValue(mockSearches);
+
+      // Act
+      const result = await service.getSavedSearchesByUserIds(userIds);
+
+      // Assert
+      expect(result).toEqual(mockSearches);
+      expect(mockSavedSearchRepository.find).toHaveBeenCalledWith({
+        where: { user_id: expect.anything() },
+      });
+    });
+
+    it('should return empty array when no user IDs provided', async () => {
+      // Arrange
+      mockSavedSearchRepository.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.getSavedSearchesByUserIds([]);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array when no saved searches found for users', async () => {
+      // Arrange
+      const userIds = ['non-existent-1', 'non-existent-2'];
+      mockSavedSearchRepository.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.getSavedSearchesByUserIds(userIds);
+
+      // Assert
+      expect(result).toEqual([]);
+    });
+  });
+});
  
 
-});
