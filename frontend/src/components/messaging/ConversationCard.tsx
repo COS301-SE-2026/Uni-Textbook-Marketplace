@@ -1,16 +1,35 @@
-export default function ConversationCard() {
+import type { Conversation } from '@/types/messaging';
+
+interface Props {
+    conversation: Conversation;
+    selected: boolean;
+    onClick: () => void;
+}
+
+export default function ConversationCard({
+    conversation,
+    selected,
+    onClick,
+}: Props) {
+    
     return (
-        <div className="cursor-pointer p-3 hover:bg-blue-100 border-black">
-
-            <h2 className="font-semibold
-                            text-black">
-                John Smith
+        <div
+            onClick={onClick}
+            className={`
+                cursor-pointer
+                border-b
+                p-4
+                transition-colors
+                hover:bg-gray-100
+                ${selected ? 'bg-gray-100' : ''}
+            `}
+        >
+            <h2 className="font-semibold">
+                {conversation.listingId}
             </h2>
-
-            <p className="text-sm text-gray-500 truncate">
-                Hey, is the textbook still available?
+            <p className="truncate text-sm text-gray-500">
+                {conversation.lastMessage ?? 'No messages yet'}
             </p>
-
         </div>
     );
 }

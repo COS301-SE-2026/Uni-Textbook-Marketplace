@@ -6,17 +6,24 @@ import MessagesDesktop from './MessagesDesktop';
 import MessagesMobile from './MessagesMobile';
 
 export default function MessagesPage() {
-    const [isMobile, setIsMobile] = useState(false);
+
+    const [mobile, setMobile] = useState(false);
+
     useEffect(() => {
-        const check = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-        check();
-        window.addEventListener('resize', check);
-        return () => window.removeEventListener('resize', check);
+
+        const resize = () =>
+            setMobile(window.innerWidth < 768);
+
+        resize();
+
+        window.addEventListener('resize', resize);
+
+        return () =>
+            window.removeEventListener('resize', resize);
+
     }, []);
 
-    return isMobile
+    return mobile
         ? <MessagesMobile />
         : <MessagesDesktop />;
 }

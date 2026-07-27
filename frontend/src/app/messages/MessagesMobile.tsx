@@ -2,44 +2,67 @@
 
 import { useState } from 'react';
 
-import ConversationList from '../../components/messaging//ConversationList';
-import ChatHeader from '../../components/messaging//ChatHeader';
-import ChatWindow from '../../components/messaging//ChatWindow';
-import MessageInput from '../../components/messaging//MessageInput';
+import { useAuth } from '@/context/AuthContext';
+import { useMessaging } from '@/hooks/useMessaging';
 
+import ConversationList from '@/components/messaging/ConversationList';
+import ChatHeader from '@/components/messaging/ChatHeader';
+import ChatWindow from '@/components/messaging/ChatWindow';
+import MessageInput from '@/components/messaging/MessageInput';
 
 export default function MessagesMobile() {
-    const [openChat, setOpenChat] = useState(false);
+    const { user } = useAuth();
 
+    const {
+        conversations,
+        selectedConversation,
+        messages,
+        selectConversation,
+        send,
+    } = useMessaging();
+
+    const [chatOpen, setChatOpen] = useState(false);
+
+    if (!chatOpen) {
+        return (
+            <main className="min-h-screen bg-gray-50">
+                <header className="border-b bg-white p-4">
+                    <h1 className="text-xl font-semibold">
+                        Messages
+                    </h1>
+                </header>
+                <ConversationList
+                    conversations={conversations}
+                    selectedConversationId={
+                        selectedConversation?.conversationId
+                    }
+                    onSelectConversation={(conversation) => {
+                        selectConversation(conversation);
+                        setChatOpen(true);
+                    }}
+                />
+            </main>
+        );
+    }
     return (
-        <main className="min-h-screen bg-gray-50">
-
-            {!openChat ? (
-                <>
-                    <header className="
-                        bg-white 
-                        border-b 
-                        px-4 
-                        py-4
-                    ">
-                        <h1 className="text-xl font-semibold">
-                            Messages
-                        </h1>
-                    </header>
-
-                    <ConversationList />
-                </>
-            ) : (
-                <div className="h-screen flex flex-col">
-
-                    <ChatHeader />
-
-                    <ChatWindow />
-
-                    <MessageInput />
-
-                </div>
-            )}
+        <main className="flex h-screen flex-col">
+            <div className="border-b bg-white p-4">
+                <button
+                    onClick={() => setChatOpen(false)}
+                    className="mb-2 text-sm text-blue-600"
+                >
+                    Back
+                </button>
+                <ChatHeader
+                    title={`Conversation ${selectedConversation?.conversationId}`}
+                    subtitle={selectedConversation?.listingId ?? ''}
+                />
+            </div>
+            <ChatWindow
+                messages={messages}
+                currentUserId={user?.id ?? ''}
+            />
+            <MessageInput onSend={send} />
         </main>
     );
 }

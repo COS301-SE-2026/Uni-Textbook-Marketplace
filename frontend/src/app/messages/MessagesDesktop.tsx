@@ -1,65 +1,73 @@
 'use client';
 
-import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useMessaging } from '@/hooks/useMessaging';
 
-import ConversationList from '../../components/messaging/ConversationList';
-import ChatHeader from '../../components/messaging/ChatHeader';
-import ChatWindow from '../../components/messaging//ChatWindow';
-import MessageInput from '../../components/messaging//MessageInput';
-
+import ConversationList from '@/components/messaging/ConversationList';
+import ChatHeader from '@/components/messaging/ChatHeader';
+import ChatWindow from '@/components/messaging/ChatWindow';
+import MessageInput from '@/components/messaging/MessageInput';
 
 export default function MessagesDesktop() {
+    const { user } = useAuth();
 
-    const [selectedConversation, setSelectedConversation] = useState(true);
-
+    const {
+        conversations,
+        selectedConversation,
+        messages,
+        loadingConversations,
+        loadingMessages,
+        selectConversation,
+        send,
+    } = useMessaging();
 
     return (
         <main className="min-h-screen bg-gray-50 p-8">
-
-            <div className="
-                mx-auto 
-                max-w-7xl 
-                h-[85vh] 
-                rounded-2xl 
-                bg-white 
-                shadow 
-                border 
-                flex
-                overflow-hidden
-            ">
-                {/* Conversation list */}
-                <ConversationList />
-                {/* Chat section */}
-                <section className="flex-1 flex flex-col">
+            <div className="mx-auto flex h-[85vh] max-w-7xl overflow-hidden rounded-2xl border bg-white shadow">
+                <ConversationList
+                    conversations={conversations}
+                    selectedConversationId={
+                        selectedConversation?.conversationId
+                    }
+                    onSelectConversation={selectConversation}
+                />
+                <section className="flex flex-1 flex-col">
                     {selectedConversation ? (
-
                         <>
-                            <ChatHeader />
-
-                            <ChatWindow />
-
-                            <MessageInput />
+                            <ChatHeader
+                                title={`Conversation ${selectedConversation.conversationId}`}
+                                subtitle={selectedConversation.listingId}
+                            />
+                            {loadingMessages ? (
+                                <div className="flex flex-1 items-center justify-center">
+                                    Loading messages...
+                                </div>
+                            ) : (
+                                <ChatWindow
+                                    messages={messages}
+                                    currentUserId={user?.id ?? ''}
+                                />
+                            )}
+                            <MessageInput onSend={send} />
                         </>
                     ) : (
-                        <div className="
-                            flex-1 
-                            flex 
-                            items-center 
-                            justify-center
-                        ">
-                            <div className="text-center">
-                                <h2 className="text-2xl font-semibold">
-                                    Select a conversation
-                                </h2>
-                                <p className="text-gray-500 mt-2">
-                                    Choose a conversation from the left.
-                                </p>
-                            </div>
+                        <div className="flex flex-1 items-center justify-center">
+                            {loadingConversations ? (
+                                <p>Loading conversations...</p>
+                            ) : (
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-semibold">
+                                        Select a conversation
+                                    </h2>
+                                    <p className="mt-2 text-gray-500">
+                                        Choose a conversation from the left.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </section>
             </div>
-
         </main>
     );
 }

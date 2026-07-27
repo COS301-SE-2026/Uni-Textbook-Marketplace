@@ -1,22 +1,41 @@
-export default function MessageInput() {
+'use client';
+
+import { useState } from 'react';
+
+interface Props {
+    onSend: (text: string) => void;
+}
+
+export default function MessageInput({
+    onSend,
+}: Props) {
+    const [text, setText] = useState('');
+    const send = () => {
+        if (!text.trim()) {
+            return;
+        }
+        onSend(text);
+        setText('');
+    };
+
     return (
-        <div className="border-t bg-white p-4 bg-lg">
-
-            <div className="flex gap-3 bg-white">
-
+        <div className="border-t bg-white p-4">
+            <div className="flex gap-3">
                 <input
-                    className="flex-1 rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+                    value={text}
+                    onChange={(e) =>
+                        setText(e.target.value)
+                    }
+                    className="flex-1 rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Type a message..."
                 />
-
                 <button
+                    onClick={send}
                     className="rounded-lg bg-blue-500 px-6 text-white hover:bg-blue-600"
                 >
                     Send
                 </button>
-
             </div>
-
         </div>
     );
 }

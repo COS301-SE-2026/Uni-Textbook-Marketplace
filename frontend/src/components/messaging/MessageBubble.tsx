@@ -1,34 +1,37 @@
+import type { Message } from '@/types/messaging';
+
 interface Props {
-    own?: boolean;
-    text: string;
+    message: Message;
+    own: boolean;
 }
 
 export default function MessageBubble({
-    own = false,
-    text
+    message,
+    own,
 }: Props) {
+
     return (
         <div
-            className={`
-                mb-4 
-                flex
-                ${own ? "justify-end" : "justify-start"}
-            `}
+            className={`mb-4 flex ${
+                own
+                    ? 'justify-end'
+                    : 'justify-start'
+            }`}
         >
             <div
                 className={`
-                    max-w-xs 
-                    rounded-lg 
-                    px-4 
+                    max-w-xs
+                    rounded-lg
+                    px-4
                     py-2
                     ${
                         own
-                        ? "bg-blue-500 text-white"
-                        : "bg-white border text-black"
+                            ? 'bg-blue-500 text-white'
+                            : 'border bg-white'
                     }
                 `}
             >
-                {text}
+                {message.text}
             </div>
         </div>
     );

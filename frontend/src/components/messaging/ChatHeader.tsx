@@ -1,18 +1,21 @@
-export default function ChatHeader() {
-    return (
-        <header className="
-            border-b 
-            bg-white 
-            p-4
-        ">
-            <h2 className="font-bold text-black">
-                John Smith
-            </h2>
+interface Props {
+    title: string;
+    subtitle: string;
+}
 
+export default function ChatHeader({
+    title,
+    subtitle,
+}: Props) {
+
+    return (
+        <header className="border-b bg-white p-4">
+            <h2 className="font-bold">
+                {title}
+            </h2>
             <p className="text-sm text-gray-500">
-                COS214 Textbook
+                {subtitle}
             </p>
         </header>
-
     );
 }
