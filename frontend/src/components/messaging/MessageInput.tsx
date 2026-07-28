@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Button from '@/components/ui/Button';
 
 interface Props {
     onSend: (text: string) => void;
@@ -37,20 +38,11 @@ export default function MessageInput({
                         focus:outline-none"
                     placeholder="Type a message..."
                 />
-                <button
-                type = "button"
+                <Button
                     onClick={send}
-                    className="
-                        rounded-full
-                        bg-cyan-500
-                        px-8
-                        font-medium
-                        text-white
-                        transition
-                        hover:bg-cyan-600"
-                >
+                    className="rounded-full px-8">
                     Send
-                </button>
+                </Button>
             </div>
         </div>
     );
