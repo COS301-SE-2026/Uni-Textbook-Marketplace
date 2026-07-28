@@ -1,7 +1,15 @@
-import { Controller, Post, Param, Body, Req, Get, Query, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Body,
+  Req,
+  Get,
+  Query,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { AdminService } from './admin.service';
-import { User } from '../database/entities/users.entity';
 import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -21,7 +29,7 @@ interface RequestWithUser extends Request {
 @ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService) {}
 
   @Patch(':id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,7 +57,7 @@ export class AdminController {
   }
 
   @Get('emails')
-  async getadmin(){
+  async getadmin() {
     return await this.adminService.getusersAdmin();
   }
 }

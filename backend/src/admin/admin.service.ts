@@ -1,6 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Between, ILike, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  EntityManager,
+  Between,
+  ILike,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { User } from '../database/entities/users.entity';
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { AuditLog } from '../database/entities/audit_log.entity';
@@ -14,7 +20,7 @@ export class AdminService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   private async updateListingStatus(
     id: string,
@@ -50,7 +56,6 @@ export class AdminService {
 
       const savedlisting = await listingRepository.save(listing);
 
-      const actionVerb = status === ListingStatus.APPROVED ? 'approved' : 'rejected';
       const auditLog = auditLogRepository.create({
         entity_type: 'listing',
         entity_id: listing.id,
@@ -139,18 +144,15 @@ export class AdminService {
     };
   }
 
-  async getusersAdmin(){
-
-    return (
-      await this.usersRepository.find({
-        select:{
-          id: true,
-          email: true,
-        },
-        where:{
-          role: 'admin',
-        }
-      })
-    )
+  async getusersAdmin() {
+    return await this.usersRepository.find({
+      select: {
+        id: true,
+        email: true,
+      },
+      where: {
+        role: 'admin',
+      },
+    });
   }
 }

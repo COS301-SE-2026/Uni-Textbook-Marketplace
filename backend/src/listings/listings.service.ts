@@ -130,7 +130,13 @@ export class ListingsService {
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module','module.faculty', 'seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
   }
 
@@ -142,7 +148,13 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'module.faculty','seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
@@ -168,10 +180,10 @@ export class ListingsService {
     return await this.listingRepo.save(listing);
   }
 
-  async getAllListingsForAdmin(){
+  async getAllListingsForAdmin() {
     return this.listingRepo.find({
-      relations:['book','module','seller','reviewer'],
-      order: { created_at: 'DESC'},
+      relations: ['book', 'module', 'seller', 'reviewer'],
+      order: { created_at: 'DESC' },
     });
   }
 }

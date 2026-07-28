@@ -72,7 +72,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Thomas H. Cormen',
       isbn: '978-026033848',
       title: 'Introduction to Algorithms',
-      publiser: ''
+      publisher: ''
     },
     module: {
       code: 'COS212',
@@ -107,7 +107,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Robert C. Martin',
       isbn: '978-0132350884',
       title: 'Clean Code',
-      publiser: '',
+      publisher: '',
     },
     module: {
       code: 'COS301',
@@ -139,7 +139,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Abraham Silberschatz',
       isbn: '978-0078022159',
       title: 'Database System Concepts',
-      publiser: ''
+      publisher: ''
     },
     module: {
       code: 'COS221',
@@ -169,7 +169,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'James Stewart',
       isbn: '978-1119456339',
       title: 'Calculus Early Transcendentals',
-      publiser: '',
+      publisher: '',
     },
     module: {
       code: 'WTW258',
@@ -199,7 +199,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Brian W. Kernighan',
       isbn: '978-0131103627',
       title: 'The C Programming Language',
-      publiser: ''
+      publisher: ''
     },
     module: {
       code: 'COS132',
@@ -229,7 +229,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'James F. Kurose',
       isbn: '978-0133594140',
       title: 'Computer Networking: A Top-Down Approach',
-      publiser: ''
+      publisher: ''
     },
     module: {
       code: 'COS216',
@@ -259,7 +259,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Martin Kleppmann',
       isbn: '978-1492056355',
       title: 'Designing Data-Intensive Applications',
-      publiser: ''
+      publisher: ''
     },
     module: {
       code: 'COS341',
@@ -289,7 +289,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       author: 'Dimitri Bertsekas',
       isbn: '978-0199535569',
       title: 'Introduction to Probability',
-      publiser: '',
+      publisher: '',
     },
     module: {
       code: 'WTW152',

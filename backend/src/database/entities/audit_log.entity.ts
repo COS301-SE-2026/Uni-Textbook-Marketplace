@@ -48,6 +48,6 @@ export class AuditLog {
   })
   notes!: string;
 
-  @Column({ type: 'text', nullable: true})
+  @Column({ type: 'text', nullable: true })
   reason?: string;
 }

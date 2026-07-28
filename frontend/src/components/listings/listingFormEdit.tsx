@@ -6,6 +6,7 @@ import AccordionSection from "@/components/ui/AccordionSection"
 import { getMyListings, uploadImages, editListing, type EditListingData } from "@/lib/listings.api";
 import { Button } from "../ui";
 import  Fields  from "@/components/ui/Fields"
+import Image from "next/image";
 
 
 const SECTIONS = [
@@ -227,7 +228,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {existingImageUrls.map((url, index) => (
                                     <div key={url} className="relative group">
-                                        <img src={url} alt="listing" className="w-full h-32 object-cover rounded" />
+                                        <Image src={url} alt="listing" className="w-full h-32 object-cover rounded" />
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveExistingImage(index)}

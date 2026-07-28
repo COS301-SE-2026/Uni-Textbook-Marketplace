@@ -365,7 +365,7 @@ export default function AdminReviewDashboard() {
         getMe()
             .then(user => setCurrentAdminId(user.id))
             .catch(() => showToast('failed to load user','error'))
-    },[])
+    },[showToast])
 
     const pendingCount = listings.filter(l => l.status === 'PENDING').length
     const approveByMeCount = listings.filter(l => l.status === 'APPROVED' && l.reviewer?.id === currentAdminId).length
