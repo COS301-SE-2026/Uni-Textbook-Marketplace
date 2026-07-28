@@ -170,7 +170,7 @@ export default function MyListingsPage() {
                             <div className="absolute top-2 left-2 gap-1 ">
 
                                 {/* Edit */}
-                                {listing.status === 'REJECTED' && (
+                                {(listing.status === 'REJECTED' || listing.status === 'PENDING') && (
                                     <Button
                                         variant='primary'
                                         onClick={() => {

@@ -39,7 +39,7 @@ export class AddIndexesToAuditLogBooksListings1784386300000 implements Migration
     await queryRunner.query(`
       ALTER TABLE "audit_log" 
       ADD CONSTRAINT "audit_log_action_check" 
-      CHECK (action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN'))
+      CHECK (action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN','APPROVE_LISTING','REJECT_LISTING'))
     `);
 
     // Books indexes

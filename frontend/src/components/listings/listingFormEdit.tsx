@@ -57,9 +57,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     photo_urls: string[];
                     description?: string;
                     book: { id: string; isbn?: string; title: string; author?: string; edition?: number; publisher?: string };
-                    module?: { id: string; code: string; name: string; semester: number; faculty?: string };
+                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name : string} };
                 };
-
 
                 if (!cancelled) {
 
@@ -73,7 +72,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
                         code: data.module?.code ?? "",
                         name: data.module?.name ?? "",
-                        faculty: data.module?.faculty ?? "",
+                        faculty: data.module?.faculty?.name ?? "",
                         semester: data.module?.semester.toString() ?? "",
 
                         listingTitle:data.title ?? "",
