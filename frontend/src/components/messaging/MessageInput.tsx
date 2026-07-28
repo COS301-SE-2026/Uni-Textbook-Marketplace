@@ -19,20 +19,35 @@ export default function MessageInput({
     };
 
     return (
-        <div className="border-t bg-white p-4">
+        <div className="border-t bg-white px-8 py-5">
             <div className="flex gap-3">
                 <input
                     value={text}
                     onChange={(e) =>
                         setText(e.target.value)
                     }
-                    className="flex-1 rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    className="
+                        flex-1
+                        rounded-full
+                        border
+                        border-gray-300
+                        px-5
+                        py-3
+                        focus:border-cyan-500
+                        focus:outline-none"
                     placeholder="Type a message..."
                 />
                 <button
                 type = "button"
                     onClick={send}
-                    className="rounded-lg bg-blue-500 px-6 text-white hover:bg-blue-600"
+                    className="
+                        rounded-full
+                        bg-cyan-500
+                        px-8
+                        font-medium
+                        text-white
+                        transition
+                        hover:bg-cyan-600"
                 >
                     Send
                 </button>
