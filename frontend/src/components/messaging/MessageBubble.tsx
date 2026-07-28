@@ -20,18 +20,19 @@ export default function MessageBubble({
         >
             <div
                 className={`
-                    max-w-xs
-                    rounded-lg
-                    px-4
-                    py-2
+                    max-w-md
+                    rounded-2xl
+                    px-5
+                    py-3
+                    shadow-sm
                     ${
                         own
-                            ? 'bg-blue-500 text-white'
-                            : 'border bg-white'
+                            ? 'bg-cyan-500 text-white'
+                            : 'bg-white border'
                     }
                 `}
             >
-                {message.text}
+                <p>{message.text}</p>
             </div>
         </div>
     );

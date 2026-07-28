@@ -14,23 +14,36 @@ export default function ConversationCard({
     
     return (
         <button
-            type = "button"
+            type="button"
             onClick={onClick}
             className={`
-                cursor-pointer
+                w-full
+                px-5
+                py-4
+                text-left
+                transition-all
                 border-b
-                p-4
-                transition-colors
-                hover:bg-gray-100
-                ${selected ? 'bg-gray-100' : ''}
+
+                ${
+                    selected
+                        ? 'bg-cyan-50 border-l-4 border-l-cyan-500'
+                        : 'hover:bg-gray-50'
+                }
             `}
         >
-            <h2 className="font-semibold">
-                {conversation.otherUser.firstName} {conversation.otherUser.lastName}
-            </h2>
+            <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-slate-900">
+                    {conversation.otherUser.firstName}{' '}
+                    {conversation.otherUser.lastName}
+                </h3>
+            </div>
 
-            <p className="truncate text-sm text-gray-500">
-                {conversation.lastMessage ?? conversation.listing.title}
+            <p className="mt-1 text-sm text-slate-500">
+                {conversation.listing.title}
+            </p>
+
+            <p className="mt-2 truncate text-sm text-slate-600">
+                {conversation.lastMessage ?? 'Start the conversation'}
             </p>
         </button>
     );

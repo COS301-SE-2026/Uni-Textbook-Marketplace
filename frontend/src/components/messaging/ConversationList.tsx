@@ -15,9 +15,15 @@ export default function ConversationList({
 }: Readonly<Props>) {
 
     return (
-        <aside className="w-80 overflow-y-auto border-r bg-white">
-            <div className="border-b p-4 text-lg font-bold">
-                Conversations
+        <aside className="w-96 border-r bg-white flex flex-col">
+            <div className="border-b px-6 py-5">
+                <h2 className="text-2xl font-bold text-slate-900">
+                    Messages
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                    Your conversations
+                </p>
             </div>
             {conversations.length === 0 ? (
                 <div className="p-4 text-sm text-gray-500">

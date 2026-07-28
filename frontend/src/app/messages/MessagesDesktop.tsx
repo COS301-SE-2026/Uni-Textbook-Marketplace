@@ -38,20 +38,20 @@ export default function MessagesDesktop() {
         );
     } else {
         emptyState = (
-            <div className="text-center">
-                <h2 className="text-2xl font-semibold">
-                    Select a conversation
-                </h2>
-                <p className="mt-2 text-gray-500">
-                    Choose a conversation from the left.
-                </p>
-            </div>
+            <div className="flex flex-1 flex-col items-center justify-center">
+            <h2 className="text-3xl font-bold text-slate-900">
+                Your Messages
+            </h2>
+            <p className="mt-3 max-w-sm text-center text-slate-500">
+                Select a conversation to view messages and continue chatting with buyers and sellers.
+            </p>
+        </div>
         );
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 p-8">
-            <div className="mx-auto flex h-[85vh] max-w-7xl overflow-hidden rounded-2xl border bg-white shadow">
+        <main className="min-h-screen bg-slate-50 p-8">
+            <div className="mx-auto flex h-[85vh] max-w-7xl overflow-hidden rounded-3xl border bg-white shadow-xl">
                 <ConversationList
                     conversations={conversations}
                     selectedConversationId={
