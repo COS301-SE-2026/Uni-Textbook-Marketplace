@@ -28,7 +28,7 @@ export interface Listing {
         author: string
         isbn: string
         title: string
-        publiser:string
+        publisher:string
     }
 
     module: {

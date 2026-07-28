@@ -239,7 +239,7 @@ export default function ListingDetailPage() {
                                             ['Edition', listing.book.edition?.toString() ?? 'N/A'],
                                             ['ISBN', listing.book.isbn ?? 'N/A'],
                                             ['Name of Author', listing.book.author ?? 'N/A'],
-                                            ['Name of Publisher', listing.book.publiser ?? 'N/A']
+                                            ['Name of Publisher', listing.book.publisher ?? 'N/A']
                                         ].map(([label, value], index) => (
                                             <tr key={`book-detail-${index}`} className="border-b border-gray-100">
                                                 <td className="py-2 text-gray-500 w-32">{label}</td>
@@ -257,6 +257,7 @@ export default function ListingDetailPage() {
                                             ['Name', listing.module.name],
                                             ['Code', listing.module.code],
                                             ['Semester', listing.module.semester?.toString() ?? 'N/A'],
+                                            ['Faculty', listing.module.faculty?.name ?? 'N/A'],
                                         ].map(([label, value], index) => (
                                             <tr key={`module-detail-${index}`} className="border-b border-gray-100">
                                                 <td className="py-2 text-gray-500 w-32">{label}</td>

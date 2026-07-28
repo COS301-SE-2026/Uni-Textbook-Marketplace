@@ -25,6 +25,7 @@ const adminNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
+  { label: 'Audit Logs', href: '/admin/logs' }
 ]
 
 

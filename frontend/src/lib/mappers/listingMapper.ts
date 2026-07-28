@@ -27,7 +27,7 @@ export function mapListing(apiListing: any): Listing {
             author: apiListing.book?.author || '',
             isbn: apiListing.book?.isbn || '',
             title: apiListing.book?.title || '',
-            publiser: apiListing.book?.publiser || '',
+            publisher: apiListing.book?.publiser || '',
         },
 
         module: {

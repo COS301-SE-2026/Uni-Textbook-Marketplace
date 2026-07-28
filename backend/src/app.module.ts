@@ -20,6 +20,7 @@ import { AuditLog } from './database/entities/audit_log.entity';
 import { BooksModule } from './books/books.module';
 import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
+import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 
 import { AzureModule } from './azure/azure.module';
@@ -51,6 +52,7 @@ import { MessagingModule } from './messaging/messaging.module';
           AuditLog,
           Faculty,
           Wishlist,
+          Notifications,
           SavedSearch,
         ],
         migrations: ['dist/database/migrations/*.js'],

@@ -145,13 +145,18 @@ CREATE TABLE audit_log (
             'LOGIN',
             'LOGOUT',
             'SOLD',
-            'WITHDRAWN'
+            'WITHDRAWN',
+            'APPROVE_LISTING',
+            'REJECT_LISTING'
         )),     
 
     performed_by UUID REFERENCES users(id) ON DELETE SET NULL,
     performed_at TIMESTAMPTZ DEFAULT NOW(),
 
-    notes TEXT
+    notes TEXT,
+    
+    --this is for when a listing is rejected
+    reason TEXT NULL,
 );
 
 -- wishlist
@@ -170,11 +175,11 @@ CREATE TABLE notifications(
 
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    notification_from UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    notification_from UUID  REFERENCES users(id) ON DELETE SET NULL,
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
     entity_type VARCHAR NOT NULL,
-    entity_id UUID NOT NULL REFERENCES listings(id) ON DELETE SET NULL,
-    message_info TEXT,
+    entity_id UUID REFERENCES listings(id) ON DELETE SET NULL,
+    message_info TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 
 );
