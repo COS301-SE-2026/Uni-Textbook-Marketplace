@@ -16,7 +16,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword']
+const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword', '/help', '/brand']
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some(route => route === '/' ? pathname === '/' : pathname.startsWith(route));

@@ -48,22 +48,25 @@ function BrowseListingsContent() {
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
 
-    const firstSearch = boundSearches?.get('search') || ''
+        const getInitialFilters = (): Filters => {
+        return {
+            faculty: boundSearches?.get('faculty') || '',
+            moduleCode: boundSearches?.get('moduleCode') || '',
+            edition: boundSearches?.get('edition') || '',
+            priceMin: boundSearches?.get('priceMin') || '',
+            priceMax: boundSearches?.get('priceMax') || '',
+            condition: boundSearches?.get('condition') || '',
+            annotationLevel: boundSearches?.get('annotationLevel') || '',
+            search: boundSearches?.get('search') || '',
+        }
+    }
+
+    const initialFilters = getInitialFilters()
     
-    const [filters, setFilters] = useState<Filters>(() => ({
-        ...EMPTY_FILTERS,
-
-        search: firstSearch,
-    
-    }))
+    const [filters, setFilters] = useState<Filters>(initialFilters)
 
 
-    const [applied, setApplied] = useState<Filters>(() => ({
-
-       ...EMPTY_FILTERS,
-        search: firstSearch,
-
-    }))
+    const [applied, setApplied] = useState<Filters>(initialFilters)
 
     const [total, setTotal] = useState(0)
 
@@ -166,6 +169,8 @@ function BrowseListingsContent() {
     }
 
     // Render
+
+  
 
     return (
         <ProtectedRoute>

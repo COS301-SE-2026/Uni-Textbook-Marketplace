@@ -37,6 +37,8 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+
+
   const [mounted, setMounted] = useState(false);
   
   const [scrolled, setScrolled] = useState(false);
@@ -53,9 +55,11 @@ export default function NavBar() {
     if (!isLandingPage) return;
 
     const handleScroll = () => setScrolled (window.scrollY > 50);
+
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+
   }, [isLandingPage]);
 
   const isTransparent = isLandingPage && !scrolled;
@@ -64,21 +68,28 @@ if (!mounted) return null;
 
   if (isLoading) {
     return (
+
+
       <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
         isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
       }`}>
         <div className="container-content">
           <div className="flex items-center justify-between h-[70px]">
+
+
             <Link href="/" className="flex items-center gap-2 no-underline">
               <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
               <div className="leading-tight">
                 <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                   Uni Textbook
                 </span>
+
                 <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white': 'text-[#000f2b]'}`}>
                   Marketplace
                 </span>
               </div>
+
+
             </Link>
           </div>
         </div>
@@ -107,6 +118,8 @@ if (!mounted) return null;
               <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white' : 'text-[var(--foreground)]'}`}>
                 Marketplace
               </span>
+
+
             </div>
           </Link>
 
@@ -123,6 +136,8 @@ if (!mounted) return null;
                       : isTransparent ? 'text-white' : 'text-[var(--foreground)]'
                     }`}
                 >
+
+
                   {link.label.toUpperCase()}
                 </Link>
               ))}
@@ -161,6 +176,7 @@ if (!mounted) return null;
                     <span className="text-sm font-medium text-[var(--foreground)]">
                       {user.first_name}
                     </span>
+
                     <ChevronDown
                       size={16}
                       className={`text-[#4B4F58] dark:text-gray-400 transition-transform duration-200
@@ -250,6 +266,8 @@ if (!mounted) return null;
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
+
+
         </div>
       </div>
 
@@ -303,6 +321,8 @@ if (!mounted) return null;
                 >
                   Settings
                 </Link>
+
+
                 <button
                   className="py-3 text-left text-sm text-[#b91c1c] dark:text-[#ef4444]
                              hover:text-[#7F1D1D] transition-colors"
@@ -326,6 +346,8 @@ if (!mounted) return null;
                 >
                   Register
                 </Link>
+
+
                 <Link
                   href="/auth/login"
                   className="py-3 text-sm font-medium text-[#3a3a3a]
@@ -338,6 +360,8 @@ if (!mounted) return null;
               </>
             )}
           </div>
+
+          
         </div>
       )}
     </nav>
