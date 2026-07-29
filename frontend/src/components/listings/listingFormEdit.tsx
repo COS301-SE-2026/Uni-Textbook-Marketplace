@@ -7,6 +7,7 @@ import { getMyListings, uploadImages, editListing, type EditListingData } from "
 import { Button } from "../ui";
 import  Fields  from "@/components/ui/Fields"
 import Image from "next/image";
+// import { useRouter } from 'next/navigation'
 
 
 const SECTIONS = [
@@ -25,6 +26,7 @@ type ListingFormEditProps = {
 
 export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
+    // const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -32,6 +34,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
+    // const [success, setSuccess] = useState(false);
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -178,6 +181,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
             }
 
             await editListing(diff);
+            // setSuccess(true);
+
         } catch (err) {
             console.error('failed to edit',err);
         } finally {
@@ -273,6 +278,16 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     {saving ? "Saving..." : "Save changes"}
                 </Button>
             </div>
+
+            {/* <Modal
+                isOpen={success}
+                title="Updated Successfully!!"
+                onClose={() => router.push('/listings/mine')}
+            >
+                <p>
+                    Your Listing has been successfully edited
+                </p>
+            </Modal> */}
         </form>
     )
 }
