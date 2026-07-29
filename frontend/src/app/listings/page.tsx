@@ -231,7 +231,7 @@ function BrowseListingsContent() {
                                     <option value="">Select Faculty</option>
                                     <option value="Engineering, Built-Environment and IT">EBIT - Engineering, Built-Environment and IT</option>
                                     <option value="Law">Law</option>
-                                    <option value="Humanties">Humanities</option>
+                                    <option value="Humanities">Humanities</option>
                                     <option value="Health Sciences">Health Sciences</option>
                                     <option value="Gordon Institute of Business Science">Gordon Institute of Business Science</option>
                                     <option value="Natural and Agricultural Sciences">Natural and Agricultural Sciences</option>
