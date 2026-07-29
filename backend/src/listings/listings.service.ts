@@ -143,9 +143,10 @@ export class ListingsService {
       });
     }
     if (query?.faculty) {
-      qb.andWhere('module.faculty ILIKE :faculty', {
-        faculty: `%${query.faculty}%`,
-      });
+      qb.leftJoin('module.faculty', 'faculty').andWhere(
+        'faculty.name ILIKE :faculty',
+        { faculty: `%${query.faculty}%` },
+      );
     }
     if (query?.condition) {
       qb.andWhere('listing.condition = :condition', {
