@@ -229,13 +229,13 @@ function BrowseListingsContent() {
                                     onChange={handleFilterChange}
                                 >
                                     <option value="">Select Faculty</option>
-                                    <option value="Engineering, Built-Environment and IT">EBIT - Engineering, Built-Environment & IT</option>
+                                    <option value="Engineering, Built-Environment and IT">EBIT - Engineering, Built-Environment and IT</option>
                                     <option value="Law">Law</option>
                                     <option value="Humanties">Humanities</option>
                                     <option value="Health Sciences">Health Sciences</option>
                                     <option value="Gordon Institute of Business Science">Gordon Institute of Business Science</option>
-                                    <option value="Natural and Agricultural Sciences">Natural & Agricultural Sciences</option>
-                                    <option value="Economic and Management Sciences">Economic & Management Sciences</option>
+                                    <option value="Natural and Agricultural Sciences">Natural and Agricultural Sciences</option>
+                                    <option value="Economic and Management Sciences">Economic and Management Sciences</option>
                                     <option value="Education">Education</option>
                                     <option value="Theology and Religion">Theology and Religion</option>
                                     <option value="Veterinary Sciences">Veterinary Sciences</option>
