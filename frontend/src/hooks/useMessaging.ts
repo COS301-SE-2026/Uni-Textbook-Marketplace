@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+    createConversation,
     getMyConversations,
     getMessages,
     sendMessage,
@@ -12,6 +13,7 @@ import type {
     Conversation,
     Message,
 } from '@/types/messaging';
+import { start } from 'repl';
 
 export function useMessaging() {
 
@@ -27,6 +29,34 @@ export function useMessaging() {
 
     const [loadingMessages, setLoadingMessages] =
         useState(false);
+
+    /**Start a new conversation */
+    const startConversation = async (
+        listingId: string,
+        text: string,
+    ) => {
+        const conversation =
+            await createConversation(listingId);
+
+        await sendMessage(
+            conversation.conversationId,
+            text,
+        );
+
+        await loadConversations();
+
+        const createdConversation = (
+            await getMyConversations()
+        ).find(
+            (c) =>
+                c.conversationId ===
+                conversation.conversationId,
+        );
+
+        if (createdConversation) {
+            await selectConversation(createdConversation);
+        }
+    };
 
     /**Load all conversations*/
     const loadConversations = async () => {
@@ -99,6 +129,7 @@ export function useMessaging() {
     return {
         conversations,
         selectedConversation,
+        startConversation,
         messages,
         loadingConversations,
         loadingMessages,

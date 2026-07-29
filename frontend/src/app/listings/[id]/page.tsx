@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
+import { useMessaging } from '@/hooks/useMessaging'
 
 
 const CONDITION_LABEL: Record<string, string> = {
@@ -69,6 +70,7 @@ export default function ListingDetailPage() {
         bookDetails: false,
         moduleDetails: false,
     })
+    const {startConversation} = useMessaging();
 
     // Fetch listing
 
@@ -360,7 +362,41 @@ export default function ListingDetailPage() {
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                         />
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    setShowMessageModal(false);
+                                    setMessage("");
+                                }}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                onClick={async () => {
+                                    if (!message.trim()) {
+                                        return;
+                                    }
+
+                                    try {
+                                        await startConversation(
+                                            listing.id,
+                                            message,
+                                        );
+
+                                        setMessageSent(true);
+                                        setMessage("");
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
+                            >
+                                Send Message
+                            </Button>
+                        </div>
                     </div>
+                    
                 )}
             </Modal>
 
