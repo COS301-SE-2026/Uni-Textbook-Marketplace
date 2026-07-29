@@ -229,7 +229,7 @@ function BrowseListingsContent() {
                                     onChange={handleFilterChange}
                                 >
                                     <option value="">Select Faculty</option>
-                                    <option value="Engineering, Built-Environment and IT">EBIT - Engineering, Built-Environment and IT</option>
+                                    <option value="Engineering, Built Environment and IT">EBIT - Engineering, Built-Environment and IT</option>
                                     <option value="Law">Law</option>
                                     <option value="Humanities">Humanities</option>
                                     <option value="Health Sciences">Health Sciences</option>
