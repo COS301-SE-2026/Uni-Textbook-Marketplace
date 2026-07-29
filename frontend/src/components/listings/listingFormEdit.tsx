@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import ListingForm, { ListingFormData } from "./listingForm";
 import AccordionSection from "@/components/ui/AccordionSection"
 import { getMyListings, uploadImages, editListing, type EditListingData } from "@/lib/listings.api";
-import { Button } from "../ui";
+import { Button, Modal } from "../ui";
 import  Fields  from "@/components/ui/Fields"
 import Image from "next/image";
-// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 
 const SECTIONS = [
@@ -26,7 +26,7 @@ type ListingFormEditProps = {
 
 export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
-    // const router = useRouter()
+    const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
-    // const [success, setSuccess] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -181,7 +181,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
             }
 
             await editListing(diff);
-            // setSuccess(true);
+            setSuccess(true);
 
         } catch (err) {
             console.error('failed to edit',err);
@@ -199,7 +199,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 <AccordionSection
                     key={key}
                     title={title}
-                    isOpen={openSections[key]}
+                    isOpen={!success && openSections[key]}
                     OnToggle={() => toggleSection(key)}
                 >
                     {key === "bookDetails" && form && (
@@ -279,15 +279,18 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 </Button>
             </div>
 
-            {/* <Modal
+            <Modal
                 isOpen={success}
                 title="Updated Successfully!!"
-                onClose={() => router.push('/listings/mine')}
+                onClose={() => {
+                    setSuccess(false);
+                    router.push('/listings/mine');
+                }}
             >
                 <p>
                     Your Listing has been successfully edited
                 </p>
-            </Modal> */}
+            </Modal>
         </form>
     )
 }
