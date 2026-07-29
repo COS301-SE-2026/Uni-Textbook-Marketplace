@@ -48,22 +48,25 @@ function BrowseListingsContent() {
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
 
-    const firstSearch = boundSearches?.get('search') || ''
+        const getInitialFilters = (): Filters => {
+        return {
+            faculty: boundSearches?.get('faculty') || '',
+            moduleCode: boundSearches?.get('moduleCode') || '',
+            edition: boundSearches?.get('edition') || '',
+            priceMin: boundSearches?.get('priceMin') || '',
+            priceMax: boundSearches?.get('priceMax') || '',
+            condition: boundSearches?.get('condition') || '',
+            annotationLevel: boundSearches?.get('annotationLevel') || '',
+            search: boundSearches?.get('search') || '',
+        }
+    }
+
+    const initialFilters = getInitialFilters()
     
-    const [filters, setFilters] = useState<Filters>(() => ({
-        ...EMPTY_FILTERS,
-
-        search: firstSearch,
-    
-    }))
+    const [filters, setFilters] = useState<Filters>(initialFilters)
 
 
-    const [applied, setApplied] = useState<Filters>(() => ({
-
-       ...EMPTY_FILTERS,
-        search: firstSearch,
-
-    }))
+    const [applied, setApplied] = useState<Filters>(initialFilters)
 
     const [total, setTotal] = useState(0)
 
@@ -167,6 +170,8 @@ function BrowseListingsContent() {
 
     // Render
 
+  
+
     return (
         <ProtectedRoute>
             <div className="container-content py-8">
@@ -224,14 +229,16 @@ function BrowseListingsContent() {
                                     onChange={handleFilterChange}
                                 >
                                     <option value="">Select Faculty</option>
-                                    <option value="ENG">Engineering</option>
-                                    <option value="EBIT">EBIT - Engineering, Built-Environment & IT</option>
-                                    <option value="LAW">Law</option>
-                                    <option value="HUM">Humanities</option>
-                                    <option value="MED">Health Sciences</option>
-                                    <option value="NAT">Natural Sciences</option>
-                                    <option value="ECO">Economic Sciences</option>
-                                    <option value="EDU">Education</option>
+                                    <option value="Engineering, Built Environment and IT">EBIT - Engineering, Built-Environment and IT</option>
+                                    <option value="Law">Law</option>
+                                    <option value="Humanities">Humanities</option>
+                                    <option value="Health Sciences">Health Sciences</option>
+                                    <option value="Gordon Institute of Business Science">Gordon Institute of Business Science</option>
+                                    <option value="Natural and Agricultural Sciences">Natural and Agricultural Sciences</option>
+                                    <option value="Economic and Management Sciences">Economic and Management Sciences</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Theology and Religion">Theology and Religion</option>
+                                    <option value="Veterinary Sciences">Veterinary Sciences</option>
                                 </Select>
                             </div>
 

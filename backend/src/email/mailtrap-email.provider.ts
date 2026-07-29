@@ -14,7 +14,7 @@ export class MailtrapEmailProvider implements IEmailService {
       host: this.config.getOrThrow<string>('MAIL_HOST'),
       port: Number(this.config.getOrThrow('MAIL_PORT')),
       secure: false,
-      requireTLS: true, 
+      requireTLS: true,
       auth: {
         user: this.config.getOrThrow<string>('MAILTRAP_USER'),
         pass: this.config.getOrThrow<string>('MAILTRAP_PASS'),

@@ -49,6 +49,7 @@ export class ModuleService {
         code: dto.code,
         name: dto.name,
         semester: dto.semester,
+        faculty: { id: dto.faculty_id },
       },
     });
 

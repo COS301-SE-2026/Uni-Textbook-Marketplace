@@ -14,6 +14,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'https://localhost:3001',
       'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
+      'https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],

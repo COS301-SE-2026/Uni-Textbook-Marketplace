@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
-  name = 'AddIndexesToAuditLogBooksListings';
-
+export class AddIndexesToAuditLogBooksListings1784386300000 implements MigrationInterface {
   private async createIndex(
     queryRunner: QueryRunner,
     name: string,
@@ -41,7 +39,7 @@ export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
     await queryRunner.query(`
       ALTER TABLE "audit_log" 
       ADD CONSTRAINT "audit_log_action_check" 
-      CHECK (action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN'))
+      CHECK (action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN','APPROVE_LISTING','REJECT_LISTING'))
     `);
 
     // Books indexes
@@ -59,7 +57,7 @@ export class AddIndexesToAuditLogBooksListings implements MigrationInterface {
       queryRunner,
       'idx_listings_module_price',
       'listings',
-      ['module', 'price'],
+      ['module_id', 'price'],
     );
     await this.createIndex(queryRunner, 'idx_listings_condition', 'listings', [
       'condition',

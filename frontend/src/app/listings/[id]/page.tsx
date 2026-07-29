@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
+import { useMessaging } from '@/hooks/useMessaging'
 
 
 const CONDITION_LABEL: Record<string, string> = {
@@ -69,6 +70,7 @@ export default function ListingDetailPage() {
         bookDetails: false,
         moduleDetails: false,
     })
+    const {startConversation} = useMessaging();
 
     // Fetch listing
 
@@ -239,7 +241,7 @@ export default function ListingDetailPage() {
                                             ['Edition', listing.book.edition?.toString() ?? 'N/A'],
                                             ['ISBN', listing.book.isbn ?? 'N/A'],
                                             ['Name of Author', listing.book.author ?? 'N/A'],
-                                            ['Name of Publisher', listing.book.publiser ?? 'N/A']
+                                            ['Name of Publisher', listing.book.publisher ?? 'N/A']
                                         ].map(([label, value], index) => (
                                             <tr key={`book-detail-${index}`} className="border-b border-gray-100">
                                                 <td className="py-2 text-gray-500 w-32">{label}</td>
@@ -257,6 +259,7 @@ export default function ListingDetailPage() {
                                             ['Name', listing.module.name],
                                             ['Code', listing.module.code],
                                             ['Semester', listing.module.semester?.toString() ?? 'N/A'],
+                                            ['Faculty', listing.module.faculty?.name ?? 'N/A'],
                                         ].map(([label, value], index) => (
                                             <tr key={`module-detail-${index}`} className="border-b border-gray-100">
                                                 <td className="py-2 text-gray-500 w-32">{label}</td>
@@ -359,7 +362,41 @@ export default function ListingDetailPage() {
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                         />
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    setShowMessageModal(false);
+                                    setMessage("");
+                                }}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                onClick={async () => {
+                                    if (!message.trim()) {
+                                        return;
+                                    }
+
+                                    try {
+                                        await startConversation(
+                                            listing.id,
+                                            message,
+                                        );
+
+                                        setMessageSent(true);
+                                        setMessage("");
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
+                            >
+                                Send Message
+                            </Button>
+                        </div>
                     </div>
+                    
                 )}
             </Modal>
 

@@ -143,9 +143,10 @@ export class ListingsService {
       });
     }
     if (query?.faculty) {
-      qb.andWhere('module.faculty ILIKE :faculty', {
-        faculty: `%${query.faculty}%`,
-      });
+      qb.leftJoin('module.faculty', 'faculty').andWhere(
+        'faculty.name ILIKE :faculty',
+        { faculty: `%${query.faculty}%` },
+      );
     }
     if (query?.condition) {
       qb.andWhere('listing.condition = :condition', {
@@ -182,7 +183,13 @@ export class ListingsService {
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module', 'seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
   }
 
@@ -194,52 +201,18 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
 
     return listing;
-  }
-
-  //awaiting approval
-  async getPendingListings() {
-    return this.listingRepo.find({
-      where: { status: ListingStatus.PENDING },
-      relations: ['book', 'seller'],
-    });
-  }
-
-  //ensure admin only access
-  async approveListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
-    }
-
-    const reviewer = new User();
-    reviewer.id = adminId;
-
-    listing.status = ListingStatus.APPROVED;
-    listing.reviewer = reviewer;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
-  }
-
-  //ensure admin only access
-  async rejectListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    const reviewer = new User();
-    reviewer.id = adminId;
-
-    listing.status = ListingStatus.REJECTED;
-    listing.reviewer = reviewer;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
   }
 
   private isValidUUID(uuid: string): boolean {
