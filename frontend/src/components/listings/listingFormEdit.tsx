@@ -199,7 +199,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 <AccordionSection
                     key={key}
                     title={title}
-                    isOpen={openSections[key]}
+                    isOpen={!success && openSections[key]}
                     OnToggle={() => toggleSection(key)}
                 >
                     {key === "bookDetails" && form && (
