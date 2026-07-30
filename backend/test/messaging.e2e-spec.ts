@@ -225,30 +225,31 @@ describe("Messaging e2e testing",() =>{
         });
     });
 
-    //testing valid conversation start
-    describe("create conversation", () => {
+    //testing conversation create
+    describe("create conversation", async () => {
+        // Create university
+        const university = await createUniversity();
+
+        // Register , verify and login users
+        await registerSeller(university.id);
+        await registerBuyer(university.id);
+        await verifyUser("seller@tuks.co.za");
+        await verifyUser("buyer@tuks.co.za");
+        sellerToken = await loginVerifiedSeller();
+        buyerToken = await loginVerifiedBuyer();
+
+        //create listing
+        const moduleId = await createModule(university.id);
+        const bookId = await createBook();
+        listingId = await createListing(
+            sellerToken,
+            moduleId,
+            bookId,
+        );
+
+        //Happy test
         it("should create a conversation for a listing", async () => {
-            // Create university
-            const university = await createUniversity();
-
-            // Register , verify and login users
-            await registerSeller(university.id);
-            await registerBuyer(university.id);
-            await verifyUser("seller@tuks.co.za");
-            await verifyUser("buyer@tuks.co.za");
-            sellerToken = await loginVerifiedSeller();
-            buyerToken = await loginVerifiedBuyer();
-
-            //create listing
-            const moduleId = await createModule(university.id);
-            const bookId = await createBook();
-            listingId = await createListing(
-                sellerToken,
-                moduleId,
-                bookId,
-            );
-
-            //create conversation
+        
             const res = await request(app.getHttpServer())
                 .post("/conversations")
                 .set("Cookie", `access_token=${buyerToken}`)
@@ -261,23 +262,8 @@ describe("Messaging e2e testing",() =>{
             conversationId = res.body.conversationId;
         });
 
-    });
-
-    //testing a conversation with a non listing
-    describe("create conversation with non listing", ()=> {
-        it("should not create a new conversation", async () =>{
-            // Create university
-            const university = await createUniversity();
-
-            // Register , verify and login users
-            await registerSeller(university.id);
-            await registerBuyer(university.id);
-            await verifyUser("seller@tuks.co.za");
-            await verifyUser("buyer@tuks.co.za");
-            sellerToken = await loginVerifiedSeller();
-            buyerToken = await loginVerifiedBuyer();
-
-            //create conversation
+        //invalid listing
+        it("should not create a new conversation",async () =>{
             const res = await request(app.getHttpServer())
                 .post("/conversations")
                 .set("Cookie", `access_token=${buyerToken}`)
@@ -287,31 +273,9 @@ describe("Messaging e2e testing",() =>{
             expect(res.status).toBe(404);
             conversationId = res.body.conversationId;
         })
-    })
 
-    //test a conversation tht already exists
-    describe ("Converse in an already existing conversation", () =>{
-        it("should return true", async() =>{
-            // Create university
-            const university = await createUniversity();
-
-            // Register , verify and login users
-            await registerSeller(university.id);
-            await registerBuyer(university.id);
-            await verifyUser("seller@tuks.co.za");
-            await verifyUser("buyer@tuks.co.za");
-            sellerToken = await loginVerifiedSeller();
-            buyerToken = await loginVerifiedBuyer();
-
-            //create listing
-            const moduleId = await createModule(university.id);
-            const bookId = await createBook();
-            listingId = await createListing(
-                sellerToken,
-                moduleId,
-                bookId,
-            );
-
+        //alresdy exiust
+        it("Should return true for already exists", async() =>{
             //create first one
             const blah = await request(app.getHttpServer())
                 .post("/conversations")
@@ -332,28 +296,9 @@ describe("Messaging e2e testing",() =>{
             expect(res.body.alreadyExists).toBe(true);
             conversationId = res.body.conversationId;
         })
-    })
 
-    describe("Start a conversation with themself", () =>{
+        //self
         it("Should return 500", async() =>{
-            //create university
-            const university = await createUniversity();
-
-            //register one user
-            await registerBuyer(university.id);
-            await verifyUser("buyer@tuks.co.za");
-            buyerToken = await loginVerifiedBuyer();
-
-            //create listing
-            const moduleId = await createModule(university.id);
-            const bookId = await createBook();
-            listingId = await createListing(
-                buyerToken,
-                moduleId,
-                bookId,
-            );
-
-            //get the duplicate conversatyion
             const res = await request(app.getHttpServer())
                 .post("/conversations")
                 .set("Cookie", `access_token=${buyerToken}`)
@@ -362,40 +307,82 @@ describe("Messaging e2e testing",() =>{
                 });
             expect(res.status).toBe(500);
         })
-    })
 
-    describe("Unauthorized access, ie, no cookie", () =>{
+        //unauth
         it("Should return a 401 error", async()=>{
-            //create uni
-            const university = await createUniversity();
-
-            //make a seller
-            const seller = await registerSeller(university.id);
-            await verifyUser("seller@tuks.co.za");
-            sellerToken = await loginVerifiedSeller();
-
-            //create listing
-            const moduleId = await createModule(university.id);
-            const bookId = await createBook();
-            listingId = await createListing(
-                sellerToken,
-                moduleId,
-                bookId,
-            );
-
-            //get the duplicate conversatyion
             const res = await request(app.getHttpServer())
                 .post("/conversations")
                 //.set("Cookie", `access_token=${buyerToken}`)
                 .send({
                     listingId,
                 });
-            expect(res.status).toBe(500);
-            
-
+            expect(res.status).toBe(401);
         })
+
+    });
+
+
+    //GET my conversations
+    describe("get my conversations", () => {
+        //happy test
+        it("should return the buyer's conversations", async () => {
+
+            const res = await request(app.getHttpServer())
+                .get("/conversations/mine")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .expect(200);
+
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body.length).toBeGreaterThan(0);
+
+            expect(res.body[0]).toHaveProperty("conversationId");
+            expect(res.body[0]).toHaveProperty("listing");
+            expect(res.body[0]).toHaveProperty("otherUser");
+            expect(res.body[0].conversationId).toBe(conversationId);
+        });
+
+        it("should return 401 when not logged in", async () => {
+
+            await request(app.getHttpServer())
+                .get("/conversations/mine")
+                .expect(401);
+        });
+    });
+
+    //POST message
+    describe("send message", () => {
+        //happy test
+        it("should send a message", async () => {
+
+            const res = await request(app.getHttpServer())
+                .post(`/conversations/${conversationId}/messages`)
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    text: "Hello seller!",
+                })
+                .expect(201);
+
+            expect(res.body).toHaveProperty("messageId");
+            expect(res.body.message).toBe(
+                "Message sent successfully.",
+            );
+
+        });
+
+        //unhappy test
+        it("should return 404 for an invalid conversation", async () => {
+
+            await request(app.getHttpServer())
+                .post("/conversations/00000000/messages")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    text: "Hello",
+                })
+                .expect(404);
+
+        });
     })
 
+});
 
 
-})
