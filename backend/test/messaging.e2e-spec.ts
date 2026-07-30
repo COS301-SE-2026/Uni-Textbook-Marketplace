@@ -128,6 +128,30 @@ describe("Messaging e2e testing",() =>{
         return res.body.id;
     }
 
+    const createListing = async (
+        token: string,
+        moduleId: string,
+        bookId: string,
+    ): Promise<string> => {
+
+        const res = await request(app.getHttpServer())
+            .post("/listings")
+            .set("Cookie", `access_token=${token}`)
+            .send({
+                title: "Messaging Test Listing",
+                bookId,
+                moduleId,
+                condition: "good",
+                annotationLevel: "light",
+                price: 100,
+                photoUrls: [],
+                hasNotes: false,
+            })
+            .expect(201);
+
+        return res.body.id;
+    };
+
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
