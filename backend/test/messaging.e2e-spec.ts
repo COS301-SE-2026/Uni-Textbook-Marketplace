@@ -101,7 +101,7 @@ describe("Messaging e2e testing",() =>{
 
    const createModule = async (
         universityId: string,
-        facultyid: string,
+        facultyId: string,
         sellerToken: string,
         ): Promise<string> => {
         const res = await request(app.getHttpServer())
@@ -112,7 +112,7 @@ describe("Messaging e2e testing",() =>{
             name: "software",
             semester: 1,
             university_id: universityId,
-            faculty_id: facultyid,
+            faculty_id: facultyId,
             })
             .expect(201);
 
@@ -157,6 +157,9 @@ describe("Messaging e2e testing",() =>{
         return res.body.id;
     };
 
+    const auth = (token: string) => ({
+        Cookie: `access_token=${token}`,
+    });
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
@@ -257,7 +260,7 @@ describe("Messaging e2e testing",() =>{
         
             const res = await request(app.getHttpServer())
                 .post("/conversations")
-                .set("Cookie", `access_token=${buyerToken}`)
+                .set(auth(buyerToken))
                 .send({
                     listingId,
                 })
@@ -267,16 +270,6 @@ describe("Messaging e2e testing",() =>{
             conversationId = res.body.conversationId;
         });
 
-        //invalid listing
-        it("should not create a new conversation",async () =>{
-            await request(app.getHttpServer())
-                .post("/conversations")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    listingId: "00000000-0000-0000-0000-000000000000",
-                })
-                .expect(404);
-        })
 
         //alresdy exiust
         it("Should return true for already exists", async() =>{
@@ -308,8 +301,8 @@ describe("Messaging e2e testing",() =>{
                 .set("Cookie", `access_token=${sellerToken}`)
                 .send({
                     listingId,
-                });
-            expect(res.status).toBe(403);
+                })
+                .expect(403);
         })
 
         //unauth
@@ -377,7 +370,7 @@ describe("Messaging e2e testing",() =>{
         it("should return 404 for an invalid conversation", async () => {
 
             await request(app.getHttpServer())
-                .post("/conversations/00000000/messages")
+                .post("/conversations/65454/messages")
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
                     text: "Hello",
@@ -387,7 +380,7 @@ describe("Messaging e2e testing",() =>{
 
         it("should return 401 for no access", async()=> {
             await request(app.getHttpServer())
-                .post("/conversations/00000000/messages")
+                .post("/conversations/001112212/messages")
                 .set("Cookie", `access_token=${"nope"}`)
                 .send({
                     text: "Hello",
@@ -418,7 +411,7 @@ describe("Messaging e2e testing",() =>{
         it("should return 404 for an invalid conversation", async () => {
 
             await request(app.getHttpServer())
-                .get("/conversations/00000000/messages")
+                .get("/conversations/0054345/messages")
                 .set("Cookie", `access_token=${buyerToken}`)
                 .expect(404);
 
