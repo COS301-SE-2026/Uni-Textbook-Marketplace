@@ -21,8 +21,9 @@
     "test:cov:auth": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"!src/auth/**/*.spec.ts\" src/auth/",
     "test:cov:listings": "jest --coverage --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/listings/**/*.spec.ts\" src/listings/listings.service.spec.ts",
     "test:auth": "jest --testPathPatterns='auth.service.spec.ts' --watch",
-    "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
-    "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts",
+    "test:cov:messaging": "jest --coverage --collectCoverageFrom=\"src/messaging/**/*.ts\" --collectCoverageFrom=\"!src/messaging/**/*.module.ts\" --collectCoverageFrom=\"!src/messaging/**/*.controller.ts\" --collectCoverageFrom=\"!src/messaging/dto/**/*.ts\" test/messaging.service.spec.ts",
+    "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"src/messaging/**/*.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts src/messaging/",
+    "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"src/messaging/**/*.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts src/messaging/",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": "typeorm migration:run -d dist/data-source.js",
     "migration:generate": "cross-env NODE_OPTIONS=--no-experimental-strip-types typeorm-ts-node-commonjs migration:generate -d src/data-source.ts"
