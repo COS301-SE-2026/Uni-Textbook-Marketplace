@@ -231,6 +231,272 @@ describe('Admin Integration Tests', () => {
         });
     });
 
+    describe('Admin Approve Listing', () => {
+        it('should approve a pending listing and create audit log', async () => {
+            const admin = await createUser('admin');
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body.status).toBe(ListingStatus.APPROVED);
+            expect(response.body.reviewer.id).toBe(admin.id);
+
+            const auditLogs = await auditLogRepository.find({
+                where: { entity_id: listing.id },
+                relations: ['performedBy']
+            });
+
+            expect(auditLogs.length).toBeGreaterThan(0);
+            expect(auditLogs[0].action).toBe('APPROVE_LISTING');
+        }, 15000);
+
+        it('should return 403 when non-admin tries to approve', async () => {
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        }, 15000);
+
+        it('should return 404 when listing not found', async () => {
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
+
+            await request(app.getHttpServer())
+                .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(404);
+        }, 15000);
+    });
+
+    describe('Admin Reject Listing', () => {
+        it('should reject a pending listing and create audit log', async () => {
+            const admin = await createUser('admin');
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            const rejectReason = 'Inappropriate content';
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/reject`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: rejectReason })
+                .expect(200);
+
+            expect(response.body.status).toBe(ListingStatus.REJECTED);
+            expect(response.body.reviewer.id).toBe(admin.id);
+
+            const auditLogs = await auditLogRepository.find({
+                where: { entity_id: listing.id },
+                relations: ['performedBy']
+            });
+
+            expect(auditLogs.length).toBeGreaterThan(0);
+            expect(auditLogs[0].action).toBe('REJECT_LISTING');
+            expect(auditLogs[0].notes).toBeTruthy();
+        }, 15000);
+
+        it('should return 403 when non-admin tries to reject', async () => {
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/reject`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Invalid' })
+                .expect(403);
+        }, 15000);
+    });
+
+    describe('Get Audit Logs', () => {
+        it('should retrieve audit logs for admin', async () => {
+            const admin = await createUser('admin');
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            // Create and approve a listing to generate audit log
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            // Get audit logs
+            const response = await request(app.getHttpServer())
+                .get('/admin/audit-log')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body).toHaveProperty('logs');
+            expect(response.body).toHaveProperty('total');
+            expect(Array.isArray(response.body.logs)).toBe(true);
+            expect(response.body.total).toBeGreaterThan(0);
+
+            // Find the log for our listing
+            const relevantLog = response.body.logs.find(
+                (log: any) => log.entity_id === listing.id
+            );
+            expect(relevantLog).toBeDefined();
+            expect(relevantLog.action).toBe('APPROVE_LISTING');
+        }, 15000);
+
+        it('should filter audit logs by action', async () => {
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
+
+            // Create an audit log by approving a listing
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const response = await request(app.getHttpServer())
+                .get('/admin/audit-log?action=APPROVE_LISTING')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(response.body.logs.length).toBeGreaterThan(0);
+            for (const log of response.body.logs) {
+                expect(log.action).toBe('APPROVE_LISTING');
+            }
+        }, 15000);
+
+        it('should return 403 when non-admin tries to view audit logs', async () => {
+            const user = await createUser('student');
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .get('/admin/audit-log')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        }, 15000);
+    });
+
+    describe('Get Admin Users', () => {
+        it('should retrieve all admin users', async () => {
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
+
+            const response = await request(app.getHttpServer())
+                .get('/admin/emails')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(Array.isArray(response.body)).toBe(true);
+            expect(response.body.length).toBeGreaterThan(0);
+            expect(response.body.some((u: any) => u.email === admin.email)).toBe(true);
+        }, 15000);
+
+        it('should return 403 when non-admin tries to view admin users', async () => {
+            const user = await createUser('student');
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .get('/admin/emails')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
+        }, 15000);
+    });
+
+    describe('Complete Admin Workflow', () => {
+        it('should handle complete workflow: create listing → approve → audit log → view admin users', async () => {
+            // Setup
+            const admin = await createUser('admin');
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(admin);
+
+            // 1. Create a listing
+            const listingRes = await request(app.getHttpServer())
+                .post('/listings')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    title: 'Complete Workflow Test',
+                    bookId: book.id,
+                    moduleId: module.id,
+                    condition: 'good',
+                    annotationLevel: 'light',
+                    price: 49.99,
+                    photoUrls: ['http://example.com/photo.jpg'],
+                    hasNotes: false
+                })
+                .expect(201);
+
+            const listingId = listingRes.body.id;
+
+            // 2. Approve the listing
+            await request(app.getHttpServer())
+                .patch(`/admin/${listingId}/approve`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            // 3. Verify in database
+            const approvedListing = await listingRepository.findOne({
+                where: { id: listingId },
+                relations: ['reviewer']
+            });
+            expect(approvedListing?.status).toBe(ListingStatus.APPROVED);
+            expect(approvedListing?.reviewer?.id).toBe(admin.id);
+
+            // 4. Verify audit log
+            const auditLogs = await auditLogRepository.find({
+                where: { entity_id: listingId }
+            });
+            expect(auditLogs.length).toBe(1);
+            expect(auditLogs[0].action).toBe('APPROVE_LISTING');
+
+            // 5. Get admin users
+            const adminRes = await request(app.getHttpServer())
+                .get('/admin/emails')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            expect(adminRes.body.some((u: any) => u.id === admin.id)).toBe(true);
+        }, 15000);
+    });
 });
 
 
