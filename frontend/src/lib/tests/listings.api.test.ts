@@ -8,7 +8,7 @@ import {
 } from '../listings.api'
 
 import { api } from '../api'
-import { title } from 'process'
+
 
 jest.mock('../api')
 
@@ -50,6 +50,26 @@ describe('listings.api', () => {
 
         expect(await getFaculties()).toEqual([{ id: '1', name: 'EBIT' }])
         expect(mockValApi.get).toHaveBeenCalledWith('/modules/faculties')
-        
+
+    })
+
+
+    it('uploads images or handles empty input', async () => {
+
+        expect(await uploadImages([])).toEqual({ urls: [] })
+
+
+        const imageRespons = { urls: ['http://example.com/image.jpg'] }
+
+        global.fetch = jest.fn().mockResolvedValueOnce({
+            ok: true,
+            json: async () => imageRespons,
+
+        })
+
+        const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+
+        expect(await uploadImages([file])).toEqual(imageRespons)
+
     })
 })
