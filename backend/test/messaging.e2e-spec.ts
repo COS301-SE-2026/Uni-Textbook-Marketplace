@@ -63,10 +63,10 @@ describe("Messaging e2e testing",() =>{
         return request(app.getHttpServer())
             .post("/auth/register")
             .send({
-                email: "buyer@tuks.co.za",
+                email: "seller@tuks.co.za",
                 password: Test_Password,
-                first_name: "Jane",
-                last_name: "Buyer",
+                first_name: "Jon",
+                last_name: "Seller",
                 faculty: "EBIT",
                 university_id: universityId,
             })
@@ -85,6 +85,25 @@ describe("Messaging e2e testing",() =>{
             .post("/auth/login")
             .send({
                 email: "buyer@tuks.co.za",
+                password: Test_Password,
+            })
+            .expect(200);
+    
+        const cookies = (res.headers['set-cookie'] ?? []) as unknown as string[];
+        const accessTokenCookie = cookies.find((c) => c.startsWith('access_token='));
+    
+        if (!accessTokenCookie) {
+            throw new Error('accessToken cookie not found in login response');
+        }
+    
+        return accessTokenCookie.split(';')[0].split('=')[1];
+    };
+    
+    const loginVerifiedSeller = async (): Promise<string> => {
+        const res = await request(app.getHttpServer())
+            .post("/auth/login")
+            .send({
+                email: "seller@tuks.co.za",
                 password: Test_Password,
             })
             .expect(200);
@@ -205,5 +224,114 @@ describe("Messaging e2e testing",() =>{
             expect(true).toBe(true);
         });
     });
+
+    //testing valid conversation start
+    describe("create conversation", () => {
+        it("should create a conversation for a listing", async () => {
+            // Create university
+            const university = await createUniversity();
+
+            // Register , verify and login users
+            await registerSeller(university.id);
+            await registerBuyer(university.id);
+            await verifyUser("seller@tuks.co.za");
+            await verifyUser("buyer@tuks.co.za");
+            sellerToken = await loginVerifiedSeller();
+            buyerToken = await loginVerifiedBuyer();
+
+            //create listing
+            const moduleId = await createModule(university.id);
+            const bookId = await createBook();
+            listingId = await createListing(
+                sellerToken,
+                moduleId,
+                bookId,
+            );
+
+            //create conversation
+            const res = await request(app.getHttpServer())
+                .post("/conversations")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId,
+                });
+            expect(res.status).toBe(201);
+            expect(res.body).toHaveProperty("conversationId");
+            expect(res.body.alreadyExists).toBe(false);
+            conversationId = res.body.conversationId;
+        });
+
+    });
+
+    //testing a conversation with a non listing
+    describe("create conversation with nothing", ()=> {
+        it("should not create a new conversation", async () =>{
+            // Create university
+            const university = await createUniversity();
+
+            // Register , verify and login users
+            await registerSeller(university.id);
+            await registerBuyer(university.id);
+            await verifyUser("seller@tuks.co.za");
+            await verifyUser("buyer@tuks.co.za");
+            sellerToken = await loginVerifiedSeller();
+            buyerToken = await loginVerifiedBuyer();
+
+            //create conversation
+            const res = await request(app.getHttpServer())
+                .post("/conversations")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId: "00000000-0000-0000-0000-000000000000",
+                });
+            expect(res.status).toBe(404);
+            conversationId = res.body.conversationId;
+        })
+    })
+
+    //test a conversation tht already exists
+    describe ("Converse in an already existing conversation", () =>{
+        it("should return true", async() =>{
+            // Create university
+            const university = await createUniversity();
+
+            // Register , verify and login users
+            await registerSeller(university.id);
+            await registerBuyer(university.id);
+            await verifyUser("seller@tuks.co.za");
+            await verifyUser("buyer@tuks.co.za");
+            sellerToken = await loginVerifiedSeller();
+            buyerToken = await loginVerifiedBuyer();
+
+            //create listing
+            const moduleId = await createModule(university.id);
+            const bookId = await createBook();
+            listingId = await createListing(
+                sellerToken,
+                moduleId,
+                bookId,
+            );
+
+            //create first one
+            const blah = await request(app.getHttpServer())
+                .post("/conversations")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId,
+                });
+
+            //get the duplicate conversatyion
+            const res = await request(app.getHttpServer())
+                .post("/conversations")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId,
+                });
+            expect(res.status).toBe(201);
+            expect(res.body).toHaveProperty("conversationId");
+            expect(res.body.alreadyExists).toBe(false);
+            conversationId = res.body.conversationId;
+        })
+    })
 
 })
