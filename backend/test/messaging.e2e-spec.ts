@@ -99,25 +99,6 @@ describe("Messaging e2e testing",() =>{
         return accessTokenCookie.split(';')[0].split('=')[1];
     };
 
-    const loginVerifiedSeller = async (): Promise<string> => {
-        const res = await request(app.getHttpServer())
-            .post("/auth/login")
-            .send({
-                email: "seller@tuks.co.za",
-                password: Test_Password,
-            })
-            .expect(200);
-    
-        const cookies = (res.headers['set-cookie'] ?? []) as unknown as string[];
-        const accessTokenCookie = cookies.find((c) => c.startsWith('access_token='));
-    
-        if (!accessTokenCookie) {
-            throw new Error('accessToken cookie not found in login response');
-        }
-    
-        return accessTokenCookie.split(';')[0].split('=')[1];
-    };
-
     const createModule = async (universityId: string): Promise<string> => {
         const res = await request(app.getHttpServer())
             .post("/modules")
