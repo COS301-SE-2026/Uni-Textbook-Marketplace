@@ -26,15 +26,10 @@ describe("Messaging e2e testing",() =>{
 
     let universityRepository!: Repository<University>;
     let userRepository!: Repository<User>;
-    let moduleRepository!: Repository<Module>;
-    let bookRepository!: Repository<Book>;
-    let listingRepository!: Repository<Listing>;
 
     let sellerToken!: string;
     let buyerToken!: string;
 
-    let sellerId!: string;
-    let buyerId!: string;
 
     let listingId!: string;
     let conversationId!: string;
@@ -49,28 +44,19 @@ describe("Messaging e2e testing",() =>{
         });
     };
 
-    const registerBuyer = (universityId: string) => {
+    const registerUser = (
+        email: string,
+        firstName: string,
+        lastName: string,
+        universityId: string,
+    ) => {
         return request(app.getHttpServer())
             .post("/auth/register")
             .send({
-                email: "buyer@tuks.co.za",
+                email,
                 password: Test_Password,
-                first_name: "Jane",
-                last_name: "Buyer",
-                faculty: "EBIT",
-                university_id: universityId,
-            })
-            .expect(201);
-    };
-
-    const registerSeller = (universityId: string) => {
-        return request(app.getHttpServer())
-            .post("/auth/register")
-            .send({
-                email: "seller@tuks.co.za",
-                password: Test_Password,
-                first_name: "Jon",
-                last_name: "Seller",
+                first_name: firstName,
+                last_name: lastName,
                 faculty: "EBIT",
                 university_id: universityId,
             })
@@ -78,48 +64,33 @@ describe("Messaging e2e testing",() =>{
     };
 
     const verifyUser = async (email: string) => {
-        await userRepository.update(
-            { email },
-            { is_verified: true },
-        );
-    };
+            await userRepository.update(
+                { email },
+                { is_verified: true },
+            );
+        };
 
-    const loginVerifiedBuyer = async (): Promise<string> => {
+        const login = async (email: string): Promise<string> => {
         const res = await request(app.getHttpServer())
             .post("/auth/login")
             .send({
-                email: "buyer@tuks.co.za",
+                email,
                 password: Test_Password,
             })
             .expect(200);
-    
-        const cookies = (res.headers['set-cookie'] ?? []) as unknown as string[];
-        const accessTokenCookie = cookies.find((c) => c.startsWith('access_token='));
-    
+
+        const cookies = Array.isArray(res.headers["set-cookie"])
+            ? res.headers["set-cookie"]
+            : [];
+        const accessTokenCookie = cookies.find(cookie =>
+            cookie.startsWith("access_token="),
+        );
+
         if (!accessTokenCookie) {
-            throw new Error('accessToken cookie not found in login response');
+            throw new Error("Access token cookie not found.");
         }
-    
-        return accessTokenCookie.split(';')[0].split('=')[1];
-    };
-    
-    const loginVerifiedSeller = async (): Promise<string> => {
-        const res = await request(app.getHttpServer())
-            .post("/auth/login")
-            .send({
-                email: "seller@tuks.co.za",
-                password: Test_Password,
-            })
-            .expect(200);
-    
-        const cookies = (res.headers['set-cookie'] ?? []) as unknown as string[];
-        const accessTokenCookie = cookies.find((c) => c.startsWith('access_token='));
-    
-        if (!accessTokenCookie) {
-            throw new Error('accessToken cookie not found in login response');
-        }
-    
-        return accessTokenCookie.split(';')[0].split('=')[1];
+
+        return accessTokenCookie.split(";")[0].split("=")[1];
     };
 
     const createFaculty = async (universityId: string): Promise<string> => {
@@ -207,9 +178,6 @@ describe("Messaging e2e testing",() =>{
         dataSource = moduleRef.get(DataSource);
         universityRepository = dataSource.getRepository(University);
         userRepository = dataSource.getRepository(User);
-        moduleRepository = dataSource.getRepository(Module);
-        bookRepository = dataSource.getRepository(Book);
-        listingRepository = dataSource.getRepository(Listing);
         facultyRepo = dataSource.getRepository(Faculty);
 
         // Create university
@@ -217,12 +185,25 @@ describe("Messaging e2e testing",() =>{
         const facultyId = await createFaculty(university.id);
 
         // Register , verify and login users
-        await registerSeller(university.id);
-        await registerBuyer(university.id);
-        await verifyUser("seller@tuks.co.za");
-        await verifyUser("buyer@tuks.co.za");
-        sellerToken = await loginVerifiedSeller();
-        buyerToken = await loginVerifiedBuyer();
+        await registerUser(
+            "seller@tuks.co.za",
+            "Jon",
+            "Seller",
+            university.id,
+        );
+
+        await registerUser(
+            "buyer@tuks.co.za",
+            "Jane",
+            "Buyer",
+            university.id,
+        );
+        await Promise.all([
+            verifyUser("seller@tuks.co.za"),
+            verifyUser("buyer@tuks.co.za"),
+        ]);
+        sellerToken = await login("seller@tuks.co.za");
+        buyerToken = await login("buyer@tuks.co.za");
 
         
 
@@ -265,7 +246,7 @@ describe("Messaging e2e testing",() =>{
         }
     });
 
-    describe("test connetion", () => {
+    describe("test connection", () => {
         it("should load app", () => {
             expect(true).toBe(true);
         });
@@ -282,8 +263,8 @@ describe("Messaging e2e testing",() =>{
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
                     listingId,
-                });
-            expect(res.status).toBe(201);
+                })
+                .expect(201);
             expect(res.body).toHaveProperty("conversationId");
             expect(res.body.alreadyExists).toBe(false);
             conversationId = res.body.conversationId;
@@ -296,15 +277,14 @@ describe("Messaging e2e testing",() =>{
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
                     listingId: "00000000-0000-0000-0000-000000000000",
-                });
-            expect(res.status).toBe(404);
-            conversationId = res.body.conversationId;
+                })
+                .expect(404);
         })
 
         //alresdy exiust
         it("Should return true for already exists", async() =>{
             //create first one
-            const blah = await request(app.getHttpServer())
+            await request(app.getHttpServer())
                 .post("/conversations")
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
@@ -317,8 +297,8 @@ describe("Messaging e2e testing",() =>{
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
                     listingId,
-                });
-            expect(res.status).toBe(201);
+                }).
+                expect(201);
             expect(res.body).toHaveProperty("conversationId");
             expect(res.body.alreadyExists).toBe(true);
             conversationId = res.body.conversationId;
