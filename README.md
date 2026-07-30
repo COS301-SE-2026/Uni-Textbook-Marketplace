@@ -70,6 +70,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </p>
 
 <div align="center">
+    <img src="https://cdn.simpleicons.org/stackshare/00B4D8" width="28" height="28" valign="middle"/>
 <h2 align="center">Tech Stack</h2>
 
 <h3 align="center">Frontend: Considered User Experiences</h3>
@@ -103,8 +104,8 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </p>
 
 <div align = "center">
-
-## Documentation Index
+  <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
+  <h2 align="center">Documentation</h2>
 
 ### DEMO 2 (Latest Documentation)
 
@@ -142,7 +143,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Demo Video | Documentation |
 | --- | --- |
-| [Demo 2 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
+| [Demo 2 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
 | [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
@@ -153,10 +154,104 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ## Project Structure
 
-```bash
-
+<details>
+<summary>Click to expand</summary>
 
 ```
+Uni-Textbook-Marketplace/
+├── .github/
+│   └── workflows/
+├── backend/
+│   ├── scripts/
+│   ├── src/
+│   │   ├── admin/
+│   │   │   └── dto/
+│   │   ├── auth/
+│   │   │   ├── decorator/
+│   │   │   ├── dto/
+│   │   │   ├── guards/
+│   │   │   └── strategies/
+│   │   ├── azure/
+│   │   ├── books/
+│   │   │   └── dto/
+│   │   ├── database/
+│   │   │   ├── entities/
+│   │   │   ├── migrations/
+│   │   │   ├── schema/
+│   │   │   └── seeds/
+│   │   │       └── images/
+│   │   ├── email/
+│   │   ├── firebase/
+│   │   ├── listings/
+│   │   │   └── dto/
+│   │   ├── messaging/
+│   │   │   └── dto/
+│   │   ├── modules/
+│   │   │   └── dto/
+│   │   ├── notifications/
+│   │   ├── saved_search/
+│   │   │   └── dto/
+│   │   ├── shared/
+│   │   └── wishlist/
+│   └── test/
+├── database/
+│   └── schema/
+├── docs/
+│   ├── Demo_1/
+│   ├── Demo_2/
+│   └── images/
+├── frontend/
+│   ├── public/
+│   │   ├── books/
+│   │   └── images/
+│   └── src/
+│       ├── app/
+│       │   ├── admin/
+│       │   │   ├── log/
+│       │   │   └── review/
+│       │   ├── api/
+│       │   │   └── listings/
+│       │   │       └── [id]/
+│       │   ├── auth/
+│       │   │   ├── login/
+│       │   │   ├── otp/
+│       │   │   ├── register/
+│       │   │   ├── Registration/
+│       │   │   └── resetpassword/
+│       │   ├── brand/
+│       │   ├── help/
+│       │   ├── listings/
+│       │   │   ├── [id]/
+│       │   │   ├── create/
+│       │   │   └── mine/
+│       │   ├── messages/
+│       │   ├── saved-searches/
+│       │   ├── ui-test/
+│       │   └── wishlist/
+│       ├── components/
+│       │   ├── admin/
+│       │   │   ├── login/
+│       │   │   ├── register/
+│       │   │   └── resetpassword/
+│       │   ├── icons/
+│       │   ├── listings/
+│       │   │   └── tests/
+│       │   ├── messaging/
+│       │   ├── tests/
+│       │   ├── ui/
+│       │   │   └── tests/
+│       │   └── wishlist/
+│       ├── context/
+│       ├── hooks/
+│       ├── lib/
+│       │   └── mappers/
+│       ├── providers/
+│       ├── types/
+│       └── utils/
+└── messaging/
+```
+
+</details>
 
 ## Getting Started
 
@@ -269,7 +364,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 <div align = "center">
 
-## The Team
+## Meet The Team
 
 ![Team Members](docs/images/The_Team.png) 
 
