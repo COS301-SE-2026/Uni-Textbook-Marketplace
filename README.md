@@ -44,7 +44,7 @@
 [![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
 [![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
-[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://stats.uptimerobot.com/803622535)
+[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
@@ -143,7 +143,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Demo Video | Documentation |
 | --- | --- |
-| [Demo 2 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
+| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
 | [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
