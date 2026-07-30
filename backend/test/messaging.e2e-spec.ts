@@ -11,9 +11,6 @@ import { EMAIL_SERVICE } from '../src/email/email.interface';
 
 import { University } from '../src/database/entities/university.entity';
 import { User } from '../src/database/entities/users.entity';
-import { Module } from '../src/database/entities/module.entity';
-import { Book } from '../src/database/entities/book.entity';
-import { Listing } from '../src/database/entities/listing.entity';
 
 import { Faculty } from "../src/database/entities/faculty.entity";
 
@@ -272,7 +269,7 @@ describe("Messaging e2e testing",() =>{
 
         //invalid listing
         it("should not create a new conversation",async () =>{
-            const res = await request(app.getHttpServer())
+            await request(app.getHttpServer())
                 .post("/conversations")
                 .set("Cookie", `access_token=${buyerToken}`)
                 .send({
