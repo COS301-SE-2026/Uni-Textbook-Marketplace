@@ -336,7 +336,7 @@ export default function LandingPage() {
                 <span className="text-[#00B4D8]">by Students</span>
               </h1>
               <p className="text-white/80 text-xl md:text-2xl mt-4">
-                Buy, sell or swap textbooks with students from your university
+                Buy or sell textbooks with students from your university
               </p>
               <div className="flex gap-3 mt-8">
                 <Link href="/auth/register" className="btn-primary">
@@ -363,7 +363,7 @@ export default function LandingPage() {
             {/* RIGHT feature cards */}
             <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
 
-              {/* Partnership */}
+              {/* Partnership 
               <div className="flex items-center gap-5 mt-4">
                 <span className="text-white text-xl uppercase tracking-wider">
                   In collaboration with
@@ -376,7 +376,7 @@ export default function LandingPage() {
                   height={200}
                   className="w-auto h-auto"
                 />
-              </div>
+              </div>*/}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
