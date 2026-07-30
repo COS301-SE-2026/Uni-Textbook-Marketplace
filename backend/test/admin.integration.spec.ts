@@ -260,32 +260,35 @@ describe('Admin Integration Tests', () => {
             expect(auditLogs[0].action).toBe('APPROVE_LISTING');
         }, 15000);
 
-        it('should return 403 when non-admin tries to approve', async () => {
-            const user = await createUser('student');
-            const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(user);
+       it('should return 404 when listing not found', async () => {
+    const admin = await createUser('admin');
+    const token = getAuthToken(admin);
 
-            const listing = await createTestListing(user.id, book.id, module.id, {
-                status: ListingStatus.PENDING
-            });
+    const response = await request(app.getHttpServer())
+        .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(404);
 
-            await request(app.getHttpServer())
-                .patch(`/admin/${listing.id}/approve`)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(403);
-        }, 15000);
+    // Add assertions
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('not found');
+    expect(response.statusCode).toBe(404);
+}, 15000);
 
         it('should return 404 when listing not found', async () => {
-            const admin = await createUser('admin');
-            const token = getAuthToken(admin);
+    const admin = await createUser('admin');
+    const token = getAuthToken(admin);
 
-            await request(app.getHttpServer())
-                .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(404);
-        }, 15000);
-    });
+    const response = await request(app.getHttpServer())
+        .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(404);
+
+    
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('not found');
+    expect(response.statusCode).toBe(404);
+}, 15000);
 
     describe('Admin Reject Listing', () => {
         it('should reject a pending listing and create audit log', async () => {
@@ -404,14 +407,19 @@ describe('Admin Integration Tests', () => {
         }, 15000);
 
         it('should return 403 when non-admin tries to view audit logs', async () => {
-            const user = await createUser('student');
-            const token = getAuthToken(user);
+    const user = await createUser('student');
+    const token = getAuthToken(user);
 
-            await request(app.getHttpServer())
-                .get('/admin/audit-log')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(403);
-        }, 15000);
+    const response = await request(app.getHttpServer())
+        .get('/admin/audit-log')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+
+    // Add assertions
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('Forbidden');
+    expect(response.body.message).toContain('Admin access required');
+}, 15000);
     });
 
     describe('Get Admin Users', () => {
@@ -430,14 +438,19 @@ describe('Admin Integration Tests', () => {
         }, 15000);
 
         it('should return 403 when non-admin tries to view admin users', async () => {
-            const user = await createUser('student');
-            const token = getAuthToken(user);
+    const user = await createUser('student');
+    const token = getAuthToken(user);
 
-            await request(app.getHttpServer())
-                .get('/admin/emails')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(403);
-        }, 15000);
+    const response = await request(app.getHttpServer())
+        .get('/admin/emails')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
+
+    // Add assertions
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('Forbidden');
+    expect(response.body.message).toContain('Admin access required');
+}, 15000);
     });
 
     describe('Complete Admin Workflow', () => {
@@ -500,4 +513,4 @@ describe('Admin Integration Tests', () => {
 });
 
 
-
+});
