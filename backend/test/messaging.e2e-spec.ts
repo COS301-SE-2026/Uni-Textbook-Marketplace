@@ -18,6 +18,7 @@ import { db } from '../src/firebase/firebase-admin';
 
 describe("Messaging e2e testing",() =>{
     const Test_Password = process.env.TEST_PASSWORD;
+    const INVALID_UUID = "invalid";
     let app!: INestApplication;
     let dataSource!: DataSource;
 
@@ -161,6 +162,27 @@ describe("Messaging e2e testing",() =>{
         Cookie: `access_token=${token}`,
     });
 
+    const createConversation = (
+        token: string,
+        listing: string = listingId,
+    ) => {
+        return request(app.getHttpServer())
+            .post("/conversations")
+            .set(auth(token))
+            .send({ listingId: listing });
+    };
+
+    const sendMessage = (
+        token: string,
+        conversation: string,
+        text: string,
+    ) => {
+        return request(app.getHttpServer())
+            .post(`/conversations/${conversation}/messages`)
+            .set(auth(token))
+            .send({ text });
+    };
+
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [AppModule],
@@ -257,14 +279,7 @@ describe("Messaging e2e testing",() =>{
 
         //Happy test
         it("should create a conversation for a listing", async () => {
-        
-            const res = await request(app.getHttpServer())
-                .post("/conversations")
-                .set(auth(buyerToken))
-                .send({
-                    listingId,
-                })
-                .expect(201);
+            const res = await createConversation(buyerToken).expect(201);
             expect(res.body).toHaveProperty("conversationId");
             expect(res.body.alreadyExists).toBe(false);
             conversationId = res.body.conversationId;
@@ -274,21 +289,11 @@ describe("Messaging e2e testing",() =>{
         //alresdy exiust
         it("Should return true for already exists", async() =>{
             //create first one
-            await request(app.getHttpServer())
-                .post("/conversations")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    listingId,
-                });
+            await createConversation(buyerToken);
 
             //get the duplicate conversatyion
-            const res = await request(app.getHttpServer())
-                .post("/conversations")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    listingId,
-                }).
-                expect(201);
+            const res = await createConversation(buyerToken).expect(201);
+            
             expect(res.body).toHaveProperty("conversationId");
             expect(res.body.alreadyExists).toBe(true);
             conversationId = res.body.conversationId;
@@ -296,13 +301,7 @@ describe("Messaging e2e testing",() =>{
 
         //self
         it("Should return 403", async() =>{
-            const res = await request(app.getHttpServer())
-                .post("/conversations")
-                .set("Cookie", `access_token=${sellerToken}`)
-                .send({
-                    listingId,
-                })
-                .expect(403);
+            await createConversation(sellerToken).expect(403);
         })
 
         //unauth
@@ -351,13 +350,11 @@ describe("Messaging e2e testing",() =>{
         //happy test
         it("should send a message", async () => {
 
-            const res = await request(app.getHttpServer())
-                .post(`/conversations/${conversationId}/messages`)
-                .set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    text: "Hello seller!",
-                })
-                .expect(201);
+            const res = await sendMessage(
+                buyerToken,
+                conversationId,
+                "Hello seller!",
+            ).expect(201);
 
             expect(res.body).toHaveProperty("messageId");
             expect(res.body.message).toBe(
@@ -369,13 +366,11 @@ describe("Messaging e2e testing",() =>{
         //unhappy test
         it("should return 404 for an invalid conversation", async () => {
 
-            await request(app.getHttpServer())
-                .post("/conversations/65454/messages")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    text: "Hello",
-                })
-                .expect(404);
+            await sendMessage(
+                buyerToken,
+                INVALID_UUID,
+                "Hello",
+            ).expect(404);
         });
 
         it("should return 401 for no access", async()=> {
