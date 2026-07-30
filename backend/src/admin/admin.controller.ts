@@ -57,6 +57,8 @@ export class AdminController {
   }
 
   @Get('emails')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async getadmin() {
     return await this.adminService.getusersAdmin();
   }
