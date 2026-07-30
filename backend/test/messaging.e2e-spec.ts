@@ -114,6 +114,20 @@ describe("Messaging e2e testing",() =>{
         return res.body.id;
     };
 
+    const createBook = async (): Promise<string> => {
+        const res = await request(app.getHttpServer())
+            .post("/books")
+            .send({
+                isbn: "978013468599",
+                title: "Software Engineering",
+                author: "gift",
+                edition: 3,
+                publisher: "nexusdev"
+            })
+            .expect(201);
+        return res.body.id;
+    }
+
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
