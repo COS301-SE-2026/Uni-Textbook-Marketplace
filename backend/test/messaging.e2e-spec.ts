@@ -17,7 +17,7 @@ import { Listing } from '../src/database/entities/listing.entity';
 
 import { db } from '../src/firebase/firebase-admin';
 
-describe("Messaging e2e testing",() =>{
+describe("Messaging e2e testing",async() =>{
     const Test_Password = process.env.TEST_PASSWORD;
     let app!: INestApplication;
     let dataSource!: DataSource;
@@ -225,27 +225,28 @@ describe("Messaging e2e testing",() =>{
         });
     });
 
+    // Create university
+     const university = await createUniversity();
+
+    // Register , verify and login users
+    await registerSeller(university.id);
+    await registerBuyer(university.id);
+    await verifyUser("seller@tuks.co.za");
+    await verifyUser("buyer@tuks.co.za");
+    sellerToken = await loginVerifiedSeller();
+    buyerToken = await loginVerifiedBuyer();
+
+    //create listing
+    const moduleId = await createModule(university.id);
+    const bookId = await createBook();
+    listingId = await createListing(
+        sellerToken,
+        moduleId,
+        bookId,
+    );
+
     //testing conversation create
     describe("create conversation", async () => {
-        // Create university
-        const university = await createUniversity();
-
-        // Register , verify and login users
-        await registerSeller(university.id);
-        await registerBuyer(university.id);
-        await verifyUser("seller@tuks.co.za");
-        await verifyUser("buyer@tuks.co.za");
-        sellerToken = await loginVerifiedSeller();
-        buyerToken = await loginVerifiedBuyer();
-
-        //create listing
-        const moduleId = await createModule(university.id);
-        const bookId = await createBook();
-        listingId = await createListing(
-            sellerToken,
-            moduleId,
-            bookId,
-        );
 
         //Happy test
         it("should create a conversation for a listing", async () => {
@@ -379,9 +380,54 @@ describe("Messaging e2e testing",() =>{
                     text: "Hello",
                 })
                 .expect(404);
+        });
 
+        it("should return 401 for no access", async()=> {
+            await request(app.getHttpServer())
+                .post("/conversations/00000000/messages")
+                .set("Cookie", `access_token=${"nope"}`)
+                .send({
+                    text: "Hello",
+                })
+                .expect(404);
         });
     })
+
+    //Get conversation id messages
+    describe("get messages", () => {
+        //happy path
+        it("should return all messages", async () => {
+
+            const res = await request(app.getHttpServer())
+                .get(`/conversations/${conversationId}/messages`)
+                .set("Cookie", `access_token=${buyerToken}`)
+                .expect(200);
+
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body.length).toBeGreaterThan(0);
+
+            expect(res.body[0].text).toBe("Hello seller!");
+            expect(res.body[0]).toHaveProperty("senderId");
+
+        });
+
+        //unhappy path
+        it("should return 404 for an invalid conversation", async () => {
+
+            await request(app.getHttpServer())
+                .get("/conversations/00000000/messages")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .expect(404);
+
+        });
+
+        //no access
+        it("should return 401 for no access", async ()=>{
+            await request(app.getHttpServer())
+                .get(`/conversations/${conversationId}/messages`)
+                .expect(401);
+        });
+    });
 
 });
 
