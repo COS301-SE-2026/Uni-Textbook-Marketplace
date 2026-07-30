@@ -119,7 +119,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 |  Design Specifications (Design and Wireframes) | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
-| **Team Collaboration** | Overview of team structure, responsibilities, and collaboration tools. | [View Group Framework](https://www.notion.so) |
+| **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
 ---
