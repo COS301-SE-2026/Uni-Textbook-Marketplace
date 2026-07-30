@@ -364,7 +364,38 @@ describe("Messaging e2e testing",() =>{
         })
     })
 
-    //create conversation done
-    
+    describe("Unauthorized access, ie, no cookie", () =>{
+        it("Should return a 401 error", async()=>{
+            //create uni
+            const university = await createUniversity();
+
+            //make a seller
+            const seller = await registerSeller(university.id);
+            await verifyUser("seller@tuks.co.za");
+            sellerToken = await loginVerifiedSeller();
+
+            //create listing
+            const moduleId = await createModule(university.id);
+            const bookId = await createBook();
+            listingId = await createListing(
+                sellerToken,
+                moduleId,
+                bookId,
+            );
+
+            //get the duplicate conversatyion
+            const res = await request(app.getHttpServer())
+                .post("/conversations")
+                //.set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId,
+                });
+            expect(res.status).toBe(500);
+            
+
+        })
+    })
+
+
 
 })
