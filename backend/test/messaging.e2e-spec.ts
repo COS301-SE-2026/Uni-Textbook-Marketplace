@@ -15,9 +15,11 @@ import { Module } from '../src/database/entities/module.entity';
 import { Book } from '../src/database/entities/book.entity';
 import { Listing } from '../src/database/entities/listing.entity';
 
+import { Faculty } from "../src/database/entities/faculty.entity";
+
 import { db } from '../src/firebase/firebase-admin';
 
-describe("Messaging e2e testing",async() =>{
+describe("Messaging e2e testing",() =>{
     const Test_Password = process.env.TEST_PASSWORD;
     let app!: INestApplication;
     let dataSource!: DataSource;
@@ -36,6 +38,8 @@ describe("Messaging e2e testing",async() =>{
 
     let listingId!: string;
     let conversationId!: string;
+
+    let facultyRepo: Repository<Faculty>;
 
     //helper functions
     const createUniversity = () => {
@@ -118,20 +122,34 @@ describe("Messaging e2e testing",async() =>{
         return accessTokenCookie.split(';')[0].split('=')[1];
     };
 
-    const createModule = async (universityId: string): Promise<string> => {
+    const createFaculty = async (universityId: string): Promise<string> => {
+        const faculty = await facultyRepo.save({
+            name: "EBIT",
+            university: { id: universityId },
+        });
+
+        return faculty.id;
+    };
+
+   const createModule = async (
+        universityId: string,
+        facultyid: string,
+        sellerToken: string,
+        ): Promise<string> => {
         const res = await request(app.getHttpServer())
             .post("/modules")
+            .set("Authorization", `Bearer ${sellerToken}`)
             .send({
-                code: "COS301",
-                name: "software",
-                faculty: "EBIT",
-                semester: 1,
-                university_id: universityId,
-             })
+            code: "COS301",
+            name: "software",
+            semester: 1,
+            university_id: universityId,
+            faculty_id: facultyid,
+            })
             .expect(201);
 
         return res.body.id;
-    };
+        };
 
     const createBook = async (): Promise<string> => {
         const res = await request(app.getHttpServer())
@@ -192,6 +210,34 @@ describe("Messaging e2e testing",async() =>{
         moduleRepository = dataSource.getRepository(Module);
         bookRepository = dataSource.getRepository(Book);
         listingRepository = dataSource.getRepository(Listing);
+        facultyRepo = dataSource.getRepository(Faculty);
+
+        // Create university
+        const university = await createUniversity();
+        const facultyId = await createFaculty(university.id);
+
+        // Register , verify and login users
+        await registerSeller(university.id);
+        await registerBuyer(university.id);
+        await verifyUser("seller@tuks.co.za");
+        await verifyUser("buyer@tuks.co.za");
+        sellerToken = await loginVerifiedSeller();
+        buyerToken = await loginVerifiedBuyer();
+
+        
+
+        //create listing
+        const moduleId = await createModule(
+            university.id,
+            facultyId,
+            sellerToken,
+        );
+        const bookId = await createBook();
+        listingId = await createListing(
+            sellerToken,
+            moduleId,
+            bookId,
+        );
     });
 
     afterAll(async () => {
@@ -225,28 +271,8 @@ describe("Messaging e2e testing",async() =>{
         });
     });
 
-    // Create university
-     const university = await createUniversity();
-
-    // Register , verify and login users
-    await registerSeller(university.id);
-    await registerBuyer(university.id);
-    await verifyUser("seller@tuks.co.za");
-    await verifyUser("buyer@tuks.co.za");
-    sellerToken = await loginVerifiedSeller();
-    buyerToken = await loginVerifiedBuyer();
-
-    //create listing
-    const moduleId = await createModule(university.id);
-    const bookId = await createBook();
-    listingId = await createListing(
-        sellerToken,
-        moduleId,
-        bookId,
-    );
-
     //testing conversation create
-    describe("create conversation", async () => {
+    describe("create conversation", () => {
 
         //Happy test
         it("should create a conversation for a listing", async () => {
@@ -299,14 +325,14 @@ describe("Messaging e2e testing",async() =>{
         })
 
         //self
-        it("Should return 500", async() =>{
+        it("Should return 403", async() =>{
             const res = await request(app.getHttpServer())
                 .post("/conversations")
-                .set("Cookie", `access_token=${buyerToken}`)
+                .set("Cookie", `access_token=${sellerToken}`)
                 .send({
                     listingId,
                 });
-            expect(res.status).toBe(500);
+            expect(res.status).toBe(403);
         })
 
         //unauth
@@ -389,7 +415,7 @@ describe("Messaging e2e testing",async() =>{
                 .send({
                     text: "Hello",
                 })
-                .expect(404);
+                .expect(401);
         });
     })
 
@@ -430,5 +456,3 @@ describe("Messaging e2e testing",async() =>{
     });
 
 });
-
-
