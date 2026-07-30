@@ -22,10 +22,14 @@ describe('listings.api', () => {
 
         const responsMock = { listings: [{ id: '1' }], total: 1 }
 
-        mockValApi.get.mockResolvedValueOnce(responsMock)
+        mockValApi.get.mockResolvedValue(responsMock)
         expect(await getListings()).toEqual(responsMock)
 
-        expect(mockValApi).toHaveBeenCalledWith('/listings?faculty=EBIT&condition=new')
+        expect(mockValApi.get).toHaveBeenCalledWith('/listings')
+
+        await getListings('faculty=EBIT&condition=new')
+        
+        expect(mockValApi.get).toHaveBeenCalledWith('/listings?faculty=EBIT&condition=new')
 
     })
     it('handles listing creation and updates', async () => {
@@ -33,9 +37,14 @@ describe('listings.api', () => {
         
         mockValApi.post.mockResolvedValueOnce({ id: 'new' })
         mockValApi.patch.mockResolvedValueOnce({ success: true })
+
         await createListing(payload)
 
-        expect(mockValApi.post).toHaveBeenCalledWith('/listing/editlist', payload)
+        expect(mockValApi.post).toHaveBeenCalledWith('/listings', payload)
+
+        await editListing(payload)
+
+        expect(mockValApi.patch).toHaveBeenCalledWith('/listings/editlist', payload)
 
     })
 
@@ -46,6 +55,7 @@ describe('listings.api', () => {
         expect(await getMyListings('123')).toEqual({ id: '123', title: 'Test' })
 
         expect(mockValApi.get).toHaveBeenCalledWith('/listings/123')
+
         mockValApi.get.mockResolvedValueOnce([{ id: '1', name: 'EBIT' }])
 
         expect(await getFaculties()).toEqual([{ id: '1', name: 'EBIT' }])
