@@ -37,6 +37,36 @@ describe("Messaging e2e testing",() =>{
     let listingId!: string;
     let conversationId!: string;
 
+    //helper functions
+    const createUniversity = () => {
+        return universityRepository.save({
+            name: "University of Pretoria",
+            email_domain: "tuks.co.za",
+        });
+    };
+
+    const registerBuyer = (universityId: string) => {
+        return request(app.getHttpServer())
+            .post("/auth/register")
+            .send({
+                email: "buyer@tuks.co.za",
+                password: Test_Password,
+                first_name: "Jane",
+                last_name: "Buyer",
+                faculty: "EBIT",
+                university_id: universityId,
+            })
+            .expect(201);
+    };
+
+    const verifyUser = async (email: string) => {
+        await userRepository.update(
+            { email },
+            { is_verified: true },
+        );
+    };
+
+
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [AppModule],
@@ -55,9 +85,24 @@ describe("Messaging e2e testing",() =>{
         universityRepository = dataSource.getRepository(University);
         userRepository = dataSource.getRepository(User);
         moduleRepository = dataSource.getRepository(Module);
+        bookRepository = dataSource.getRepository(Book);
+        listingRepository = dataSource.getRepository(Listing);
     });
 
     afterAll(async () => {
+        const conversations = await db.collection('conversations').get();
+
+        for (const conversation of conversations.docs) {
+
+            // delet subcollection
+            const messages = await conversation.ref.collection('messages').get();
+            for (const message of messages.docs) {
+                await message.ref.delete();
+            }
+            // delete the conversation document
+            await conversation.ref.delete();
+        }
+
         if (dataSource?.isInitialized) {
             await dataSource.query(
                 `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities" RESTART IDENTITY CASCADE`
@@ -68,4 +113,11 @@ describe("Messaging e2e testing",() =>{
             await app.close();
         }
     });
+
+    describe("test connetion", () => {
+        it("should load app", () => {
+            expect(true).toBe(true);
+        });
+    });
+
 })
