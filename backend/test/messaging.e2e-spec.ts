@@ -264,7 +264,7 @@ describe("Messaging e2e testing",() =>{
     });
 
     //testing a conversation with a non listing
-    describe("create conversation with nothing", ()=> {
+    describe("create conversation with non listing", ()=> {
         it("should not create a new conversation", async () =>{
             // Create university
             const university = await createUniversity();
@@ -329,9 +329,42 @@ describe("Messaging e2e testing",() =>{
                 });
             expect(res.status).toBe(201);
             expect(res.body).toHaveProperty("conversationId");
-            expect(res.body.alreadyExists).toBe(false);
+            expect(res.body.alreadyExists).toBe(true);
             conversationId = res.body.conversationId;
         })
     })
+
+    describe("Start a conversation with themself", () =>{
+        it("Should return 500", async() =>{
+            //create university
+            const university = await createUniversity();
+
+            //register one user
+            await registerBuyer(university.id);
+            await verifyUser("buyer@tuks.co.za");
+            buyerToken = await loginVerifiedBuyer();
+
+            //create listing
+            const moduleId = await createModule(university.id);
+            const bookId = await createBook();
+            listingId = await createListing(
+                buyerToken,
+                moduleId,
+                bookId,
+            );
+
+            //get the duplicate conversatyion
+            const res = await request(app.getHttpServer())
+                .post("/conversations")
+                .set("Cookie", `access_token=${buyerToken}`)
+                .send({
+                    listingId,
+                });
+            expect(res.status).toBe(500);
+        })
+    })
+
+    //create conversation done
+    
 
 })
