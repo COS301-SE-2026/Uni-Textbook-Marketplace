@@ -34,6 +34,30 @@ describe("Messaging e2e testing",() =>{
 
     let facultyRepo: Repository<Faculty>;
 
+    // ---------- shared request helpers ----------
+    // Every route below authenticates via the "access_token" cookie except
+    // module creation, which uses a Bearer header (kept as-is, unchanged).
+
+    const auth = (token: string) => ({
+        Cookie: `access_token=${token}`,
+    });
+
+    const authGet = (url: string, token?: string) => {
+        const req = request(app.getHttpServer()).get(url);
+        return token ? req.set(auth(token)) : req;
+    };
+
+    const authPost = (url: string, token?: string, body: object = {}) => {
+        const req = request(app.getHttpServer()).post(url).send(body);
+        return token ? req.set(auth(token)) : req;
+    };
+
+    const bearerPost = (url: string, token: string, body: object = {}) =>
+        request(app.getHttpServer())
+            .post(url)
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
     //helper functions
     const createUniversity = () => {
         return universityRepository.save({
@@ -48,34 +72,28 @@ describe("Messaging e2e testing",() =>{
         lastName: string,
         universityId: string,
     ) => {
-        return request(app.getHttpServer())
-            .post("/auth/register")
-            .send({
-                email,
-                password: Test_Password,
-                first_name: firstName,
-                last_name: lastName,
-                faculty: "EBIT",
-                university_id: universityId,
-            })
-            .expect(201);
+        return authPost("/auth/register", undefined, {
+            email,
+            password: Test_Password,
+            first_name: firstName,
+            last_name: lastName,
+            faculty: "EBIT",
+            university_id: universityId,
+        }).expect(201);
     };
 
     const verifyUser = async (email: string) => {
-            await userRepository.update(
-                { email },
-                { is_verified: true },
-            );
-        };
+        await userRepository.update(
+            { email },
+            { is_verified: true },
+        );
+    };
 
-        const login = async (email: string): Promise<string> => {
-        const res = await request(app.getHttpServer())
-            .post("/auth/login")
-            .send({
-                email,
-                password: Test_Password,
-            })
-            .expect(200);
+    const login = async (email: string): Promise<string> => {
+        const res = await authPost("/auth/login", undefined, {
+            email,
+            password: Test_Password,
+        }).expect(200);
 
         const cookies = Array.isArray(res.headers["set-cookie"])
             ? res.headers["set-cookie"]
@@ -100,88 +118,68 @@ describe("Messaging e2e testing",() =>{
         return faculty.id;
     };
 
-   const createModule = async (
+    const createModule = async (
         universityId: string,
         facultyId: string,
         sellerToken: string,
-        ): Promise<string> => {
-        const res = await request(app.getHttpServer())
-            .post("/modules")
-            .set("Authorization", `Bearer ${sellerToken}`)
-            .send({
+    ): Promise<string> => {
+        const res = await bearerPost("/modules", sellerToken, {
             code: "COS301",
             name: "software",
             semester: 1,
             university_id: universityId,
             faculty_id: facultyId,
-            })
-            .expect(201);
+        }).expect(201);
 
         return res.body.id;
-        };
+    };
 
     const createBook = async (): Promise<string> => {
-        const res = await request(app.getHttpServer())
-            .post("/books")
-            .send({
-                isbn: "978013468599",
-                title: "Software Engineering",
-                author: "gift",
-                edition: 3,
-                publisher: "nexusdev"
-            })
-            .expect(201);
+        const res = await authPost("/books", undefined, {
+            isbn: "978013468599",
+            title: "Software Engineering",
+            author: "gift",
+            edition: 3,
+            publisher: "nexusdev",
+        }).expect(201);
         return res.body.id;
-    }
+    };
 
     const createListing = async (
         token: string,
         moduleId: string,
         bookId: string,
     ): Promise<string> => {
-
-        const res = await request(app.getHttpServer())
-            .post("/listings")
-            .set("Cookie", `access_token=${token}`)
-            .send({
-                title: "Messaging Test Listing",
-                bookId,
-                moduleId,
-                condition: "good",
-                annotationLevel: "light",
-                price: 100,
-                photoUrls: [],
-                hasNotes: false,
-            })
-            .expect(201);
+        const res = await authPost("/listings", token, {
+            title: "Messaging Test Listing",
+            bookId,
+            moduleId,
+            condition: "good",
+            annotationLevel: "light",
+            price: 100,
+            photoUrls: [],
+            hasNotes: false,
+        }).expect(201);
 
         return res.body.id;
     };
 
-    const auth = (token: string) => ({
-        Cookie: `access_token=${token}`,
-    });
-
     const createConversation = (
         token: string,
         listing: string = listingId,
-    ) => {
-        return request(app.getHttpServer())
-            .post("/conversations")
-            .set(auth(token))
-            .send({ listingId: listing });
-    };
+    ) => authPost("/conversations", token, { listingId: listing });
 
     const sendMessage = (
         token: string,
         conversation: string,
         text: string,
-    ) => {
-        return request(app.getHttpServer())
-            .post(`/conversations/${conversation}/messages`)
-            .set(auth(token))
-            .send({ text });
-    };
+    ) => authPost(`/conversations/${conversation}/messages`, token, { text });
+
+    const getMessages = (conversation: string, token?: string) =>
+        authGet(`/conversations/${conversation}/messages`, token);
+
+    const getMyConversations = (token?: string) =>
+        authGet("/conversations/mine", token);
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
@@ -227,7 +225,7 @@ describe("Messaging e2e testing",() =>{
         sellerToken = await login("seller@tuks.co.za");
         buyerToken = await login("buyer@tuks.co.za");
 
-        
+
 
         //create listing
         const moduleId = await createModule(
@@ -293,7 +291,7 @@ describe("Messaging e2e testing",() =>{
 
             //get the duplicate conversatyion
             const res = await createConversation(buyerToken).expect(201);
-            
+
             expect(res.body).toHaveProperty("conversationId");
             expect(res.body.alreadyExists).toBe(true);
             conversationId = res.body.conversationId;
@@ -306,12 +304,9 @@ describe("Messaging e2e testing",() =>{
 
         //unauth
         it("Should return a 401 error", async()=>{
-            const res = await request(app.getHttpServer())
-                .post("/conversations")
-                //.set("Cookie", `access_token=${buyerToken}`)
-                .send({
-                    listingId,
-                });
+            const res = await authPost("/conversations", undefined, {
+                listingId,
+            });
             expect(res.status).toBe(401);
         })
 
@@ -323,10 +318,7 @@ describe("Messaging e2e testing",() =>{
         //happy test
         it("should return the buyer's conversations", async () => {
 
-            const res = await request(app.getHttpServer())
-                .get("/conversations/mine")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .expect(200);
+            const res = await getMyConversations(buyerToken).expect(200);
 
             expect(Array.isArray(res.body)).toBe(true);
             expect(res.body.length).toBeGreaterThan(0);
@@ -339,9 +331,7 @@ describe("Messaging e2e testing",() =>{
 
         it("should return 401 when not logged in", async () => {
 
-            await request(app.getHttpServer())
-                .get("/conversations/mine")
-                .expect(401);
+            await getMyConversations().expect(401);
         });
     });
 
@@ -374,13 +364,7 @@ describe("Messaging e2e testing",() =>{
         });
 
         it("should return 401 for no access", async()=> {
-            await request(app.getHttpServer())
-                .post("/conversations/001112212/messages")
-                .set("Cookie", `access_token=${"nope"}`)
-                .send({
-                    text: "Hello",
-                })
-                .expect(401);
+            await sendMessage("nope", "001112212", "Hello").expect(401);
         });
     })
 
@@ -389,10 +373,7 @@ describe("Messaging e2e testing",() =>{
         //happy path
         it("should return all messages", async () => {
 
-            const res = await request(app.getHttpServer())
-                .get(`/conversations/${conversationId}/messages`)
-                .set("Cookie", `access_token=${buyerToken}`)
-                .expect(200);
+            const res = await getMessages(conversationId, buyerToken).expect(200);
 
             expect(Array.isArray(res.body)).toBe(true);
             expect(res.body.length).toBeGreaterThan(0);
@@ -405,18 +386,13 @@ describe("Messaging e2e testing",() =>{
         //unhappy path
         it("should return 404 for an invalid conversation", async () => {
 
-            await request(app.getHttpServer())
-                .get("/conversations/0054345/messages")
-                .set("Cookie", `access_token=${buyerToken}`)
-                .expect(404);
+            await getMessages("0054345", buyerToken).expect(404);
 
         });
 
         //no access
         it("should return 401 for no access", async ()=>{
-            await request(app.getHttpServer())
-                .get(`/conversations/${conversationId}/messages`)
-                .expect(401);
+            await getMessages(conversationId).expect(401);
         });
     });
 
