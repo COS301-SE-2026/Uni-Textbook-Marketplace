@@ -17,23 +17,20 @@ const possiblePaths = [
 
 let loaded = false;
 for (const envPath of possiblePaths) {
-    try {
-        const result = dotenv.config({ path: envPath });
-        if (!result.error) {
-            console.log(`Loaded .env.test from: ${envPath}`);
-            loaded = true;
-            break;
-        }
-    } catch (error) {
-        
+    const result = dotenv.config({ path: envPath });
+    
+    if (!result.error) {
+        console.log(`Loaded .env.test from: ${envPath}`);
+        loaded = true;
+        break;
+    } else {
+       
         continue;
     }
 }
 
 if (!loaded) {
-    console.error('Could not load .env.test from any path');
-    
-    dotenv.config();
+    console.warn('No .env.test file found in any of the expected locations');
 }
 
 

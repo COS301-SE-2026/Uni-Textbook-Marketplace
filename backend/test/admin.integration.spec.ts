@@ -260,7 +260,7 @@ describe('Admin Integration Tests', () => {
             expect(auditLogs[0].action).toBe('APPROVE_LISTING');
         }, 15000);
 
-       it('should return 404 when listing not found', async () => {
+       it('should return 404 when listing not found for approve endpoint', async () => {
     const admin = await createUser('admin');
     const token = getAuthToken(admin);
 
@@ -269,13 +269,13 @@ describe('Admin Integration Tests', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
 
-    // Add assertions
+  
     expect(response.body).toHaveProperty('message');
     expect(response.body.message).toContain('not found');
     expect(response.statusCode).toBe(404);
 }, 15000);
 
-        it('should return 404 when listing not found', async () => {
+        it('should return 404 when listing not found for reject endpoint', async () => {
     const admin = await createUser('admin');
     const token = getAuthToken(admin);
 
@@ -324,21 +324,26 @@ describe('Admin Integration Tests', () => {
         }, 15000);
 
         it('should return 403 when non-admin tries to reject', async () => {
-            const user = await createUser('student');
-            const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(user);
+    const user = await createUser('student');
+    const book = await createBook();
+    const module = await createModule();
+    const token = getAuthToken(user);
+    const listing = await createTestListing(user.id, book.id, module.id, {
+        status: ListingStatus.PENDING
+    });
 
-            const listing = await createTestListing(user.id, book.id, module.id, {
-                status: ListingStatus.PENDING
-            });
+    const response = await request(app.getHttpServer())
+        .patch(`/admin/${listing.id}/reject`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ reason: 'Invalid' })
+        .expect(403);
 
-            await request(app.getHttpServer())
-                .patch(`/admin/${listing.id}/reject`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ reason: 'Invalid' })
-                .expect(403);
-        }, 15000);
+    
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('Forbidden');
+    expect(response.body.message).toContain('Admin access required');
+    expect(response.statusCode).toBe(403);
+}, 15000);
     });
 
     describe('Get Audit Logs', () => {
@@ -415,7 +420,7 @@ describe('Admin Integration Tests', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
 
-    // Add assertions
+   
     expect(response.body).toHaveProperty('message');
     expect(response.body.message).toContain('Forbidden');
     expect(response.body.message).toContain('Admin access required');
@@ -446,7 +451,7 @@ describe('Admin Integration Tests', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(403);
 
-    // Add assertions
+ 
     expect(response.body).toHaveProperty('message');
     expect(response.body.message).toContain('Forbidden');
     expect(response.body.message).toContain('Admin access required');
@@ -498,7 +503,7 @@ describe('Admin Integration Tests', () => {
             const auditLogs = await auditLogRepository.find({
                 where: { entity_id: listingId }
             });
-            expect(auditLogs.length).toBe(1);
+            expect(auditLogs).toHaveLength(1);
             expect(auditLogs[0].action).toBe('APPROVE_LISTING');
 
             // 5. Get admin users
