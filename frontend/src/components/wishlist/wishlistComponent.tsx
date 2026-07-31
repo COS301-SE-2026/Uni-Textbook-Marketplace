@@ -29,7 +29,7 @@ export default function WishlistComponent() {
 
             try {
                 const data = await api.get<Listing[]>('/wishlist/mywishlist')
-                console.log(data);
+                //console.log(data);
                 console.log(Array.isArray(data));
 
                 setListings(data)

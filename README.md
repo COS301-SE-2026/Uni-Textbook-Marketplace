@@ -44,7 +44,7 @@
 [![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
 [![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
-[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://stats.uptimerobot.com/YOUR_DASHBOARD_ID)
+[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
@@ -70,6 +70,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </p>
 
 <div align="center">
+    <img src="https://cdn.simpleicons.org/stackshare/00B4D8" width="28" height="28" valign="middle"/>
 <h2 align="center">Tech Stack</h2>
 
 <h3 align="center">Frontend: Considered User Experiences</h3>
@@ -103,8 +104,8 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </p>
 
 <div align = "center">
-
-## Documentation Index
+  <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
+  <h2 align="center">Documentation</h2>
 
 ### DEMO 2 (Latest Documentation)
 
@@ -116,11 +117,10 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 |  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf) |
 |  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf) |
 |  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf) |
-|  Wireframes Document | [View Wireframes](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Wireframes.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
+|  Design Specifications (Design and Wireframes) | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
-| **Team Collaboration** | Overview of team structure, responsibilities, and collaboration tools. | [View Group Framework](https://www.notion.so) |
+| **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
 ---
@@ -143,6 +143,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Demo Video | Documentation |
 | --- | --- |
+| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
 | [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
@@ -153,10 +154,104 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ## Project Structure
 
-```bash
-
+<details>
+<summary>Click to expand</summary>
 
 ```
+Uni-Textbook-Marketplace/
+├── .github/
+│   └── workflows/
+├── backend/
+│   ├── scripts/
+│   ├── src/
+│   │   ├── admin/
+│   │   │   └── dto/
+│   │   ├── auth/
+│   │   │   ├── decorator/
+│   │   │   ├── dto/
+│   │   │   ├── guards/
+│   │   │   └── strategies/
+│   │   ├── azure/
+│   │   ├── books/
+│   │   │   └── dto/
+│   │   ├── database/
+│   │   │   ├── entities/
+│   │   │   ├── migrations/
+│   │   │   ├── schema/
+│   │   │   └── seeds/
+│   │   │       └── images/
+│   │   ├── email/
+│   │   ├── firebase/
+│   │   ├── listings/
+│   │   │   └── dto/
+│   │   ├── messaging/
+│   │   │   └── dto/
+│   │   ├── modules/
+│   │   │   └── dto/
+│   │   ├── notifications/
+│   │   ├── saved_search/
+│   │   │   └── dto/
+│   │   ├── shared/
+│   │   └── wishlist/
+│   └── test/
+├── database/
+│   └── schema/
+├── docs/
+│   ├── Demo_1/
+│   ├── Demo_2/
+│   └── images/
+├── frontend/
+│   ├── public/
+│   │   ├── books/
+│   │   └── images/
+│   └── src/
+│       ├── app/
+│       │   ├── admin/
+│       │   │   ├── log/
+│       │   │   └── review/
+│       │   ├── api/
+│       │   │   └── listings/
+│       │   │       └── [id]/
+│       │   ├── auth/
+│       │   │   ├── login/
+│       │   │   ├── otp/
+│       │   │   ├── register/
+│       │   │   ├── Registration/
+│       │   │   └── resetpassword/
+│       │   ├── brand/
+│       │   ├── help/
+│       │   ├── listings/
+│       │   │   ├── [id]/
+│       │   │   ├── create/
+│       │   │   └── mine/
+│       │   ├── messages/
+│       │   ├── saved-searches/
+│       │   ├── ui-test/
+│       │   └── wishlist/
+│       ├── components/
+│       │   ├── admin/
+│       │   │   ├── login/
+│       │   │   ├── register/
+│       │   │   └── resetpassword/
+│       │   ├── icons/
+│       │   ├── listings/
+│       │   │   └── tests/
+│       │   ├── messaging/
+│       │   ├── tests/
+│       │   ├── ui/
+│       │   │   └── tests/
+│       │   └── wishlist/
+│       ├── context/
+│       ├── hooks/
+│       ├── lib/
+│       │   └── mappers/
+│       ├── providers/
+│       ├── types/
+│       └── utils/
+└── messaging/
+```
+
+</details>
 
 ## Getting Started
 
@@ -269,7 +364,7 @@ The system follows a **modular monolith** architecture for core features with an
 
 <div align = "center">
 
-## The Team
+## Meet The Team
 
 ![Team Members](docs/images/The_Team.png) 
 
