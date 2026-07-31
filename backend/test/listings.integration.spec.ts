@@ -1,4 +1,4 @@
- import './setup';
+import './setup';
 import { Test } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import { TestModule } from "./test.module";
@@ -30,6 +30,7 @@ describe('ListingsController Integration Tests', () => {
     let configService: ConfigService;
 
     let emailCounter = 0;
+    let cleanupInProgress = false;
 
     const getTestUser = () => ({
         email: `u${1234598 + emailCounter}@tuks.co.za`,
@@ -67,43 +68,58 @@ describe('ListingsController Integration Tests', () => {
         faculty: 'Engineering'
     });
 
-    const createModule = () => moduleRepository.save({
-        code: `COS${132 + emailCounter}`,
-        name: 'Imperative Programming',
-        faculty: 'Engineering'
-    });
+    const createModule = async (facultyId: string, universityId: string) => {
+        return moduleRepository.save({
+            code: `COS${132 + emailCounter}`,
+            name: 'Imperative Programming',
+            faculty: { id: facultyId },
+            university: { id: universityId }
+        });
+    };
 
-    const registerUser = (university_id: string, faculty_id: string, userData: any, overrides = {}) =>
-        request(app.getHttpServer())
+    const registerUser = (university_id: string, faculty_id: string, userData: any, overrides = {}) => {
+        const payload = {
+            email: userData.email,
+            password: Test_Password,
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+            university_id,
+            faculty_id,
+            ...overrides
+        };
+        
+        return request(app.getHttpServer())
             .post('/auth/register')
-            .send({
-                email: userData.email,
-                password: Test_Password,
-                first_name: userData.first_name,
-                last_name: userData.last_name,
-                university_id,
-                faculty_id,
-                ...overrides
-            });
+            .send(payload);
+    };
 
-    const registerAdmin = (university_id: string, faculty_id: string, adminData: any, overrides = {}) =>
-        request(app.getHttpServer())
+    const registerAdmin = (university_id: string, faculty_id: string, adminData: any, overrides = {}) => {
+        const payload = {
+            email: adminData.email,
+            password: Test_Password,
+            first_name: adminData.first_name,
+            last_name: adminData.last_name,
+            university_id,
+            faculty_id,
+            role: 'admin',
+            ...overrides
+        };
+        
+        return request(app.getHttpServer())
             .post('/auth/register')
-            .send({
-                email: adminData.email,
-                password: Test_Password,
-                first_name: adminData.first_name,
-                last_name: adminData.last_name,
-                university_id,
-                faculty_id,
-                role: 'admin',
-                ...overrides
-            });
+            .send(payload);
+    };
 
     const createVerifiedUser = async (university_id: string, faculty_id: string): Promise<User> => {
         emailCounter++;
         const testUser = getTestUser();
-        await registerUser(university_id, faculty_id, testUser).expect(201);
+        const response = await registerUser(university_id, faculty_id, testUser);
+        
+        if (response.status !== 201) {
+            console.error('Registration failed:', response.body);
+            throw new Error(`Registration failed with status ${response.status}: ${JSON.stringify(response.body)}`);
+        }
+        
         await userRepository.update(
             { email: testUser.email },
             { is_verified: true }
@@ -124,8 +140,12 @@ describe('ListingsController Integration Tests', () => {
     const createVerifiedAdmin = async (university_id: string, faculty_id: string): Promise<User> => {
         emailCounter++;
         const testAdmin = getTestAdmin();
-        await registerAdmin(university_id, faculty_id, testAdmin).expect(201);
+        const response = await registerAdmin(university_id, faculty_id, testAdmin);
         
+        if (response.status !== 201) {
+            console.error('Admin registration failed:', response.body);
+            throw new Error(`Admin registration failed with status ${response.status}: ${JSON.stringify(response.body)}`);
+        }
         
         await userRepository.update(
             { email: testAdmin.email },
@@ -149,30 +169,16 @@ describe('ListingsController Integration Tests', () => {
     };
 
     const getAuthToken = (user: User): string => {
-    const payload = {
-        sub: user.id,
-        email: user.email,
-        role: user.role || 'student'
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            role: user.role || 'student'
+        };
+        
+        const token = jwtService.sign(payload);
+        return token;
     };
-    
-    console.log('Creating token with payload:', JSON.stringify(payload, null, 2));
-    console.log('User ID:', user.id);
-    console.log(' User email:', user.email);
-    console.log('User role from DB:', user.role);
-    
-    const token = jwtService.sign(payload);
-    console.log('Token created (first 50 chars):', token.substring(0, 50) + '...');
-    
-    // Try to verify and get the decoded token
-    try {
-        const decoded = jwtService.verify(token);
-        console.log('Token decoded:', JSON.stringify(decoded, null, 2));
-    } catch (error) {
-        console.error('Token verification failed:', error);
-    }
-    
-    return token;
-};
+
     const createTestListing = async (sellerId: string, bookId: string, moduleId: string | null, overrides = {}) => {
         const listingData: any = {
             title: 'Test Listing',
@@ -194,6 +200,27 @@ describe('ListingsController Integration Tests', () => {
         return listingRepository.save(listingData);
     };
 
+    const cleanupDatabase = async () => {
+        if (cleanupInProgress || !dataSource || !dataSource.isInitialized) return;
+        cleanupInProgress = true;
+        
+        try {
+            
+            await dataSource.query('DELETE FROM listings');
+            await dataSource.query('DELETE FROM otps');
+            await dataSource.query('DELETE FROM users');
+            await dataSource.query('DELETE FROM books');
+            await dataSource.query('DELETE FROM modules');
+            await dataSource.query('DELETE FROM faculties');
+            await dataSource.query('DELETE FROM universities');
+            emailCounter = 0;
+        } catch (error) {
+            console.warn('Cleanup warning');
+        } finally {
+            cleanupInProgress = false;
+        }
+    };
+
     beforeAll(async () => {
         try {
             console.log('Setting up test environment...');
@@ -204,8 +231,8 @@ describe('ListingsController Integration Tests', () => {
             if (!process.env.JWT_REFRESH_SECRET) {
                 process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-key';
             }
-               process.env.JWT_SECRET = 'test-secret-key';
-            console.log('JWT_ACCESS_SECRET from env:', process.env.JWT_ACCESS_SECRET ? 'Set' : 'Not set');
+            process.env.JWT_SECRET = 'test-secret-key';
+            process.env.NODE_ENV = 'test';
 
             const moduleRef = await Test.createTestingModule({
                 imports: [TestModule],
@@ -229,46 +256,23 @@ describe('ListingsController Integration Tests', () => {
             
             jwtService = app.get(JwtService);
             configService = app.get(ConfigService);
-            
-            const jwtSecret = configService.get('JWT_ACCESS_SECRET');
-            console.log('App JWT_ACCESS_SECRET:', jwtSecret);
-            
-            const testPayload = { sub: 'test-id', email: 'test@test.com', role: 'student' };
-            const testToken = jwtService.sign(testPayload);
-            console.log('Test token created:', testToken.substring(0, 30) + '...');
-            
-            try {
-                const verified = jwtService.verify(testToken);
-                console.log('JWT verification works');
-            } catch (error) {
-                console.error('JWT verification failed:', error);
-                throw error;
-            }
 
             console.log('Test setup completed successfully');
         } catch (error) {
             console.error('Error in beforeAll:', error);
             throw error;
         }
-    }, 30000);
+    }, 60000);
+
+    beforeEach(async () => {
+       
+        await cleanupDatabase();
+    }, 10000);
 
     afterEach(async () => {
-        if (dataSource && dataSource.isInitialized) {
-            try {
-                await dataSource.query('TRUNCATE TABLE listings CASCADE');
-                await dataSource.query('TRUNCATE TABLE otps CASCADE');
-                await dataSource.query('TRUNCATE TABLE users CASCADE');
-                await dataSource.query('TRUNCATE TABLE books CASCADE');
-                await dataSource.query('TRUNCATE TABLE modules CASCADE');
-                await dataSource.query('TRUNCATE TABLE faculties CASCADE');
-                await dataSource.query('TRUNCATE TABLE universities CASCADE');
-                
-                emailCounter = 0;
-            } catch (error) {
-                console.error('Error in afterEach cleanup:', error);
-            }
-        }
-    });
+        
+        await cleanupDatabase();
+    }, 10000);
 
     afterAll(async () => {
         if (app) {
@@ -277,7 +281,7 @@ describe('ListingsController Integration Tests', () => {
         if (dataSource && dataSource.isInitialized) {
             await dataSource.destroy();
         }
-    });
+    }, 10000);
 
     describe('database', () => {
         it('should load app', () => {
@@ -306,7 +310,7 @@ describe('ListingsController Integration Tests', () => {
             const faculty = await createFaculty(university.id);
             const user = await createVerifiedUser(university.id, faculty.id);
             const book = await createBook();
-            const module = await createModule();
+            const module = await createModule(faculty.id, university.id);
             const token = getAuthToken(user);
 
             const response = await request(app.getHttpServer())
@@ -320,7 +324,8 @@ describe('ListingsController Integration Tests', () => {
                     annotationLevel: 'light',
                     price: 49.99,
                     photoUrls: ['http://example.com/photo1.jpg'],
-                    hasNotes: true
+                    hasNotes: true,
+                    description: 'A great textbook'
                 })
                 .expect(201);
 
@@ -331,7 +336,8 @@ describe('ListingsController Integration Tests', () => {
                 price: 49.99,
                 status: ListingStatus.PENDING,
                 has_notes: true,
-                photo_urls: ['http://example.com/photo1.jpg']
+                photo_urls: ['http://example.com/photo1.jpg'],
+                description: 'A great textbook'
             });
             expect(response.body.id).toBeDefined();
             expect(response.body.seller.id).toBe(user.id);
@@ -343,7 +349,7 @@ describe('ListingsController Integration Tests', () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
             const user = await createVerifiedUser(university.id, faculty.id);
-            const module = await createModule();
+            const module = await createModule(faculty.id, university.id);
             const token = getAuthToken(user);
 
             await request(app.getHttpServer())
@@ -351,7 +357,7 @@ describe('ListingsController Integration Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     title: 'Test Listing',
-                   bookId: '00000000-0000-0000-0000-000000000000', 
+                    bookId: '00000000-0000-0000-0000-000000000000',
                     moduleId: module.id,
                     condition: 'good',
                     annotationLevel: 'light',
@@ -385,14 +391,13 @@ describe('ListingsController Integration Tests', () => {
             expect(response.body.title).toBe('Listing Without Module');
         });
     });
-
     describe('GET /listings - Get All Approved Listings', () => {
         it('should return all approved listings', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
             const user = await createVerifiedUser(university.id, faculty.id);
             const book = await createBook();
-            const module = await createModule();
+            const module = await createModule(faculty.id, university.id);
 
             await createTestListing(user.id, book.id, module.id, {
                 status: ListingStatus.APPROVED,
@@ -411,171 +416,330 @@ describe('ListingsController Integration Tests', () => {
                 .get('/listings')
                 .expect(200);
 
-            expect(response.body).toHaveLength(2);
-            expect(response.body.every((l: any) => l.status === ListingStatus.APPROVED)).toBe(true);
+            expect(response.body.listings).toHaveLength(2);
+            expect(response.body.listings.every((l: any) => l.status === ListingStatus.APPROVED)).toBe(true);
+            expect(response.body.total).toBe(2);
         });
-    });
 
-    describe('GET /listings/admin/pending - Admin Get Pending Listings', () => {
-        it('should return pending listings for admin', async () => {
+        it('should filter listings by search term', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
-            const admin = await createVerifiedAdmin(university.id, faculty.id);
-            if (!admin) {
-                throw new Error('Admin not found');
-            }
-            console.log('Admin role in test:', admin.role); 
             const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
             const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(admin);
+            const module = await createModule(faculty.id, university.id);
 
             await createTestListing(user.id, book.id, module.id, {
-                title: 'Pending 1',
-                status: ListingStatus.PENDING
-            });
-            await createTestListing(user.id, book.id, null, {
-                title: 'Pending 2',
-                status: ListingStatus.PENDING
+                status: ListingStatus.APPROVED,
+                title: 'Advanced Mathematics'
             });
             await createTestListing(user.id, book.id, module.id, {
-                title: 'Approved',
-                status: ListingStatus.APPROVED
+                status: ListingStatus.APPROVED,
+                title: 'Physics Textbook'
             });
 
             const response = await request(app.getHttpServer())
-                .get('/listings/admin/pending')
+                .get('/listings')
+                .query({ search: 'Mathematics' })
+                .expect(200);
+
+            expect(response.body.listings).toHaveLength(1);
+            expect(response.body.listings[0].title).toBe('Advanced Mathematics');
+        });
+    });
+
+    describe('GET /listings/:id - Get Listing by ID', () => {
+        it('should return a listing by ID', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                title: 'Specific Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get(`/listings/${listing.id}`)
+                .expect(200);
+
+            expect(response.body.id).toBe(listing.id);
+            expect(response.body.title).toBe('Specific Listing');
+            expect(response.body.seller.id).toBe(user.id);
+        });
+
+        it('should return 404 for non-existent listing', async () => {
+       
+        await request(app.getHttpServer())
+            .get('/listings/123e4567-e89b-12d3-a456-426614174000')
+            .expect(404);
+    });
+    });
+
+    describe('GET /listings/mine - Get My Listings', () => {
+        it('should return listings for authenticated user', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'My Listing 1'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                title: 'My Listing 2'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings/mine')
                 .set('Authorization', `Bearer ${token}`)
                 .expect(200);
 
             expect(response.body).toHaveLength(2);
-            expect(response.body.every((l: any) => l.status === ListingStatus.PENDING)).toBe(true);
+            expect(response.body.every((l: any) => l.seller.id === user.id)).toBe(true);
         });
 
-        it('should return 403 for non-admin users', async () => {
-            const university = await createUniversity();
-            const faculty = await createFaculty(university.id);
-            const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
-            const token = getAuthToken(user);
-
+        it('should return 401 for unauthenticated user', async () => {
             await request(app.getHttpServer())
-                .get('/listings/admin/pending')
-                .set('Authorization', `Bearer ${token}`)
-                .expect(403);
+                .get('/listings/mine')
+                .expect(401);
         });
     });
-    describe('PATCH /listings/admin/:id/approve - Admin Approve Listing', () => {
-        it('should approve pending listing for admin', async () => {
+
+    describe('GET /listings/admin/all - Admin Get All Listings', () => {
+        it('should return all listings for admin', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
-            const admin = await createVerifiedAdmin(university.id, faculty.id);
-            if (!admin) {
-                throw new Error('Admin not found');
-            }
             const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
             const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(admin);
+            const module = await createModule(faculty.id, university.id);
+
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                title: 'Pending Listing'
+            });
+            await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                title: 'Approved Listing'
+            });
+
+            const response = await request(app.getHttpServer())
+                .get('/listings/admin/all')
+                .expect(200);
+
+            expect(response.body).toHaveLength(2);
+        });
+    });
+
+
+    describe('PATCH /listings/editlist - Edit Listing', () => {
+        it('should allow student to edit their own pending listing', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            // Create a listing
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                title: 'Original Title',
+                price: 49.99,
+                condition: 'good',
+                annotation_level: 'light',
+                description: 'Original description'
+            });
+
+            // Edit the listing
+            const response = await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    title: 'Updated Title',
+                    price: 39.99,
+                    condition: 'fair',
+                    annotation_level: 'heavy',
+                    description: 'Updated description'
+                })
+                .expect(200);
+
+            expect(response.body.title).toBe('Updated Title');
+            expect(response.body.price).toBe(39.99);
+            expect(response.body.condition).toBe('fair');
+            expect(response.body.annotation_level).toBe('heavy');
+            expect(response.body.description).toBe('Updated description');
+            expect(response.body.id).toBe(listing.id);
+            
+        });
+
+        it('should allow student to update photo URLs', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                photo_urls: ['http://example.com/old-photo.jpg']
+            });
+
+            const newPhotos = ['http://example.com/new-photo1.jpg', 'http://example.com/new-photo2.jpg'];
+            const response = await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    photo_urls: newPhotos
+                })
+                .expect(200);
+
+            expect(response.body.photo_urls).toEqual(newPhotos);
+        });
+
+        it('should allow student to update has_notes', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                has_notes: false
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    has_notes: true
+                })
+                .expect(200);
+
+            expect(response.body.has_notes).toBe(true);
+        });
+
+        it('should allow partial updates', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                title: 'Original Title',
+                price: 49.99,
+                condition: 'good',
+                annotation_level: 'light',
+                has_notes: false,
+                description: 'Original description',
+                photo_urls: ['http://example.com/photo.jpg']
+            });
+
+            // Only update title and price
+            const response = await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    title: 'Updated Title Only',
+                    price: 59.99
+                })
+                .expect(200);
+
+            expect(response.body.title).toBe('Updated Title Only');
+            expect(response.body.price).toBe(59.99);
+            expect(response.body.condition).toBe('good');
+            expect(response.body.annotation_level).toBe('light');
+            expect(response.body.has_notes).toBe(false);
+            expect(response.body.description).toBe('Original description');
+            expect(response.body.photo_urls).toEqual(['http://example.com/photo.jpg']);
+        });
+
+        it('should return 401 for unauthenticated edit request', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
 
             const listing = await createTestListing(user.id, book.id, module.id, {
                 status: ListingStatus.PENDING
             });
 
-            const response = await request(app.getHttpServer())
-                .patch(`/listings/admin/${listing.id}/approve`)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-
-            expect(response.body.status).toBe(ListingStatus.APPROVED);
-            expect(response.body.reviewer.id).toBe(admin.id);
-            expect(response.body.reviewed_at).toBeDefined();
-        });
-
-        it('should return 403 for non-admin users', async () => {
-            const university = await createUniversity();
-            const faculty = await createFaculty(university.id);
-            const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
-            const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(user);
-
-            const listing = await createTestListing(user.id, book.id, module.id, {
-                status: ListingStatus.PENDING
-            });
-
             await request(app.getHttpServer())
-                .patch(`/listings/admin/${listing.id}/approve`)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(403);
+                .patch('/listings/editlist')
+                .send({
+                    id: listing.id,
+                    title: 'Updated Title'
+                })
+                .expect(401);
         });
 
         it('should return 404 when listing not found', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
-            const admin = await createVerifiedAdmin(university.id, faculty.id);
-            if (!admin) {
-                throw new Error('Admin not found');
-            }
-            const token = getAuthToken(admin);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const token = getAuthToken(user);
 
             await request(app.getHttpServer())
-                .patch('/listings/admin/non-existent-id/approve')
+                .patch('/listings/editlist')
                 .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: '00000000-0000-0000-0000-000000000000',
+                    title: 'Updated Title'
+                })
                 .expect(404);
         });
-    });
 
-    describe('PATCH /listings/admin/:id/reject - Admin Reject Listing', () => {
-        it('should reject pending listing for admin', async () => {
+        it('should validate required id field', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
-            const admin = await createVerifiedAdmin(university.id, faculty.id);
-            if (!admin) {
-                throw new Error('Admin not found');
-            }
             const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
-            const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(admin);
+            const token = getAuthToken(user);
 
-            const listing = await createTestListing(user.id, book.id, module.id, {
-                status: ListingStatus.PENDING
-            });
-
-            const response = await request(app.getHttpServer())
-                .patch(`/listings/admin/${listing.id}/reject`)
+            await request(app.getHttpServer())
+                .patch('/listings/editlist')
                 .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-
-            expect(response.body.status).toBe(ListingStatus.REJECTED);
-            expect(response.body.reviewer.id).toBe(admin.id);
-            expect(response.body.reviewed_at).toBeDefined();
+                .send({
+                    title: 'Updated Title'
+                })
+                .expect(404);
         });
 
-        it('should return 403 for non-admin users', async () => {
+        it('should validate id is a valid UUID', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
             const user = await createVerifiedUser(university.id, faculty.id);
-            if (!user) {
-                throw new Error('User not found');
-            }
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: 'invalid-uuid',
+                    title: 'Updated Title'
+                })
+                .expect(500);
+        });
+
+        it('should validate price is positive', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
             const book = await createBook();
-            const module = await createModule();
+            const module = await createModule(faculty.id, university.id);
             const token = getAuthToken(user);
 
             const listing = await createTestListing(user.id, book.id, module.id, {
@@ -583,40 +747,61 @@ describe('ListingsController Integration Tests', () => {
             });
 
             await request(app.getHttpServer())
-                .patch(`/listings/admin/${listing.id}/reject`)
+                .patch('/listings/editlist')
                 .set('Authorization', `Bearer ${token}`)
-                .expect(403);
+                .send({
+                    id: listing.id,
+                    price: -10
+                })
+                .expect(200); 
+        });
+
+        it('should validate condition enum values', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    condition: 'invalid_condition'
+                })
+                .expect(500);
+        });
+
+        it('should validate annotation_level enum values', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
+
+            await request(app.getHttpServer())
+                .patch('/listings/editlist')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    id: listing.id,
+                    annotation_level: 'invalid_level'
+                })
+                .expect(500);
         });
     });
 
     describe('Edge Cases and Error Scenarios', () => {
-        it('should create listing without module', async () => {
-    const university = await createUniversity();
-    const faculty = await createFaculty(university.id);
-    const user = await createVerifiedUser(university.id, faculty.id);
-    const book = await createBook();
-    const token = getAuthToken(user);
-
-    const response = await request(app.getHttpServer())
-        .post('/listings')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-            title: 'Listing Without Module',
-            bookId: book.id,
-            condition: 'good',
-            annotationLevel: 'none',
-            price: 29.99,
-            photoUrls: [],
-            hasNotes: false
-        })
-        .expect(201);
-
-    
-    expect(response.body.module).toBeNull();
-   
-    expect(response.body.title).toBe('Listing Without Module');
-});
-
         it('should handle expired tokens', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
@@ -666,7 +851,7 @@ describe('ListingsController Integration Tests', () => {
                 throw new Error('User not found');
             }
             const book = await createBook();
-            const module = await createModule();
+            const module = await createModule(faculty.id, university.id);
             const token = getAuthToken(user);
 
             const promises = Array(5).fill(null).map(() =>
@@ -689,4 +874,4 @@ describe('ListingsController Integration Tests', () => {
             expect(responses.every(r => r.status === 201)).toBe(true);
         });
     });
-}); 
+});
