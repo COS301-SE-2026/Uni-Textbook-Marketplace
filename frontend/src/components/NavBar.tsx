@@ -209,6 +209,7 @@ if (!mounted) return null;
                           My Listings
                         </Link>
                       )}
+                      {/** 
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -217,6 +218,7 @@ if (!mounted) return null;
                       >
                         Settings
                       </Link>
+                      */}
                       <div className="border-t border-[var(--card-border)]" />
                       <button
                         onClick={async () => {
