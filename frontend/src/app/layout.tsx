@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import { Montserrat, Inter } from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/NavBar'
 import { AuthProvider } from '@/context/AuthContext'
 import ThemeProvider from '@/providers/ThemeProvider'
 import HelpMenuWrapper from '@/components/HelpMenuWrapper'
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -23,7 +26,7 @@ export default function RootLayout({
   readonly children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
       <body className={`${montserrat.variable} font-sans antialiased`} suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
