@@ -135,7 +135,7 @@ export default function LoginDesktop() {
                                         Forgot Password?
                                     </button>
                                 </div>
-                                <Button className="w-full" disabled={loading}>
+                                <Button className="w-full" disabled={loading} variant="default" type="submit">
                                     {loading ? "Logging in…" : "Login"}
                                 </Button>
                             </form>

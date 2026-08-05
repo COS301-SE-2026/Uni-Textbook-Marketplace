@@ -22,27 +22,7 @@
   /* Selection */
   ::selection {
     background-color: #00B4D8;
-    color: #000f2b;
-  }
-
-  /* Light mode (default)*/
-  :root {
-    --background: #ffffff;
-    --foreground: #000f2b;
-    --card-bg: #ffffff;
-    --card-border: #dddddd;
-    --nav-bg: #ffffff;
-    --nav-border: #ffffff;
-  }
-
-  /* Dark mode */
-  .dark {
-    --background: #000f2b;
-    --foreground: #ededed;
-    --card-bg: #000f2b;
-    --card-border: #374151;
-    --nav-bg: #000f2b;
-    --nav-border: #374151;
+    color: #ffffff;
   }
 
   /* Base */
