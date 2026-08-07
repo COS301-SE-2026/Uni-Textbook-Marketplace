@@ -88,7 +88,7 @@ function ActionsCell({
     return (
         <td className="px-4 py-3">
             <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => onViewDetails(listing.id)} disabled={isLoading}>
+                <Button variant="primary" onClick={() => onViewDetails(listing.id)} disabled={isLoading}>
                     {isLoading ? '...' : 'View'}
                 </Button>
                 {listing.status === 'PENDING' && (

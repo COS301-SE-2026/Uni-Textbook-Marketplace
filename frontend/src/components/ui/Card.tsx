@@ -7,7 +7,7 @@ type CardProps = Readonly<{
 export default function Card({ children, className = "", variant = 'default' }: CardProps) {
     const styles = {
         default: 'card',
-        glass: 'backdrop-blur-md bg-white/10 border border-white/20 rounded-md p-5'
+        glass: 'backdrop-blur-md bg-white/10 border border-white/20 rounded-md p-5 text-foreground'
     }
     return (
         <div className={`${styles[variant]} ${className}`}>
