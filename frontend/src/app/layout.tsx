@@ -6,6 +6,7 @@ import { AuthProvider } from '@/context/AuthContext'
 import ThemeProvider from '@/providers/ThemeProvider'
 import HelpMenuWrapper from '@/components/HelpMenuWrapper'
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -28,15 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
       <body className={`${montserrat.variable} font-sans antialiased`} suppressHydrationWarning>
-        <ThemeProvider>
-          <AuthProvider>
-            <NavBar />
-            <main>
-              {children}
-            </main>
-            <HelpMenuWrapper />
-          </AuthProvider>
-        </ThemeProvider>
+        <TooltipProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <NavBar />
+              <main>
+                {children}
+              </main>
+              <HelpMenuWrapper />
+            </AuthProvider>
+          </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
