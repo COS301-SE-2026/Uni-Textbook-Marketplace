@@ -10,8 +10,17 @@ export class MailtrapEmailProvider implements IEmailService {
   private readonly logger = new Logger(MailtrapEmailProvider.name);
 
   constructor(private readonly config: ConfigService) {
+    const host = this.config.getOrThrow<string>('MAIL_HOST');
+    const nodeEnv = this.config.get<string>('NODE_ENV');
+
+    if (host.includes('live.smtp') && nodeEnv !== 'production') {
+      throw new Error(
+        'Refusing to start: live Mailtrap SMTP host configured outside production environment.',
+      );
+    }
+
     this.transporter = nodemailer.createTransport({
-      host: this.config.getOrThrow<string>('MAIL_HOST'),
+      host,
       port: Number(this.config.getOrThrow('MAIL_PORT')),
       secure: false,
       requireTLS: true,

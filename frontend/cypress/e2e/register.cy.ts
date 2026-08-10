@@ -6,6 +6,7 @@ describe('Registration', () => {
     beforeEach(() => {
 
         cy.visit('/auth/register');
+        cy.contains('Create an account').should('be.visible');
     });
 
     it('walks through steps 1-3 and reaches the OTP verification screen', () => {
@@ -17,6 +18,7 @@ describe('Registration', () => {
 
         cy.contains('button', 'Next').click();
 
+        cy.get('select[name="university"]').should('be.visible');
         cy.get('select[name="university"]').select(universityName);
         cy.get('input[placeholder="@university.email"]').type(uniqueEmail);
         cy.contains('button', 'Next').click();
@@ -81,6 +83,7 @@ describe('Registration', () => {
 
         cy.contains('button', 'Next').click();
 
+        cy.get('select[name="university"]').should('be.visible');
         cy.get('select[name="university"]').select(universityName);
 
         cy.get('input[placeholder="@university.email"]').type(uniqueEmail);
@@ -104,6 +107,7 @@ describe('Registration', () => {
 
         cy.contains('button', 'Next').click();
 
+        cy.get('select[name="university"]').should('be.visible');
         cy.get('select[name="university"]').select(universityName);
 
         cy.get('input[placeholder="@university.email"]').type(uniqueEmail);
@@ -127,6 +131,7 @@ describe('Registration', () => {
         cy.contains('button', 'Next').click();
 
 
+        cy.get('select[name="university"]').should('be.visible');
         cy.get('select[name="university"]').select(universityName);
         cy.get('input[placeholder="@university.email"]').type(`cypress.test.${Date.now()}@${emailDomain}`);
 

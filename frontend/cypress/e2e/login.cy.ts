@@ -51,18 +51,15 @@ describe('Login', () => {
 
     
     it('toggles password visibility', () => {
-        const pwdInput = cy.get('#password-desktop');
-
-        pwdInput.type(validPassword);
-
-        pwdInput.should('have.attr', 'type', 'password');
+        cy.get('#password-desktop').type(validPassword);
+        cy.get('#password-desktop').should('have.attr', 'type', 'password');
 
         cy.get('button[aria-label="Show password"]').click();
-
-        pwdInput.should('have.attr', 'type', 'text');
+        cy.get('#password-desktop').should('have.attr', 'type', 'text');
 
         cy.get('button[aria-label="Hide password"]').click();
-        pwdInput.should('have.attr', 'type', 'password');
+        cy.get('#password-desktop').should('have.attr', 'type', 'password');
+        
     });
 
     it('navigates to the forgot password page', () => {
