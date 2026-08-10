@@ -12,6 +12,7 @@ describe('Registration', () => {
         const uniqueEmail = `cypress.test.${Date.now()}@${emailDomain}`;
 
         cy.get('input[placeholder="Enter your full name(s)"]').type('Cypress');
+
         cy.get('input[placeholder="Enter your surname"]').type('Tester');
 
         cy.contains('button', 'Next').click();
@@ -22,6 +23,7 @@ describe('Registration', () => {
 
 
         cy.get('#reg-password').type('CypressTest123');
+
         cy.get('#reg-confirm-password').type('CypressTest123');
         cy.get('#terms').check();
 
@@ -50,6 +52,7 @@ describe('Registration', () => {
 
         cy.contains('button', 'Next').click();
         cy.contains('button', 'Next').click();
+
         cy.contains('Please select your university').should('be.visible');
     });
 
@@ -61,14 +64,83 @@ describe('Registration', () => {
 
         cy.contains('button', 'Next').click();
         cy.get('select[name="university"]').select(universityName);
+
         cy.get('input[placeholder="@university.email"]').type('cypress.test@university.gmail.com');
         cy.contains('button', 'Next').click();
+
         cy.contains(`Email must end in @${emailDomain}`).should('be.visible');
 
     });
 
 
     it('blocks step 3 from advancing when the passwords do not match', () => {
+        const uniqueEmail = `cypress.test.${Date.now()}@${emailDomain}`;
+
+        cy.get('input[placeholder="Enter your full name(s)"]').type('Cypress');
+        cy.get('input[placeholder="Enter your surname"]').type('Tester');
+
+        cy.contains('button', 'Next').click();
+
+        cy.get('select[name="university"]').select(universityName);
+
+        cy.get('input[placeholder="@university.email"]').type(uniqueEmail);
+        cy.contains('button', 'Next').click();
+
+        cy.get('#reg-password').type('CypressTest123');
+        cy.get('#reg-confirm-password').type('CypressTest456');
+
+        cy.get('#terms').check();
+        cy.contains('button', 'Next').click();
+
+
+        cy.contains('Passwords do not match').should('be.visible');
+    });
+
+    it('blocks step 3 from advancing when Terms of Service is not agreed to', () => {
+        const uniqueEmail = `cypress.test.${Date.now()}@${emailDomain}`;
+        cy.get('input[placeholder="Enter your full name(s)"]').type('Cypress');
+        cy.get('input[placeholder="Enter your surname"]').type('Tester');
+
+
+        cy.contains('button', 'Next').click();
+
+        cy.get('select[name="university"]').select(universityName);
+
+        cy.get('input[placeholder="@university.email"]').type(uniqueEmail);
+        cy.contains('button', 'Next').click();
+
+
+
+        cy.get('#reg-password').type('CypressTest123');
+        cy.get('#reg-confirm-password').type('CypressTest123');
+
+        cy.contains('button', 'Next').click();
+
+        cy.contains('You must agree to the Terms of Service').should('be.visible');
 
     });
-})
+
+    it('toggles password and confirm password visibility independently', () => {
+
+        cy.get('input[placeholder="Enter your full name(s)"]').type('Cypress');
+        cy.get('input[placeholder="Enter your surname"]').type('Tester');
+        cy.contains('button', 'Next').click();
+
+
+        cy.get('select[name="university"]').select(universityName);
+        cy.get('input[placeholder="@university.email"]').type(`cypress.test.${Date.now()}@${emailDomain}`);
+
+        cy.contains('button', 'Next').click();
+        cy.get('#reg-password').type('CypressTest123');
+
+        cy.get('#reg-password').should('have.attr', 'type', 'password');
+
+        cy.get('#reg-password').parent().find('button').click();
+        cy.get('#reg-password').should('have.attr', 'type', 'text');
+
+        cy.get('#reg-confirm-password').type('CypressTest123');
+
+        cy.get('#reg-confirm-password').should('have.attr', 'type', 'password');
+
+    });
+});
