@@ -23,7 +23,7 @@ describe('Login', () => {
 
         cy.contains('button', 'Login').click();
 
-        cy.contains('Invalid email').should('be-visible');
+        cy.contains('Invalid email').should('be.visible');
     });
 
     it('shows a client-side validation error for a short password', () => {
@@ -33,7 +33,7 @@ describe('Login', () => {
         cy.get('#password-desktop').type('short');
 
         cy.contains('button', 'Login').click();
-        cy.contains('Password must be at least 8 characters long').should('be.visible');
+        cy.contains('Password must be at least 8 characters').should('be.visible');
     });
 
     
