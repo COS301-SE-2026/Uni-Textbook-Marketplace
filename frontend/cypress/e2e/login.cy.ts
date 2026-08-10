@@ -1,6 +1,6 @@
 describe('Login', () => {
 
-    const validEmail = 'student@tuks.co.za';
+    const validEmail = 'student1@tuks.co.za';
     const validPassword = 'Password123';
 
     beforeEach(() => {
