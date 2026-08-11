@@ -70,7 +70,7 @@ export default function ListingCard({
     showStatus = false,
     isLiked: initialIsliked = false,
     removeClick = false,
-}: Readonly<ListingCardProps>) {
+}: ListingCardProps) {
     const router = useRouter()
     const [isLiked, setIsLiked] = useState(initialIsliked)
     /* const [prevInitialIsliked, setPrevInitialIsliked] = useState(initialIsliked)
