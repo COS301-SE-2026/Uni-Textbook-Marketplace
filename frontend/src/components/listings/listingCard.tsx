@@ -95,10 +95,9 @@ export default function ListingCard({
             } else {
                 await remove(listing.id)
             }
-
-            if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('wishlist:changed'))
-            }
+           
+            window.dispatchEvent(new CustomEvent('wishlist:changed'))
+            
         } catch (error) {
             console.error('Failed to update wishlist', error)
             setIsLiked(!liked)
