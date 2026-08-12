@@ -8,7 +8,7 @@ import { University } from "../src/database/entities/university.entity";
 import { User } from "../src/database/entities/users.entity";
 import { EMAIL_SERVICE } from "../src/email/email.interface";
 
-const Test_Password = process.env.TEST_PASSWORD || 'student@123';
+const Test_Password = process.env.TEST_PASSWORD || process.env.NODE_ENV === 'test' ? 'test-password-123' : '';
 
 
 describe('Auth (e2e) test', () => {

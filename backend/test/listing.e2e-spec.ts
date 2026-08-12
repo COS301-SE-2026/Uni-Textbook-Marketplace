@@ -10,7 +10,7 @@ import { EMAIL_SERVICE } from "../src/email/email.interface";
 import { Module } from "../src/database/entities/module.entity";
 import cookieParser from 'cookie-parser';
 
-const Test_Password = process.env.TEST_PASSWORD || 'student@123';
+const Test_Password = process.env.TEST_PASSWORD || process.env.NODE_ENV === 'test' ? 'test-password-123' : '';
 
 describe("listing (e2e) test", () => {
     let app!: INestApplication;

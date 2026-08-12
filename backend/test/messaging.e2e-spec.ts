@@ -14,7 +14,7 @@ import { User } from '../src/database/entities/users.entity';
 import { Faculty } from '../src/database/entities/faculty.entity';
 import { db } from '../src/firebase/firebase-admin';
 
-const Test_Password = process.env.TEST_PASSWORD || 'student@123';
+const Test_Password = process.env.TEST_PASSWORD || process.env.NODE_ENV === 'test' ? 'test-password-123' : '';
 
 describe("Messaging e2e testing", () => {
     const INVALID_UUID = "invalid";
