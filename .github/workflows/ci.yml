@@ -150,27 +150,11 @@ jobs:
         - name: Install deps
           run: npm ci --ignore-scripts
 
-        - name: Build backend
-          working-directory: backend
-          run: npm run build
-
-        - name: Debug Node version
-          run: node --version
-
-        - name: List compiled migrations
-          run: ls -la backend/dist/database/migrations/
-
-        - name: Bisect broken migration file
-          working-directory: backend
-          run: |
-            for f in dist/database/migrations/*.js; do
-              echo "Testing $f"
-              node -e "require('./$f')" || echo "FAILED: $f"
-            done
-
         - name: Run migrations
           working-directory: backend
-          run: npm run migration:run
+          run: npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts
+          env:
+            NODE_OPTIONS: --no-experimental-strip-types
         
         - name: Run seeds
           working-directory: backend
