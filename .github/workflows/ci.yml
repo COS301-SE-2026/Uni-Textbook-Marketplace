@@ -121,11 +121,62 @@ jobs:
         JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
         NODE_ENV: test
 
-        MAIL_HOST: sandbox.smtp.mailtrap.io
+        MAIL_HOST: ${{ secrets.MAILTRAP_HOST }}
         MAIL_PORT: 587
         MAIL_USER: ${{ secrets.MAILTRAP_USER }}
         MAIL_PASS: ${{ secrets.MAILTRAP_PASS }}
         MAIL_FROM: ${{ secrets.MAIL_FROM }}
+
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Init Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20
+            cache: 'npm'
+
+        - name: Install deps
+          run: npm ci --ignore-scripts
+
+        - name: Run migrations
+          working-directory: backend
+          run: npm run migration:run
+        
+        - name: Run seeds
+          working-directory: backend
+          run: npm run seed
+
+        - name: Start backend
+          working-directory: backend
+          run: npm run start:dev &
+
+        - name: Wait for backend to be ready
+          run: npx wait-on http://localhost:3001/api --timeout 60000
+
+        - name: Build frontend
+          working-directory: frontend
+          run: npm run build
+          env:
+            NEXT_PUBLIC_API_URL: http://localhost:3001
+
+        - name: Start frontend
+          working-directory: frontend
+          run: npm run start &
+
+        - name: Wait for frontend to be ready
+          run: npx wait-on http://localhost:3000 --timeout 60000
+
+        - name: Run Cypress
+          working-directory: frontend
+          run: npm run cy:run
+          
+        - name: Upload Cypress screenshots on failure
+          if: failure()
+          uses: actions/upload-artifact@v4
+          with:
+            name: cypress-screenshots
+            path: frontend/cypress/screenshots
 
   ci-success:
       name: Gatekeeper
