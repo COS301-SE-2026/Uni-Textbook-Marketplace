@@ -154,6 +154,12 @@ jobs:
           working-directory: backend
           run: npm run build
 
+        - name: Debug Node version
+          run: node --version
+
+        - name: List compiled migrations
+          run: ls -la backend/dist/database/migrations/
+
         - name: Run migrations
           working-directory: backend
           run: npm run migration:run
