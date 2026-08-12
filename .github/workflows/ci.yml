@@ -153,8 +153,6 @@ jobs:
         - name: Run migrations
           working-directory: backend
           run: npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts
-          env:
-            NODE_OPTIONS: --no-experimental-strip-types
         
         - name: Run seeds
           working-directory: backend
