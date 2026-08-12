@@ -56,6 +56,12 @@ jobs:
             DATABASE_URL: postgresql://nexusdev:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/textbook_marketplace_test
             JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
             NODE_ENV: test
+            MAIL_HOST: ${{ secrets.MAIL_HOST }}
+            MAIL_PORT: 587
+            MAILTRAP_USER: ${{ secrets.MAILTRAP_USER }}
+            MAILTRAP_PASS: ${{ secrets.MAILTRAP_PASS }}
+            MAIL_FROM: ${{ secrets.MAIL_FROM }}
+            FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
         - name: Upload Report
           uses: codecov/codecov-action@v4
