@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { render, screen } from '@testing-library/react'
 import Footer from '../Footer'
 
@@ -14,6 +15,7 @@ jest.mock('next/image', () => ({
     return <img {...props} alt={props.alt} />
   },
 }))
+/* eslint-enable react/display-name */
 
 describe('Footer', () => {
 
