@@ -1,15 +1,16 @@
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { AppModule } from "../src/app.module";
+import { TestModule } from "./test.module";
 import { DataSource, Repository } from "typeorm";
 import { University } from "../src/database/entities/university.entity";
 import { User } from "../src/database/entities/users.entity";
+import { Faculty } from "../src/database/entities/faculty.entity";
 import request from "supertest";
 import { EMAIL_SERVICE } from "../src/email/email.interface";
 import { Module } from "../src/database/entities/module.entity";
 import cookieParser from 'cookie-parser';
 
-const Test_Password = process.env.TEST_PASSWORD;
+const Test_Password = process.env.TEST_PASSWORD || 'student@123';
 
 describe("listing (e2e) test", () => {
     let app!: INestApplication;
@@ -17,6 +18,7 @@ describe("listing (e2e) test", () => {
     let universityRepository!: Repository<University>;
     let userRepository!: Repository<User>;
     let moduleRepository!: Repository<Module>;
+    let facultyRepository!: Repository<Faculty>;
 
     let userToken!: string;
     let createdListingId!: string;
@@ -28,7 +30,15 @@ describe("listing (e2e) test", () => {
         });
     };
 
-    const registerStudent = (universityId: string) => {
+    const createFaculty = async (universityId: string): Promise<string> => {
+        const faculty = await facultyRepository.save({
+            name: "EBIT",
+            university: { id: universityId },
+        });
+        return faculty.id;
+    };
+
+    const registerStudent = (universityId: string, facultyId: string) => {
         return request(app.getHttpServer())
             .post("/auth/register")
             .send({
@@ -36,7 +46,7 @@ describe("listing (e2e) test", () => {
                 password: Test_Password,
                 first_name: "gift",
                 last_name: "mohub",
-                faculty: "EBIT",
+                faculty_id: facultyId,
                 university_id: universityId,
             })
             .expect(201);
@@ -65,15 +75,16 @@ describe("listing (e2e) test", () => {
         return accessTokenCookie.split(';')[0].split('=')[1];
     };
 
-    const createModule = async (universityId: string): Promise<string> => {
+    const createModule = async (universityId: string, facultyId: string, token: string): Promise<string> => {
         const res = await request(app.getHttpServer())
             .post("/modules")
+            .set('Authorization', `Bearer ${token}`)
             .send({
                 code: "COS301",
                 name: "software",
-                faculty: "EBIT",
                 semester: 1,
                 university_id: universityId,
+                faculty_id: facultyId,
             })
             .expect(201);
 
@@ -81,7 +92,6 @@ describe("listing (e2e) test", () => {
     };
 
     const createBook = async (): Promise<string> => {
-
         const res = await request(app.getHttpServer())
             .post("/books")
             .send({
@@ -97,7 +107,7 @@ describe("listing (e2e) test", () => {
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [AppModule],
+            imports: [TestModule],
         })
             .overrideProvider(EMAIL_SERVICE)
             .useValue({
@@ -113,38 +123,36 @@ describe("listing (e2e) test", () => {
         universityRepository = dataSource.getRepository(University);
         userRepository = dataSource.getRepository(User);
         moduleRepository = dataSource.getRepository(Module);
-    });
+        facultyRepository = dataSource.getRepository(Faculty);
+    }, 30000);
 
     afterAll(async () => {
-
         if (dataSource?.isInitialized) {
             await dataSource.query(
-                `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities" RESTART IDENTITY CASCADE`
-            )
+                `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities", "faculties" RESTART IDENTITY CASCADE`
+            );
         }
 
         if (app) {
             await app.close();
         }
-    });
+    }, 10000);
 
-
-    describe("test connetion", () => {
+    describe("test connection", () => {
         it("should load app", () => {
             expect(true).toBe(true);
         });
     });
 
     describe("create listing", () => {
-
         it("should allow verified user to create listing", async () => {
-
             const university = await createUniversity();
-            await registerStudent(university.id);
+            const facultyId = await createFaculty(university.id);
+            await registerStudent(university.id, facultyId);
             await verifyUser("u1234598@tuks.co.za");
             const token = await loginVerifiedStudent();
             userToken = token;
-            const moduleId = await createModule(university.id);
+            const moduleId = await createModule(university.id, facultyId, token);
             const bookId = await createBook();
 
             const res = await request(app.getHttpServer())
@@ -169,49 +177,41 @@ describe("listing (e2e) test", () => {
     });
 
     describe("get mine listing", () => {
-
         it("should return my listing", async () => {
-
-            // const token = await loginVerifiedStudent();
-
             const res = await request(app.getHttpServer())
                 .get("/listings/mine")
                 .set("Cookie", `access_token=${userToken}`)
                 .expect(200);
 
             expect(Array.isArray(res.body)).toBe(true);
-            expect(res.body.length).toBeGreaterThan(0);
+            expect(res.body.length).toBeGreaterThanOrEqual(1);
             expect(res.body[0]).toHaveProperty("title", "Test Listing");
         });
     });
 
     describe("get approved listing", () => {
-
         it("should not include a pending listings", async () => {
-
             const res = await request(app.getHttpServer())
                 .get("/listings")
                 .expect(200);
 
-            expect(Array.isArray(res.body)).toBe(true);
-            expect(res.body.some((l: any) => l.title === "Test Listing")).toBe(false);
+            expect(res.body).toHaveProperty("listings");
+            expect(Array.isArray(res.body.listings)).toBe(true);
+            expect(res.body.listings.some((l: any) => l.title === "Test Listing")).toBe(false);
         });
     });
 
     describe("get listing by id", () => {
-
-        it("should return the listing", async() => {
-
+        it("should return the listing", async () => {
             const res = await request(app.getHttpServer())
                 .get(`/listings/${createdListingId}`)
                 .expect(200);
 
-            expect(res.body).toHaveProperty("id",createdListingId);
+            expect(res.body).toHaveProperty("id", createdListingId);
             expect(res.body.title).toBe("Test Listing");
         });
 
         it("should return 404 for id thats not there", async () => {
-
             await request(app.getHttpServer())
                 .get("/listings/00000000-0000-0000-0000-000000000000")
                 .expect(404);

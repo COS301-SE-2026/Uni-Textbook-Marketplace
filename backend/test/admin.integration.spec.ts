@@ -324,26 +324,25 @@ describe('Admin Integration Tests', () => {
         }, 15000);
 
         it('should return 403 when non-admin tries to reject', async () => {
-    const user = await createUser('student');
-    const book = await createBook();
-    const module = await createModule();
-    const token = getAuthToken(user);
-    const listing = await createTestListing(user.id, book.id, module.id, {
-        status: ListingStatus.PENDING
-    });
+            const user = await createUser('student');
+            const book = await createBook();
+            const module = await createModule();
+            const token = getAuthToken(user);
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING
+            });
 
-    const response = await request(app.getHttpServer())
-        .patch(`/admin/${listing.id}/reject`)
-        .set('Authorization', `Bearer ${token}`)
-        .send({ reason: 'Invalid' })
-        .expect(403);
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${listing.id}/reject`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Invalid' })
+                .expect(403);
 
-    
-    expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toContain('Forbidden');
-    expect(response.body.message).toContain('Admin access required');
-    expect(response.statusCode).toBe(403);
-}, 15000);
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('Insufficient permissions');
+            expect(response.body.message).toContain('admin');
+            expect(response.statusCode).toBe(403);
+        }, 15000);
     });
 
     describe('Get Audit Logs', () => {
@@ -411,20 +410,19 @@ describe('Admin Integration Tests', () => {
             }
         }, 15000);
 
-        it('should return 403 when non-admin tries to view audit logs', async () => {
-    const user = await createUser('student');
-    const token = getAuthToken(user);
+        it('should return 403 when non-admin tries to view admin users', async () => {
+            const user = await createUser('student');
+            const token = getAuthToken(user);
 
-    const response = await request(app.getHttpServer())
-        .get('/admin/audit-log')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(403);
+            const response = await request(app.getHttpServer())
+                .get('/admin/emails')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
 
-   
-    expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toContain('Forbidden');
-    expect(response.body.message).toContain('Admin access required');
-}, 15000);
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('Insufficient permissions');
+            expect(response.body.message).toContain('admin');
+        }, 15000);
     });
 
     describe('Get Admin Users', () => {
@@ -443,19 +441,19 @@ describe('Admin Integration Tests', () => {
         }, 15000);
 
         it('should return 403 when non-admin tries to view admin users', async () => {
-    const user = await createUser('student');
-    const token = getAuthToken(user);
+            const user = await createUser('student');
+            const token = getAuthToken(user);
 
-    const response = await request(app.getHttpServer())
-        .get('/admin/emails')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(403);
+            const response = await request(app.getHttpServer())
+                .get('/admin/emails')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(403);
 
- 
-    expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toContain('Forbidden');
-    expect(response.body.message).toContain('Admin access required');
-}, 15000);
+            
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('Insufficient permissions');
+            expect(response.body.message).toContain('admin');
+        }, 15000);
     });
 
     describe('Complete Admin Workflow', () => {

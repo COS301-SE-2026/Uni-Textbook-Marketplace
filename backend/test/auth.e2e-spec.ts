@@ -1,6 +1,6 @@
 import { Test } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import { AppModule } from "../src/app.module";
+import { TestModule } from "./test.module";;
 import { DataSource, Repository } from "typeorm";
 import request from "supertest";
 
@@ -50,7 +50,7 @@ describe('Auth (e2e) test', () => {
     beforeAll(async () => {
 
         const moduleRef = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [TestModule]
         })
             .overrideProvider(EMAIL_SERVICE)
             .useValue({
