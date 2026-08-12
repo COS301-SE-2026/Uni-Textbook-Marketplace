@@ -127,7 +127,7 @@ describe('SavedSearchesService', () => {
     return search;
   };
 
-  
+
   const mockUser = createMockUser();
   const mockBook = createMockBook();
   const mockModule = createMockModule();
@@ -199,7 +199,7 @@ describe('SavedSearchesService', () => {
     userRepo = mockDataSource.getRepository(User);
     listingRepo = mockDataSource.getRepository(Listing);
 
-  
+
     jest.clearAllMocks();
   });
 
@@ -207,7 +207,7 @@ describe('SavedSearchesService', () => {
     expect(service).toBeDefined();
   });
 
-    
+
 
   describe('createSavedSearch', () => {
     const createDto: CreateSavedSearchDto = {
@@ -340,7 +340,7 @@ describe('SavedSearchesService', () => {
     });
   });
 
-    //getUserSavedSearches
+  //getUserSavedSearches
 
   describe('getUserSavedSearches', () => {
     const query: GetSavedSearchesQueryDto = {
@@ -503,7 +503,7 @@ describe('SavedSearchesService', () => {
     });
   });
 
-    // matchesFilter tests
+  // matchesFilter tests
 
   describe('matchesFilter', () => {
     it('should return true when listing matches all filters', () => {
@@ -708,29 +708,23 @@ describe('SavedSearchesService', () => {
 
     it('should return matching saved searches for a listing (happy path)', async () => {
       // Arrange
-      mockListingRepository.findOne.mockResolvedValue(mockListing);
       mockSavedSearchRepository.find.mockResolvedValue([matchingSearch, nonMatchingSearch]);
 
       // Act
-      const result = await service.findMatchingSavedSearches(validUuid2);
+      const result = await service.findMatchingSavedSearches(mockListing);
 
       // Assert
       expect(result).toHaveLength(1);
       expect(result[0].savedSearchId).toBe(validUuid3);
       expect(result[0].userId).toBe(validUuid);
-      expect(mockListingRepository.findOne).toHaveBeenCalledWith({
-        where: { id: validUuid2 },
-        relations: ['book', 'module', 'module.university', 'module.faculty'],
-      });
     });
 
     it('should return empty array when no saved searches match', async () => {
       // Arrange
-      mockListingRepository.findOne.mockResolvedValue(mockListing);
       mockSavedSearchRepository.find.mockResolvedValue([nonMatchingSearch]);
 
       // Act
-      const result = await service.findMatchingSavedSearches(validUuid2);
+      const result = await service.findMatchingSavedSearches(mockListing);
 
       // Assert
       expect(result).toHaveLength(0);
@@ -738,21 +732,20 @@ describe('SavedSearchesService', () => {
 
     it('should throw NotFoundException when listing does not exist', async () => {
       // Arrange
-      mockListingRepository.findOne.mockResolvedValue(null);
+      const nullListing = null as any;
 
       // Act & Assert
-      await expect(service.findMatchingSavedSearches('non-existent')).rejects.toThrow(
+      await expect(service.findMatchingSavedSearches(nullListing)).rejects.toThrow(
         new NotFoundException('Listing not found'),
       );
     });
 
     it('should return empty array when no saved searches exist', async () => {
       // Arrange
-      mockListingRepository.findOne.mockResolvedValue(mockListing);
       mockSavedSearchRepository.find.mockResolvedValue([]);
 
       // Act
-      const result = await service.findMatchingSavedSearches(validUuid2);
+      const result = await service.findMatchingSavedSearches(mockListing);
 
       // Assert
       expect(result).toHaveLength(0);
@@ -830,5 +823,5 @@ describe('SavedSearchesService', () => {
     });
   });
 });
- 
+
 

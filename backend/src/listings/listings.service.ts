@@ -36,7 +36,7 @@ export class ListingsService {
 
     @Inject(forwardRef(() => SavedSearchesService))
     private savedSearchesService: SavedSearchesService,
-  ) {}
+  ) { }
 
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
@@ -69,7 +69,7 @@ export class ListingsService {
 
     const savedListing = await this.listingRepo.save(listing);
 
-    this.checkSavedSearchMatches(savedListing.id).catch((error: unknown) => {
+    this.checkSavedSearchMatches(savedListing).catch((error: unknown) => {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error('Error checking saved search matches:', errorMessage);
@@ -78,28 +78,28 @@ export class ListingsService {
     return savedListing;
   }
 
-  private async checkSavedSearchMatches(listingId: string): Promise<void> {
+  private async checkSavedSearchMatches(listing: Listing): Promise<void> {
     try {
       const matches =
-        await this.savedSearchesService.findMatchingSavedSearches(listingId);
+        await this.savedSearchesService.findMatchingSavedSearches(listing);
 
       if (matches.length === 0) {
-        console.log(`No saved search matches found for listing ${listingId}`);
+        console.log(`No saved search matches found for listing ${listing.id}`);
         return;
       }
       console.log(
-        `Found ${matches.length} saved search matches for listing ${listingId}`,
+        `Found ${matches.length} saved search matches for listing ${listing.id}`,
       );
 
       for (const match of matches) {
         console.log(
-          `User ${match.userId} has a saved search match for listing ${listingId}`,
+          `User ${match.userId} has a saved search match for listing ${listing.id}`,
         );
         // i'll uncomment this when the notification service is ready:
         // await this.notificationService.createNotification({
         //   userId: match.userId,
         //   type: 'NEW_MATCH',
-        //   listingId: listingId,
+        //   listingId: listing.id,
         //   message: `New listing matches your saved search`,
         // });
       }
@@ -107,7 +107,7 @@ export class ListingsService {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error(
-        `Error checking saved search matches for listing ${listingId}:`,
+        `Error checking saved search matches for listing ${listing.id}:`,
         errorMessage,
       );
     }
