@@ -45,6 +45,7 @@
     "postcss": "8.5.14",
     "tailwindcss": "4.3.0",
     "ts-node": "10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "9.1.0"
   }
 }

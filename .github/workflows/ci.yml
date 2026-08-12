@@ -152,7 +152,7 @@ jobs:
           run: npm run start:dev &
 
         - name: Wait for backend to be ready
-          run: npx wait-on http://localhost:3001/api --timeout 60000
+          run: node_modules/.bin/wait-on http://localhost:3001/api --timeout 60000
 
         - name: Build frontend
           working-directory: frontend
@@ -165,7 +165,7 @@ jobs:
           run: npm run start &
 
         - name: Wait for frontend to be ready
-          run: npx wait-on http://localhost:3000 --timeout 60000
+          run: node_modules/.bin/wait-on http://localhost:3000 --timeout 60000
 
         - name: Run Cypress
           working-directory: frontend
