@@ -157,7 +157,65 @@ describe('API Client', () => {
       })
     })
 
-    
+    it('handles non-JSON response', async () => {
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+
+        ok: false,
+        status: 500,
+        json: async () => { throw new Error('Invalid JSON') },
+      })
+
+      await expect(api.get('/error')).rejects.toMatchObject({
+
+        status: 500,
+        message: 'Something went wrong. Please try again.',
+      })
+    })
+  })
+
+  describe('buildQuery', () => {
+
+    it('builds query string from object', () => {
+      const params = { name: 'test', age: 25, empty: undefined, null: null }
+      const result = buildQuery(params)
+
+
+      expect(result).toBe('name=test&age=25')
+    })
+
+    it('handles empty object', () => {
+
+      const result = buildQuery({})
+      expect(result).toBe('')
+
+    })
+
+    it('handles boolean values', () => {
+
+      const params = { active: true, featured: false }
+      const result = buildQuery(params)
+
+      expect(result).toBe('active=true&featured=false')
+    })
+
+    it('handles number values', () => {
+
+      const params = { page: 1, limit: 10 }
+      const result = buildQuery(params)
+
+
+      expect(result).toBe('page=1&limit=10')
+    })
+  })
+
+  describe('BASE_URL', () => {
+    it('BASE_URL is defined', () => {
+
+
+      expect(BASE_URL).toBeDefined()
+      expect(typeof BASE_URL).toBe('string')
+
+    })
 
   })
 })
