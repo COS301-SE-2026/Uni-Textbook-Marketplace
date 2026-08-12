@@ -121,11 +121,13 @@ jobs:
         JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
         NODE_ENV: test
 
-        MAIL_HOST: ${{ secrets.MAILTRAP_HOST }}
+        MAIL_HOST: ${{ secrets.MAIL_HOST }}
         MAIL_PORT: 587
-        MAIL_USER: ${{ secrets.MAILTRAP_USER }}
-        MAIL_PASS: ${{ secrets.MAILTRAP_PASS }}
+        MAILTRAP_USER: ${{ secrets.MAILTRAP_USER }}
+        MAILTRAP_PASS: ${{ secrets.MAILTRAP_PASS }}
         MAIL_FROM: ${{ secrets.MAIL_FROM }}
+
+        FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
       steps:
         - uses: actions/checkout@v4
