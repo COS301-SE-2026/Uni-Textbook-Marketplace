@@ -56,6 +56,9 @@ jobs:
             DATABASE_URL: postgresql://nexusdev:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/textbook_marketplace_test
             JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
             NODE_ENV: test
+            AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+            AZURE_STORAGE_SAS_TOKEN: ${{ secrets.AZURE_STORAGE_SAS_TOKEN }}
+            AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
             MAIL_HOST: ${{ secrets.MAIL_HOST }}
             MAIL_PORT: 587
             MAILTRAP_USER: ${{ secrets.MAILTRAP_USER }}
