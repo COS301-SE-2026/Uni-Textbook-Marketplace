@@ -109,12 +109,6 @@ describe('SearchBar', () => {
     expect(outerDiv).toHaveClass('custom-class')
   })
 
-   
-
-    it('debounces search input changes', async () => {
-        // This test is skipped due to timing issues in the test environment
-    })
-
 
   it('does not call onSearch on first render', () => {
     render(<SearchBar onSearch={mockOnSearch} initialQuery="initial" />)
