@@ -68,6 +68,95 @@ describe('API Client', () => {
       )
     })
 
+    it('DELETE makes request without body', async () => {
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      })
+
+      await api.delete('/test/123')
+      
+      
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/test/123'),
+        expect.objectContaining({ method: 'DELETE' })
+      )
+      
+      
+      const callArgs = (global.fetch as jest.Mock).mock.calls[0]
+      const options = callArgs[1]
+      
+      expect(options.body).toBeUndefined()
+    })
+
+  })
+
+  describe('Error handling', () => {
+
+
+    it('handles 401 with unauthorized handler', async () => {
+      const handler = jest.fn()
+      setUnauthorizedHandle(handler)
+      
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+
+
+        ok: false,
+        status: 401,
+        json: async () => ({ message: 'Unauthorized' }),
+      })
+
+      await expect(api.get('/protected')).rejects.toMatchObject({ status: 401 })
+      expect(handler).toHaveBeenCalled()
+    })
+
+    it('handles 400 with error message', async () => {
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+
+
+        ok: false,
+        status: 400,
+        json: async () => ({ message: 'Bad request' }),
+      })
+
+      await expect(api.get('/bad')).rejects.toMatchObject({
+        status: 400,
+        message: 'Bad request',
+      })
+
+    })
+
+    it('handles array error messages', async () => {
+
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({ message: ['Field is required', 'Field is invalid'] }),
+      })
+
+      await expect(api.get('/bad')).rejects.toMatchObject({
+
+        status: 400,
+        message: 'Field is required, Field is invalid',
+      })
+    })
+
+    it('handles missing error message', async () => {
+
+
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      })
+
+      await expect(api.get('/error')).rejects.toMatchObject({
+
+        status: 500,
+        message: 'Something went wrong. Please try again.',
+      })
+    })
+
     
 
   })
