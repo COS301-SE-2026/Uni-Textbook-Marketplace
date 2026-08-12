@@ -160,6 +160,14 @@ jobs:
         - name: List compiled migrations
           run: ls -la backend/dist/database/migrations/
 
+        - name: Bisect broken migration file
+          working-directory: backend
+          run: |
+            for f in dist/database/migrations/*.js; do
+              echo "Testing $f"
+              node -e "require('./$f')" || echo "FAILED: $f"
+            done
+
         - name: Run migrations
           working-directory: backend
           run: npm run migration:run
