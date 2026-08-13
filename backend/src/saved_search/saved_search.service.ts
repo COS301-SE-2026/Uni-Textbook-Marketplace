@@ -143,18 +143,32 @@ export class SavedSearchesService {
       if (!listing.module?.code) {
         return false;
       }
-      if (listing.module.code !== filter.moduleCode) {
+      if (listing.module.code !== filter.moduleCode!) {
         return false;
       }
     }
 
-    if (isProvided(filter.edition)) {
-      if (!listing.book?.edition) {
+    if (
+      isProvided(filter.modules) &&
+      Array.isArray(filter.modules) &&
+      filter.modules.length > 0
+    ) {
+      if (!listing.module?.code) {
         return false;
       }
-      if (String(listing.book.edition) !== filter.edition) {
+      if (!filter.modules.includes(listing.module.code)) {
         return false;
       }
+    }
+
+    if (isProvided(filter.faculty)) {
+      if (!listing.module?.faculty?.name) {
+        return false;
+      }
+      const facultyMatch = listing.module.faculty.name
+        .toLowerCase()
+        .includes(filter.faculty!.toLowerCase());
+      if (!facultyMatch) return false;
     }
 
     if (isProvided(filter.book_title)) {
@@ -163,7 +177,7 @@ export class SavedSearchesService {
       }
       const titleMatch = listing.book.title
         .toLowerCase()
-        .includes(filter.book_title.toLowerCase());
+        .includes(filter.book_title!.toLowerCase());
       if (!titleMatch) return false;
     }
 
@@ -173,7 +187,7 @@ export class SavedSearchesService {
       }
       const authorMatch = listing.book.author
         .toLowerCase()
-        .includes(filter.author.toLowerCase());
+        .includes(filter.author!.toLowerCase());
       if (!authorMatch) return false;
     }
 
@@ -181,7 +195,16 @@ export class SavedSearchesService {
       if (!listing.book?.isbn) {
         return false;
       }
-      if (listing.book.isbn.toLowerCase() !== filter.isbn.toLowerCase()) {
+      if (listing.book.isbn.toLowerCase() !== filter.isbn!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.edition)) {
+      if (!listing.book?.edition) {
+        return false;
+      }
+      if (String(listing.book.edition) !== filter.edition!) {
         return false;
       }
     }
@@ -200,11 +223,12 @@ export class SavedSearchesService {
       return false;
     }
 
+    
     if (isProvided(filter.condition)) {
       if (!listing.condition) {
         return false;
       }
-      if (listing.condition !== filter.condition) {
+      if (listing.condition !== filter.condition!) {
         return false;
       }
     }
@@ -213,14 +237,52 @@ export class SavedSearchesService {
       if (!listing.annotation_level) {
         return false;
       }
-      if (listing.annotation_level !== filter.annotationLevel) {
+      if (listing.annotation_level !== filter.annotationLevel!) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.search)) {
+      const searchLower = filter.search!.toLowerCase();
+
+      const matchesSearch =
+        (listing.title && listing.title.toLowerCase().includes(searchLower)) ||
+        (listing.book?.title &&
+          listing.book.title.toLowerCase().includes(searchLower)) ||
+        (listing.book?.author &&
+          listing.book.author.toLowerCase().includes(searchLower)) ||
+        (listing.book?.isbn &&
+          listing.book.isbn.toLowerCase().includes(searchLower)) ||
+        (listing.module?.code &&
+          listing.module.code.toLowerCase().includes(searchLower)) ||
+        (listing.module?.name &&
+          listing.module.name.toLowerCase().includes(searchLower)) ||
+        (listing.book?.publisher &&
+          listing.book.publisher.toLowerCase().includes(searchLower));
+
+      if (!matchesSearch) return false;
+    }
+
+    if (isProvided(filter.university_id)) {
+      if (!listing.module?.university?.id) {
+        return false;
+      }
+      if (listing.module.university.id !== filter.university_id!) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.faculty_id)) {
+      if (!listing.module?.faculty?.id) {
+        return false;
+      }
+      if (listing.module.faculty.id !== filter.faculty_id!) {
         return false;
       }
     }
 
     return true;
   }
-
   // Find all users with saved searches that match a new listing
   async findMatchingSavedSearches(listingId: string): Promise<
     Array<{
