@@ -11,6 +11,8 @@ import { User } from '../database/entities/users.entity';
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { AuditLog } from '../database/entities/audit_log.entity';
 import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
+import { AdminEvent } from './events/admin.event';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AdminService {
@@ -20,6 +22,8 @@ export class AdminService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private async updateListingStatus(
@@ -66,6 +70,14 @@ export class AdminService {
       });
 
       await auditLogRepository.save(auditLog);
+
+      const event = new AdminEvent();
+      event.title = listing.
+
+      this.eventEmitter.emit('listing.reviewed', new AdminEvent(
+        title: listing.title,
+
+      ));
 
       return savedlisting;
     });
