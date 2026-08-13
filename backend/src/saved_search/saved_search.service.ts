@@ -135,12 +135,10 @@ export class SavedSearchesService {
 
   // Check if a listing matches a saved search filter
   matchesFilter(listing: Listing, filter: SavedSearchFiltersDto): boolean {
-   
     const isProvided = (value: any): boolean => {
       return value !== undefined && value !== null && value !== '';
     };
 
-    
     if (isProvided(filter.moduleCode)) {
       if (!listing.module?.code) {
         return false;
@@ -150,7 +148,44 @@ export class SavedSearchesService {
       }
     }
 
-   
+    if (isProvided(filter.edition)) {
+      if (!listing.book?.edition) {
+        return false;
+      }
+      if (String(listing.book.edition) !== filter.edition) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.book_title)) {
+      if (!listing.book?.title) {
+        return false;
+      }
+      const titleMatch = listing.book.title
+        .toLowerCase()
+        .includes(filter.book_title.toLowerCase());
+      if (!titleMatch) return false;
+    }
+
+    if (isProvided(filter.author)) {
+      if (!listing.book?.author) {
+        return false;
+      }
+      const authorMatch = listing.book.author
+        .toLowerCase()
+        .includes(filter.author.toLowerCase());
+      if (!authorMatch) return false;
+    }
+
+    if (isProvided(filter.isbn)) {
+      if (!listing.book?.isbn) {
+        return false;
+      }
+      if (listing.book.isbn.toLowerCase() !== filter.isbn.toLowerCase()) {
+        return false;
+      }
+    }
+
     const priceMin = this.toNumber(filter.priceMin);
     const priceMax = this.toNumber(filter.priceMax);
 
@@ -165,7 +200,6 @@ export class SavedSearchesService {
       return false;
     }
 
-    
     if (isProvided(filter.condition)) {
       if (!listing.condition) {
         return false;
@@ -175,7 +209,6 @@ export class SavedSearchesService {
       }
     }
 
-    
     if (isProvided(filter.annotationLevel)) {
       if (!listing.annotation_level) {
         return false;
@@ -185,7 +218,6 @@ export class SavedSearchesService {
       }
     }
 
-    
     return true;
   }
 
