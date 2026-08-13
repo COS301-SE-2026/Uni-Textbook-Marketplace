@@ -185,7 +185,7 @@ function BrowseListingsContent() {
         <ProtectedRoute>
             <SidebarProvider>
                 <div className="flex w-full">
-                    <Sidebar side='left' variant='sidebar' collapsible='offcanvas' 
+                    <Sidebar side='left' variant='sidebar' collapsible='offcanvas'
                         className="border-r top-16 h-[calc(100vh-4rem)]"
                     >
                         <SidebarContent className="p-4">
@@ -195,6 +195,7 @@ function BrowseListingsContent() {
                                         Filters
                                     </SidebarGroupLabel>
                                     <button
+                                        type='submit'
                                         onClick={handleClear}
                                         className="text-sm font-bold text-blue-600 hover:underline"
                                     >
@@ -203,10 +204,11 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor="faculty-filter" className="mb-1 text-xs font-medium">
                                         Faculty
                                     </label>
                                     <Select
+                                        id="faculty-filter"
                                         name="faculty"
                                         value={filters.faculty}
                                         onChange={handleFilterChange}
@@ -226,10 +228,11 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor='moduleCode-filter' className="mb-1 text-xs font-medium">
                                         Module Code
                                     </label>
                                     <Input
+                                        id="moduleCode-filter"
                                         name="moduleCode"
                                         value={filters.moduleCode}
                                         onChange={handleFilterChange}
@@ -238,10 +241,11 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor='edition-filter' className="mb-1 block text-xs font-medium">
                                         Edition
                                     </label>
                                     <Select
+                                        id="edition-filter"
                                         name="edition"
                                         value={filters.edition}
                                         onChange={handleFilterChange}
@@ -254,11 +258,12 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor='priceMin-filter' className="mb-1 block text-xs font-medium">
                                         Price Range
                                     </label>
                                     <div className="flex items-center gap-2">
                                         <Input
+                                            id="priceMin-filter"
                                             name="priceMin"
                                             value={filters.priceMin}
                                             onChange={handleFilterChange}
@@ -267,6 +272,7 @@ function BrowseListingsContent() {
                                         />
                                         <span className="text-gray-400">–</span>
                                         <Input
+                                            id="priceMax-filter"
                                             name="priceMax"
                                             value={filters.priceMax}
                                             onChange={handleFilterChange}
@@ -277,10 +283,11 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor='condition-filter' className="mb-1 block text-xs font-medium">
                                         Condition
                                     </label>
                                     <Select
+                                        id="condition-filter"
                                         name="condition"
                                         value={filters.condition}
                                         onChange={handleFilterChange}
@@ -294,10 +301,11 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <div className="mb-1">
-                                    <label className="mb-1 block text-xs font-medium">
+                                    <label htmlFor='annotationLevel-filter' className="mb-1 block text-xs font-medium">
                                         Annotation Level
                                     </label>
                                     <Select
+                                        id="annotationLevel-filter"
                                         name="annotationLevel"
                                         value={filters.annotationLevel}
                                         onChange={handleFilterChange}
@@ -310,6 +318,7 @@ function BrowseListingsContent() {
                                 </div>
 
                                 <button
+                                    type='submit'
                                     onClick={handleApply}
                                     className="btn-primary mt-2 w-full"
                                 >
@@ -330,7 +339,7 @@ function BrowseListingsContent() {
                                     <Bookmark size={20} />
                                     Saved Searches
                                 </Link>
-                
+
                             </SidebarGroup>
                         </SidebarContent>
                     </Sidebar>
@@ -338,16 +347,16 @@ function BrowseListingsContent() {
                     <SidebarInset className="flex-1">
                         <div className="py-8 mx-18">
                             <div className="mb-6 flex gap-2">
-    
-                                <SidebarTrigger/>
-                               
+
+                                <SidebarTrigger />
+
                                 <div>
                                     <h1>Browse Textbooks</h1>
                                     <p className="text-sm text-gray-500">
                                         Find the right textbook for your module
                                     </p>
                                 </div>
-  
+
                             </div>
 
                             <SearchBar
@@ -394,6 +403,7 @@ function BrowseListingsContent() {
                                         </svg>
                                         <p className="text-sm">No listings found</p>
                                         <button
+                                            type='submit'
                                             onClick={handleClear}
                                             className="mt-3 text-sm text-blue-600 hover:underline"
                                         >
