@@ -15,6 +15,7 @@ import {
   CreateSavedSearchDto,
   GetSavedSearchesQueryDto,
   SavedSearchFiltersDto,
+  c,
 } from './dto/saved_search.dto';
 
 @Injectable()
@@ -134,28 +135,28 @@ export class SavedSearchesService {
 
   // Check if a listing matches a saved search filter
   matchesFilter(listing: Listing, filter: SavedSearchFiltersDto): boolean {
-    // Module filter (by module code)
-    if (filter.moduleCode && listing.module?.code !== filter.moduleCode) {
-      return false;
+   
+    const isProvided = (value: any): boolean => {
+      return value !== undefined && value !== null && value !== '';
+    };
+
+    
+    if (isProvided(filter.moduleCode)) {
+      if (!listing.module?.code) {
+        return false;
+      }
+      if (listing.module.code !== filter.moduleCode) {
+        return false;
+      }
     }
 
-    // Faculty filter
-    if (filter.faculty && listing.module?.faculty?.name) {
-      const facultyMatch = listing.module.faculty.name
-        .toLowerCase()
-        .includes(filter.faculty.toLowerCase());
-      if (!facultyMatch) return false;
-    }
-
-    // Edition filter
-    if (filter.edition && listing.book?.edition) {
-      const editionMatch = String(listing.book.edition) === filter.edition;
-      if (!editionMatch) return false;
-    }
-
-    // Price range filter
+   
     const priceMin = this.toNumber(filter.priceMin);
     const priceMax = this.toNumber(filter.priceMax);
+
+    if (listing.price === undefined || listing.price === null) {
+      return false;
+    }
 
     if (priceMin !== null && listing.price < priceMin) {
       return false;
@@ -164,36 +165,27 @@ export class SavedSearchesService {
       return false;
     }
 
-    // Condition filter
-    if (filter.condition && listing.condition !== filter.condition) {
-      return false;
+    
+    if (isProvided(filter.condition)) {
+      if (!listing.condition) {
+        return false;
+      }
+      if (listing.condition !== filter.condition) {
+        return false;
+      }
     }
 
-    // Annotation level filter
-    if (
-      filter.annotationLevel &&
-      listing.annotation_level !== filter.annotationLevel
-    ) {
-      return false;
+    
+    if (isProvided(filter.annotationLevel)) {
+      if (!listing.annotation_level) {
+        return false;
+      }
+      if (listing.annotation_level !== filter.annotationLevel) {
+        return false;
+      }
     }
 
-    // Search filter
-    if (filter.search) {
-      const searchLower = filter.search.toLowerCase();
-      const matchesSearch =
-        (listing.title && listing.title.toLowerCase().includes(searchLower)) ||
-        (listing.book?.title &&
-          listing.book.title.toLowerCase().includes(searchLower)) ||
-        (listing.book?.author &&
-          listing.book.author.toLowerCase().includes(searchLower)) ||
-        (listing.book?.isbn &&
-          listing.book.isbn.toLowerCase().includes(searchLower)) ||
-        (listing.module?.code &&
-          listing.module.code.toLowerCase().includes(searchLower));
-
-      if (!matchesSearch) return false;
-    }
-
+    
     return true;
   }
 
