@@ -160,10 +160,14 @@ jobs:
 
         - name: Start backend
           working-directory: backend
-          run: npm run start:dev &
+          run: npm run start:dev > backend.log 2>&1 &
 
         - name: Wait for backend to be ready
           run: node_modules/.bin/wait-on http://localhost:3001/api --timeout 60000
+
+        - name: Show backend log if it failed to start
+          if: failure()
+          run: cat backend/backend.log
 
         - name: Build frontend
           working-directory: frontend
