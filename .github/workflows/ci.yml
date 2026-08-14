@@ -162,11 +162,11 @@ jobs:
 
         - name: Install Cypress binary
           working-directory: frontend
-          run: npx cypress install
+          run: npm run cypress:install
 
         - name: Run migrations
           working-directory: backend
-          run: npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts
+          run: npm run migration:run
         
         - name: Run seeds
           working-directory: backend

@@ -25,7 +25,7 @@
     "test:cov:auth-listings": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"src/messaging/**/*.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts src/messaging/",
     "test:cov": "jest --coverage --collectCoverageFrom=\"src/auth/**/*.ts\" --collectCoverageFrom=\"src/listings/listings.service.ts\" --collectCoverageFrom=\"src/messaging/**/*.ts\" --collectCoverageFrom=\"!src/**/*.spec.ts\" src/auth/ src/listings/listings.service.spec.ts src/messaging/",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:run": "typeorm migration:run -d dist/data-source.js",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
     "migration:generate": "cross-env NODE_OPTIONS=--no-experimental-strip-types typeorm-ts-node-commonjs migration:generate -d src/data-source.ts"
   },
   "dependencies": {
