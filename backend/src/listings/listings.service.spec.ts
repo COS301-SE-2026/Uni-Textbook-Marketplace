@@ -188,7 +188,7 @@ describe('ListingsService', () => {
         description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
-      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing.id);
+      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing);
     });
 
     it('should throw NotFoundException when user does not exist', async () => {
@@ -212,7 +212,7 @@ describe('ListingsService', () => {
 
     it('should create listing without module when moduleId not provided', async () => {
       const dtoWithoutModule = { ...createListingDto, moduleId: undefined };
-      
+
       mockUserRepository.findOneBy.mockResolvedValue(mockUser);
       mockBookRepository.findOneBy.mockResolvedValue(mockBook);
       mockListingRepository.create.mockReturnValue({ ...mockListing, module: null });
@@ -223,7 +223,7 @@ describe('ListingsService', () => {
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
       expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalled();
     });
-     
+
     it('should use default values for optional fields when not provided', async () => {
       const minimalDto: CreateListingDto = {
         title: 'Minimal Listing',
@@ -347,7 +347,7 @@ describe('ListingsService', () => {
       expect(qb.where).toHaveBeenCalledWith('listing.status = :status', {
         status: ListingStatus.APPROVED,
       });
-      
+
       expect(qb.andWhere).not.toHaveBeenCalled();
     });
   });
@@ -365,10 +365,10 @@ describe('ListingsService', () => {
       const result = await service.getMyListings(userId);
 
       expect(result).toEqual(userListings);
-      
+
       expect(mockListingRepository.find).toHaveBeenCalledWith({
         where: { seller: { id: userId } },
-        relations: ['book', 'module','module.faculty', 'seller', 'seller.university'],
+        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
       });
     });
 
@@ -398,10 +398,10 @@ describe('ListingsService', () => {
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
-     
+
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
         where: { id: validUuid },
-        relations: ['book', 'module','module.faculty', 'seller', 'seller.university'],
+        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
       });
     });
 

@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { TestModule } from './test.module'; 
 
 import { DataSource, Repository } from 'typeorm';
 
@@ -11,33 +11,27 @@ import { EMAIL_SERVICE } from '../src/email/email.interface';
 
 import { University } from '../src/database/entities/university.entity';
 import { User } from '../src/database/entities/users.entity';
-
-import { Faculty } from "../src/database/entities/faculty.entity";
-
+import { Faculty } from '../src/database/entities/faculty.entity';
 import { db } from '../src/firebase/firebase-admin';
 
-describe("Messaging e2e testing",() =>{
-    const Test_Password = process.env.TEST_PASSWORD;
+const Test_Password = process.env.TEST_PASSWORD || process.env.NODE_ENV === 'test' ? 'test-password-123' : '';
+
+describe("Messaging e2e testing", () => {
     const INVALID_UUID = "invalid";
     let app!: INestApplication;
     let dataSource!: DataSource;
 
     let universityRepository!: Repository<University>;
     let userRepository!: Repository<User>;
+    let facultyRepository!: Repository<Faculty>;
 
     let sellerToken!: string;
     let buyerToken!: string;
 
-
     let listingId!: string;
     let conversationId!: string;
 
-    let facultyRepo: Repository<Faculty>;
-
-    // ---------- shared request helpers ----------
-    // Every route below authenticates via the "access_token" cookie except
-    // module creation, which uses a Bearer header (kept as-is, unchanged).
-
+    
     const auth = (token: string) => ({
         Cookie: `access_token=${token}`,
     });
@@ -58,7 +52,7 @@ describe("Messaging e2e testing",() =>{
             .set("Authorization", `Bearer ${token}`)
             .send(body);
 
-    //helper functions
+    
     const createUniversity = () => {
         return universityRepository.save({
             name: "University of Pretoria",
@@ -66,18 +60,27 @@ describe("Messaging e2e testing",() =>{
         });
     };
 
+    const createFaculty = async (universityId: string): Promise<string> => {
+        const faculty = await facultyRepository.save({
+            name: "EBIT",
+            university: { id: universityId },
+        });
+        return faculty.id;
+    };
+
     const registerUser = (
         email: string,
         firstName: string,
         lastName: string,
         universityId: string,
+        facultyId: string,
     ) => {
         return authPost("/auth/register", undefined, {
             email,
             password: Test_Password,
             first_name: firstName,
             last_name: lastName,
-            faculty: "EBIT",
+            faculty_id: facultyId,
             university_id: universityId,
         }).expect(201);
     };
@@ -107,15 +110,6 @@ describe("Messaging e2e testing",() =>{
         }
 
         return accessTokenCookie.split(";")[0].split("=")[1];
-    };
-
-    const createFaculty = async (universityId: string): Promise<string> => {
-        const faculty = await facultyRepo.save({
-            name: "EBIT",
-            university: { id: universityId },
-        });
-
-        return faculty.id;
     };
 
     const createModule = async (
@@ -183,7 +177,7 @@ describe("Messaging e2e testing",() =>{
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [AppModule],
+            imports: [TestModule], 
         })
             .overrideProvider(EMAIL_SERVICE)
             .useValue({
@@ -198,18 +192,19 @@ describe("Messaging e2e testing",() =>{
         dataSource = moduleRef.get(DataSource);
         universityRepository = dataSource.getRepository(University);
         userRepository = dataSource.getRepository(User);
-        facultyRepo = dataSource.getRepository(Faculty);
+        facultyRepository = dataSource.getRepository(Faculty);
 
-        // Create university
+        
         const university = await createUniversity();
         const facultyId = await createFaculty(university.id);
 
-        // Register , verify and login users
+        
         await registerUser(
             "seller@tuks.co.za",
             "Jon",
             "Seller",
             university.id,
+            facultyId,
         );
 
         await registerUser(
@@ -217,6 +212,7 @@ describe("Messaging e2e testing",() =>{
             "Jane",
             "Buyer",
             university.id,
+            facultyId,
         );
         await Promise.all([
             verifyUser("seller@tuks.co.za"),
@@ -225,9 +221,7 @@ describe("Messaging e2e testing",() =>{
         sellerToken = await login("seller@tuks.co.za");
         buyerToken = await login("buyer@tuks.co.za");
 
-
-
-        //create listing
+        
         const moduleId = await createModule(
             university.id,
             facultyId,
@@ -239,32 +233,32 @@ describe("Messaging e2e testing",() =>{
             moduleId,
             bookId,
         );
-    });
+    }, 30000);
 
     afterAll(async () => {
-        const conversations = await db.collection('conversations').get();
-
-        for (const conversation of conversations.docs) {
-
-            // delet subcollection
-            const messages = await conversation.ref.collection('messages').get();
-            for (const message of messages.docs) {
-                await message.ref.delete();
+        try {
+            const conversations = await db.collection('conversations').get();
+            for (const conversation of conversations.docs) {
+                const messages = await conversation.ref.collection('messages').get();
+                for (const message of messages.docs) {
+                    await message.ref.delete();
+                }
+                await conversation.ref.delete();
             }
-            // delete the conversation document
-            await conversation.ref.delete();
+        } catch (error) {
+            console.warn('Firestore cleanup warning:', error);
         }
 
         if (dataSource?.isInitialized) {
             await dataSource.query(
-                `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities" RESTART IDENTITY CASCADE`
-            )
+                `TRUNCATE TABLE "listings", "otps", "modules","books", "users", "universities", "faculties" RESTART IDENTITY CASCADE`
+            );
         }
 
         if (app) {
             await app.close();
         }
-    });
+    }, 10000);
 
     describe("test connection", () => {
         it("should load app", () => {

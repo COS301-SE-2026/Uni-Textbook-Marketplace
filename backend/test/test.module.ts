@@ -19,6 +19,7 @@ import { OTP } from '../src/database/entities/otps.entity';
 import { AuditLog } from '../src/database/entities/audit_log.entity';
 import { Faculty } from '../src/database/entities/faculty.entity';
 import { SavedSearch } from '../src/database/entities/saved_search.entity';
+import { MessagingModule } from '../src/messaging/messaging.module';
 
 @Module({
     imports: [
@@ -51,6 +52,7 @@ import { SavedSearch } from '../src/database/entities/saved_search.entity';
         BooksModule,
         AdminModule,
         SavedSearchesModule,
+        MessagingModule,
     ],
 })
 export class TestModule {}
