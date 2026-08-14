@@ -72,12 +72,14 @@ export class AdminService {
       await auditLogRepository.save(auditLog);
 
       const event = new AdminEvent();
-      event.title = listing.
+      event.title = listing.title;
+      event.action = action;
+      event.description = reason?? "Your listing is now approved and live.";
+      event.listingId = listing.id;
+      event.studentId = userId;
+      event.name = `${admin.first_name} ${admin.last_name}`
 
-      this.eventEmitter.emit('listing.reviewed', new AdminEvent(
-        title: listing.title,
-
-      ));
+      this.eventEmitter.emit('listing.reviewed', event);
 
       return savedlisting;
     });
