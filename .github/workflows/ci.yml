@@ -156,7 +156,7 @@ jobs:
           with:
             path: ~/.cache/Cypress
             key: cypress-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-            
+
         - name: Install deps
           run: npm ci --ignore-scripts
 
@@ -187,7 +187,7 @@ jobs:
           working-directory: frontend
           run: npm run build
           env:
-            NEXT_PUBLIC_API_URL: http://localhost:3001
+            NEXT_PUBLIC_API_URL: http://localhost:3001/api
 
         - name: Start frontend
           working-directory: frontend
