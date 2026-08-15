@@ -13,7 +13,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { ListingsService } from './listings.service';
-import { AdminService } from '../admin/admin.service';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
@@ -36,7 +36,6 @@ interface RequestWithUser extends Request {
 export class ListingsController {
   constructor(
     private readonly listingsService: ListingsService,
-    private readonly adminService: AdminService,
   ) {}
 
   @Post()
