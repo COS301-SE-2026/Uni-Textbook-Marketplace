@@ -10,6 +10,6 @@ export class ListingNotificationListener {
 
     @OnEvent('listing.reviewed')
     notifyStudentOfReview(event: AdminEvent){
-        this.notificationsService.create({});
+        this.notificationsService.create(event);
     }
 }
