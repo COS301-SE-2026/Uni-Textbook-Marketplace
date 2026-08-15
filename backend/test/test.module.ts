@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { AuthModule } from '../src/auth/auth.module';
 import { ListingsModule } from '../src/listings/listings.module';
@@ -20,9 +21,12 @@ import { AuditLog } from '../src/database/entities/audit_log.entity';
 import { Faculty } from '../src/database/entities/faculty.entity';
 import { SavedSearch } from '../src/database/entities/saved_search.entity';
 import { MessagingModule } from '../src/messaging/messaging.module';
+import { Notifications } from '../src/database/entities/notifications.entity';
+import { Wishlist } from '../src/database/entities/wishlist.entity';
 
 @Module({
     imports: [
+        EventEmitterModule.forRoot(),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: '.env.test',
@@ -40,7 +44,7 @@ import { MessagingModule } from '../src/messaging/messaging.module';
                     synchronize: true,
                     dropSchema: true,
                     entities: [
-                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch
+                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,
                     ],
                     logging: false,
                 };
