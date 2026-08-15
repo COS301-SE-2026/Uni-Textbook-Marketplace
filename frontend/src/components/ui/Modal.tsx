@@ -1,4 +1,4 @@
-import Button from "./Button";
+import { Button } from "./Button";
 
 type ModalProps = Readonly<{
     isOpen: boolean;

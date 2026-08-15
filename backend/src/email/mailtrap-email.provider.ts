@@ -8,21 +8,65 @@ import { IEmailService } from './email.interface';
 export class MailtrapEmailProvider implements IEmailService {
   private readonly transporter: Transporter;
   private readonly logger = new Logger(MailtrapEmailProvider.name);
+  private readonly isTestEnvironment: boolean;
 
   constructor(private readonly config: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: this.config.getOrThrow<string>('MAIL_HOST'),
-      port: Number(this.config.getOrThrow('MAIL_PORT')),
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: this.config.getOrThrow<string>('MAILTRAP_USER'),
-        pass: this.config.getOrThrow<string>('MAILTRAP_PASS'),
-      },
-    });
+    this.isTestEnvironment = this.config.get<string>('NODE_ENV') === 'test';
+
+    if (this.isTestEnvironment) {
+      this.logger.log('Test environment detected - email sending disabled');
+      return;
+    }
+
+    const host = this.config.getOrThrow<string>('MAIL_HOST');
+    const nodeEnv = this.config.get<string>('NODE_ENV');
+
+    if (host.includes('live.smtp') && nodeEnv !== 'production') {
+      throw new Error(
+        'Refusing to start: live Mailtrap SMTP host configured outside production environment.',
+      );
+    }
+
+    if (!host) {
+      if (nodeEnv === 'test') {
+        this.logger.warn(
+          'MAIL_HOST not set in test environment - email sending disabled',
+        );
+        return;
+      }
+      throw new Error('MAIL_HOST is not configured');
+    }
+
+    try {
+      this.transporter = nodemailer.createTransport({
+        host,
+        port: Number(this.config.get<string>('MAIL_PORT') || 2525),
+        secure: false,
+        requireTLS: true,
+        auth: {
+          user: this.config.get<string>('MAILTRAP_USER') || 'test',
+          pass: this.config.get<string>('MAILTRAP_PASS') || 'test',
+        },
+      });
+    } catch (error) {
+      this.logger.error('Failed to create email transporter', error);
+      if (nodeEnv !== 'test') {
+        throw error;
+      }
+    }
   }
 
   async sendOtp(to: string, otp: string): Promise<void> {
+    if (this.isTestEnvironment || !this.transporter) {
+      this.logger.log(`[TEST MODE] Would send OTP ${otp} to ${to}`);
+      return;
+    }
+
+    const fromEmail = this.config.get<string>('MAIL_FROM');
+    if (!fromEmail) {
+      this.logger.error('MAIL_FROM is not configured');
+      throw new Error('Email sender address not configured');
+    }
     try {
       await this.transporter.sendMail({
         from: this.config.getOrThrow<string>('MAIL_FROM'),
