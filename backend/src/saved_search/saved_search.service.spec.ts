@@ -58,7 +58,7 @@ describe('SavedSearchesService - Part 1: Core Setup and Edge Cases', () => {
     annotation_level: 'light',
     price: 45.99,
     reviewer: null,
-    reviewed_at: null,
+    reviewed_at: new Date(),
     photo_urls: [],
     status: 'APPROVED' as any,
     listing_status: 'AVAILABLE' as any,
