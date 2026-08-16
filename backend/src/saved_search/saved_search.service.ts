@@ -15,7 +15,6 @@ import {
   CreateSavedSearchDto,
   GetSavedSearchesQueryDto,
   SavedSearchFiltersDto,
-  c,
 } from './dto/saved_search.dto';
 
 @Injectable()
