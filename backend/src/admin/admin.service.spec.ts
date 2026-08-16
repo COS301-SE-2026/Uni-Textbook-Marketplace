@@ -8,7 +8,6 @@ import { AuditLog } from '../database/entities/audit_log.entity';
 import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
 import { NotFoundException } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('AdminService', () => {
   let service: AdminService;
@@ -76,10 +75,6 @@ describe('AdminService', () => {
     getRepository: jest.fn(),
   };
 
-  const mockEventEmitter = {
-    emit: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -91,10 +86,6 @@ describe('AdminService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
-        },
-        {
-          provide: EventEmitter2,
-          useValue: mockEventEmitter,
         },
       ],
     }).compile();
@@ -559,11 +550,11 @@ describe('AdminService', () => {
     });
 
     it('should accept search parameter', async () => {
-      const dto = new AuditLogFiltersDto();
-      dto.search = 'test search query';
-      const errors = await validate(dto);
-      expect(errors).toHaveLength(0);
-    });
+  const dto = new AuditLogFiltersDto();
+  dto.search = 'test search query';
+  const errors = await validate(dto);
+  expect(errors).toHaveLength(0); 
+});
 
     it('should reject non-date strings for date fields', async () => {
       dto.startDate = 'not-a-date';
