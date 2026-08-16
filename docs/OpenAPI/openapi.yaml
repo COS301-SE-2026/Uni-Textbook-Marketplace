@@ -310,3 +310,101 @@ security:
           description: Report dismissed
         "403":
           $ref: "#/components/responses/Forbidden"
+
+  # (Josh): confirm the actual route/verb for the ban action once
+  # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
+  # banned_by, ban_reason set on the reported listing's seller) but not yet
+  # a confirmed endpoint path. Likely PATCH /admin/users/{id}/ban or similar.
+  /admin/users/{id}/ban:
+    patch:
+      tags: [Reports]
+      summary: >
+        Bans the user who owns the reported listing. Writes an audit_log
+        entry (action = BANNED) and triggers a ban-notice notification with
+        appeal instructions via NotificationService.emit().
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ban_reason:
+                  type: string
+      responses:
+        "200":
+          description: User banned
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
+  # the admin review + decide endpoint.
+  /cases:
+    post:
+      tags: [Cases]
+      summary: A banned user submits an appeal. Only accessible if is_banned = true.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appeal_message]
+              properties:
+                appeal_message:
+                  type: string
+      responses:
+        "201":
+          description: Appeal submitted
+        "403":
+          description: Only banned users may submit an appeal
+
+  /admin/cases:
+    get:
+      tags: [Cases]
+      summary: Returns appeal cases for admin review, paginated.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Paginated cases
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  # (Neo): confirm the actual route/verb for the decide action once
+  # committed - sprint-5.md describes "a decide endpoint" without a
+  # confirmed path yet. Likely PATCH /admin/cases/{id}/decide.
+  /admin/cases/{id}/decide:
+    patch:
+      tags: [Cases]
+      summary: >
+        Admin upholds the ban or reinstates the account. Writes audit_log,
+        triggers a case-decision notification via emit().
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [UPHOLD, REINSTATE]
+      responses:
+        "200":
+          description: Case decided
+        "403":
+          $ref: "#/components/responses/Forbidden"
