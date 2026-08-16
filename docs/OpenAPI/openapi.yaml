@@ -133,3 +133,75 @@ components:
         createdAt:
           type: string
           format: date-time
+
+    # (Josh): confirm field names against the actual reports table
+    # migration once committed.
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reporterId:
+          type: string
+          format: uuid
+        listingId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, REVIEWED]
+        createdAt:
+          type: string
+          format: date-time
+
+    # (Neo): confirm field names against the actual cases table
+    # migration once committed.
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        banId:
+          type: string
+          format: uuid
+        appealMessage:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, UPHELD, REVERSED]
+        reviewedBy:
+          type: string
+          format: uuid
+        reviewedAt:
+          type: string
+          format: date-time
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Authenticated but not permitted (wrong role, not the owner)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+security:
+  - bearerAuth: []
