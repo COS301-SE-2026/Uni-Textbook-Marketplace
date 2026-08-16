@@ -1,0 +1,40 @@
+openapi: 3.0.4
+info:
+  title: Uni Textbook Marketplace API
+  description: >
+    NexusDev - Uni Textbook Marketplace, COS 301 Software Engineering, 2026.
+    Single source of truth for the API contract. Everyone edits this file
+    directly, the same day and endpoint is committed. sas.tex's API Contracts
+    section is a readbale rendering of this file, not an independently
+    maintained copy. If the two disagree, this file is right.
+  version: "5.0.0"
+  contact:
+    name: NexusDev
+    url: https://github.com/COS301-SE-2026
+
+  servers:
+    - url: https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api
+      description: Production (main)
+    - url: https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api
+      description: Staging (develop)
+    - url: http://localhost:3001/api
+      description: Local development
+
+  tags:
+  - name: Auth
+  - name: Listings
+  - name: Admin
+  - name: Modules
+  - name: SavedSearches
+  - name: Wishlist
+  - name: Images
+  - name: Conversations
+  - name: Notifications
+    description: "Sprint 5 / UC9, UC9.1, UC9.2. Owner: Gift."
+  - name: Reports
+    description: "Sprint 5 / UC10. Owner: Josh."
+  - name: Cases
+    description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
+  - name: Profile
+    description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+
