@@ -38,3 +38,98 @@ info:
   - name: Profile
     description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        edition:
+          type: integer
+        condition:
+          type: string
+          enum: [new, good, fair, poor]
+        annotationLevel:
+          type: string
+          enum: [none, light, heavy]
+        hasNotes:
+          type: boolean
+        price:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED, RESERVED, SOLD, WITHDRAWN, SOFT_DELETED]
+        moduleId:
+          type: string
+          format: uuid
+        photoUrls:
+          type: array
+          items:
+            type: string
+        sellerId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    # (Gift): confirm this matches the final notifications table shape
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          description: >
+            Drives frontend icon, copy, and routing (see Tiego's
+            type-to-route map alongside utils/messageHelpers.ts).
+            Keep this enum in sync with every new type introduced -
+            flag additions the same day.
+          enum:
+            - LISTING_APPROVED
+            - LISTING_REJECTED
+            - LISTING_EDIT_NEEDS_REVIEW
+            - WISHLIST_STATUS_CHANGE
+            - NEW_MESSAGE
+            - SAVED_SEARCH_MATCH
+            - REPORT_RECEIVED
+            - BAN_ISSUED
+            - CASE_DECISION
+        payload:
+          type: object
+          description: Free-form JSON, shape depends on `type`.
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
