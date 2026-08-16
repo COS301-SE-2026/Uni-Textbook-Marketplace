@@ -1,3 +1,4 @@
+//admin
 export class AdminEvent {
     title: string;
     action: 'APPROVE_LISTING' | 'REJECT_LISTING';
