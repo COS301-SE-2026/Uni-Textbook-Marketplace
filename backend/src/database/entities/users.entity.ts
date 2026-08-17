@@ -13,6 +13,7 @@ import {
 import { University } from './university.entity';
 import { Listing } from './listing.entity';
 import { Faculty } from './faculty.entity';
+import { Report } from './report.entity';
 
 @Entity('users')
 export class User {
@@ -73,4 +74,7 @@ export class User {
     nullable: true,
   })
   deleted_at!: Date;
+
+  @OneToMany(() => Report, (report) => report.user)
+  reports!: Report[];
 }
