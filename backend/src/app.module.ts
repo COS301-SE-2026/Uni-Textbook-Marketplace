@@ -27,6 +27,7 @@ import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { MessagingModule } from './messaging/messaging.module';
     AzureModule,
     NotificationsModule,
     AdminModule,
-    MessagingModule
+    MessagingModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
