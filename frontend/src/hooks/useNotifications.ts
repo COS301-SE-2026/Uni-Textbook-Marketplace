@@ -55,3 +55,65 @@ interface UseNotificationsResult {
     markAllRead: () => Promise<void>;
     refresh: () => Promise<void>;
 }
+
+export function useNotifications(): UseNotificationsResult {
+
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+
+    const refresh = useCallback(async () => {
+
+        try {
+            const items = await fetchNotifications();
+            setNotifications(items);
+            setError(null);
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something wrong occurred");
+
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+
+        refresh();
+
+        const interval = setInterval(refresh, POLL_INTERVAL_MS);
+        return () => clearInterval(interval);
+    }, [refresh]);
+
+    const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+    const markRead = useCallback(
+        async (id: string) => {
+            setNotifications((prev) =>
+                prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+            );
+
+            try {
+                await markReadRequest(id);
+            } catch {
+
+                refresh();
+            }
+        },
+        [refresh]
+    );
+
+
+    const markAllRead = useCallback(async () => {
+        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+
+        try {
+            await markAllReadRequest();
+        } catch {
+            refresh();
+        }
+    }, [refresh]);
+
+    return { notifications, unreadCount, isLoading, error, markRead, markAllRead, refresh };
+}
