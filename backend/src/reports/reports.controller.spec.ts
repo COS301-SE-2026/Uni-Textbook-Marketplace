@@ -2,9 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ReportsController } from './reports.controller';
 import { ReportsService } from './reports.service';
-
-import { ReportCategory } from './enums/report-category.dto';
 import { CreateReportDto } from './dto/create-report.dto';
+import {
+    Report,
+    ReportStatus,
+} from '../database/entities/report.entity';
 
 describe('ReportsController', () => {
     let controller: ReportsController;
@@ -16,9 +18,9 @@ describe('ReportsController', () => {
 
     beforeEach(async () => {
         service = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
+            create: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
         };
 
         const module: TestingModule =
@@ -32,10 +34,7 @@ describe('ReportsController', () => {
             ],
         }).compile();
 
-        controller =
-        module.get<ReportsController>(
-            ReportsController,
-        );
+        controller = module.get<ReportsController>(ReportsController,);
     });
 
     afterEach(() => {
@@ -52,15 +51,19 @@ describe('ReportsController', () => {
 
         const dto: CreateReportDto = {
             listing_id: 'listing-123',
-            category: ReportCategory.FRAUD,
-            reason: 'This listing is fraudulent.',
+            reason:
+                'This listing is fraudulent.',
         };
 
         const expectedReport = {
             id: 'report-123',
-            ...dto,
-            user: request.user,
-        };
+            reporter: request.user,
+            listing: {
+                id: 'listing-123',
+            },
+            reason: dto.reason,
+            status: ReportStatus.PENDING,
+        } as unknown as Report;
 
         service.create.mockResolvedValue(
             expectedReport,
@@ -82,43 +85,46 @@ describe('ReportsController', () => {
 
     describe('findAll', () => {
         it('should return all reports', async () => {
-        const reports = [
-            {
-            id: 'report-1',
-            category: ReportCategory.FRAUD,
-            },
-            {
-            id: 'report-2',
-            category: ReportCategory.DUPLICATE,
-            },
-        ];
+            const reports = [
+                {
+                    id: 'report-1',
+                    reason: 'Fraudulent listing',
+                    status: ReportStatus.PENDING,
+                },
+                {
+                    id: 'report-2',
+                    reason: 'Duplicate listing',
+                    status: ReportStatus.REVIEWED,
+                },
+            ] as Report[];
 
-        service.findAll.mockResolvedValue(reports);
+            service.findAll.mockResolvedValue(reports);
 
-        const result = await controller.findAll();
+            const result = await controller.findAll();
 
-        expect(service.findAll).toHaveBeenCalled();
-        expect(result).toBe(reports);
+            expect(service.findAll).toHaveBeenCalled();
+            expect(result).toBe(reports);
         });
     });
 
     describe('findOne', () => {
         it('should return a report by ID', async () => {
-        const report = {
-            id: 'report-123',
-            category: ReportCategory.MISLEADING,
-        };
+            const report = {
+                id: 'report-123',
+                reason: 'Misleading listing',
+                status: ReportStatus.PENDING,
+            } as Report;
 
-        service.findOne.mockResolvedValue(report);
+            service.findOne.mockResolvedValue(report);
 
-        const result =
-            await controller.findOne('report-123');
+            const result =
+                await controller.findOne('report-123');
 
-        expect(service.findOne).toHaveBeenCalledWith(
-            'report-123',
-        );
+            expect(service.findOne).toHaveBeenCalledWith(
+                'report-123',
+            );
 
-        expect(result).toBe(report);
+            expect(result).toBe(report);
         });
     });
 });

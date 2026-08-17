@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Report } from '../database/entities/report.entity';
+import { ReportStatus } from '../database/entities/report.entity';
 import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 
@@ -50,10 +51,10 @@ export class ReportsService {
         }
 
         const report = this.reportsRepository.create({
-        user,
-        listing,
-        category: createReportDto.category,
-        reason: createReportDto.reason,
+            reporter: user,
+            listing,
+            reason: createReportDto.reason,
+            status: ReportStatus.PENDING,
         });
 
         return this.reportsRepository.save(report);
@@ -62,7 +63,7 @@ export class ReportsService {
     async findAll(): Promise<Report[]> {
         return this.reportsRepository.find({
         relations: {
-            user: true,
+            reporter: true,
             listing: true,
         },
         order: {
@@ -77,7 +78,7 @@ export class ReportsService {
             id,
         },
         relations: {
-            user: true,
+            reporter: true,
             listing: true,
         },
         });

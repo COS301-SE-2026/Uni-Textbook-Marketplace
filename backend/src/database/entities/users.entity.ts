@@ -75,6 +75,6 @@ export class User {
   })
   deleted_at!: Date;
 
-  @OneToMany(() => Report, (report) => report.user)
+  @OneToMany(() => Report, (report) => report.reporter)
   reports!: Report[];
 }

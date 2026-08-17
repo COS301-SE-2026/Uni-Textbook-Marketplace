@@ -9,7 +9,11 @@ import {
 
 import { User } from './users.entity';
 import { Listing } from './listing.entity';
-import { ReportCategory } from '../../reports/enums/report-category.dto';
+
+export enum ReportStatus {
+    PENDING = 'PENDING',
+    REVIEWED = 'REVIEWED',
+}
 
 @Entity('reports')
 export class Report {
@@ -20,8 +24,8 @@ export class Report {
         nullable: false,
         onDelete: 'CASCADE',
     })
-    @JoinColumn({ name: 'user_id' })
-    user!: User;
+    @JoinColumn({ name: 'reporter_id' })
+    reporter!: User;
 
     @ManyToOne(() => Listing, {
         nullable: false,
@@ -31,15 +35,16 @@ export class Report {
     listing!: Listing;
 
     @Column({
-        type: 'enum',
-        enum: ReportCategory,
-    })
-    category!: ReportCategory;
-
-    @Column({
         type: 'text',
     })
     reason!: string;
+
+    @Column({
+        type: 'enum',
+        enum: ReportStatus,
+        default: ReportStatus.PENDING,
+    })
+    status!: ReportStatus;
 
     @CreateDateColumn({
         type: 'timestamptz',
