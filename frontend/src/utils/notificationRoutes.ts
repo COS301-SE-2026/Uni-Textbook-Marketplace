@@ -5,8 +5,8 @@ import type { Notification } from "@/types/notification";
 
 
 const ENTITY_TYPE_ICON: Record<string, LucideIcon> = {
-    APPROVED: CheckCircle2,
-    REJECTED: XCircle,
+    APPROVED_LISTING: CheckCircle2,
+    REJECTED_LISTING: XCircle,
 };
 
 
