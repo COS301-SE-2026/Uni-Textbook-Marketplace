@@ -74,10 +74,10 @@ export class AdminService {
       const event = new AdminEvent();
       event.title = listing.title;
       event.action = action;
-      event.description = reason?? "Your listing is now approved and live.";
+      event.description = reason ?? 'Your listing is now approved and live.';
       event.listingId = listing.id;
       event.studentId = userId;
-      event.name = `${admin.first_name} ${admin.last_name}`
+      event.name = `${admin.first_name} ${admin.last_name}`;
 
       this.eventEmitter.emit('listing.reviewed', event);
 

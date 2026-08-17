@@ -40,7 +40,7 @@ export class ListingsService {
     private readonly savedSearchesService: SavedSearchesService,
 
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
@@ -226,7 +226,6 @@ export class ListingsService {
   }
 
   async editlisting(dto: EditListingDto) {
-
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
       relations: ['reviewer', 'seller', 'book', 'module'],
@@ -236,12 +235,11 @@ export class ListingsService {
 
     if (!listing) throw new NotFoundException('listing not found');
 
-    if (listing.status === 'REJECTED') {
-
+    if (listing.status === ListingStatus.REJECTED) {
       const event = new EditEvent();
 
       event.adminId = listing.reviewer.id;
-      event.entityType = "Edited listing";
+      event.entityType = 'Edited listing';
       event.listingId = listing.id;
       event.studentId = listing.seller.id;
 
@@ -267,7 +265,6 @@ export class ListingsService {
       listing.status = ListingStatus.PENDING;
       this.eventEmitter.emit('listing.edit', event);
     }
-
 
     Object.assign(listing, dto);
 

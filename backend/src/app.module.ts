@@ -70,7 +70,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AzureModule,
     NotificationsModule,
     AdminModule,
-    MessagingModule
+    MessagingModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
