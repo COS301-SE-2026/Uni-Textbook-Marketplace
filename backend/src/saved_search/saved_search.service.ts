@@ -222,7 +222,6 @@ export class SavedSearchesService {
       return false;
     }
 
-    
     if (isProvided(filter.condition)) {
       if (!listing.condition) {
         return false;
