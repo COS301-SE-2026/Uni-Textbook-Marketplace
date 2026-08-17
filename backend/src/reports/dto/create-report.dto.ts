@@ -1,11 +1,21 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+
+import { ReportCategory } from '../enums/report-category.dto';
 
 export class CreateReportDto {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
-    listingId: string;
+    listing_id!: string;
+
+    @IsEnum(ReportCategory)
+    category!: ReportCategory;
 
     @IsString()
     @IsNotEmpty()
-    reason: string;
+    reason!: string;
 }
