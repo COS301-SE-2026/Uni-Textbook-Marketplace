@@ -572,4 +572,176 @@ describe('Initial Tests', () => {
       expect(result).toBe(false);
     });
   })
+
+ 
+  describe('findMatchingSavedSearches', () => {
+    it('should return empty array when no saved searches exist', async () => {
+      listingRepository.findOne.mockResolvedValue(mockListing);
+      savedSearchRepository.find.mockResolvedValue([]);
+
+      const result = await service.findMatchingSavedSearches('listing-1');
+      
+      expect(result).toEqual([]);
+      expect(savedSearchRepository.find).toHaveBeenCalled();
+    });
+
+    it('should return empty array when no searches match', async () => {
+      listingRepository.findOne.mockResolvedValue(mockListing);
+      
+      const nonMatchingSearch: SavedSearch = {
+        ...mockSavedSearch,
+        filter_json: { moduleCode: 'CS102' } as any,
+      };
+      savedSearchRepository.find.mockResolvedValue([nonMatchingSearch]);
+
+      const result = await service.findMatchingSavedSearches('listing-1');
+      
+      expect(result).toEqual([]);
+    });
+
+    it('should return matching saved searches', async () => {
+      listingRepository.findOne.mockResolvedValue(mockListing);
+      
+      const matchingSearch: SavedSearch = {
+        ...mockSavedSearch,
+        filter_json: { moduleCode: 'CS101', condition: 'good' } as any,
+      };
+      savedSearchRepository.find.mockResolvedValue([matchingSearch]);
+
+      const result = await service.findMatchingSavedSearches('listing-1');
+      
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({
+        userId: 'user-1',
+        savedSearchId: 'search-1',
+        filter: { moduleCode: 'CS101', condition: 'good' },
+      });
+    });
+
+    it('should return multiple matching saved searches', async () => {
+      listingRepository.findOne.mockResolvedValue(mockListing);
+      
+      const search1: SavedSearch = {
+        ...mockSavedSearch,
+        id: 'search-1',
+        filter_json: { moduleCode: 'CS101' } as any,
+      };
+      const search2: SavedSearch = {
+        ...mockSavedSearch,
+        id: 'search-2',
+        user_id: 'user-2',
+        filter_json: { priceMin: '30', priceMax: '50' } as any,
+      };
+      const search3: SavedSearch = {
+        ...mockSavedSearch,
+        id: 'search-3',
+        user_id: 'user-3',
+        filter_json: { condition: 'new' } as any,
+      };
+      
+      savedSearchRepository.find.mockResolvedValue([search1, search2, search3]);
+
+      const result = await service.findMatchingSavedSearches('listing-1');
+      
+      expect(result).toHaveLength(2);
+      expect(result.map(r => r.savedSearchId)).toEqual(['search-1', 'search-2']);
+    });
+
+    it('should throw NotFoundException when listing not found', async () => {
+      listingRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findMatchingSavedSearches('invalid-id'))
+        .rejects
+        .toThrow(NotFoundException);
+    });
+  });
+
+  describe('Integration Scenarios', () => {
+    it('should handle complex multi-filter scenarios', () => {
+      const complexFilter: SavedSearchFiltersDto = {
+        moduleCode: 'CS101',
+        condition: 'good',
+        annotationLevel: 'light',
+        priceMin: '30',
+        priceMax: '50',
+        book_title: 'Clean',
+        author: 'Martin',
+        faculty: 'Computer',
+        search: 'Clean Code',
+      };
+      
+      const result = service.matchesFilter(mockListing, complexFilter);
+      expect(result).toBe(true);
+    });
+
+    it('should reject when one filter fails', () => {
+      const complexFilter: SavedSearchFiltersDto = {
+        moduleCode: 'CS101',
+        condition: 'good',
+        annotationLevel: 'light',
+        priceMin: '30',
+        priceMax: '40',
+        book_title: 'Clean',
+        author: 'Martin',
+      };
+      
+      const result = service.matchesFilter(mockListing, complexFilter);
+      expect(result).toBe(false);
+    });
+
+    it('should handle price as string with decimal values', () => {
+      const listingWithDecimal = createTestListing({ price: 45.99 });
+      
+      const filter: SavedSearchFiltersDto = {
+        priceMin: '45.50',
+        priceMax: '46.00',
+      };
+      
+      const result = service.matchesFilter(listingWithDecimal, filter);
+      expect(result).toBe(true);
+    });
+
+    it('should handle case-insensitive text matching', () => {
+      const filter: SavedSearchFiltersDto = {
+        book_title: 'clean code',
+        author: 'robert c. martin',
+        faculty: 'computer science',
+        search: 'clean code textbook',
+      };
+      
+      const result = service.matchesFilter(mockListing, filter);
+      expect(result).toBe(true);
+    });
+
+    it('should match when search finds text across multiple fields', () => {
+      const filter: SavedSearchFiltersDto = {
+        search: 'Clean Code Textbook Introduction CS101',
+      };
+      
+      const result = service.matchesFilter(mockListing, filter);
+      expect(result).toBe(true);
+    });
+
+    it('should handle all filters together', () => {
+      const allFilters: SavedSearchFiltersDto = {
+        moduleCode: 'CS101',
+        modules: ['CS101', 'CS102'],
+        faculty: 'Computer Science',
+        book_title: 'Clean Code',
+        author: 'Robert C. Martin',
+        isbn: '978-0132350884',
+        edition: '1',
+        priceMin: '30',
+        priceMax: '50',
+        condition: 'good',
+        annotationLevel: 'light',
+        search: 'Clean',
+        university_id: 'univ-1',
+        faculty_id: 'fac-1',
+      };
+      
+      const result = service.matchesFilter(mockListing, allFilters);
+      expect(result).toBe(true);
+    });
+  });
 });
