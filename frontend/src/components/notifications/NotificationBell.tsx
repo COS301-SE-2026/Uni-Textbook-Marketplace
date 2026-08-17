@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 
 export function NotificationBell() {
@@ -54,7 +55,16 @@ export function NotificationBell() {
                 )}
             </button>
 
+            {isOpen && (
+                <NotificationDropdown notifications={notifications}
+                            isLoading={isLoading}
+                            onMarkRead={markRead}
+                            onMarkAllRead={markAllRead}
+                            onNavigate={() => setIsOpen(false)}
+                />
+            )}
+
             
         </div>
-    )
+    );
 }
