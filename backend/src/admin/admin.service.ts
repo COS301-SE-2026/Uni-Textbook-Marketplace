@@ -1,16 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager, Between, ILike, FindOptionsWhere } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import {
+  EntityManager,
+  Between,
+  ILike,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { User } from '../database/entities/users.entity';
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { AuditLog } from '../database/entities/audit_log.entity';
-import { AuditLogFiltersDto } from '../audit/dto/audit-log-filters.dto';
+import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AdminEvent } from './events/admin.event';
 
 @Injectable()
 export class AdminService {
   constructor(
     @InjectEntityManager()
     private entityManager: EntityManager,
+
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private async updateListingStatus(
@@ -18,13 +31,13 @@ export class AdminService {
     userId: string,
     status: ListingStatus,
     action: 'APPROVE_LISTING' | 'REJECT_LISTING',
+    reason?: string,
   ) {
     return await this.entityManager.transaction(async (manager) => {
       const listingRepository = manager.getRepository(Listing);
       const auditLogRepository = manager.getRepository(AuditLog);
       const userRepository = manager.getRepository(User);
 
-      // Get the admin user
       const admin = await userRepository.findOne({
         where: { id: userId },
       });
@@ -41,27 +54,34 @@ export class AdminService {
         throw new NotFoundException(`Listing with ID ${id} not found`);
       }
 
-      // Update listing status
       listing.status = status;
       listing.reviewer = admin;
       listing.reviewed_at = new Date();
 
-      await listingRepository.save(listing);
+      const savedlisting = await listingRepository.save(listing);
 
-      // Create audit log
-      const actionVerb =
-        status === ListingStatus.APPROVED ? 'approved' : 'rejected';
       const auditLog = auditLogRepository.create({
         entity_type: 'listing',
         entity_id: listing.id,
         action: action,
         performedBy: admin,
-        notes: `Listing "${listing.title}" ${actionVerb} by ${admin.email}`,
+        notes: listing.title,
+        reason: reason,
       });
 
       await auditLogRepository.save(auditLog);
 
-      return listing;
+      const event = new AdminEvent();
+      event.title = listing.title;
+      event.action = action;
+      event.description = reason?? "Your listing is now approved and live.";
+      event.listingId = listing.id;
+      event.studentId = userId;
+      event.name = `${admin.first_name} ${admin.last_name}`
+
+      this.eventEmitter.emit('listing.reviewed', event);
+
+      return savedlisting;
     });
   }
 
@@ -74,46 +94,14 @@ export class AdminService {
     );
   }
 
-  async rejectListing(id: string, userId: string) {
+  async rejectListing(id: string, userId: string, reason: string) {
     return this.updateListingStatus(
       id,
       userId,
       ListingStatus.REJECTED,
       'REJECT_LISTING',
+      reason,
     );
-  }
-
-  // ... rest of the methods remain the same
-  async getPendingListings() {
-    const listingRepository = this.entityManager.getRepository(Listing);
-    return await listingRepository.find({
-      where: { status: ListingStatus.PENDING },
-      relations: ['seller', 'book', 'module'],
-      order: { created_at: 'ASC' },
-    });
-  }
-
-  async getListingById(id: string) {
-    const listingRepository = this.entityManager.getRepository(Listing);
-    const listing = await listingRepository.findOne({
-      where: { id },
-      relations: ['seller', 'book', 'module', 'reviewer'],
-    });
-
-    if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
-    }
-
-    return listing;
-  }
-
-  async getListingsByStatus(status: ListingStatus) {
-    const listingRepository = this.entityManager.getRepository(Listing);
-    return await listingRepository.find({
-      where: { status },
-      relations: ['seller', 'book', 'module'],
-      order: { created_at: 'DESC' },
-    });
   }
 
   async getAuditLog(filters: AuditLogFiltersDto) {
@@ -170,62 +158,14 @@ export class AdminService {
     };
   }
 
-  async logAction(data: {
-    userId: string;
-    action: string;
-    entityType: string;
-    entityId: string;
-    notes?: string;
-  }) {
-    const auditLogRepository = this.entityManager.getRepository(AuditLog);
-    const log = auditLogRepository.create({
-      performedBy: { id: data.userId },
-      action: data.action,
-      entity_type: data.entityType,
-      entity_id: data.entityId,
-      notes: data.notes,
-    });
-    return await auditLogRepository.save(log);
-  }
-
-  async getAuditLogStats() {
-    const auditLogRepository = this.entityManager.getRepository(AuditLog);
-
-    const totalLogs = await auditLogRepository.count();
-
-    const actionStats = await auditLogRepository
-      .createQueryBuilder('audit_log')
-      .select('audit_log.action', 'action')
-      .addSelect('COUNT(*)', 'count')
-      .groupBy('audit_log.action')
-      .getRawMany();
-
-    const dailyStats = await auditLogRepository
-      .createQueryBuilder('audit_log')
-      .select('DATE(audit_log.performed_at)', 'date')
-      .addSelect('COUNT(*)', 'count')
-      .groupBy('DATE(audit_log.performed_at)')
-      .orderBy('date', 'DESC')
-      .limit(30)
-      .getRawMany();
-
-    return {
-      totalLogs,
-      actionStats,
-      dailyStats,
-    };
-  }
-
-  async getAuditLogByEntity(entityType: string, entityId: string) {
-    const auditLogRepository = this.entityManager.getRepository(AuditLog);
-    return await auditLogRepository.find({
-      where: {
-        entity_type: entityType,
-        entity_id: entityId,
+  async getusersAdmin() {
+    return await this.usersRepository.find({
+      select: {
+        id: true,
+        email: true,
       },
-      relations: ['performedBy'],
-      order: {
-        performed_at: 'DESC',
+      where: {
+        role: 'admin',
       },
     });
   }

@@ -20,14 +20,18 @@ import { AuditLog } from './database/entities/audit_log.entity';
 import { BooksModule } from './books/books.module';
 import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
+import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -50,6 +54,7 @@ import { NotificationsModule } from './notifications/notifications.module';
           AuditLog,
           Faculty,
           Wishlist,
+          Notifications,
           SavedSearch,
         ],
         migrations: ['dist/database/migrations/*.js'],
@@ -65,6 +70,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     AzureModule,
     NotificationsModule,
     AdminModule,
+    MessagingModule
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

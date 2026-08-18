@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import ListingForm, { ListingFormData } from "./listingForm";
 import AccordionSection from "@/components/ui/AccordionSection"
 import { getMyListings, uploadImages, editListing, type EditListingData } from "@/lib/listings.api";
-import { Button } from "../ui";
+import { Button, Modal } from "../ui";
 import  Fields  from "@/components/ui/Fields"
+import Image from "next/image";
+import { useRouter } from 'next/navigation'
 
 
 const SECTIONS = [
@@ -24,6 +26,7 @@ type ListingFormEditProps = {
 
 export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
+    const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -31,6 +34,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
+    const [success, setSuccess] = useState(false);
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -56,9 +60,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     photo_urls: string[];
                     description?: string;
                     book: { id: string; isbn?: string; title: string; author?: string; edition?: number; publisher?: string };
-                    module?: { id: string; code: string; name: string; semester: number; faculty?: string };
+                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name : string} };
                 };
-
 
                 if (!cancelled) {
 
@@ -72,7 +75,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
                         code: data.module?.code ?? "",
                         name: data.module?.name ?? "",
-                        faculty: data.module?.faculty ?? "",
+                        faculty: data.module?.faculty?.name ?? "",
                         semester: data.module?.semester.toString() ?? "",
 
                         listingTitle:data.title ?? "",
@@ -178,6 +181,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
             }
 
             await editListing(diff);
+            setSuccess(true);
+
         } catch (err) {
             console.error('failed to edit',err);
         } finally {
@@ -194,7 +199,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 <AccordionSection
                     key={key}
                     title={title}
-                    isOpen={openSections[key]}
+                    isOpen={!success && openSections[key]}
                     OnToggle={() => toggleSection(key)}
                 >
                     {key === "bookDetails" && form && (
@@ -227,7 +232,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {existingImageUrls.map((url, index) => (
                                     <div key={url} className="relative group">
-                                        <img src={url} alt="listing" className="w-full h-32 object-cover rounded" />
+                                        <Image src={url} alt="listing" className="w-full h-32 object-cover rounded" />
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveExistingImage(index)}
@@ -273,6 +278,19 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     {saving ? "Saving..." : "Save changes"}
                 </Button>
             </div>
+
+            <Modal
+                isOpen={success}
+                title="Updated Successfully!!"
+                onClose={() => {
+                    setSuccess(false);
+                    router.push('/listings/mine');
+                }}
+            >
+                <p>
+                    Your Listing has been successfully edited
+                </p>
+            </Modal>
         </form>
     )
 }

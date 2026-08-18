@@ -282,18 +282,13 @@ export class SavedSearchesService {
     return true;
   }
   // Find all users with saved searches that match a new listing
-  async findMatchingSavedSearches(listingId: string): Promise<
+  async findMatchingSavedSearches(listing: Listing): Promise<
     Array<{
       userId: string;
       savedSearchId: string;
       filter: SavedSearchFiltersDto;
     }>
   > {
-    const listing = await this.listingRepository.findOne({
-      where: { id: listingId },
-      relations: ['book', 'module', 'module.university', 'module.faculty'],
-    });
-
     if (!listing) {
       throw new NotFoundException('Listing not found');
     }

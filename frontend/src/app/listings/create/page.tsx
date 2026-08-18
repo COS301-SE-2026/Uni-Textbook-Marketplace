@@ -44,7 +44,7 @@ function validateListingDetails(form: ListingFormData): FormErrors {
     const errors: FormErrors = {}
     if (!form.condition)       errors.condition       = 'Condition is required'
     if (!form.annotationLevel) errors.annotationLevel = 'Annotation level is required'
-
+    if (!form.listingTitle) errors.listingTitle = 'Listing title is required'
     if (!form.price.trim()) {
         errors.price = 'Price is required'
     } else if (!PRICE_REGEX.test(form.price) || Number(form.price) <= 0) {

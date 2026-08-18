@@ -63,27 +63,6 @@ export class ListingsController {
     return this.listingsService.getListingById(id);
   }
 
-  @Get('admin/pending')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  getPending() {
-    return this.adminService.getPendingListings();
-  }
-
-  @Patch('admin/:id/approve')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  approve(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.adminService.approveListing(id, req.user.id);
-  }
-
-  @Patch('admin/:id/reject')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  reject(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.adminService.rejectListing(id, req.user.id);
-  }
-
   //for student to edit listings
   @Patch('editlist')
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -36,7 +36,7 @@ export class ListingsService {
 
     @Inject(forwardRef(() => SavedSearchesService))
     private savedSearchesService: SavedSearchesService,
-  ) {}
+  ) { }
 
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
@@ -69,7 +69,7 @@ export class ListingsService {
 
     const savedListing = await this.listingRepo.save(listing);
 
-    this.checkSavedSearchMatches(savedListing.id).catch((error: unknown) => {
+    this.checkSavedSearchMatches(savedListing).catch((error: unknown) => {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error('Error checking saved search matches:', errorMessage);
@@ -78,28 +78,28 @@ export class ListingsService {
     return savedListing;
   }
 
-  private async checkSavedSearchMatches(listingId: string): Promise<void> {
+  private async checkSavedSearchMatches(listing: Listing): Promise<void> {
     try {
       const matches =
-        await this.savedSearchesService.findMatchingSavedSearches(listingId);
+        await this.savedSearchesService.findMatchingSavedSearches(listing);
 
       if (matches.length === 0) {
-        console.log(`No saved search matches found for listing ${listingId}`);
+        console.log(`No saved search matches found for listing ${listing.id}`);
         return;
       }
       console.log(
-        `Found ${matches.length} saved search matches for listing ${listingId}`,
+        `Found ${matches.length} saved search matches for listing ${listing.id}`,
       );
 
       for (const match of matches) {
         console.log(
-          `User ${match.userId} has a saved search match for listing ${listingId}`,
+          `User ${match.userId} has a saved search match for listing ${listing.id}`,
         );
         // i'll uncomment this when the notification service is ready:
         // await this.notificationService.createNotification({
         //   userId: match.userId,
         //   type: 'NEW_MATCH',
-        //   listingId: listingId,
+        //   listingId: listing.id,
         //   message: `New listing matches your saved search`,
         // });
       }
@@ -107,7 +107,7 @@ export class ListingsService {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       console.error(
-        `Error checking saved search matches for listing ${listingId}:`,
+        `Error checking saved search matches for listing ${listing.id}:`,
         errorMessage,
       );
     }
@@ -143,9 +143,10 @@ export class ListingsService {
       });
     }
     if (query?.faculty) {
-      qb.andWhere('module.faculty ILIKE :faculty', {
-        faculty: `%${query.faculty}%`,
-      });
+      qb.leftJoin('module.faculty', 'faculty').andWhere(
+        'faculty.name ILIKE :faculty',
+        { faculty: `%${query.faculty}%` },
+      );
     }
     if (query?.condition) {
       qb.andWhere('listing.condition = :condition', {
@@ -182,7 +183,13 @@ export class ListingsService {
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module', 'seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
   }
 
@@ -194,52 +201,18 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller', 'seller.university'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
 
     return listing;
-  }
-
-  //awaiting approval
-  async getPendingListings() {
-    return this.listingRepo.find({
-      where: { status: ListingStatus.PENDING },
-      relations: ['book', 'seller'],
-    });
-  }
-
-  //ensure admin only access
-  async approveListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
-    }
-
-    const reviewer = new User();
-    reviewer.id = adminId;
-
-    listing.status = ListingStatus.APPROVED;
-    listing.reviewer = reviewer;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
-  }
-
-  //ensure admin only access
-  async rejectListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    const reviewer = new User();
-    reviewer.id = adminId;
-
-    listing.status = ListingStatus.REJECTED;
-    listing.reviewer = reviewer;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
   }
 
   private isValidUUID(uuid: string): boolean {

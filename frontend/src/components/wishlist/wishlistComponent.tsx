@@ -21,6 +21,19 @@ export default function WishlistComponent() {
     const [loading, setLoading] = useState(true)
     const [listings, setListings] = useState<Listing[]>([])
     const [listactiveTab, setlistactiveTab] = useState<Tab>('ALL')
+    const [wishlistVersion, setWishlistVersion] = useState(0);
+
+    useEffect(() => {
+        const handleWishlistChanged = () => {
+            setWishlistVersion(prev => prev + 1)
+        }
+
+        window.addEventListener('wishlist:changed', handleWishlistChanged)
+
+        return () => {
+            window.removeEventListener('wishlist:changed', handleWishlistChanged)
+        }
+    }, [])
 
     useEffect(() => {
 
@@ -29,7 +42,6 @@ export default function WishlistComponent() {
 
             try {
                 const data = await api.get<Listing[]>('/wishlist/mywishlist')
-                console.log(data);
                 console.log(Array.isArray(data));
 
                 setListings(data)
@@ -41,7 +53,7 @@ export default function WishlistComponent() {
             }
         }
         fetchMywishlist()
-    }, [])
+    }, [wishlistVersion]);
 
     const safelisting = Array.isArray(listings) ? listings : [];
     const filters = listactiveTab == 'ALL' ? safelisting : safelisting.filter(lis => lis.listing_status === listactiveTab)
@@ -67,6 +79,7 @@ export default function WishlistComponent() {
             <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
                 {LISTTABS.map(tab => (
                     <button
+                        type="button"
                         key={tab.value}
                         onClick={() => setlistactiveTab(tab.value)}
                         className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${listactiveTab === tab.value
@@ -127,7 +140,7 @@ export default function WishlistComponent() {
                     </p>
                     {listactiveTab === 'ALL' && (
                         <Link href="/listings">
-                            <button className="btn-primary mt-4">
+                            <button className="btn-primary mt-4" type="button">
                                 Browse our listings to find your favourite listing
                             </button>
                         </Link>
@@ -139,7 +152,7 @@ export default function WishlistComponent() {
                     {filters.map(listing => (
                         <div key={listing.id} className="relative group">
 
-                            <ListingCard listing={listing} showStatus={false} isLiked={true}/>
+                            <ListingCard listing={listing} showStatus={false} isLiked={true} />
 
                         </div>
                     ))}

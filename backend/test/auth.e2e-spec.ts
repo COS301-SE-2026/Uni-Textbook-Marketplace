@@ -1,6 +1,6 @@
 import { Test } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import { AppModule } from "../src/app.module";
+import { TestModule } from "./test.module";;
 import { DataSource, Repository } from "typeorm";
 import request from "supertest";
 
@@ -8,7 +8,7 @@ import { University } from "../src/database/entities/university.entity";
 import { User } from "../src/database/entities/users.entity";
 import { EMAIL_SERVICE } from "../src/email/email.interface";
 
-const Test_Password = process.env.TEST_PASSWORD;
+const Test_Password = process.env.TEST_PASSWORD || process.env.NODE_ENV === 'test' ? 'test-password-123' : '';
 
 
 describe('Auth (e2e) test', () => {
@@ -50,7 +50,7 @@ describe('Auth (e2e) test', () => {
     beforeAll(async () => {
 
         const moduleRef = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [TestModule]
         })
             .overrideProvider(EMAIL_SERVICE)
             .useValue({

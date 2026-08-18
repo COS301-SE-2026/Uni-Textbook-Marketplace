@@ -16,7 +16,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword']
+const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword', '/help', '/brand']
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some(route => route === '/' ? pathname === '/' : pathname.startsWith(route));
@@ -35,16 +35,19 @@ function getStoredUser(): AuthUser | null {
 }
 
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
 
-  const [isLoading, setIsLoading] = useState(() => {
-    return getStoredUser() === null;
-  });
+  const initialUser = getStoredUser();
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [isLoading, setIsLoading] = useState(initialUser === null);
+
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (user) return;
+
+    if (user) {
+      return;
+    }
 
     getMe()
       .then((me) => {

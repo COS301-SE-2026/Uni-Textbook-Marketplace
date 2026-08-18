@@ -11,7 +11,7 @@ services:
       - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema:/docker-entrypoint-initdb.d
+      - ./backend/database/schema:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s
@@ -36,8 +36,16 @@ services:
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
       MAILTRAP_USER: ${MAILTRAP_USER}
       MAILTRAP_PASS: ${MAILTRAP_PASS}
+      MAIL_FROM: ${MAILTRAP_FROM}
+      AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
+      AZURE_STORAGE_SAS_TOKEN: ${AZURE_STORAGE_SAS_TOKEN}
+      AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME}
+      FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY}
 
   frontend:
     image: node:20
