@@ -1,15 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ReportsController } from './reports.controller';
-import { ReportsService } from './reports.service';
-import { CreateReportDto } from './dto/create-report.dto';
+import { ReportsController } from '../reports/reports.controller';
+import { ReportsService } from '../reports/reports.service';
+import { CreateReportDto } from '../reports/dto/create-report.dto';
+import { AdminController } from './admin.controller';
 import {
     Report,
     ReportStatus,
 } from '../database/entities/report.entity';
 
-describe('ReportsController', () => {
+describe('Reports and admin controllers', () => {
     let controller: ReportsController;
+    let admin: AdminController;
     let service: {
         create: jest.Mock;
         findAll: jest.Mock;
@@ -25,7 +27,7 @@ describe('ReportsController', () => {
 
         const module: TestingModule =
         await Test.createTestingModule({
-            controllers: [ReportsController],
+            controllers: [ReportsController, AdminController],
             providers: [
             {
                 provide: ReportsService,
@@ -35,6 +37,7 @@ describe('ReportsController', () => {
         }).compile();
 
         controller = module.get<ReportsController>(ReportsController,);
+        admin = module.get<AdminController>(AdminController,);
     });
 
     afterEach(() => {
@@ -100,7 +103,7 @@ describe('ReportsController', () => {
 
             service.findAll.mockResolvedValue(reports);
 
-            const result = await controller.findAll();
+            const result = await admin.findAll();
 
             expect(service.findAll).toHaveBeenCalled();
             expect(result).toBe(reports);
@@ -118,7 +121,7 @@ describe('ReportsController', () => {
             service.findOne.mockResolvedValue(report);
 
             const result =
-                await controller.findOne('report-123');
+                await admin.findOne('report-123');
 
             expect(service.findOne).toHaveBeenCalledWith(
                 'report-123',
@@ -128,3 +131,5 @@ describe('ReportsController', () => {
         });
     });
 });
+
+

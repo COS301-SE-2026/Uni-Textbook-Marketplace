@@ -31,15 +31,5 @@ export class ReportsController {
         );
     }
 
-    @Get()
-    async findAll() {
-        return this.reportsService.findAll();
-    }
-
-    @Get(':id')
-    async findOne(
-        @Param('id') id: string,
-    ) {
-        return this.reportsService.findOne(id);
-    }
+    //moved the GETter and GET ID to admin
 }
