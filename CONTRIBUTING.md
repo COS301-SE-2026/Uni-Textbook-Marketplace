@@ -138,6 +138,18 @@ This isn't optional boilerplate, it prevents a real, easy-to-hit Next.js hydrati
 
 The `e2e` job in `.github/workflows/ci.yml` runs automatically on every push and PR to `main`/`devlop`. It spins up a fresh, disposable Postgres database, ruuns migrations and seeds, starts a real backend  and a real production build of the frontend, then runs the full Cypress suite against them. On failure, screenshots are uploaded as workflow artifact, check the failed run's Actions tab and download `cypress-screenshots` to see exactly what was on screen when a test failed.
 
+## OpenAPI
+
+OpenAPI is a standard, structured format for describing an API: which endpoints exist, what HTTP method each uses, what request body and query parameters they expect, and what the response looks like for each possible status code.
+
+Everytime you have an endpoint, please document in `docs/OpenAPI/openapi.yaml`. This doc must be treated as the true source. You document here first, and then you edit the API Contracts in the SAS LaTeX doc.
+
+After you document in the `docs/OpenAPI/openapi.yaml`, run:
+```bash
+npx @redocly/cli lint docs/OpenAPI/openapi.yaml
+```
+It checks if everything was documented correctly 
+
 ## COS 301 Specific Rules
 
 - Use **system Git via command line only** - no GitHub Desktop, GitKraken etc.
