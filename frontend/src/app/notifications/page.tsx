@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCheck, Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
-import { getNotificationIcon } from "@/utils/notificationRoutes";
+import { getNotificationIcon, getNotificationRoute } from "@/utils/notificationRoutes";
 
 const PAGE_SIZE = 15;
 
@@ -77,6 +77,70 @@ export default function NotificationsPage() {
                     </p>
                 )}
 
+                {!isLoading && !error && visible.length > 0 && (
+                    <ul>
+                        
+                        {visible.map((notification) => {
+                            const Icon = getNotificationIcon(notification.entity_type);
+                            const href = getNotificationRoute(notification);
+
+
+                            return (
+                                <li key={notification.id}
+                                    className="border-b border-[var(--card-border)] last:border-b-0"
+                                >
+                                    <Link href={href}
+                                        onClick={() => {
+                                            if(!notification.is_read) markRead(notification.id);
+                                        }}
+
+                                        className={`flex items-start gap-4 px-6 py-4 transition-colors hover:bg-[#F5F5F5] dark:hover:bg-gray-800 ${
+                                            notification.is_read ? "" : "bg-[#00B4D8] / [0.06]"
+                                            
+                                        }`}
+                                    >
+
+                                        <Icon
+                                            className="mt-0.5 h-5 w-5 shrink-0 text-[#00B4D8]"
+                                            aria-hidden="true"
+                                            />
+                                            <span className="flex-1">
+
+                                            <span className="block text-sm text-[var(--foreground)]">
+                                                {notification.message_info}
+                                            </span>
+                                            <span className="mt-1 block text-xs text-[#4B4F58] dark:text-gray-400">
+                                                {timeAgo(notification.created_at)}
+                                            </span>
+
+                                            </span>
+                                            {!notification.is_read && (
+                                            <span
+                                                className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#00B4D8]"
+                                                aria-hidden="true"
+                                            />
+
+                                            )}
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+
             </div>
-        </div>
-    )}
+            {hasMore && (
+                <div className="mt-6 flex justify-center">
+                <button
+                    type="button"
+                    onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                    className="rounded-md border border-[#dddddd] px-5 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-[#00B4D8] hover:text-[#00B4D8] dark:border-gray-700"
+                >
+                    Load more
+                </button>
+                </div>
+            )}
+            </div>
+        
+    );
+}
