@@ -89,4 +89,19 @@ export class ReportsService {
 
         return report;
     }
+
+    async dismiss(id: string): Promise<Report> {
+        const report = await this.reportsRepository.findOne({
+            where: {
+                id,
+            },
+        });
+
+        if (!report) {
+            throw new NotFoundException('Report not found');
+        }
+        
+        report.status = ReportStatus.REVIEWED;
+        return this.reportsRepository.save(report);
+    }
 }
