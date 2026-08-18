@@ -41,7 +41,7 @@ export function NotificationDropdown({
 
     return (
         <div role="menu"
-            className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
+            className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
         >
             <div className="flex items-center justify-between border-b border-[var(--card-border)] px-4 py-3">
                 <h2 className="text-sm font-semibold text-[var(--foreground)]">Notifications</h2>
