@@ -48,6 +48,7 @@ export class AdminService {
 
       const listing = await listingRepository.findOne({
         where: { id },
+        relations: ['seller'],
       });
 
       if (!listing) {
@@ -76,7 +77,7 @@ export class AdminService {
       event.action = action;
       event.description = reason ?? 'Your listing is now approved and live.';
       event.listingId = listing.id;
-      event.studentId = userId;
+      event.studentId = listing.seller.id;
       event.name = `${admin.first_name} ${admin.last_name}`;
 
       this.eventEmitter.emit('listing.reviewed', event);
