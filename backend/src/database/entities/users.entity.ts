@@ -77,4 +77,28 @@ export class User {
 
   @OneToMany(() => Report, (report) => report.reporter)
   reports!: Report[];
+
+  @Column({
+    default: false,
+  })
+  is_banned!: boolean;
+
+  @Column({
+      type: 'timestamptz',
+      nullable: true,
+  })
+  banned_at!: Date | null;
+
+  @ManyToOne(() => User, {
+      nullable: true,
+      onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'banned_by' })
+  banned_by!: User | null;
+
+  @Column({
+      type: 'text',
+      nullable: true,
+  })
+  ban_reason!: string | null;
 }

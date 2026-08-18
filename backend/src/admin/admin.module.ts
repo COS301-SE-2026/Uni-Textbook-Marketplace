@@ -8,7 +8,7 @@ import { ReportsModule } from '../reports/reports.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AuditLog, User]),
-            ReportsModule],
+    ReportsModule],
   controllers: [AdminController],
   providers: [AdminService],
 })

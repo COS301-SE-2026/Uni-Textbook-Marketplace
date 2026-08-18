@@ -80,4 +80,13 @@ export class AdminController {
   ) {
       return this.reportsService.findOne(id);
   }
+
+  @Patch('reports/:id/dismiss')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async dismissReport(
+      @Param('id') id: string,
+  ) {
+      return this.reportsService.dismiss(id);
+  }
 }

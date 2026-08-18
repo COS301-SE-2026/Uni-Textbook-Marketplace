@@ -1,8 +1,6 @@
 import {
     Body,
     Controller,
-    Get,
-    Param,
     Post,
     Req,
 } from '@nestjs/common';
@@ -30,6 +28,5 @@ export class ReportsController {
         createReportDto,
         );
     }
-
     //moved the GETter and GET ID to admin
 }

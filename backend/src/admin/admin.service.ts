@@ -155,4 +155,37 @@ export class AdminService {
       },
     });
   }
+
+  async banUser(
+      userId: string,
+      adminId: string,
+      reason: string,
+  ): Promise<User> {
+      const user = await this.usersRepository.findOne({
+          where: {
+              id: userId,
+          },
+      });
+
+      if (!user) {
+          throw new NotFoundException('User not found');
+      }
+
+      const admin = await this.usersRepository.findOne({
+          where: {
+              id: adminId,
+          },
+      });
+
+      if (!admin) {
+          throw new NotFoundException('Admin user not found');
+      }
+
+      user.is_banned = true;
+      user.banned_at = new Date();
+      user.banned_by = admin;
+      user.ban_reason = reason;
+
+      return this.usersRepository.save(user);
+  }
 }

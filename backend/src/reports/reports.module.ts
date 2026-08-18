@@ -22,8 +22,8 @@ import { User } from '../database/entities/users.entity';
     providers: [
         ReportsService,
     ],
-    exports: [
+    exports:[
         ReportsService,
-    ],
+    ]
 })
 export class ReportsModule {}
