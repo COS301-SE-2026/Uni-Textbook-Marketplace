@@ -79,10 +79,39 @@ export function useNotifications(): UseNotificationsResult {
     }, []);
 
     useEffect(() => {
+    let isMounted = true;
 
+    const loadInitial = async () => {
+      try {
+        const items = await fetchNotifications();
+        if (isMounted) {
+          setNotifications(items);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "Something wrong occurred");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadInitial();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
         refresh();
+        }, POLL_INTERVAL_MS);
 
-        const interval = setInterval(refresh, POLL_INTERVAL_MS);
         return () => clearInterval(interval);
     }, [refresh]);
 
