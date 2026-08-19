@@ -587,7 +587,11 @@ export default function RegisterDesktop() {
                             </div>
 
                             <div style={{ marginTop: "1.5rem" }}>
-                                <Button className="w-full" onClick={handleNext} disabled={loading}>
+                                <Button 
+                                    className="w-full cursor-pointer" 
+                                    onClick={handleNext} 
+                                    disabled={loading}
+                                >
                                     {loading ? "Verifying..." : "REGISTER"}
                                 </Button>
                             </div>
@@ -685,7 +689,7 @@ export default function RegisterDesktop() {
                         </p>
 
                         {/* Features List without Emojis */}
-                        <div className="mt-8 space-y-2.5 w-full max-w-xs">
+                        <div className="mt-8 space-y-2.3 w-full max-w-xs">
                             {[
                                 { text: 'Verified Student Community' },
                                 { text: 'Affordable Used Textbooks' },
@@ -786,7 +790,7 @@ export default function RegisterDesktop() {
                                 <Button
                                     onClick={handleNext}
                                     disabled={loading}
-                                    className="px-8"
+                                    className="px-8 cursor-pointer"
                                 >
                                     Next
                                 </Button>
