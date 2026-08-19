@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -48,5 +49,14 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Marks all the notification read' })
   readAll(@Req() req: RequestWithUser) {
     return this.notificationService.readAll(req.user.id);
+  }
+
+  @Delete(':id/delete')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({summary: 'Delete a notification'})
+  deleteNotification(@Req() req: RequestWithUser, @Param('id') id: string){
+
+    return this.notificationService.deleteNotification(req.user.id,id);
+
   }
 }
