@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { CheckCircle2, XCircle, Bell as BellIcon } from "lucide-react";
+import { CheckCircle2, XCircle, MessageSquare,SquarePen, Bell as BellIcon } from "lucide-react";
 import type { Notification } from "@/types/notification";
 
 
@@ -7,6 +7,8 @@ import type { Notification } from "@/types/notification";
 const ENTITY_TYPE_ICON: Record<string, LucideIcon> = {
     APPROVED_LISTING: CheckCircle2,
     REJECTED_LISTING: XCircle,
+    message: MessageSquare,
+    "Edited listing": SquarePen,
 };
 
 

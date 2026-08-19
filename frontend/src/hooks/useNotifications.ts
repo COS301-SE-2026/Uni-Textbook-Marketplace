@@ -65,6 +65,17 @@ async function markAllReadRequest(): Promise<void> {
     if (!res.ok) throw new Error("Failed to mark all as read");
 }
 
+async function deleteNotification(id: string): Promise<void> {
+
+    const res = await fetch(`${API_URL}/notifications/${id}/delete`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+
+    if (!res.ok) throw new Error('failed to delete');
+
+}
+ 
 
 const POLL_INTERVAL_MS = 15000;
 
@@ -76,6 +87,7 @@ interface UseNotificationsResult {
     markRead: (id: string) => Promise<void>;
     markAllRead: () => Promise<void>;
     refresh: () => Promise<void>;
+    deleteNotif: (id: string) => Promise<void>;
 }
 
 export function useNotifications(): UseNotificationsResult {
@@ -176,6 +188,15 @@ export function useNotifications(): UseNotificationsResult {
         }
     }, [refresh]);
 
+    const deleteNotif  = useCallback(async (id: string) => {
+
+        try {
+            await deleteNotification(id);
+        } catch {
+            refresh();
+        }
+    }, [refresh]);
+
     return { notifications: Array.isArray(notifications) ? notifications : [],
         unreadCount, 
         isLoading, 
@@ -183,5 +204,6 @@ export function useNotifications(): UseNotificationsResult {
         markRead, 
         markAllRead, 
         refresh,
+        deleteNotif,
     };
 }
