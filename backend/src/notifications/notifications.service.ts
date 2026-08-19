@@ -99,4 +99,23 @@ export class NotificationsService {
 
     await this.notificationRepo.save(noti);
   }
+
+  async deleteNotification(userId: string,notificationId: string){
+
+    const notification = await this.notificationRepo.findOne({
+      where: {
+        id: notificationId,
+        user_id: {id: userId}
+      }
+    });
+
+    if(!notification){
+      throw new NotFoundException('Notification not found');
+    }
+
+    await this.notificationRepo.remove(notification);
+
+    return "Notification successfuly deleted";
+    
+  }
 }
