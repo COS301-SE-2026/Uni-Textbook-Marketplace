@@ -11,6 +11,8 @@ import { db } from '../firebase/firebase-admin';
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
 import { User } from '../database/entities/users.entity';
+import { MessageEvent } from './events/message.event';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 interface ConversationData {
   buyerId: string;
@@ -37,6 +39,8 @@ export class MessagingService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createConversation(buyerId: string, listingId: string) {
@@ -64,8 +68,21 @@ export class MessagingService {
       .where('listingId', '==', listingId)
       .limit(1)
       .get();
+    
+    const buyer = await this.usersRepository.findOne({
+      where: { id: buyerId },
+    });
 
     if (!existingConversation.empty) {
+
+      const event = new MessageEvent();
+      event.userId = sellerId;
+      event.notificationfrom = buyerId;
+      event.entityType = 'message';
+      event.messageInfo = `New message from ${buyer?.first_name} regarding listing ${listing.title}`;
+
+      this.eventEmitter.emit('messaging',event);
+
       return {
         conversationId: existingConversation.docs[0].id,
         alreadyExists: true,
@@ -83,6 +100,15 @@ export class MessagingService {
       lastMessage: null,
       lastSenderId: null,
     });
+
+    const event = new MessageEvent();
+    event.userId = sellerId;
+    event.notificationfrom = buyerId;
+    event.entityType = 'message';
+    event.messageInfo = `New conversation started by ${buyer?.first_name} regarding listing ${listing.title}`;
+    event.new = true;
+
+    this.eventEmitter.emit('messaging',event);
 
     return {
       conversationId: conversationRef.id,
