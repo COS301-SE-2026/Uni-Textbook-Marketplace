@@ -8,9 +8,6 @@ import { registerUser, verifyOtp, resendOtp, getUniversities, University } from 
 import type { ApiError } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
-import { getMe } from '@/lib/auth.api';
-
-
 
 interface FormData {
     fullName: string;
@@ -23,8 +20,6 @@ interface FormData {
     confirmPassword: string;
     agreedToTerms: boolean;
 }
-
- 
 
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
@@ -91,8 +86,6 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
         </div>
     );
 }
-
- 
 
 function OtpInput({
     value,
@@ -174,14 +167,11 @@ function OtpInput({
     );
 }
 
-//  Dot color helper
 function getDotColor(n: number, step: number): string {
     if (n === step) return "#ffffff";
     if (n < step) return "#00B4D8";
     return "#9ca3af";
 }
-
- 
 
 export default function RegisterDesktop() {
     const [step, setStep] = useState(1);
@@ -236,8 +226,6 @@ export default function RegisterDesktop() {
             .catch(() => setServerError('Could not load universities. Please refresh the page'));
     }, []);
 
-     
-
     const validateStep1 = () => {
         const e: Record<string, string> = {};
         if (!form.fullName.trim()) e.fullName = "Full name is required";
@@ -247,7 +235,6 @@ export default function RegisterDesktop() {
     };
 
     const validateStep2 = () => {
-
         const e: Record<string, string> = {};
         if (!form.university_id) e.university = 'Please select your university';
         if (!form.email.trim()) {
@@ -283,8 +270,6 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
-     
-
     const handleNext = async () => {
         if (loading) return;
         setServerError("");
@@ -295,7 +280,6 @@ export default function RegisterDesktop() {
         if (step === 2) {
             setLoading(true);
             try {
-
                 setStep((s) => s + 1);
             } catch (err) {
                 setServerError((err as ApiError).message);
@@ -304,8 +288,6 @@ export default function RegisterDesktop() {
             }
             return;
         }
-
-
 
         if (step === 3) {
             if (!validateStep3()) return;
@@ -332,13 +314,11 @@ export default function RegisterDesktop() {
             return;
         }
 
-        // Step 4 (OTP) — final submit
         if (!validateStep4()) return;
         setLoading(true);
         try {
             const result = await verifyOtp({ email: form.email, code: form.otp.join('') });
             if (result.user) login(result.user);
-
             router.push('/listings');
         } catch (err) {
             setServerError((err as ApiError).message);
@@ -357,8 +337,6 @@ export default function RegisterDesktop() {
             setServerError((err as ApiError).message);
         }
     };
-
-     
 
     const renderStepContent = () => {
         switch (step) {
@@ -405,8 +383,6 @@ export default function RegisterDesktop() {
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
-
-                            {/* University Select */}
                             <div>
                                 <Select
                                     label="Name of University/Institution"
@@ -423,20 +399,17 @@ export default function RegisterDesktop() {
                                     }}
                                 >
                                     <option value="">Select your university</option>
-
                                     {universities.map((u) => (
                                         <option key={u.id} value={u.id}>
                                             {u.name}
                                         </option>
                                     ))}
                                 </Select>
-
                                 {errors.university && (
                                     <ErrorText>{errors.university}</ErrorText>
                                 )}
                             </div>
 
-                            {/* University Email */}
                             <div>
                                 <Input
                                     label="University Email"
@@ -445,12 +418,9 @@ export default function RegisterDesktop() {
                                     value={form.email}
                                     onChange={(e) => set("email", e.target.value)}
                                 />
-
                                 {errors.email && (
                                     <ErrorText>{errors.email}</ErrorText>
                                 )}
-
-
                                 {selectedDomain && (
                                     <p
                                         className="mt-1 text-xs text-[#00B4D8]"
@@ -459,12 +429,10 @@ export default function RegisterDesktop() {
                                     </p>
                                 )}
                             </div>
-
                         </div>
                     </>
                 );
 
-            
             case 3:
                 return (
                     <>
@@ -574,7 +542,6 @@ export default function RegisterDesktop() {
                     </>
                 );
 
-            
             case 4:
                 return (
                     <>
@@ -633,24 +600,145 @@ export default function RegisterDesktop() {
         }
     };
 
-     
-
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
-            <Card className="card w-4/5 max-w-4xl flex overflow-hidden min-w-0">
+            <Card className="card w-3/5 max-w-4xl flex overflow-hidden min-w-0 shadow-2xl p-0">
+                
+                {/* LEFT PANEL - Grey Glossy */}
+                <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[550px]">
+                    
+                    {/* Floating Glass Orbs - Decorative */}
+                    <div 
+                        className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(0, 180, 216, 0.3), transparent 70%)',
+                            filter: 'blur(60px)',
+                        }}
+                    />
+                    <div 
+                        className="absolute bottom-8 left-8 w-40 h-40 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%)',
+                            filter: 'blur(60px)',
+                        }}
+                    />
 
-                {/* Left panel */}
-                <div className="w-1/2 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
-                    <Logo className="w-20 h-auto mb-6" />
-                    <h2 className="text-center">Join our student community</h2>
-                    <p className="text-center text-text-subtle mt-4">
-                        Buy, sell and swap textbooks with verified students.
-                    </p>
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col items-center text-center">
+                        {/* Logo Container with Glossy Effect */}
+                        <div 
+                            className="relative mb-6 p-4 rounded-2xl"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.06)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                            }}
+                        >
+                            <Logo className="w-20 h-auto" />
+                            
+                            {/* Glossy Highlight on Logo Container */}
+                            <div 
+                                className="absolute -top-px left-1/4 right-1/4 h-px"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                }}
+                            />
+                        </div>
+
+                        {/* Brand Name */}
+                        <h1 
+                            className="text-3xl font-bold tracking-wide mb-2"
+                            style={{
+                                color: '#1a1a2e',
+                                textShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
+                            }}
+                        >
+                            JOIN OUR
+                        </h1>
+                        <h1 
+                            className="text-3xl font-bold tracking-wide mb-6"
+                            style={{
+                                color: '#00B4D8',
+                                textShadow: '0 2px 20px rgba(0, 180, 216, 0.2)',
+                            }}
+                        >
+                            STUDENT COMMUNITY
+                        </h1>
+
+                        {/* Divider with Glossy Effect */}
+                        <div className="relative w-24 h-px mb-6">
+                            <div 
+                                className="absolute inset-0"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent)',
+                                }}
+                            />
+                        </div>
+                        <p 
+                            className="text-[#4B4F58]/80 text-sm leading-relaxed max-w-xs mt-1"
+                            style={{
+                                textShadow: '0 1px 10px rgba(0, 0, 0, 0.05)',
+                            }}
+                        >
+                            Buy, sell and swap textbooks with verified students.
+                        </p>
+
+                        {/* Features List without Emojis */}
+                        <div className="mt-8 space-y-2.5 w-full max-w-xs">
+                            {[
+                                { text: 'Verified Student Community' },
+                                { text: 'Affordable Used Textbooks' },
+                                { text: 'Direct Seller Messaging' },
+                            ].map((feature, index) => (
+                                <div 
+                                    key={index}
+                                    className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                                    style={{
+                                        background: 'rgba(0, 180, 216, 0.05)',
+                                        backdropFilter: 'blur(5px)',
+                                        border: '1px solid rgba(0, 180, 216, 0.08)',
+                                    }}
+                                >
+                                    <div 
+                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                        style={{
+                                            background: '#00B4D8',
+                                            boxShadow: '0 0 12px rgba(0, 180, 216, 0.3)',
+                                        }}
+                                    />
+                                    <span className="text-[#1a1a2e]/80 text-sm font-medium">
+                                        {feature.text}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Bottom Accent */}
+                        <div 
+                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
+                            style={{
+                                background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.3), transparent)',
+                            }}
+                        />
+                    </div>
                 </div>
 
-                {/* Right panel - wider to fit OTP inputs */}
-                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
-                    <div style={{ width: "100%", maxWidth: 480, padding: "0 2rem", boxSizing: "border-box" }}>
+                {/* RIGHT PANEL - Glossy */}
+                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(5px)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+                }}>
+                    {/* Subtle Glossy Overlay for Right Panel */}
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'radial-gradient(ellipse at 30% 20%, rgba(0, 180, 216, 0.02), transparent 50%)',
+                        }}
+                    />
+                    
+                    <div style={{ width: "100%", maxWidth: 420, padding: "0 1.5rem", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
                         {renderStepContent()}
 
                         {serverError && (
@@ -659,7 +747,6 @@ export default function RegisterDesktop() {
                             </div>
                         )}
 
-                        {/* Bottom navigation — step dots + Next button (hidden on last OTP step since it has its own button) */}
                         {step !== 4 && (
                             <div
                                 style={{
@@ -670,7 +757,6 @@ export default function RegisterDesktop() {
                                     marginTop: "2rem",
                                 }}
                             >
-                                {/* Step dots */}
                                 <div style={{ display: "flex", gap: "0.4rem", marginRight: "0.5rem" }}>
                                     {[1, 2, 3, 4].map((n) => {
                                         const dotColor = getDotColor(n, step);
