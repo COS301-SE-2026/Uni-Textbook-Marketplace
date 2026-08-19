@@ -237,26 +237,37 @@ function BrowseListingsContent() {
         <ProtectedRoute>
             <SidebarProvider>
                 <div className="flex w-full">
-                    <Sidebar side='left' variant='sidebar' collapsible='offcanvas'
+                    <Sidebar 
+                        side='left' 
+                        variant='sidebar' 
+                        collapsible='offcanvas'
                         className="border-r top-16 h-[calc(100vh-4rem)]"
                     >
                         <SidebarContent className="p-4">
                             <SidebarGroup>
                                 <div className="mb-4 flex items-center justify-between">
-                                    <SidebarGroupLabel className="p-0 text-base font-semibold text-foreground">
+                                    <SidebarGroupLabel className="p-0 text-base font-semibold text-foreground flex items-center gap-2">
+                                        <Filter size={18} />
                                         Filters
+                                        {getActiveFilterCount() > 0 && (
+                                            <span className="ml-1 text-xs bg-[#00B4D8] text-white px-2 py-0.5 rounded-full">
+                                                {getActiveFilterCount()}
+                                            </span>
+                                        )}
                                     </SidebarGroupLabel>
                                     <button
                                         type='submit'
                                         onClick={handleClear}
-                                        className="text-sm font-bold text-blue-600 hover:underline"
+                                        className="text-sm font-medium text-[#00B4D8] hover:text-[#0096B4] transition-colors flex items-center gap-1 cursor-pointer"
                                     >
-                                        clear all
+                                        <X size={14} />
+                                        Clear all
                                     </button>
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor="faculty-filter" className="mb-1 text-xs font-medium">
+                                {/* Faculty */}
+                                <div className="mb-4">
+                                    <label htmlFor="faculty-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Faculty
                                     </label>
                                     <Select
@@ -279,8 +290,9 @@ function BrowseListingsContent() {
                                     </Select>
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor='moduleCode-filter' className="mb-1 text-xs font-medium">
+                                {/* Module Code */}
+                                <div className="mb-4">
+                                    <label htmlFor='moduleCode-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Module Code
                                     </label>
                                     <Input
@@ -292,8 +304,9 @@ function BrowseListingsContent() {
                                     />
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor='edition-filter' className="mb-1 block text-xs font-medium">
+                                {/* Edition */}
+                                <div className="mb-4">
+                                    <label htmlFor='edition-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Edition
                                     </label>
                                     <Select
@@ -309,9 +322,10 @@ function BrowseListingsContent() {
                                     </Select>
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor='priceMin-filter' className="mb-1 block text-xs font-medium">
-                                        Price Range
+                                {/* Price Range */}
+                                <div className="mb-4">
+                                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        Price Range (R)
                                     </label>
                                     <div className="flex items-center gap-2">
                                         <Input
@@ -334,26 +348,38 @@ function BrowseListingsContent() {
                                     </div>
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor='condition-filter' className="mb-1 block text-xs font-medium">
+                                {/* Condition */}
+                                <div className="mb-4">
+                                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Condition
                                     </label>
-                                    <Select
-                                        id="condition-filter"
-                                        name="condition"
-                                        value={filters.condition}
-                                        onChange={handleFilterChange}
-                                    >
-                                        <option value="">Any Condition</option>
-                                        <option value="new">Like New</option>
-                                        <option value="good">Good</option>
-                                        <option value="fair">Fair</option>
-                                        <option value="poor">Poor</option>
-                                    </Select>
+                                    <div className="flex flex-wrap gap-2">
+                                        <ConditionBadge
+                                            condition="new"
+                                            selected={filters.condition === 'new'}
+                                            onClick={() => handleConditionToggle('new')}
+                                        />
+                                        <ConditionBadge
+                                            condition="good"
+                                            selected={filters.condition === 'good'}
+                                            onClick={() => handleConditionToggle('good')}
+                                        />
+                                        <ConditionBadge
+                                            condition="fair"
+                                            selected={filters.condition === 'fair'}
+                                            onClick={() => handleConditionToggle('fair')}
+                                        />
+                                        <ConditionBadge
+                                            condition="poor"
+                                            selected={filters.condition === 'poor'}
+                                            onClick={() => handleConditionToggle('poor')}
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="mb-1">
-                                    <label htmlFor='annotationLevel-filter' className="mb-1 block text-xs font-medium">
+                                {/* Annotation Level */}
+                                <div className="mb-4">
+                                    <label htmlFor='annotationLevel-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Annotation Level
                                     </label>
                                     <Select
@@ -372,58 +398,119 @@ function BrowseListingsContent() {
                                 <button
                                     type='submit'
                                     onClick={handleApply}
-                                    className="btn-primary mt-2 w-full"
+                                    className="btn-primary mt-2 w-full cursor-pointer"
                                 >
                                     APPLY FILTERS
                                 </button>
 
-                                <div className="border-t border-gray-200 pt-4">
+                                <div className="border-t border-gray-200 pt-4 mt-4">
                                     <SaveSearchButton
                                         filters={applied}
                                         onSave={() => console.log('Search saved!')}
                                     />
                                 </div>
-
-                                <Link
-                                    href="/saved-searches"
-                                    className="flex items-center gap-1 text-lg text-blue hover:underline"
-                                >
-                                    <Bookmark size={20} />
-                                    Saved Searches
-                                </Link>
-
                             </SidebarGroup>
                         </SidebarContent>
                     </Sidebar>
 
                     <SidebarInset className="flex-1">
-                        <div className="py-8 mx-18">
-                            <div className="mb-6 flex gap-2">
-
-                                <SidebarTrigger />
-
-                                <div>
-                                    <h1>Browse Textbooks</h1>
-                                    <p className="text-sm text-gray-500">
-                                        Find the right textbook for your module
-                                    </p>
+                        {/* Hero Section */}
+                        <div className="relative overflow-hidden h-[180px] md:h-[200px]" style={{
+                            background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
+                        }}>
+                            {/* Image Overlay */}
+                            <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+                                <div className="relative w-full h-full">
+                                    <Image
+                                        src="/../boy_on_book.jpg"
+                                        alt="Student reading textbook"
+                                        fill
+                                        className="object-contain object-right"
+                                        priority
+                                        style={{ objectPosition: '100% 50%' }}
+                                    />
+                                    
+                                    <div className="absolute inset-0" style={{
+                                        background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
+                                    }} />
+                                </div>
+                            </div>
+                            
+                            {/* Glossy Overlay */}
+                            <div className="absolute inset-0 opacity-20" style={{
+                                background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                            }} />
+                            
+                            {/* Background Pattern */}
+                            <div className="absolute inset-0 opacity-10" style={{
+                                backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
+                            }} />
+                            
+                            {/* Decorative Grid */}
+                            <div className="absolute inset-0 opacity-5" style={{
+                                backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
+                                backgroundSize: '40px 40px',
+                            }} />
+                            
+                            {/* Glossy Highlight Line */}
+                            <div className="absolute top-0 left-0 right-0 h-px" style={{
+                                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                            }} />
+                            
+                            <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center">
+                                <div className="flex items-start gap-4">
+                                    <SidebarTrigger className="text-white hover:text-[#00B4D8] transition-colors cursor-pointer" />
+                                    <div>
+                                        <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
+                                            Browse Textbooks
+                                        </h1>
+                                        <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
+                                            Find the right textbook for your module
+                                        </p>
+                                    </div>
                                 </div>
 
+                                {/* Search Bar */}
+                                <div className="mt-3 max-w-2xl relative">
+                                    <SearchBar
+                                        onSearch={searchApplicte}
+                                        initialQuery={filters.search}
+                                        className="w-full"
+                                    />
+                                </div>
+                            </div>
+                            
+                            
+                            <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                                background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
+                            }} />
+                        </div>
+
+                        <div className="py-6 px-6 md:px-8 lg:px-12">
+                            {/* Saved Searches */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                                <div className="flex items-center gap-3">
+                                    {!loading && (
+                                        <p className="text-sm text-gray-500">
+                                            Showing <span className="font-semibold text-gray-700">{total}</span> result{total !== 1 ? 's' : ''} found
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center gap-3">
+
+                                    {/* Saved Searches Button */}
+                                    <Link
+                                        href="/saved-searches"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#00B4D8] border border-[#00B4D8] rounded-lg hover:bg-[#00B4D8] hover:text-white transition-all duration-200 cursor-pointer hover:shadow-lg hover:shadow-[#00B4D8]/20"
+                                    >
+                                        <Bookmark size={16} />
+                                        Saved Searches
+                                    </Link>
+                                </div>
                             </div>
 
-                            <SearchBar
-                                onSearch={searchApplicte}
-                                initialQuery={filters.search}
-                                className="mb-6"
-                            />
-
                             <main className="flex-1">
-                                {!loading && (
-                                    <p className="mb-4 text-sm text-gray-500">
-                                        {total} result{total !== 1 ? 's' : ''} found
-                                    </p>
-                                )}
-
                                 {loading ? (
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                         {Array.from({ length: 6 }).map((_, i) => (
@@ -457,7 +544,7 @@ function BrowseListingsContent() {
                                         <button
                                             type='submit'
                                             onClick={handleClear}
-                                            className="mt-3 text-sm text-blue-600 hover:underline"
+                                            className="mt-3 text-sm text-[#00B4D8] hover:underline cursor-pointer"
                                         >
                                             Clear filters
                                         </button>
@@ -465,7 +552,11 @@ function BrowseListingsContent() {
                                 ) : (
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                         {listings.map(listing => (
-                                            <ListingCard key={listing.id} listing={listing} isLiked={likedIds.has(listing.id)} />
+                                            <ListingCard 
+                                                key={listing.id} 
+                                                listing={listing} 
+                                                isLiked={likedIds.has(listing.id)} 
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -479,45 +570,29 @@ function BrowseListingsContent() {
 }
 
 export default function BrowseListingsPage() {
-
     return (
         <Suspense fallback={
-
             <div className="container-content py-8">
                 <div className="mb-6">
-
                     <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
-
                     <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mt-2" />
                 </div>
-
                 <div className="flex flex-col md:flex-row gap-6">
-
                     <div className="w-full md:w-56 flex-shrink-0">
-
                         <div className="card flex flex-col gap-4">
-
                             <div className="h-6 w-20 bg-gray-200 rounded animate-pulse" />
                             {[1, 2, 3, 4, 5, 6].map((i) => (
-
                                 <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
                             ))}
                         </div>
-
                     </div>
-
                     <div className="flex-1">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
                             {[1, 2, 3, 4, 5, 6].map((i) => (
-
                                 <div key={i} className="card animate-pulse flex flex-col gap-3">
                                     <div className="h-40 bg-gray-200 rounded" />
-
                                     <div className="h-4 bg-gray-200 rounded w-3/4" />
-
                                     <div className="h-3 bg-gray-100 rounded w-1/2" />
-
                                     <div className="h-4 bg-gray-200 rounded w-1/4" />
                                 </div>
                             ))}
