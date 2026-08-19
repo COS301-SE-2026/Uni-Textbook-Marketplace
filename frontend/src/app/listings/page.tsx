@@ -13,7 +13,7 @@ import { useSearchParams } from 'next/navigation'
 
 import SaveSearchButton from '@/components/listings/SaveSearchButton'
 import Link from 'next/link'
-import { Bookmark } from 'lucide-react'
+import { Bookmark, Filter, X } from 'lucide-react'
 import {
     Sidebar,
     SidebarContent,
@@ -23,9 +23,9 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar'
+import Image from 'next/image'
 
 // Filter state
-
 interface Filters {
     faculty: string
     moduleCode: string
@@ -48,10 +48,71 @@ const EMPTY_FILTERS: Filters = {
     search: '',
 }
 
-// Page 
+// Condition Badge Component
+function ConditionBadge({ 
+    condition, 
+    selected, 
+    onClick 
+}: { 
+    condition: string
+    selected: boolean
+    onClick: () => void 
+}) {
+    const getConditionStyles = (cond: string) => {
+        switch (cond) {
+            case 'new':
+                return {
+                    bg: selected ? 'bg-[#2196F3]' : 'bg-[#E3F2FD] hover:bg-[#BBDEFB]',
+                    text: selected ? 'text-white' : 'text-[#1565C0]',
+                    border: selected ? 'border-[#2196F3]' : 'border-[#90CAF9]'
+                }
+            case 'good':
+                return {
+                    bg: selected ? 'bg-[#4CAF50]' : 'bg-[#E8F5E9] hover:bg-[#C8E6C9]',
+                    text: selected ? 'text-white' : 'text-[#2E7D32]',
+                    border: selected ? 'border-[#4CAF50]' : 'border-[#A5D6A7]'
+                }
+            case 'fair':
+                return {
+                    bg: selected ? 'bg-[#FF9800]' : 'bg-[#FFF3E0] hover:bg-[#FFE0B2]',
+                    text: selected ? 'text-white' : 'text-[#E65100]',
+                    border: selected ? 'border-[#FF9800]' : 'border-[#FFCC80]'
+                }
+            case 'poor':
+                return {
+                    bg: selected ? 'bg-[#F44336]' : 'bg-[#FFEBEE] hover:bg-[#FFCDD2]',
+                    text: selected ? 'text-white' : 'text-[#C62828]',
+                    border: selected ? 'border-[#F44336]' : 'border-[#EF9A9A]'
+                }
+            default:
+                return {
+                    bg: selected ? 'bg-[#9E9E9E]' : 'bg-[#F5F5F5] hover:bg-[#E0E0E0]',
+                    text: selected ? 'text-white' : 'text-[#616161]',
+                    border: selected ? 'border-[#9E9E9E]' : 'border-[#BDBDBD]'
+                }
+        }
+    }
 
+    const styles = getConditionStyles(condition)
+    const label = condition.charAt(0).toUpperCase() + condition.slice(1)
+
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200
+                border-2 ${styles.bg} ${styles.text} ${styles.border}
+                hover:scale-105 active:scale-95 cursor-pointer
+                ${selected ? 'shadow-md' : ''}
+            `}
+        >
+            {label}
+        </button>
+    )
+}
+
+// Page Content
 function BrowseListingsContent() {
-
     const boundSearches = useSearchParams()
 
     const [listings, setListings] = useState<Listing[]>([])
@@ -71,22 +132,14 @@ function BrowseListingsContent() {
     }
 
     const initialFilters = getInitialFilters()
-
     const [filters, setFilters] = useState<Filters>(initialFilters)
-
-
     const [applied, setApplied] = useState<Filters>(initialFilters)
-
     const [total, setTotal] = useState(0)
-
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
-
 
     const fetchListings = useCallback(async (f: Filters) => {
         try {
-
             const params = new URLSearchParams()
-
             if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
             if (f.moduleCode) params.set('moduleCode', f.moduleCode)
@@ -97,25 +150,18 @@ function BrowseListingsContent() {
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
 
             const response = await getListings(params.toString())
-
-
-            const listings = Array.isArray(response.listings) ? response.listings : [];
-
-            const total = typeof response.total === 'number' ? response.total : listings.length;
+            const listings = Array.isArray(response.listings) ? response.listings : []
+            const total = typeof response.total === 'number' ? response.total : listings.length
 
             return {
-
-
                 listings: listings.map(mapListing),
                 total: total,
             }
         } catch (err) {
-
             console.error('Failed to fetch listings', err)
             return { listings: [], total: 0 }
         }
     }, [])
-
 
     useEffect(() => {
         const loadListings = async () => {
@@ -130,7 +176,6 @@ function BrowseListingsContent() {
 
     useEffect(() => {
         const loadWishlist = async () => {
-
             try {
                 const items = await mylist()
                 const ids = items.map((item) => item.listings_id)
@@ -142,24 +187,23 @@ function BrowseListingsContent() {
         loadWishlist()
     }, [])
 
-
     // Handlers
-
     const handleFilterChange = (
-
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-
-
-
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
     }
 
+    const handleConditionToggle = (condition: string) => {
+        setFilters(prev => ({
+            ...prev,
+            condition: prev.condition === condition ? '' : condition
+        }))
+    }
+
     const searchApplicte = (query: string) => {
-
         setFilters(prev => ({ ...prev, search: query }))
-
         setApplied(prev => ({ ...prev, search: query }))
     }
 
@@ -171,15 +215,23 @@ function BrowseListingsContent() {
     }
 
     const getOrdinal = (n: number): string => {
-        if (n === 1) return '1st';
-        if (n === 2) return '2nd';
-        if (n === 3) return '3rd';
-        return `${n}th`;
+        if (n === 1) return '1st'
+        if (n === 2) return '2nd'
+        if (n === 3) return '3rd'
+        return `${n}th`
     }
 
-    // Render
-
-
+    // Count active filters
+    const getActiveFilterCount = () => {
+        let count = 0
+        if (filters.faculty) count++
+        if (filters.moduleCode) count++
+        if (filters.edition) count++
+        if (filters.priceMin || filters.priceMax) count++
+        if (filters.condition) count++
+        if (filters.annotationLevel) count++
+        return count
+    }
 
     return (
         <ProtectedRoute>
