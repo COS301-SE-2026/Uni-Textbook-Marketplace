@@ -4,6 +4,7 @@ import { Notifications } from '../database/entities/notifications.entity';
 import { Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
+import { MessageEvent } from '../messaging/events/message.event';
 
 @Injectable()
 export class NotificationsService {
@@ -82,6 +83,18 @@ export class NotificationsService {
       entity_type: event.entityType,
       entity_id: { id: event.listingId },
       message_info: event.message,
+    });
+
+    await this.notificationRepo.save(noti);
+  }
+
+  async notifyStudentofMessage(event: MessageEvent) {
+
+    const noti = this.notificationRepo.create({
+      user_id: { id: event.userId },
+      notification_from: { id: event.notificationfrom},
+      entity_type: event.entityType,
+      message_info: event.messageInfo,
     });
 
     await this.notificationRepo.save(noti);
