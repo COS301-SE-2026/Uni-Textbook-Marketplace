@@ -240,9 +240,7 @@ CREATE INDEX idx_audit_performed_at ON audit_log(performed_at DESC);
 
 -- indexes for cases table 
 CREATE INDEX idx_cases_user_id ON cases(user_id);
-CREATE INDEX idx_cases_ban_id ON cases(ban_id);
 CREATE INDEX idx_cases_status ON cases(status);
 CREATE INDEX idx_cases_user_status ON cases(user_id, status);
-CREATE INDEX idx_cases_ban_status ON cases(ban_id, status);
 CREATE INDEX idx_cases_reviewed_by ON cases(reviewed_by);
 CREATE INDEX idx_cases_created_at ON cases(created_at DESC);
