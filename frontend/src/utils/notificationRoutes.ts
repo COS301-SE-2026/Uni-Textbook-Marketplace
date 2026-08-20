@@ -18,10 +18,25 @@ export function getNotificationIcon(entityType: string): LucideIcon {
 
 
 export function getNotificationRoute(notification: Notification): string {
-    if (notification.entity_id?.id) {
 
-        return `/listings/${notification.entity_id.id}`;
+    const notificationType = notification.entity_type;
+
+    switch(notificationType) {
+
+        case "APPROVED_LISTING":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "REJECTED_LISTING":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "Edited listing":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "message":
+            return "/listings";
+
+        default:
+            return "/notifications";
     }
-
-    return "/notifications";
+    
 }
