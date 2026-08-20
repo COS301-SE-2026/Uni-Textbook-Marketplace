@@ -89,4 +89,19 @@ export class AdminController {
   ) {
       return this.reportsService.dismiss(id);
   }
+
+  @Patch(':id/ban')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async banUser(
+      @Param('id') id: string,
+      @Body('reason') reason: string,
+      @Req() req: RequestWithUser,
+  ) {
+      return this.adminService.banUser(
+          id,
+          req.user.id,
+          reason,
+      );
+  }
 }

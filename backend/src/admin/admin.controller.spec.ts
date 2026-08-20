@@ -16,6 +16,7 @@ describe('Reports and admin controllers', () => {
         create: jest.Mock;
         findAll: jest.Mock;
         findOne: jest.Mock;
+        dismiss: jest.Mock;
     };
 
     beforeEach(async () => {
@@ -23,6 +24,7 @@ describe('Reports and admin controllers', () => {
             create: jest.fn(),
             findAll: jest.fn(),
             findOne: jest.fn(),
+            dismiss: jest.fn(),
         };
 
         const module: TestingModule =
@@ -128,6 +130,31 @@ describe('Reports and admin controllers', () => {
             );
 
             expect(result).toBe(report);
+        });
+    });
+
+    describe('dismissReport', () => {
+        it('should dismiss a report', async () => {
+            const report = {
+                id: 'report-123',
+                status: ReportStatus.REVIEWED,
+            } as Report;
+
+            service.dismiss = jest.fn();
+
+            service.dismiss.mockResolvedValue(report);
+
+            const result =
+                await admin.dismissReport(
+                    'report-123',
+                );
+
+            expect(
+                service.dismiss,
+            ).toHaveBeenCalledWith(
+                'report-123',
+            );
+                expect(result).toBe(report);
         });
     });
 });

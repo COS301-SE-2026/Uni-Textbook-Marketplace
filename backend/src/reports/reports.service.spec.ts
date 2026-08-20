@@ -201,7 +201,7 @@ describe('ReportsService', () => {
             );
         });
 
-         it('should save the provided reason', async () => {
+        it('should save the provided reason', async () => {
             listingsRepository.findOne.mockResolvedValue(
                 listing,
             );
@@ -384,6 +384,64 @@ describe('ReportsService', () => {
         ).rejects.toThrow(
             new NotFoundException('Report not found'),
         );
+        });
+    });
+
+    describe('dismiss', () => {
+        it('should mark a report as REVIEWED', async () => {
+            const report = {
+                id: 'report-123',
+                status: ReportStatus.PENDING,
+            } as Report;
+
+            reportsRepository.findOne.mockResolvedValue(report);
+
+            reportsRepository.save.mockResolvedValue({
+                ...report,
+                status: ReportStatus.REVIEWED,
+            } as Report);
+
+            const result = await service.dismiss(
+                'report-123',
+            );
+
+            expect(
+                reportsRepository.findOne,
+            ).toHaveBeenCalledWith({
+                where: {
+                    id: 'report-123',
+                },
+            });
+
+            expect(report.status).toBe(
+                ReportStatus.REVIEWED,
+            );
+
+            expect(
+                reportsRepository.save,
+            ).toHaveBeenCalledWith(report);
+
+            expect(result.status).toBe(
+                ReportStatus.REVIEWED,
+            );
+        });
+
+        it('should throw NotFoundException if the report does not exist', async () => {
+            reportsRepository.findOne.mockResolvedValue(
+                null,
+            );
+
+            await expect(
+                service.dismiss('does-not-exist'),
+            ).rejects.toThrow(
+                new NotFoundException(
+                    'Report not found',
+                ),
+            );
+
+            expect(
+                reportsRepository.save,
+            ).not.toHaveBeenCalled();
         });
     });
 });

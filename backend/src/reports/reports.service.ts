@@ -100,7 +100,7 @@ export class ReportsService {
         if (!report) {
             throw new NotFoundException('Report not found');
         }
-        
+                
         report.status = ReportStatus.REVIEWED;
         return this.reportsRepository.save(report);
     }
