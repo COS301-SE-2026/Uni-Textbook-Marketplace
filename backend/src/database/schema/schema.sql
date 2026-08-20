@@ -168,7 +168,6 @@ CREATE TABLE wishlist (
 CREATE TABLE cases (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    ban_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, --same ref as user_id , will discuss with team for clarity
     appeal_message TEXT,
     status VARCHAR(20) DEFAULT 'pending'
         CHECK (status IN ('pending', 'upheld', 'reversed')),
