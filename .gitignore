@@ -48,3 +48,5 @@ logs/
 #please don't remove this
 development/
 BlobPOC/
+
+backend/firebase/serviceAccountKey.json

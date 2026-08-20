@@ -1,47 +1,102 @@
-import { Controller, Post, Param, Body, Req, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Body,
+  Req,
+  Get,
+  Query,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { AdminService } from './admin.service';
-import { User } from '../database/entities/users.entity';
-import { AuditLogFiltersDto } from '../audit/dto/audit-log-filters.dto';
+import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { ReportsService } from '../reports/reports.service';
 
-// Define the request with user interface
-interface RequestWithUser extends Request {
-  user: User; // Make it required, not optional
+interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: string;
 }
 
+interface RequestWithUser extends Request {
+  user: AuthenticatedUser;
+}
+
+@ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) {}
+  constructor(
+    private adminService: AdminService,
+    private reportsService: ReportsService,
+  ) {}
 
-  @Post(':id/approve')
-async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
-  return await this.adminService.approveListing(id, req.user.id);
-}
+  @Patch(':id/approve')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async approveListing(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return await this.adminService.approveListing(id, req.user.id);
+  }
 
-@Post(':id/reject')
-async rejectListing(
-  @Param('id') id: string,
-  @Body('reason') reason: string,
-  @Req() req: RequestWithUser,
-) {
-  return await this.adminService.rejectListing(id, req.user.id);
-}
+  @Patch(':id/reject')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async rejectListing(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @Req() req: RequestWithUser,
+  ) {
+    return await this.adminService.rejectListing(id, req.user.id, reason);
+  }
 
   @Get('audit-log')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async getAuditLog(@Query() filters: AuditLogFiltersDto) {
     return await this.adminService.getAuditLog(filters);
   }
 
-  @Get('audit-log/stats')
-  async getAuditLogStats() {
-    return await this.adminService.getAuditLogStats();
+  @Get('emails')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async getadmin() {
+    return await this.adminService.getusersAdmin();
   }
 
-  @Get('audit-log/:entityType/:entityId')
-  async getAuditLogByEntity(
-    @Param('entityType') entityType: string,
-    @Param('entityId') entityId: string,
+  //reports endpoints
+  @Get('reports')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async findAll() {
+    return this.reportsService.findAll();
+  }
+
+  @Get('reports/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async findOne(@Param('id') id: string) {
+    return this.reportsService.findOne(id);
+  }
+
+  @Patch('reports/:id/dismiss')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async dismissReport(@Param('id') id: string) {
+    return this.reportsService.dismiss(id);
+  }
+
+  @Patch(':id/ban')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async banUser(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @Req() req: RequestWithUser,
   ) {
-    return await this.adminService.getAuditLogByEntity(entityType, entityId);
+    return this.adminService.banUser(id, req.user.id, reason);
   }
 }

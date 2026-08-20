@@ -1,19 +1,21 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AzureService {
-
-
   private readonly blobServiceClient: BlobServiceClient;
+
   private readonly containerName: string;
+
   private readonly accountName: string;
 
   constructor() {
-
     const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
-
 
     this.accountName =
       process.env.AZURE_STORAGE_ACCOUNT_NAME || 'blobpocnexusdev';
@@ -21,14 +23,13 @@ export class AzureService {
     this.containerName =
       process.env.AZURE_STORAGE_CONTAINER_NAME || 'nexusdevimages';
 
-      if (!sasToken) {
-        throw new Error('Azure SAS Token is missing from .env');
-      }
+    if (!sasToken) {
+      throw new Error('Azure SAS Token is missing from .env');
+    }
 
-      this.blobServiceClient = new BlobServiceClient(
-        `https://${this.accountName}.blob.core.windows.net?${sasToken}`,
-      );
-
+    this.blobServiceClient = new BlobServiceClient(
+      `https://${this.accountName}.blob.core.windows.net?${sasToken}`,
+    );
   }
 
   async uploadImage(file: Express.Multer.File): Promise<string> {
@@ -44,7 +45,7 @@ export class AzureService {
     ];
     if (!correctMIMETypes.includes(file.mimetype)) {
       throw new BadRequestException(
-        'Only correct image files (JPEG, PNG, WEBP, GIF) are accepted'
+        'Only correct image files (JPEG, PNG, WEBP, GIF) are accepted',
       );
     }
 
@@ -55,13 +56,17 @@ export class AzureService {
     }
 
     const containerClient = this.blobServiceClient.getContainerClient(
-      this.containerName
+      this.containerName,
     );
     const extSections = file.originalname.split('.');
-    const fileExtens = extSections.length > 1 ? extSections[extSections.length - 1] : 'png';
+
+    const fileExtens =
+      extSections.length > 1 ? extSections[extSections.length - 1] : 'png';
 
     const blobContName = `${randomUUID()}.${fileExtens}`;
+
     const blockBlobClient = containerClient.getBlockBlobClient(blobContName);
+
     await blockBlobClient.uploadData(file.buffer, {
       blobHTTPHeaders: {
         blobContentType: file.mimetype,
@@ -92,21 +97,23 @@ export class AzureService {
 
     try {
       const containerClient = this.blobServiceClient.getContainerClient(
-        this.containerName
+        this.containerName,
       );
       const urlRead = new URL(imageUrl);
+
       const pathUrls = urlRead.pathname.split('/');
+
       const specificBlob = pathUrls[pathUrls.length - 1];
 
       if (!specificBlob) {
         throw new BadRequestException('Couldnt find blob path');
-
       }
       const blockBlobClient = containerClient.getBlockBlobClient(specificBlob);
+
       await blockBlobClient.deleteIfExists();
     } catch {
       throw new InternalServerErrorException(
-        'Azure operation failed during removal'
+        'Azure operation failed during removal',
       );
     }
   }

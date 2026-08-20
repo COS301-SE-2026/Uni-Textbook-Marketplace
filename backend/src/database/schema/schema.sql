@@ -120,6 +120,8 @@ CREATE TABLE listings (
 
     has_notes BOOLEAN DEFAULT FALSE,
 
+    description TEXT,
+
     updated_at TIMESTAMPTZ,
 
     -- Soft delete (IMPORTANT)
@@ -143,13 +145,18 @@ CREATE TABLE audit_log (
             'LOGIN',
             'LOGOUT',
             'SOLD',
-            'WITHDRAWN'
+            'WITHDRAWN',
+            'APPROVE_LISTING',
+            'REJECT_LISTING'
         )),     
 
     performed_by UUID REFERENCES users(id) ON DELETE SET NULL,
     performed_at TIMESTAMPTZ DEFAULT NOW(),
 
-    notes TEXT
+    notes TEXT,
+    
+    --this is for when a listing is rejected
+    reason TEXT NULL,
 );
 
 -- wishlist
@@ -161,6 +168,20 @@ CREATE TABLE wishlist (
     created_at TIMESTAMPTZ DEFAULT NOW(),
    
     PRIMARY KEY (user_id, listings_id)
+);
+
+-- notifications
+CREATE TABLE notifications(
+
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    notification_from UUID  REFERENCES users(id) ON DELETE SET NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    entity_type VARCHAR NOT NULL,
+    entity_id UUID REFERENCES listings(id) ON DELETE SET NULL,
+    message_info TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+
 );
 
 

@@ -20,16 +20,21 @@ export function mapListing(apiListing: any): Listing {
 
         created_at: apiListing.created_at,
 
+        description: apiListing.description,
+
         book: {
             edition: apiListing.book?.edition || 0,
             author: apiListing.book?.author || '',
             isbn: apiListing.book?.isbn || '',
             title: apiListing.book?.title || '',
+            publisher: apiListing.book?.publiser || '',
         },
 
         module: {
             code: apiListing.module?.code || '',
             faculty: apiListing.module?.faculty || '',
+            name: apiListing.module?.name || '',
+            semester: apiListing.module?.semester || '',
         },
 
         seller: apiListing.seller
@@ -37,6 +42,9 @@ export function mapListing(apiListing: any): Listing {
                 first_name: apiListing.seller.first_name,
                 last_name: apiListing.seller.last_name,
                 is_verified: apiListing.seller.is_verified,
+                university: {
+                    name: apiListing.university?.name || '',
+                },
             }
             : undefined,
     }

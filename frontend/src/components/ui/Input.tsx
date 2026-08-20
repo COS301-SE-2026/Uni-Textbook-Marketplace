@@ -1,4 +1,5 @@
 type InputProps = {
+    id?: string;
     label?: string;
     placeholder?: string;
     type?: string;
@@ -9,18 +10,20 @@ type InputProps = {
 };
 
 export default function Input({
+    id,
     label,
     placeholder,
     type = "text",
     name,
     value = "",
-    onChange = () => {},
+    onChange = () => { },
     className,
 }: Readonly<InputProps>) {
     return (
         <div>
-            {label && <label className="form-label">{label}</label>}
+            {label && <label htmlFor={id} className="form-label">{label}</label>}
             <input
+                id={id}
                 type={type}
                 name={name}
                 value={value}

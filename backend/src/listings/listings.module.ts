@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ListingsController } from './listings.controller';
@@ -10,9 +10,14 @@ import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { SavedSearchesModule } from '../saved_search/saved_search.module';
+import { AuditLog } from 'src/database/entities/audit_log.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity])],
+  imports: [
+    TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity, AuditLog]),
+    forwardRef(() => SavedSearchesModule),
+  ],
   controllers: [ListingsController],
   providers: [ListingsService, AdminService, RolesGuard, JwtAuthGuard],
 })

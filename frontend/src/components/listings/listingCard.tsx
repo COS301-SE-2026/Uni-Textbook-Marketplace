@@ -5,10 +5,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Heartbutton from '../icons/Heartbutton'
-import { save, remove} from '@/lib/wishlist.api'
+import { save, remove } from '@/lib/wishlist.api'
 
 export type ListingStatus =
-    | 'APPROVED'| 'PENDING'| 'REJECTED'| 'SOFT_DELETED'
+    | 'APPROVED' | 'PENDING' | 'REJECTED' | 'SOFT_DELETED'
 
 export interface Listing {
     id: string
@@ -21,23 +21,33 @@ export interface Listing {
 
     photo_urls: string[]
     created_at: string
+    description: string
 
     book: {
         edition: number
         author: string
         isbn: string
         title: string
+        publisher: string
     }
 
     module: {
+        name: string
         code: string
-        faculty?: string
+        semester: number
+        faculty?: {
+            name: string
+        }
+
     }
 
     seller?: {
         first_name: string
         last_name: string
         is_verified: boolean
+        university: {
+            name: string
+        }
     }
 }
 
@@ -45,7 +55,7 @@ interface ListingCardProps {
     listing: Listing
     showStatus?: boolean
     isLiked?: boolean
-    removeClick? : boolean
+    removeClick?: boolean
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -71,8 +81,8 @@ export default function ListingCard({
     } */
 
     const handleClick = () => {
-        if(removeClick) return
-        
+        if (removeClick) return
+
         router.push(`/listings/${listing.id}`)
     }
 
@@ -85,6 +95,9 @@ export default function ListingCard({
             } else {
                 await remove(listing.id)
             }
+           
+            window.dispatchEvent(new CustomEvent('wishlist:changed'))
+            
         } catch (error) {
             console.error('Failed to update wishlist', error)
             setIsLiked(!liked)
@@ -103,9 +116,8 @@ export default function ListingCard({
     return (
         <div
             onClick={handleClick}
-            className={`card hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 relative ${
-                !removeClick ? 'cursor-pointer' : ''
-            }`}
+            className={`card hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 relative ${!removeClick ? 'cursor-pointer' : ''
+                }`}
         >
             {/* Image */}
             <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
@@ -129,10 +141,10 @@ export default function ListingCard({
                             strokeLinejoin="round"
                             strokeWidth={1}
                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16
-                    16m-2-2l1.586-1.586a2 2 0 012.828
-                    0L20 14m-6-6h.01M6 20h12a2 2 0
-                    002-2V6a2 2 0 00-2-2H6a2 2 0
-                    00-2 2v12a2 2 0 002 2z"
+                                16m-2-2l1.586-1.586a2 2 0 012.828
+                                0L20 14m-6-6h.01M6 20h12a2 2 0
+                                002-2V6a2 2 0 00-2-2H6a2 2 0
+                                00-2 2v12a2 2 0 002 2z"
                         />
                     </svg>
                 )}

@@ -71,7 +71,7 @@ export default function LoginDesktop() {
                     </p>
                 </div>
 
-                {/* Right panel - consistent width with register page */}
+                {/* Right panel */}
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
                     <div style={{ width: "100%", maxWidth: 360, padding: "0 2rem", boxSizing: "border-box" }}>
                         <div>
@@ -135,7 +135,7 @@ export default function LoginDesktop() {
                                         Forgot Password?
                                     </button>
                                 </div>
-                                <Button className="w-full" disabled={loading}>
+                                <Button className="w-full" disabled={loading} variant="default" type="submit">
                                     {loading ? "Logging in…" : "Login"}
                                 </Button>
                             </form>
