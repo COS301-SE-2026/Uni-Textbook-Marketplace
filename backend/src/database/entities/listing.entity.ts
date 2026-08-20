@@ -143,5 +143,4 @@ export class Listing {
 
   @OneToMany(() => Report, (report) => report.listing)
   reports!: Report[];
-  
 }

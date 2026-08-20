@@ -7,8 +7,7 @@ import { User } from '../database/entities/users.entity';
 import { ReportsModule } from '../reports/reports.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuditLog, User]),
-    ReportsModule],
+  imports: [TypeOrmModule.forFeature([AuditLog, User]), ReportsModule],
   controllers: [AdminController],
   providers: [AdminService],
 })

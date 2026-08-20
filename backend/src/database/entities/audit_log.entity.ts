@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   Index,
   Check,
-  Admin,
 } from 'typeorm';
 
 import { User } from './users.entity';

@@ -9,21 +9,9 @@ import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-        Report,
-        Listing,
-        User,
-        ]),
-    ],
-    controllers: [
-        ReportsController,
-    ],
-    providers: [
-        ReportsService,
-    ],
-    exports:[
-        ReportsService,
-    ]
+  imports: [TypeOrmModule.forFeature([Report, Listing, User])],
+  controllers: [ReportsController],
+  providers: [ReportsService],
+  exports: [ReportsService],
 })
 export class ReportsModule {}

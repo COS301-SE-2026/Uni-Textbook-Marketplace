@@ -30,7 +30,10 @@ interface RequestWithUser extends Request {
 @ApiTags('Admin')
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService, private reportsService: ReportsService) {}
+  constructor(
+    private adminService: AdminService,
+    private reportsService: ReportsService,
+  ) {}
 
   @Patch(':id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -69,39 +72,31 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async findAll() {
-      return this.reportsService.findAll();
+    return this.reportsService.findAll();
   }
 
   @Get('reports/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async findOne(
-      @Param('id') id: string,
-  ) {
-      return this.reportsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return this.reportsService.findOne(id);
   }
 
   @Patch('reports/:id/dismiss')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async dismissReport(
-      @Param('id') id: string,
-  ) {
-      return this.reportsService.dismiss(id);
+  async dismissReport(@Param('id') id: string) {
+    return this.reportsService.dismiss(id);
   }
 
   @Patch(':id/ban')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async banUser(
-      @Param('id') id: string,
-      @Body('reason') reason: string,
-      @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @Req() req: RequestWithUser,
   ) {
-      return this.adminService.banUser(
-          id,
-          req.user.id,
-          reason,
-      );
+    return this.adminService.banUser(id, req.user.id, reason);
   }
 }

@@ -8,14 +8,9 @@ import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-        Listing,
-        User,
-        ]),
-    ],
-    controllers: [MessagingController],
-    providers: [MessagingService],
-    exports: [MessagingService],
+  imports: [TypeOrmModule.forFeature([Listing, User])],
+  controllers: [MessagingController],
+  providers: [MessagingService],
+  exports: [MessagingService],
 })
 export class MessagingModule {}

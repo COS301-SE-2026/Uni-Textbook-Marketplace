@@ -176,12 +176,12 @@ export class AuthService {
     );
 
     if (user.is_banned) {
-    throw new ForbiddenException(
-      `Your account has been banned. Reason: ${
-        user.ban_reason ?? 'No reason provided.'
-      }`,
-    );
-  }
+      throw new ForbiddenException(
+        `Your account has been banned. Reason: ${
+          user.ban_reason ?? 'No reason provided.'
+        }`,
+      );
+    }
 
     if (!passwordValid) {
       throw new UnauthorizedException('Invalid email or password.');
