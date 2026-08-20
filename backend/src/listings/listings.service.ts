@@ -36,7 +36,7 @@ export class ListingsService {
 
     @Inject(forwardRef(() => SavedSearchesService))
     private savedSearchesService: SavedSearchesService,
-  ) { }
+  ) {}
 
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
