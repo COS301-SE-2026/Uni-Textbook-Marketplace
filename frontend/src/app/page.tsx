@@ -1,6 +1,8 @@
 import Link from 'next/link'
-import { Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon, 
-  MessageCircle, Microscope, MessageSquare, Mail } from 'lucide-react'
+import {
+  Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
+  MessageCircle, Microscope, MessageSquare, Mail
+} from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -8,12 +10,12 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import Footer from '@/components/Footer'
 
 const UNIVERSITY_FACULTIES = [
-  { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]"/>},
-  { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]"/>},
-  { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" />},
-  { name: 'NAS (Natural & Agricultural Sciences)', icon: <Microscope className="w-6 h-6 text-[#00B4D8]" />}
+  { name: 'EBIT (Engineering, Built-Environment & IT)', icon: <Laptop className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Economic & Management Sciences', icon: <Briefcase className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Law', icon: <Scale className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Health Sciences', icon: <Stethoscope className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'Humanities', icon: <BookOpen className="w-6 h-6 text-[#00B4D8]" /> },
+  { name: 'NAS (Natural & Agricultural Sciences)', icon: <Microscope className="w-6 h-6 text-[#00B4D8]" /> }
 ];
 
 
@@ -23,7 +25,7 @@ const PLATFORM_STEPS = [
     icon: <UserPlus className="w-6 h-6 text-[#00B4D8]" />,
     title: 'Create an Account',
     desc: 'Register using your university email. We check this to make sure only actual students are trading on the platform.',
-    
+
   },
   {
     num: '02',
@@ -40,17 +42,17 @@ const PLATFORM_STEPS = [
 ];
 
 const CAMPUS_SECURITY = [
-    {
-        icon: <Mail className="w-5 h-5 text-white" />,
-        title: 'University Email Verification',
-        desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
-    },
-    {
-        icon: <MessageSquare className="w-h h-5 text-white" />,
-        title: 'In-app Handshakes',
-        desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
+  {
+    icon: <Mail className="w-5 h-5 text-white" />,
+    title: 'University Email Verification',
+    desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
+  },
+  {
+    icon: <MessageSquare className="w-h h-5 text-white" />,
+    title: 'In-app Handshakes',
+    desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
 
-    },
+  },
 ];
 
 const MOCK_FEATURED_BOOKS: Listing[] = [
@@ -64,20 +66,29 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/cormen-algorithms.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 3,
       author: 'Thomas H. Cormen',
       isbn: '978-026033848',
       title: 'Introduction to Algorithms',
+      publisher: ''
     },
     module: {
       code: 'COS212',
-      faculty: 'EBIT',
+      name: "Data Structure's and algorithm",
+      semester: 2,
+      faculty: {
+        name: 'EBIT'
+      }
     },
     seller: {
       first_name: 'John',
       last_name: 'Vasques',
       is_verified: true,
+      university: {
+        name: 'UP'
+      }
     },
   },
   {
@@ -90,20 +101,26 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/clean-code.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 1,
       author: 'Robert C. Martin',
       isbn: '978-0132350884',
       title: 'Clean Code',
+      publisher: '',
     },
     module: {
       code: 'COS301',
-      faculty: 'EBIT',
+      name: 'Agile Craftsmanship',
+      semester: 2,
     },
     seller: {
       first_name: 'Sarah',
       last_name: 'Smith',
       is_verified: true,
+      university: {
+        name: ''
+      }
     },
   },
   {
@@ -116,20 +133,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/database-systems.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 6,
       author: 'Abraham Silberschatz',
       isbn: '978-0078022159',
       title: 'Database System Concepts',
+      publisher: ''
     },
     module: {
       code: 'COS221',
-      faculty: 'EBIT',
+      name: '',
+      semester: 2
     },
     seller: {
       first_name: 'Rethabile',
       last_name: 'Zwide',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -142,20 +163,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/calculus.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 8,
       author: 'James Stewart',
       isbn: '978-1119456339',
       title: 'Calculus Early Transcendentals',
+      publisher: '',
     },
     module: {
       code: 'WTW258',
-      faculty: 'Natural Sciences',
+      name: 'Natural Sciences',
+      semester: 2,
     },
     seller: {
       first_name: 'Emily',
       last_name: 'Brown',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -168,20 +193,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/c-programming.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 2,
       author: 'Brian W. Kernighan',
       isbn: '978-0131103627',
       title: 'The C Programming Language',
+      publisher: ''
     },
     module: {
       code: 'COS132',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 1,
     },
     seller: {
       first_name: 'David',
       last_name: 'Wilson',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -194,20 +223,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/networking.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 7,
       author: 'James F. Kurose',
       isbn: '978-0133594140',
       title: 'Computer Networking: A Top-Down Approach',
+      publisher: ''
     },
     module: {
       code: 'COS216',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 1
     },
     seller: {
       first_name: 'Novuka',
       last_name: 'Mtembu',
       is_verified: true,
+      university: { name: ''}
     },
   },
   {
@@ -220,20 +253,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/data-intensive.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 1,
       author: 'Martin Kleppmann',
       isbn: '978-1492056355',
       title: 'Designing Data-Intensive Applications',
+      publisher: ''
     },
     module: {
       code: 'COS341',
-      faculty: 'EBIT',
+      name: 'EBIT',
+      semester: 2,
     },
     seller: {
       first_name: 'Teboho',
       last_name: 'Modise',
       is_verified: true,
+      university: {name: ''}
     },
   },
   {
@@ -246,20 +283,24 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
     listing_status: 'AVAILABLE',
     photo_urls: ['/books/probability.jpg'],
     created_at: new Date().toISOString(),
+    description: '',
     book: {
       edition: 2,
       author: 'Dimitri Bertsekas',
       isbn: '978-0199535569',
       title: 'Introduction to Probability',
+      publisher: '',
     },
     module: {
-        code: 'WTW152',
-        faculty: 'Natural Sciences',
-      },
+      code: 'WTW152',
+      name: 'Natural Sciences',
+      semester: 2,
+    },
     seller: {
       first_name: 'Chuku',
       last_name: 'Obioha',
       is_verified: true,
+      university: {name: ''}
     },
   },
 
@@ -268,11 +309,11 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
 export default function LandingPage() {
   return (
     <>
-      {/* Hero section with background image */}
+      {/* Hero section */}
       <section className="relative h-screen w-full bg-[#000f2b] flex items-center overflow-hidden -mt-[70px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          
+
           <Image
             src="/hero-bg.png"
             alt="Books on campus"
@@ -282,20 +323,20 @@ export default function LandingPage() {
           />
         </div>
 
-        {/* Gradient overlay: darker on left for text, lighter on right to reveal image */}
+        
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
 
         <div className="container-content relative z-20 py-16 w-full">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12 min-h-[80vh]">
 
-            {/* LEFT — text + buttons */}
+            {/* LEFT text + buttons */}
             <div className="max-w-lg">
               <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
                 Made for Students,{' '}
                 <span className="text-[#00B4D8]">by Students</span>
               </h1>
               <p className="text-white/80 text-xl md:text-2xl mt-4">
-                Buy, sell or swap textbooks with students from your university
+                Buy or sell textbooks with students from your university
               </p>
               <div className="flex gap-3 mt-8">
                 <Link href="/auth/register" className="btn-primary">
@@ -313,16 +354,16 @@ export default function LandingPage() {
                   className="px-7 py-3 text-sm font-semibold text-white border-2
                       border-white/40 rounded hover:border-white
                       transition-all duration-200 no-underline">
-                        Sell
-                      </Link>
+                  Sell
+                </Link>
 
               </div>
             </div>
 
-            {/* RIGHT — feature cards */}
+            {/* RIGHT feature cards */}
             <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
 
-              {/* Partnership */}
+              {/* Partnership 
               <div className="flex items-center gap-5 mt-4">
                 <span className="text-white text-xl uppercase tracking-wider">
                   In collaboration with
@@ -335,7 +376,7 @@ export default function LandingPage() {
                   height={200}
                   className="w-auto h-auto"
                 />
-              </div>
+              </div>*/}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
@@ -355,37 +396,23 @@ export default function LandingPage() {
                   <p className="text-white text-sm font-semibold">Save Money</p>
                   <p className="text-white/60 text-xs">Affordable textbooks from fellow students</p>
                 </Card>
+              </div>
             </div>
           </div>
-        </div>
-          {/* Search bar
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center w-full max-w-2xl bg-white rounded-full overflow-hidden shadow-lg">
-                <div className="flex-1 flex items-center gap-2 px-4 py-2">
-                  <Search size={18} className="text-[#4B4F58] flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Search by title, author, ISBN, or module..."
-                    className="w-full text-sm text-[#3a3a3a] placeholder-[#4B4F58] 
-                              border-none outline-none bg-transparent py-1.5"
-                  />
-                </div>
-                <button className="bg-[#00B4D8] text-[#000f2b] font-semibold text-sm px-6 py-2.5 hover:bg-[#0096B4] transition-colors h-full">
-                  SEARCH
-                </button>
-              </div>
-            </div>*/}
+          
         </div>
       </section>
 
-      {/* Section 2: How it works */}
+      {/* How it works */}
       <section className="py-24 bg-white border-b border-slate-100">
         <div className="container-content">
 
           <div className="text-center mb-16">
+
             <span className="text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
             </span>
+
             <p className="text-slate-500 mt-4 max-w-xl mx-auto text-xl leading-relaxed">
               Buy and sell used textbooks with other students on campus in three steps.
             </p>
@@ -395,7 +422,8 @@ export default function LandingPage() {
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
 
               {PLATFORM_STEPS.map((item, idx) => (
-                <ScrollAnimation key={idx} delay={idx * 550}>
+                <ScrollAnimation key={idx} delay={idx * 650}>
+
                 <div className="relative flex flex-col items-center text-center px-4">
                   <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
@@ -409,6 +437,7 @@ export default function LandingPage() {
                 <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
                   {item.title}
                 </h3>
+
                 <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
                   {item.desc}
                 </p>
@@ -421,9 +450,10 @@ export default function LandingPage() {
       </section>
       
 
-      {/* Section 3: Find a variety of textbooks */}
-      <ScrollAnimation delay={450}>
+      {/* Find a variety of textbooks */}
+      <ScrollAnimation delay={550}>
       <section className="py-20 bg-white">
+
         <div className="container-content">
             <div className="text-center mb-14">
               
@@ -439,6 +469,7 @@ export default function LandingPage() {
               {/* Faculty Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
                 {UNIVERSITY_FACULTIES.map((fac, idx) => (
+                  <ScrollAnimation key={idx} delay={idx * 500}>
                   <div key = {idx}
                         
                     className="flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
@@ -449,16 +480,18 @@ export default function LandingPage() {
                       {fac.name}
                     </span>
                   </div>
+                  </ScrollAnimation>
                 ))}
               </div>
             </div>
       </section>
       </ScrollAnimation>
 
-      {/* Section 4: Trust & Safety */}
-      <ScrollAnimation delay={400}>
+      {/* Trust & Safety */}
+      <ScrollAnimation delay={700}>
       <section className="py-20 bg-[#00B4D8]">
         <div className="container-content">
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
               <div>
@@ -474,6 +507,7 @@ export default function LandingPage() {
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                       {CAMPUS_SECURITY.map((item, idx) => (
+                        <ScrollAnimation key={idx} delay={idx * 650}>
                         <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                             {item.icon}
@@ -486,22 +520,25 @@ export default function LandingPage() {
                               {item.desc}
                             </p>
                           </div>
+
                         </div>
+                        </ScrollAnimation>
                   ))}
               </div>
 
             </div>
-            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-2xl">
-              <Image 
-                src="/students-sitting.jpg"
-                alt="Students meeting on campus"
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority
+            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+              <video src="/in-app-chat.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                poster="/students-sitting.jpg"
               />
             </div>
           </div>
+
         </div>
       </section>
       </ScrollAnimation>
@@ -530,6 +567,7 @@ export default function LandingPage() {
       {/* Call To Action */}
       <ScrollAnimation delay={450}>
       <section className="py-24 bg-slate-50">
+        
         <div className="container-content">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 

@@ -19,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
+import { EditListingDto } from './dto/editListing.dtos';
 
 interface AuthenticatedUser {
   id: string;
@@ -62,24 +63,16 @@ export class ListingsController {
     return this.listingsService.getListingById(id);
   }
 
-  @Get('admin/pending')
+  //for student to edit listings
+  @Patch('editlist')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  getPending() {
-    return this.adminService.getPendingListings();
+  @Roles('student')
+  async editlisting(@Body() dto: EditListingDto) {
+    return this.listingsService.editlisting(dto);
   }
 
-  @Patch('admin/:id/approve')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  approve(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.adminService.approveListing(id, req.user.id);
-  }
-
-  @Patch('admin/:id/reject')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  reject(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.adminService.rejectListing(id, req.user.id);
+  @Get('admin/all')
+  async getAllForAdmin() {
+    return this.listingsService.getAllListingsForAdmin();
   }
 }

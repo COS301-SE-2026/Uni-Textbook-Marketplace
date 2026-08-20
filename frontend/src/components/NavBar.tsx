@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
+import { Menu, X, ChevronDown, BookOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import ThemeToggle from './ThemeToggle'
+import { NotificationBell } from './notifications/NotificationBell'
 
 
 
@@ -18,13 +19,14 @@ const authNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Sell', href: '/listings/create' },
   { label: 'Messages', href: '/messages' },
-  { label: 'Favourites', href: '/wishlist' },
+  { label: 'Wishlist', href: '/wishlist' },
 ]
 
 const adminNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
+  { label: 'Audit Logs', href: '/admin/log' }
 ]
 
 
@@ -36,6 +38,8 @@ export default function NavBar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+
+
   const [mounted, setMounted] = useState(false);
   
   const [scrolled, setScrolled] = useState(false);
@@ -52,14 +56,16 @@ export default function NavBar() {
     if (!isLandingPage) return;
 
     const handleScroll = () => setScrolled (window.scrollY > 50);
+
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+
   }, [isLandingPage]);
 
   const isTransparent = isLandingPage && !scrolled;
 
-if (!mounted) return null;
+  if (!mounted) return null;
 
   if (isLoading) {
     return (
@@ -106,6 +112,8 @@ if (!mounted) return null;
               <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white' : 'text-[var(--foreground)]'}`}>
                 Marketplace
               </span>
+
+
             </div>
           </Link>
 
@@ -122,6 +130,8 @@ if (!mounted) return null;
                       : isTransparent ? 'text-white' : 'text-[var(--foreground)]'
                     }`}
                 >
+
+
                   {link.label.toUpperCase()}
                 </Link>
               ))}
@@ -137,16 +147,12 @@ if (!mounted) return null;
               <>
 
                 {/* Notification bell */}
-                <button
-                  aria-label="Notifications"
-                  className="relative p-2 text-[var(--foreground)] hover:text-[#00B4D8] transition-colors duration-200 rounded-full hover:bg-[#F5F5F5] dark:hover:bg-gray-800"
-                >
-                  <Bell size={20} />
-                </button>
+                <NotificationBell />
 
                 {/* User menu */}
                 <div className="relative">
                   <button
+                    type="button"
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center gap-2 p-1 rounded-full
                                hover:bg-[#F5F5F5] dark:hover:bg-gray-800 transition-colors duration-200"
@@ -160,6 +166,7 @@ if (!mounted) return null;
                     <span className="text-sm font-medium text-[var(--foreground)]">
                       {user.first_name}
                     </span>
+
                     <ChevronDown
                       size={16}
                       className={`text-[#4B4F58] dark:text-gray-400 transition-transform duration-200
@@ -192,6 +199,7 @@ if (!mounted) return null;
                           My Listings
                         </Link>
                       )}
+                      {/** 
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -200,8 +208,10 @@ if (!mounted) return null;
                       >
                         Settings
                       </Link>
+                      */}
                       <div className="border-t border-[var(--card-border)]" />
                       <button
+                        type="button"
                         onClick={async () => {
                           setUserMenuOpen(false);
                           await logout();
@@ -238,8 +248,14 @@ if (!mounted) return null;
             )}
           </div>
 
+          {/* MOBILE: Notification Bell */}
+          <div className="flex items-center gap-1 md:hidden">
+            {isAuthenticated && user && <NotificationBell />}
+          </div>
+
           {/* HAMBURGER: Mobile only */}
           <button
+            type="button"
             className={`md:hidden p-2 transition-colors duration-200 ${
               isTransparent ? 'text-white' : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
             }`}
@@ -249,6 +265,8 @@ if (!mounted) return null;
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
+
+
         </div>
       </div>
 
@@ -302,7 +320,10 @@ if (!mounted) return null;
                 >
                   Settings
                 </Link>
+
+
                 <button
+                  type="button"
                   className="py-3 text-left text-sm text-[#b91c1c] dark:text-[#ef4444]
                              hover:text-[#7F1D1D] transition-colors"
                   onClick={async () => {
@@ -325,6 +346,8 @@ if (!mounted) return null;
                 >
                   Register
                 </Link>
+
+
                 <Link
                   href="/auth/login"
                   className="py-3 text-sm font-medium text-[#3a3a3a]
@@ -337,6 +360,8 @@ if (!mounted) return null;
               </>
             )}
           </div>
+
+          
         </div>
       )}
     </nav>

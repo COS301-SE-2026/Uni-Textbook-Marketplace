@@ -11,9 +11,9 @@
   "forceExit": true,
   "detectOpenHandles": true,
   "verbose": true,
-  "setupFiles": ["<rootDir>/setup.ts"],
   "setupFilesAfterEnv": ["<rootDir>/setup.ts"],
   "moduleNameMapper": {
-    "^@/(.*)$": "<rootDir>/../src/$1"
+    "^@/(.*)$": "<rootDir>/../src/$1",
+    "^src/(.*)$": "<rootDir>/../src/$1"
   }
 }

@@ -6,10 +6,12 @@ import Image from 'next/image'
 import { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
+import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
-import BASE_URL from '@/lib/api';
+import api from '@/lib/api';
+import AccordionSection from '@/components/ui/AccordionSection'
+import { useMessaging } from '@/hooks/useMessaging'
 
-// Helpers
 
 const CONDITION_LABEL: Record<string, string> = {
     'new': 'Like New',
@@ -24,16 +26,21 @@ const ANNOTATION_LABEL: Record<string, string> = {
     'heavy': 'Heavy',
 }
 
-const FACULTY_LABEL: Record<string, string> = {
-    ENG: 'Engineering',
-    EBIT: 'EBIT',
-    LAW: 'Law',
-    HUM: 'Humanities',
-    MED: 'Health Sciences',
-    NAT: 'Natural & Agricultural Sciences',
-    ECO: 'Economic & Management Sciences',
-    EDU: 'Education',
+const LISTING_LABEL: Record<string, string> = {
+    'AVAILABLE': 'Available',
+    'RESERVED': 'Reserved',
+    'SOLD': 'Sold',
+    'WITHDRAWN': 'Available'
 }
+
+const SECTIONS = [
+    { key: "bookDetails", title: "Book Details" },
+    { key: "moduleDetails", title: "Module Details" },
+] as const;
+
+type SectionKey = (typeof SECTIONS)[number]["key"];
+type OpenSection = Record<SectionKey, boolean>;
+
 
 function timeAgo(dateStr: string): string {
     const diff = Date.now() - new Date(dateStr).getTime()
@@ -59,22 +66,18 @@ export default function ListingDetailPage() {
     const [showMessageModal, setShowMessageModal] = useState(false)
     const [message, setMessage] = useState('')
     const [messageSent, setMessageSent] = useState(false)
-    const [saving, setSaving] = useState(false)
-    const [saved, setSaved] = useState(false)
+    const [openSections, setOpenSection] = useState<OpenSection>({
+        bookDetails: false,
+        moduleDetails: false,
+    })
+    const {startConversation} = useMessaging();
 
     // Fetch listing
 
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${BASE_URL}/listings/${id}`, {
-                    headers: {
-                        'Authorization': token ? `Bearer ${token}` : '',
-                    },
-                })
-                if (!res.ok) throw new Error('Not found')
-                const data = await res.json()
+                const data = await api.get<Listing>(`/listings/${id}`);
                 setListing(data)
             } catch (err) {
                 console.error('Error fetching listing:', err)
@@ -85,48 +88,9 @@ export default function ListingDetailPage() {
         fetchListing()
     }, [id])
 
-    // Actions 
-
-    const handleSave = async () => {
-        setSaving(true)
-        try {
-            await fetch(`${BASE_URL}/listings/${id}/save`, { method: 'POST' })
-            setSaved(true)
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setSaving(false)
-        }
+    function onselect(section: SectionKey) {
+        setOpenSection((prev) => ({ ...prev, [section]: !prev[section] }))
     }
-
-    const handleSendMessage = async () => {
-        if (!message.trim()) return
-        try {
-            await fetch(`${BASE_URL}/messages`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ listingId: id, content: message }),
-            });
-            setMessageSent(true)
-            setMessage('')
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
-    const handleShare = async () => {
-        try {
-            await navigator.share({
-                title: listing?.title,
-                url: window.location.href,
-            })
-        } catch {
-            navigator.clipboard.writeText(window.location.href)
-            alert('Link copied to clipboard!')
-        }
-    }
-
-    // Loading 
 
     if (loading) {
         return (
@@ -147,48 +111,38 @@ export default function ListingDetailPage() {
         return (
             <div className="container-content py-8">
                 <p className="text-gray-500">Listing not found.</p>
-                <button
+                <Button
                     onClick={() => router.push('/listings')}
                     className="btn-secondary mt-4"
+                    variant='secondary'
                 >
                     Back to listings
-                </button>
+                </Button>
             </div>
         )
     }
 
-    const seller = listing.seller || { first_name: 'Unknown', last_name: 'Seller', is_verified: false }
-    const book = listing.book || { edition: 'N/A', author: 'Unknown', isbn: 'N/A'}
-    const moduleData = listing.module || { code: 'N/A', faculty: 'N/A' }
-    const photoUrls = listing.photo_urls || []
-    const title = listing.title || 'Untitled'
-    const price = listing.price || 0
-    const condition = listing.condition || 'good'
-    const annotationLevel = listing.annotation_level || 'none'
-    const createdAt = listing.created_at || new Date().toISOString()
-
     return (
         <div className="container-content py-8">
 
-            {/* Back */}
-            <button
+            <Button
                 onClick={() => router.back()}
                 className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6 group"
+                variant='secondary'
             >
                 <span className="transform group-hover:-translate-x-1 transition-transform duration-200">&larr;</span>
-                Back to results
-            </button>
+                Back 
+            </Button>
 
             <div className="flex flex-col lg:flex-row gap-8">
 
                 <div className="flex-1">
 
-                    {/* Main image */}
                     <div className="relative w-full aspect-square max-w-sm bg-gray-100 rounded-lg overflow-hidden mb-3">
-                        {photoUrls.length > 0 ? (
+                        {listing.photo_urls.length > 0 ? (
                             <Image
-                                src={normalizeImage(photoUrls[activeImage] || photoUrls[0])}
-                                alt={title}
+                                src={normalizeImage(listing.photo_urls[activeImage] || listing.photo_urls[0])}
+                                alt={listing.title}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
@@ -209,16 +163,15 @@ export default function ListingDetailPage() {
                         )}
                     </div>
 
-                    {/* Thumbnails */}
-                    {photoUrls.length > 1 && (
+                    {listing.photo_urls.length > 1 && (
                         <div className="flex gap-2">
-                            {photoUrls.map((img, i) => (
+                            {listing.photo_urls.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImage(i)}
                                     className={`relative w-14 h-14 rounded border-2 overflow-hidden ${activeImage === i
-                                            ? 'border-blue-600'
-                                            : 'border-transparent'
+                                        ? 'border-blue-600'
+                                        : 'border-transparent'
                                         }`}
                                 >
                                     <Image
@@ -233,45 +186,34 @@ export default function ListingDetailPage() {
                         </div>
                     )}
 
-                    {/* Description */}
-                    {/*<div className="mt-6">
-                        <h4 className="font-semibold mb-1">Description</h4>
-                        <p className="text-sm text-gray-600 leading-relaxed">
-                            {listing.description}
-                        </p>
-                    </div>*/}
-
                 </div>
 
-                {/*Centre: book info*/}
                 <div className="flex-1">
 
                     <h2 className="text-xl font-bold leading-snug">
-                        {title}
+                        {listing.title}
                     </h2>
-                    <p className="text-gray-500 text-sm mt-1">
-                        {book.edition} Edition
-                    </p>
-                    <p className="text-gray-700 text-sm mt-1">
-                        {book.author}
-                    </p>
 
                     <p className="text-2xl font-bold mt-4">
-                        R {Number(price).toFixed(2)}
+                        R {Number(listing.price).toFixed(2)}
                     </p>
 
-                    {/* Details table */}
+                    <div className="mt-6">
+                        <h5 className="font-semibold mb-1">Description</h5>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            {listing.description}
+                        </p>
+                    </div>
+
                     <table className="mt-6 w-full text-sm">
                         <tbody>
                             {[
-                                ['Condition', CONDITION_LABEL[condition] || condition],
-                                ['Annotations', ANNOTATION_LABEL[annotationLevel] || annotationLevel],
-                                ['Module Code', moduleData.code],
-                                ['Faculty', moduleData.faculty],
-                                ['ISBN', book.isbn],
-                                ['Listed', timeAgo(createdAt)],
-                            ].map(([label, value]) => (
-                                <tr key={label} className="border-b border-gray-100">
+                                ['Condition', CONDITION_LABEL[listing.condition]],
+                                ['Annotations', ANNOTATION_LABEL[listing.annotation_level]],
+                                ['Listing status', <Badge key="listing-status" variant='approved'>{LISTING_LABEL[listing.listing_status]}</Badge>],
+                                ['Listed', timeAgo(listing.created_at)],
+                            ].map(([label, value], index) => (
+                                <tr key={`detail-row-${index}`} className="border-b border-gray-100">
                                     <td className="py-2 text-gray-500 w-32">
                                         {label}
                                     </td>
@@ -283,93 +225,104 @@ export default function ListingDetailPage() {
                         </tbody>
                     </table>
 
-                    {/* CTA buttons */}
-                    <div className="flex gap-3 mt-8 flex-wrap">
-                        <button
-                            onClick={() => setShowMessageModal(true)}
-                            className="btn-primary"
-                        >
-                            MESSAGE SELLER
-                        </button>
-                        <Button
-                            variant='secondary'
-                            onClick={handleSave}
-                            disabled={saving || saved}
+                    {SECTIONS.map(({ key, title }) => (
 
+                        <AccordionSection
+                            key={key}
+                            title={title}
+                            isOpen={openSections[key]}
+                            OnToggle={() => onselect(key)}
                         >
-                            {saved ? '✓ SAVED' : saving ? 'Saving...' : 'SAVE LISTING'}
-                        </Button>
-                        <Button
-                            onClick={handleShare}
-                            variant='secondary'
-                        >
-                            SHARE
-                        </Button>
-                    </div>
+                            {key === "bookDetails" && listing && (
+                                <table className="mt-2 w-full text-sm">
+                                    <tbody>
+                                        {[
+                                            ['Title', listing.book.title],
+                                            ['Edition', listing.book.edition?.toString() ?? 'N/A'],
+                                            ['ISBN', listing.book.isbn ?? 'N/A'],
+                                            ['Name of Author', listing.book.author ?? 'N/A'],
+                                            ['Name of Publisher', listing.book.publisher ?? 'N/A']
+                                        ].map(([label, value], index) => (
+                                            <tr key={`book-detail-${index}`} className="border-b border-gray-100">
+                                                <td className="py-2 text-gray-500 w-32">{label}</td>
+                                                <td className="py-2 font-medium">{value}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+
+                            {key === "moduleDetails" && listing && (
+                                <table className="mt-2 w-full text-sm">
+                                    <tbody>
+                                        {[
+                                            ['Name', listing.module.name],
+                                            ['Code', listing.module.code],
+                                            ['Semester', listing.module.semester?.toString() ?? 'N/A'],
+                                            ['Faculty', listing.module.faculty?.name ?? 'N/A'],
+                                        ].map(([label, value], index) => (
+                                            <tr key={`module-detail-${index}`} className="border-b border-gray-100">
+                                                <td className="py-2 text-gray-500 w-32">{label}</td>
+                                                <td className="py-2 font-medium">{value}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </AccordionSection>
+                    ))}
+
 
                 </div>
 
-                {/* Seller column */}
-                    <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
+                <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
 
-                        {/* Seller info */}
-                        <div className="card">
-                            <h4 className="font-semibold mb-3">
-                                Seller Information
-                            </h4>
+                    <div className="card">
+                        <h4 className="font-semibold mb-3">
+                            Seller Information
+                        </h4>
 
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                                    {seller.first_name?.[0]}{seller.last_name?.[0] || ''}
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-sm">
-                                        {seller.first_name} {seller.last_name}
-                                    </p>
-                                    {seller.is_verified && (
-                                        <span className="text-xs text-green-600 flex items-center gap-1">
-                                            ✓ Verified Student
-                                        </span>
-                                    )}
-                                </div>
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                                {listing.seller?.first_name?.[0]}{listing.seller?.last_name?.[0]}
                             </div>
+                            <div>
+                                <p className="font-semibold text-sm">
+                                    {listing.seller?.first_name} {listing.seller?.last_name}
+                                </p>
 
-                            {/*<p className="text-xs text-gray-500 mb-1">
-                                Member since {seller.memberSince}
-                            </p>*/}
-
-                            {/*<div className="flex items-center gap-1 text-sm">
-                                <span className="text-yellow-400">★</span>
-                                <span className="font-medium">
-                                    {seller.rating.toFixed(1)}
-                                </span>
-                                <span className="text-gray-400 text-xs">
-                                    ({seller.reviewCount} reviews)
-                                </span>
-                            </div>*/}
+                                {listing.seller?.is_verified && (
+                                    <span className="text-xs text-green-600 flex items-center gap-1">
+                                        ✓ Verified Student
+                                    </span>
+                                )}
+                            </div>
                         </div>
+                        <p>
+                            {listing.seller?.university.name}
+                        </p>
 
-                        {/* Meetup preferences */}
-                        {/*<div className="card">
-                            <h4 className="font-semibold mb-2 text-sm">
-                                Meet up Preferences
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                                {seller.meetupPreference}
-                            </p>
-                        </div>
+                    </div>
 
-                        {/* Safety tip */}
-                        <div className="card bg-amber-50 border border-amber-200">
-                            <h4 className="font-semibold mb-1 text-sm text-amber-800">
-                                Stay Safe
-                            </h4>
-                            <p className="text-xs text-amber-700">
-                                Keep all conversations inside the app. Do not share
-                                personal details with sellers.
-                            </p>
-                        </div>
-                    </aside>
+                    <div className="card">
+                        <h4 className="font-semibold mb-1 text-sm">
+                            Stay Safe
+                        </h4>
+                        <p className="text-xs ">
+                            Keep all conversations inside the app. Do not share
+                            personal details with sellers.
+                        </p>
+                    </div>
+
+                    <div className="flex gap-3 mt-8 flex-wrap">
+                        <Button
+                            onClick={() => setShowMessageModal(true)}
+                            variant='secondary'
+                        >
+                            MESSAGE SELLER
+                        </Button>
+                    </div>
+                </aside>
             </div>
 
             <Modal
@@ -378,7 +331,7 @@ export default function ListingDetailPage() {
                     setShowMessageModal(false)
                     setMessageSent(false)
                 }}
-                title={`Message ${seller?.first_name ?? 'Seller'}`}
+                title={`Message ${listing.seller?.first_name ?? 'Seller'}`}
             >
                 {messageSent ? (
                     <div className="text-center py-6">
@@ -387,7 +340,7 @@ export default function ListingDetailPage() {
                         <p className="text-sm text-gray-500 mt-1">
                             You will receive a reply in your messages.
                         </p>
-                        <button
+                        <Button
                             onClick={() => {
                                 setShowMessageModal(false)
                                 setMessageSent(false)
@@ -395,12 +348,12 @@ export default function ListingDetailPage() {
                             className="btn-primary mt-4"
                         >
                             Close
-                        </button>
+                        </Button>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
                         <p className="text-sm text-gray-600">
-                            Enquiring about: <strong>{title}</strong>
+                            Enquiring about: <strong>{listing.title}</strong>
                         </p>
                         <textarea
                             className="w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -409,10 +362,41 @@ export default function ListingDetailPage() {
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                         />
-                        <Button onClick={handleSendMessage} disabled={!message.trim()}>
-                            Send Message
-                        </Button>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    setShowMessageModal(false);
+                                    setMessage("");
+                                }}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                onClick={async () => {
+                                    if (!message.trim()) {
+                                        return;
+                                    }
+
+                                    try {
+                                        await startConversation(
+                                            listing.id,
+                                            message,
+                                        );
+
+                                        setMessageSent(true);
+                                        setMessage("");
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
+                            >
+                                Send Message
+                            </Button>
+                        </div>
                     </div>
+                    
                 )}
             </Modal>
 

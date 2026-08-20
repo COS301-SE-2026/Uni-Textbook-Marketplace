@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-
+import { Button } from '@/components/ui'
 import { Trash2, Bookmark, Search, ArrowLeft } from 'lucide-react'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { getSavedSearches, deleteSavedSearch, SavedSearch, Filters } from '@/lib/saved-searches.api'
@@ -23,8 +23,12 @@ export default function SavedSearchesPage() {
 
     try {
 
-      const data = await getSavedSearches()
-      setFilterSearches(data)
+      const data = await getSavedSearches();
+
+console.log("Returned from API:", data);
+console.log("Is array?", Array.isArray(data));
+
+setFilterSearches(data);
     } catch (error) {
 
       console.error('Failed to load saved searches', error)
@@ -161,16 +165,16 @@ export default function SavedSearchesPage() {
       <div className="container-content py-8">
         <div className="mb-6">
 
-          <button
-            type="button"
-            onClick={() => routAttr.back()}
+         <Button
+        variant="secondary"
+        onClick={() => routAttr.back()}
+        className="mb-2"
+    >
+        <ArrowLeft size={16} className="mr-1" />
+        Back
+    </Button>
 
-
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-2"
-          >
-            <ArrowLeft size={16} />
-            Back
-          </button>
+          
 
 
           <div className="flex items-center justify-between">

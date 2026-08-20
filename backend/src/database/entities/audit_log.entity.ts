@@ -15,7 +15,7 @@ import { User } from './users.entity';
 @Index('idx_audit_entity', ['entity_type', 'entity_id'])
 @Index('idx_audit_created_at', ['performed_at'])
 @Check(
-  `action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN')`,
+  `action IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'SOLD', 'WITHDRAWN','APPROVE_LISTING','REJECT_LISTING','BAN_USER')`,
 )
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
@@ -47,4 +47,7 @@ export class AuditLog {
     nullable: true,
   })
   notes!: string;
+
+  @Column({ type: 'text', nullable: true })
+  reason?: string;
 }

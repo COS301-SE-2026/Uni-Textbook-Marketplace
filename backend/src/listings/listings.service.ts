@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm'; // Added DeepPartial
 
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
@@ -13,6 +15,8 @@ import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
+import { EditListingDto } from './dto/editListing.dtos';
+import { SavedSearchesService } from '../saved_search/saved_search.service';
 
 @Injectable()
 export class ListingsService {
@@ -29,9 +33,11 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private moduleRepo: Repository<ModuleEntity>,
+
+    @Inject(forwardRef(() => SavedSearchesService))
+    private savedSearchesService: SavedSearchesService,
   ) {}
 
-  //Create
   async createListing(userId: string, dto: CreateListingDto) {
     const user = await this.userRepo.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
@@ -43,20 +49,68 @@ export class ListingsService {
       ? await this.moduleRepo.findOneBy({ id: dto.moduleId })
       : null;
 
-    const listing = this.listingRepo.create({
+    const listingData = {
       title: dto.title,
       seller: user,
-      book,
+      book: book,
       module: module ?? null,
       condition: dto.condition,
       annotation_level: dto.annotationLevel,
       price: dto.price,
-      status: ListingStatus.PENDING,
+      status: ListingStatus.PENDING as ListingStatus,
       photo_urls: dto.photoUrls ?? [],
       has_notes: dto.hasNotes ?? false,
+      description: dto.description,
+    };
+
+    const listing = this.listingRepo.create(
+      listingData as DeepPartial<Listing>,
+    );
+
+    const savedListing = await this.listingRepo.save(listing);
+
+    this.checkSavedSearchMatches(savedListing).catch((error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error('Error checking saved search matches:', errorMessage);
     });
 
-    return this.listingRepo.save(listing);
+    return savedListing;
+  }
+
+  private async checkSavedSearchMatches(listing: Listing): Promise<void> {
+    try {
+      const matches =
+        await this.savedSearchesService.findMatchingSavedSearches(listing);
+
+      if (matches.length === 0) {
+        console.log(`No saved search matches found for listing ${listing.id}`);
+        return;
+      }
+      console.log(
+        `Found ${matches.length} saved search matches for listing ${listing.id}`,
+      );
+
+      for (const match of matches) {
+        console.log(
+          `User ${match.userId} has a saved search match for listing ${listing.id}`,
+        );
+        // i'll uncomment this when the notification service is ready:
+        // await this.notificationService.createNotification({
+        //   userId: match.userId,
+        //   type: 'NEW_MATCH',
+        //   listingId: listing.id,
+        //   message: `New listing matches your saved search`,
+        // });
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error(
+        `Error checking saved search matches for listing ${listing.id}:`,
+        errorMessage,
+      );
+    }
   }
 
   //get the validated ones
@@ -68,25 +122,20 @@ export class ListingsService {
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
 
-      if (query?.search) {
+    if (query?.search) {
+      const itemSearched = `%${query.search}%`;
 
-        const itemSearched = `%${query.search}%`;
-
-        qb.andWhere(
-          `(
+      qb.andWhere(
+        `(
           listing.title ILIKE :itemSearched OR
           book.title ILIKE :itemSearched OR
           book.author ILIKE :itemSearched OR
           book.isbn ILIKE :itemSearched OR
           module.code ILIKE :itemSearched
           )`,
-
-
-          { itemSearched }
-          
-        );
-
-      }
+        { itemSearched },
+      );
+    }
     //optional query filters
     if (query?.moduleCode) {
       qb.andWhere('module.code ILIKE :moduleCode', {
@@ -94,9 +143,10 @@ export class ListingsService {
       });
     }
     if (query?.faculty) {
-      qb.andWhere('module.faculty ILIKE :faculty', {
-        faculty: `%${query.faculty}%`,
-      });
+      qb.leftJoin('module.faculty', 'faculty').andWhere(
+        'faculty.name ILIKE :faculty',
+        { faculty: `%${query.faculty}%` },
+      );
     }
     if (query?.condition) {
       qb.andWhere('listing.condition = :condition', {
@@ -126,13 +176,20 @@ export class ListingsService {
     const [listings, total] = await qb.getManyAndCount();
     return [listings, total];
   }
+
   //get listings specific to the user
   async getMyListings(userId: string) {
     return this.listingRepo.find({
       where: {
         seller: { id: userId },
       },
-      relations: ['book', 'module'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
   }
 
@@ -144,7 +201,13 @@ export class ListingsService {
 
     const listing = await this.listingRepo.findOne({
       where: { id },
-      relations: ['book', 'module', 'seller'],
+      relations: [
+        'book',
+        'module',
+        'module.faculty',
+        'seller',
+        'seller.university',
+      ],
     });
 
     if (!listing) throw new NotFoundException('Listing not found');
@@ -152,43 +215,28 @@ export class ListingsService {
     return listing;
   }
 
-  //awaiting approval
-  async getPendingListings() {
-    return this.listingRepo.find({
-      where: { status: ListingStatus.PENDING },
-      relations: ['book', 'seller'],
-    });
-  }
-
-  //ensure admin only access
-  async approveListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
-    }
-
-    listing.status = ListingStatus.APPROVED;
-    listing.reviewer = { id: adminId } as User;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
-  }
-
-  ///enrurer admin only access
-  async rejectListing(id: string, adminId: string) {
-    const listing = await this.getListingById(id);
-
-    listing.status = ListingStatus.REJECTED;
-    listing.reviewer = { id: adminId } as User;
-    listing.reviewed_at = new Date();
-
-    return this.listingRepo.save(listing);
-  }
-
   private isValidUUID(uuid: string): boolean {
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
+  }
+
+  async editlisting(dto: EditListingDto) {
+    const listing = await this.listingRepo.findOne({
+      where: { id: dto.id },
+    });
+
+    if (!listing) throw new NotFoundException('listing not found');
+
+    Object.assign(listing, dto);
+
+    return await this.listingRepo.save(listing);
+  }
+
+  async getAllListingsForAdmin() {
+    return this.listingRepo.find({
+      relations: ['book', 'module', 'seller', 'reviewer'],
+      order: { created_at: 'DESC' },
+    });
   }
 }

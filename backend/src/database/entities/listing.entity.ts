@@ -8,11 +8,13 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from './users.entity';
 import { Book } from './book.entity';
 import { Module } from './module.entity';
+import { Report } from './report.entity';
 
 export enum ListingStatus {
   PENDING = 'PENDING',
@@ -135,4 +137,10 @@ export class Listing {
     nullable: true,
   })
   deleted_at!: Date;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @OneToMany(() => Report, (report) => report.listing)
+  reports!: Report[];
 }

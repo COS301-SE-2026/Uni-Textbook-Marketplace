@@ -13,6 +13,8 @@ import { AuditLog } from './database/entities/audit_log.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 import { Case } from './database/entities/case.entity';
+import { Notifications } from './database/entities/notifications.entity';
+import { Report } from './database/entities/report.entity';
 
 dotenv.config();
 
@@ -33,6 +35,24 @@ export const AppDataSource = new DataSource({
     SavedSearch,
     Wishlist,
     Case,
+    Notifications,
+    Report,
   ],
   migrations: ['src/database/migrations/*.ts'],
 });
+
+console.log(
+  'Entity classes registered:',
+  [
+    Faculty,
+    User,
+    Listing,
+    Book,
+    Module,
+    University,
+    OTP,
+    AuditLog,
+    SavedSearch,
+    Wishlist,
+  ].map((e) => e?.name || 'undefined'),
+);

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
 import { api } from '@/lib/api'
+import EditPage from '@/components/listings/editpage'
+import { Button } from '@/components/ui'
 
 // Filter tabs
 
@@ -26,8 +28,8 @@ export default function MyListingsPage() {
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<Tab>('ALL')
-    const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
-    const [deleting, setDeleting] = useState(false)
+    const [selectedListingId, setSelectedListingId] = useState<string | null>(null)
+    const [EditPanel, setEditPanel] = useState(false)
 
     // Fetch
 
@@ -36,7 +38,7 @@ export default function MyListingsPage() {
             setLoading(true)
             try {
                 const data = await api.get<Listing[]>('/listings/mine')
-                setListings(data ?? [])
+                setListings(data)
             } catch (err) {
                 console.error('Failed to load listings', err)
             } finally {
@@ -48,37 +50,27 @@ export default function MyListingsPage() {
 
     // Derived 
 
+    const listingSafe = Array.isArray(listings) ? listings : []
+
     const filtered = activeTab === 'ALL'
-        ? listings
-        : listings.filter(l => l.status === activeTab)
+        ? listingSafe
+        : listingSafe.filter(l => l.status === activeTab)
 
     const counts: Record<Tab, number> = {
-        ALL: listings.length,
-        APPROVED: listings.filter(l => l.status === 'APPROVED').length,
-        PENDING: listings.filter(l => l.status === 'PENDING').length,
-        REJECTED: listings.filter(l => l.status === 'REJECTED').length,
+        ALL: listingSafe.length,
+        APPROVED: listingSafe.filter(l => l.status === 'APPROVED').length,
+        PENDING: listingSafe.filter(l => l.status === 'PENDING').length,
+        REJECTED: listingSafe.filter(l => l.status === 'REJECTED').length,
     }
 
-    // Delete 
-
-    const handleDelete = async () => {
-        if (!deleteTarget) return
-        setDeleting(true)
-        try {
-            await api.delete(`/listings/${deleteTarget}`)
-            setListings(prev => prev.filter(l => l.id !== deleteTarget))
-            setDeleteTarget(null)
-        } catch (err) {
-            console.error('Delete failed', err)
-        } finally {
-            setDeleting(false)
-        }
+    const closeEditPanel = () => {
+        setEditPanel(false)
+        setSelectedListingId(null)
     }
-
-    // Render 
+ 
 
     return (
-        <div className="container-content py-8">
+        <div className="container-content py-8 relative">
 
             {/* Header */}
             <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
@@ -172,34 +164,23 @@ export default function MyListingsPage() {
                     {filtered.map(listing => (
                         <div key={listing.id} className="relative group">
 
-                            <ListingCard listing={listing} showStatus />
+                            <ListingCard listing={listing} showStatus={false} />
 
                             {/* Action overlay */}
-                            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute top-2 left-2 gap-1 ">
 
-                                {/* Edit - only for PENDING or APPROVED */}
-                                {listing.status !== 'REJECTED' && (
-                                    <button
-                                        onClick={e => {
-                                            e.stopPropagation()
-                                            router.push(`/listings/${listing.id}/edit`)
+                                {/* Edit */}
+                                {(listing.status === 'REJECTED' || listing.status === 'PENDING') && (
+                                    <Button
+                                        variant='primary'
+                                        onClick={() => {
+                                            setSelectedListingId(listing.id)
+                                            setEditPanel(true)
                                         }}
-                                        className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Edit
-                                    </button>
+                                    </Button>
                                 )}
-
-                                {/* Delete */}
-                                <button
-                                    onClick={e => {
-                                        e.stopPropagation()
-                                        setDeleteTarget(listing.id)
-                                    }}
-                                    className="bg-white shadow rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
-                                >
-                                    Delete
-                                </button>
 
                             </div>
 
@@ -209,32 +190,13 @@ export default function MyListingsPage() {
             )}
 
 
-            {/* Delete confirmation modal*/}
-            <Modal
-                isOpen={!!deleteTarget}
-                onClose={() => setDeleteTarget(null)}
-                title="Delete Listing"
-            >
-                <p className="text-sm text-gray-600 mb-6">
-                    Are you sure you want to delete this listing? This action
-                    cannot be undone.
-                </p>
-                <div className="flex gap-3 justify-end">
-                    <button
-                        onClick={() => setDeleteTarget(null)}
-                        className="btn-secondary"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium disabled:opacity-50"
-                    >
-                        {deleting ? 'Deleting...' : 'Delete'}
-                    </button>
-                </div>
-            </Modal>
+            {selectedListingId && (
+                <EditPage
+                    onClick={closeEditPanel}
+                    PanelStatus={EditPanel}
+                    listingId={selectedListingId}
+                />
+            )}
 
         </div>
     )

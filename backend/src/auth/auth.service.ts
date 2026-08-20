@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
   Inject,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -21,7 +22,7 @@ import { EMAIL_SERVICE } from '../email/email.interface';
 
 import { User } from '../database/entities/users.entity';
 import { University } from '../database/entities/university.entity';
-import { Faculty } from '../database/entities/faculty.entity'; // ADD THIS IMPORT
+import { Faculty } from '../database/entities/faculty.entity';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
@@ -36,7 +37,7 @@ export class AuthService {
     private readonly universityRepository: Repository<University>,
 
     @InjectRepository(Faculty)
-    private readonly facultyRepository: Repository<Faculty>, // ADD THIS
+    private readonly facultyRepository: Repository<Faculty>,
 
     private readonly otpService: OtpService,
 
@@ -81,7 +82,6 @@ export class AuthService {
 
     const password_hash = await bcrypt.hash(dto.password, this.BCRYPT_ROUNDS);
 
-    // Handle faculty relation - if faculty_id is provided, find the faculty entity
     let facultyEntity: Faculty | null = null;
     if (dto.faculty_id) {
       facultyEntity = await this.facultyRepository.findOne({
@@ -157,6 +157,8 @@ export class AuthService {
         password_hash: true,
         role: true,
         is_verified: true,
+        is_banned: true,
+        ban_reason: true,
       },
       where: {
         email,
@@ -172,6 +174,14 @@ export class AuthService {
       dto.password,
       user.password_hash,
     );
+
+    if (user.is_banned) {
+      throw new ForbiddenException(
+        `Your account has been banned. Reason: ${
+          user.ban_reason ?? 'No reason provided.'
+        }`,
+      );
+    }
 
     if (!passwordValid) {
       throw new UnauthorizedException('Invalid email or password.');
@@ -310,5 +320,43 @@ export class AuthService {
     );
 
     return this.resendOtp(email);
+  }
+
+  async refreshTokens(refreshToken: string) {
+    let payload: {
+      sub: string;
+      email: string;
+      role: string;
+    };
+
+    try {
+      payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        id: payload.sub,
+        deleted_at: IsNull(),
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('user not found');
+    }
+
+    return this.issueTokens({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
   }
 }

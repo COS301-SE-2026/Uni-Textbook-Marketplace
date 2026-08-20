@@ -1,9 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { getMe, logoutUser } from '@/lib/auth.api';
 import type { AuthUser } from '@/lib/auth.api';
+import { setUnauthorizedHandle } from '@/lib/api';
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -14,6 +15,12 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword', '/help', '/brand']
+
+function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTES.some(route => route === '/' ? pathname === '/' : pathname.startsWith(route));
+}
 
 function getStoredUser(): AuthUser | null {
   try {
@@ -28,15 +35,19 @@ function getStoredUser(): AuthUser | null {
 }
 
 export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
 
-  const [isLoading, setIsLoading] = useState(() => {
-    return getStoredUser() === null;
-  });
+  const initialUser = getStoredUser();
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [isLoading, setIsLoading] = useState(initialUser === null);
+
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (user) return;
+
+    if (user) {
+      return;
+    }
 
     getMe()
       .then((me) => {
@@ -46,6 +57,20 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
   }, [user]);
+
+  useEffect(() => {
+    if(isLoading) return;
+    if(!user && !isPublicRoute(pathname)){
+      router.push('/auth/login');
+    }
+  },[isLoading,user,pathname,router]);
+
+  useEffect(() => {
+    setUnauthorizedHandle(() => {
+      setUser(null);
+      sessionStorage.removeItem('auth_user');
+    });
+  },[])
 
   const login = (userData: AuthUser) => {
     if (!userData) return;
