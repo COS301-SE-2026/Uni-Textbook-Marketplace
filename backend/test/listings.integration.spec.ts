@@ -11,7 +11,7 @@ import { Book } from "../src/database/entities/book.entity";
 import { Module } from "../src/database/entities/module.entity";
 import { University } from "../src/database/entities/university.entity";
 import { Faculty } from "../src/database/entities/faculty.entity";
-import { ListingStatus } from "../src/database/entities/listing.entity";
+import { ListingStatus, ListingsStatus } from "../src/database/entities/listing.entity";
 import { EMAIL_SERVICE } from "../src/email/email.interface";
 import { ConfigService } from '@nestjs/config';
 
@@ -839,6 +839,187 @@ describe('ListingsController Integration Tests', () => {
                     price: 49.99
                 })
                 .expect(401);
+        });
+    });
+
+    describe('PATCH /listings/:id/status (UC5.2 Reserved/Sold)', () => {
+        it('should allow the seller to move an approved AVAILABLE listing to RESERVED', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.AVAILABLE,
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(200);
+
+            expect(response.body.listing_status).toBe(ListingsStatus.RESERVED);
+        });
+
+        it('should allow the seller to move RESERVED -> SOLD', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.RESERVED,
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.SOLD })
+                .expect(200);
+
+            expect(response.body.listing_status).toBe(ListingsStatus.SOLD);
+        });
+
+        it('should allow the seller to un-reserve, RESERVED -> AVAILABLE', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.RESERVED,
+            });
+
+            const response = await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.AVAILABLE })
+                .expect(200);
+
+            expect(response.body.listing_status).toBe(ListingsStatus.AVAILABLE);
+        });
+
+        it('should reject a transition out of SOLD (terminal state)', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.SOLD,
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.AVAILABLE })
+                .expect(400);
+        });
+
+        it('should reject changing status on a listing that has not been approved yet', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const token = getAuthToken(user);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.PENDING,
+                listing_status: ListingsStatus.AVAILABLE,
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(400);
+        });
+
+        it('should reject a non-owner attempting to change status', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const owner = await createVerifiedUser(university.id, faculty.id);
+            const otherUser = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const otherToken = getAuthToken(otherUser);
+
+            const listing = await createTestListing(owner.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.AVAILABLE,
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${otherToken}`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(403);
+        });
+
+        it('should return 401 for an unauthenticated status change request', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+
+            const listing = await createTestListing(user.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.AVAILABLE,
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(401);
+        });
+
+        it('should return 404 when the listing does not exist', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const user = await createVerifiedUser(university.id, faculty.id);
+            const token = getAuthToken(user);
+
+            await request(app.getHttpServer())
+                .patch('/listings/00000000-0000-0000-0000-000000000000/status')
+                .set('Authorization', `Bearer ${token}`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(404);
+        });
+
+        it('should reject an admin attempting to change a listing status (student-only route)', async () => {
+            const university = await createUniversity();
+            const faculty = await createFaculty(university.id);
+            const seller = await createVerifiedUser(university.id, faculty.id);
+            const admin = await createVerifiedAdmin(university.id, faculty.id);
+            const book = await createBook();
+            const module = await createModule(faculty.id, university.id);
+            const adminToken = getAuthToken(admin);
+
+            const listing = await createTestListing(seller.id, book.id, module.id, {
+                status: ListingStatus.APPROVED,
+                listing_status: ListingsStatus.AVAILABLE,
+            });
+
+            await request(app.getHttpServer())
+                .patch(`/listings/${listing.id}/status`)
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ listing_status: ListingsStatus.RESERVED })
+                .expect(403);
         });
     });
 
