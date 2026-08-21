@@ -422,7 +422,7 @@ function BrowseListingsContent() {
                             <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                                 <div className="relative w-full h-full">
                                     <Image
-                                        src="/../boy_on_book.jpg"
+                                        src="/../boy_on_book.png"
                                         alt="Student reading textbook"
                                         fill
                                         className="object-contain object-right"

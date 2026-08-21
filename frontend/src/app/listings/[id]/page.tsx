@@ -33,6 +33,13 @@ const LISTING_LABEL: Record<string, string> = {
     'WITHDRAWN': 'Available'
 }
 
+const LISTING_STATUS_BADGE_VARIANT: Record<string, 'approved' | 'reserved' | 'sold' | 'pending'> = {
+    'AVAILABLE': 'approved',
+    'RESERVED': 'reserved',
+    'SOLD': 'sold',
+    'WITHDRAWN': 'pending',
+}
+
 const SECTIONS = [
     { key: "bookDetails", title: "Book Details" },
     { key: "moduleDetails", title: "Module Details" },
@@ -210,7 +217,7 @@ export default function ListingDetailPage() {
                             {[
                                 ['Condition', CONDITION_LABEL[listing.condition]],
                                 ['Annotations', ANNOTATION_LABEL[listing.annotation_level]],
-                                ['Listing status', <Badge key="listing-status" variant='approved'>{LISTING_LABEL[listing.listing_status]}</Badge>],
+                                ['Listing status', <Badge key="listing-status" variant={LISTING_STATUS_BADGE_VARIANT[listing.listing_status]}>{LISTING_LABEL[listing.listing_status]}</Badge>],
                                 ['Listed', timeAgo(listing.created_at)],
                             ].map(([label, value], index) => (
                                 <tr key={`detail-row-${index}`} className="border-b border-gray-100">

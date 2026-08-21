@@ -79,7 +79,7 @@ export default function WishlistComponent() {
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                     <div className="relative w-full h-full">
                         <Image
-                            src="/images/boy_on_book.jpg"
+                            src="/../../wishlist_books.jpg"
                             alt="Student reading textbook"
                             fill
                             className="object-contain object-right"
@@ -109,7 +109,7 @@ export default function WishlistComponent() {
                     backgroundSize: '40px 40px',
                 }} />
                 
-                {/* Glossy Highlight Line - Top */}
+                {/* Glossy Highlight Line */}
                 <div className="absolute top-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
                 }} />

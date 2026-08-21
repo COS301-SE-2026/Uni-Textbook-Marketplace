@@ -200,7 +200,7 @@ export default function ListingCard({
 
             {/* Sale Status Badge */}
             {(listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
-                <div className="absolute bottom-2 left-2">
+                <div className="absolute bottom-2 right-2">
                     <Badge variant="reserved">Reserved</Badge>
 
             

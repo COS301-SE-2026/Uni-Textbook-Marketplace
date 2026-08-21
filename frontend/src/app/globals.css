@@ -365,6 +365,16 @@
     color: #7F1D1D;
   }
 
+  .badge-reserved {
+    background-color: #f3f300;
+    color: #78350F;
+  }
+
+  .badge-sold {
+    background-color: #E2E8F0;
+    color: #334155;
+  }
+
   /* Form label */
   .form-label {
     display: block;
