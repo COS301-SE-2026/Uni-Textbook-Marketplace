@@ -163,19 +163,19 @@ export default function ListingCard({
                     </svg>
                 )}
 
-                {/* Gradient overlay at bottom of image */}
+                {/* Gradient overlay */}
                 <div className="absolute bottom-0 left-0 right-0 h-12" style={{
                     background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
                 }} />
 
-                {/* Condition Badge - Top Right using Badge component */}
+                {/* Condition Badge */}
                 <div className="absolute top-2 right-2">
                     <Badge variant={conditionVariant}>
                         {CONDITION_LABEL[listing.condition]}
                     </Badge>
                 </div>
 
-                {/* Sale Status Badge - Top Left using Badge component */}
+                {/* Sale Status Badge */}
                 {(listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
                     <div className="absolute top-2 left-2">
                         <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
@@ -184,7 +184,7 @@ export default function ListingCard({
                     </div>
                 )}
 
-                {/* Status badge for admin views */}
+                {/* Status badge */}
                 {showStatus && listing.status !== 'APPROVED' && (
                     <div className="absolute top-2 left-2">
                         {listing.status === 'PENDING' && (
@@ -204,7 +204,7 @@ export default function ListingCard({
                     {listing.title}
                 </p>
 
-                {/* Book details - Edition and Module */}
+                {/* Book details */}
                 <p className="text-xs text-gray-500">
                     {listing.book?.edition} Edition • {listing.module?.code}
                 </p>
@@ -232,13 +232,13 @@ export default function ListingCard({
                             {listing.seller.first_name} {listing.seller.last_name}
                         </span>
                         {listing.seller.is_verified && (
-                            <span className="text-[#00B4D8] font-medium">• Verified</span>
+                            <span className="text-[#00B4D8] font-medium">• Verified ✓</span>
                         )}
                     </div>
                 )}
             </div>
 
-            {/* Hover Glossy Border Effect */}
+            {/* Hover Effect */}
             <div className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
                 boxShadow: 'inset 0 0 0 2px rgba(0,180,216,0.3)',
             }} />
