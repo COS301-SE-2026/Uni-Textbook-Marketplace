@@ -3,13 +3,23 @@ import { CheckCircle2, XCircle, MessageSquare,SquarePen, Bell as BellIcon } from
 import type { Notification } from "@/types/notification";
 
 
-
 const ENTITY_TYPE_ICON: Record<string, LucideIcon> = {
-    APPROVED_LISTING: CheckCircle2,
-    REJECTED_LISTING: XCircle,
+    APPROVE_LISTING: CheckCircle2,
+    REJECT_LISTING: XCircle,
     message: MessageSquare,
     "Edited listing": SquarePen,
 };
+
+const ENTITY_TYPE_LABEL: Record<string, string> = {
+    APPROVE_LISTING: "Listing Approved",
+    REJECT_LISTING: "Listing Rejected",
+    message: "New Message",
+    "Edited listing": "Listing Edited",
+};
+
+export function getNotificationHeading(entityType: string): string {
+    return ENTITY_TYPE_LABEL[entityType] ?? "Notification";
+}
 
 
 export function getNotificationIcon(entityType: string): LucideIcon {
@@ -33,7 +43,7 @@ export function getNotificationRoute(notification: Notification): string {
             return `/listings/${notification.entity_id?.id}`;
 
         case "message":
-            return "/listings";
+            return "/messages";
 
         default:
             return "/notifications";
