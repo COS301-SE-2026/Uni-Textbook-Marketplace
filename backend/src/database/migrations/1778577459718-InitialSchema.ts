@@ -3,38 +3,54 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class InitialSchema1778577459718 implements MigrationInterface {
   name = 'InitialSchema1778577459718';
 
-  private async tableExists(
+  private async exists(
     queryRunner: QueryRunner,
-    table: string,
+    type: 'table' | 'type' | 'column',
+    name: string,
+    table?: string,
   ): Promise<boolean> {
-    const result = (await queryRunner.query(
-      `SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = $1)`,
-      [table],
-    )) as { exists: boolean }[];
+    let query: string;
+    const params: string[] = [];
+
+    switch (type) {
+      case 'table':
+        query = `SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = $1)`;
+        params.push(name);
+        break;
+      case 'type':
+        query = `SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = $1)`;
+        params.push(name);
+        break;
+      case 'column':
+        query = `SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2)`;
+        params.push(table!, name);
+        break;
+      default:
+        return false;
+    }
+
+    const result = (await queryRunner.query(query, params)) as {
+      exists: boolean;
+    }[];
     return result?.[0]?.exists === true;
   }
 
-  private async typeExists(
+  private async safeQuery(
     queryRunner: QueryRunner,
-    typeName: string,
-  ): Promise<boolean> {
-    const result = (await queryRunner.query(
-      `SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = $1)`,
-      [typeName],
-    )) as { exists: boolean }[];
-    return result?.[0]?.exists === true;
-  }
-
-  private async columnExists(
-    queryRunner: QueryRunner,
-    table: string,
-    column: string,
-  ): Promise<boolean> {
-    const result = (await queryRunner.query(
-      `SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2)`,
-      [table, column],
-    )) as { exists: boolean }[];
-    return result?.[0]?.exists === true;
+    query: string,
+    ignorePatterns: string[] = [],
+  ): Promise<void> {
+    try {
+      await queryRunner.query(query);
+    } catch (err) {
+      const error = err as Error;
+      const shouldIgnore = ignorePatterns.some((pattern) =>
+        error.message?.includes(pattern),
+      );
+      if (!shouldIgnore) {
+        throw error;
+      }
+    }
   }
 
   private getTableQueries(): Record<string, string> {
@@ -125,9 +141,8 @@ export class InitialSchema1778577459718 implements MigrationInterface {
   }
 
   private async createEnumTypes(queryRunner: QueryRunner): Promise<void> {
-    const enums = this.getEnumDefinitions();
-    for (const enumDef of enums) {
-      const exists = await this.typeExists(queryRunner, enumDef.name);
+    for (const enumDef of this.getEnumDefinitions()) {
+      const exists = await this.exists(queryRunner, 'type', enumDef.name);
       if (!exists) {
         await queryRunner.query(enumDef.query);
       }
@@ -147,7 +162,7 @@ export class InitialSchema1778577459718 implements MigrationInterface {
     ];
 
     for (const table of tables) {
-      const exists = await this.tableExists(queryRunner, table);
+      const exists = await this.exists(queryRunner, 'table', table);
       if (!exists && tableQueries[table]) {
         await queryRunner.query(tableQueries[table]);
       }
@@ -155,59 +170,26 @@ export class InitialSchema1778577459718 implements MigrationInterface {
   }
 
   private async addForeignKeys(queryRunner: QueryRunner): Promise<void> {
-    const foreignKeys = this.getForeignKeyDefinitions();
-    for (const { query, name, table, column } of foreignKeys) {
-      const canAdd = await this.canAddForeignKey(
+    for (const {
+      query,
+      name,
+      table,
+      column,
+    } of this.getForeignKeyDefinitions()) {
+      const columnExists = await this.exists(
         queryRunner,
-        table,
+        'column',
         column,
-        name,
+        table,
       );
-      if (canAdd) {
-        try {
-          await queryRunner.query(query);
-        } catch (err) {
-          this.handleForeignKeyError(err, name, column);
-        }
+      if (!columnExists) {
+        continue;
       }
+      await this.safeQuery(queryRunner, query, [
+        `constraint "${name}" already exists`,
+        `column "${column}" referenced in foreign key constraint does not exist`,
+      ]);
     }
-  }
-
-  private async canAddForeignKey(
-    queryRunner: QueryRunner,
-    table: string,
-    column: string,
-    name: string,
-  ): Promise<boolean> {
-    const columnExists = await this.columnExists(queryRunner, table, column);
-    if (!columnExists) {
-      console.warn(
-        `Skipping foreign key "${name}": column "${column}" does not exist in table "${table}"`,
-      );
-      return false;
-    }
-    return true;
-  }
-
-  private handleForeignKeyError(
-    err: unknown,
-    name: string,
-    column: string,
-  ): void {
-    const error = err as Error;
-    const shouldIgnore = [
-      `constraint "${name}" already exists`,
-      `column "${column}" referenced in foreign key constraint does not exist`,
-    ];
-
-    const isIgnorable = shouldIgnore.some((pattern) =>
-      error.message?.includes(pattern),
-    );
-    if (!isIgnorable) {
-      throw error;
-    }
-    // Log but don't throw for ignorable errors
-    console.warn(`Foreign key "${name}" skipped: ${error.message}`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -232,22 +214,7 @@ export class InitialSchema1778577459718 implements MigrationInterface {
     ];
 
     for (const query of dropQueries) {
-      await this.executeDropQuery(queryRunner, query);
-    }
-  }
-
-  private async executeDropQuery(
-    queryRunner: QueryRunner,
-    query: string,
-  ): Promise<void> {
-    try {
-      await queryRunner.query(query);
-    } catch (err) {
-      const error = err as Error;
-
-      if (!error.message?.includes('does not exist')) {
-        console.warn(`Migration down warning: ${error.message}`);
-      }
+      await this.safeQuery(queryRunner, query, ['does not exist']);
     }
   }
 }

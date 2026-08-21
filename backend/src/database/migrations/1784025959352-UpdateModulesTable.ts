@@ -9,17 +9,10 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     column: string,
   ): Promise<boolean> {
     const result = (await queryRunner.query(
-      `
-      SELECT EXISTS (
-        SELECT FROM information_schema.columns 
-        WHERE table_name = $1 
-        AND column_name = $2
-      );
-    `,
+      `SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2)`,
       [table, column],
     )) as { exists: boolean }[];
-
-    return result && result.length > 0 && result[0]?.exists === true;
+    return result?.[0]?.exists === true;
   }
 
   private async constraintExists(
@@ -27,16 +20,22 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     constraintName: string,
   ): Promise<boolean> {
     const result = (await queryRunner.query(
-      `
-      SELECT EXISTS (
-        SELECT FROM information_schema.table_constraints 
-        WHERE constraint_name = $1
-      );
-    `,
+      `SELECT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1)`,
       [constraintName],
     )) as { exists: boolean }[];
+    return result?.[0]?.exists === true;
+  }
 
-    return result && result.length > 0 && result[0]?.exists === true;
+  private async getColumnType(
+    queryRunner: QueryRunner,
+    table: string,
+    column: string,
+  ): Promise<string | null> {
+    const result = (await queryRunner.query(
+      `SELECT data_type, udt_name FROM information_schema.columns WHERE table_name = $1 AND column_name = $2`,
+      [table, column],
+    )) as { data_type: string; udt_name: string }[];
+    return result?.[0]?.udt_name || result?.[0]?.data_type || null;
   }
 
   private async renameFacultyColumn(queryRunner: QueryRunner): Promise<void> {
@@ -64,6 +63,36 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       }
     }
 
+    if (facultyIdExists) {
+      const columnType = await this.getColumnType(
+        queryRunner,
+        'modules',
+        'faculty_id',
+      );
+
+      if (
+        columnType?.includes('varchar') ||
+        columnType === 'character varying' ||
+        columnType === 'text'
+      ) {
+        const constraintExists = await this.constraintExists(
+          queryRunner,
+          'FK_70de6abbb8d2dc5bae2ea096764',
+        );
+        if (constraintExists) {
+          await queryRunner.query(
+            `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`,
+          );
+        }
+
+        await queryRunner.query(`
+          ALTER TABLE "modules" 
+          ALTER COLUMN "faculty_id" TYPE uuid 
+          USING faculty_id::uuid
+        `);
+      }
+    }
+
     if (!facultyIdExists && !facultyColumnExists) {
       await queryRunner.query(`ALTER TABLE "modules" ADD "faculty_id" uuid`);
     }
@@ -79,12 +108,9 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       return;
     }
 
-    const isbnType = (await queryRunner.query(`
-      SELECT data_type, character_maximum_length 
-      FROM information_schema.columns 
-      WHERE table_name = 'books' 
-      AND column_name = 'isbn'
-    `)) as { data_type: string; character_maximum_length: number }[];
+    const isbnType = (await queryRunner.query(
+      `SELECT data_type, character_maximum_length FROM information_schema.columns WHERE table_name = 'books' AND column_name = 'isbn'`,
+    )) as { data_type: string; character_maximum_length: number }[];
 
     const needsUpdate =
       isbnType.length > 0 &&
@@ -116,6 +142,39 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
   }
 
   private async addFacultyForeignKey(queryRunner: QueryRunner): Promise<void> {
+    const facultiesExist = (await queryRunner.query(
+      `SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'faculties')`,
+    )) as { exists: boolean }[];
+
+    if (!facultiesExist?.[0]?.exists) {
+      console.warn('Skipping foreign key: faculties table does not exist');
+      return;
+    }
+
+    const facultyIdExists = await this.columnExists(
+      queryRunner,
+      'modules',
+      'faculty_id',
+    );
+    if (!facultyIdExists) {
+      console.warn(
+        'Skipping foreign key: faculty_id column does not exist in modules',
+      );
+      return;
+    }
+
+    const columnType = await this.getColumnType(
+      queryRunner,
+      'modules',
+      'faculty_id',
+    );
+    if (columnType !== 'uuid') {
+      console.warn(
+        `Skipping foreign key: faculty_id is type "${columnType}", expected "uuid"`,
+      );
+      return;
+    }
+
     const fkConstraintExists = await this.constraintExists(
       queryRunner,
       'FK_70de6abbb8d2dc5bae2ea096764',
@@ -133,13 +192,16 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       `);
     } catch (err) {
       const error = err as Error;
-      if (
-        !error.message?.includes(
-          'constraint "FK_70de6abbb8d2dc5bae2ea096764" already exists',
-        )
-      ) {
+      const shouldIgnore = [
+        'constraint "FK_70de6abbb8d2dc5bae2ea096764" already exists',
+        'foreign key constraint "FK_70de6abbb8d2dc5bae2ea096764" cannot be implemented',
+      ];
+      if (!shouldIgnore.some((pattern) => error.message?.includes(pattern))) {
         throw error;
       }
+      console.warn(
+        `Foreign key "FK_70de6abbb8d2dc5bae2ea096764" skipped: ${error.message}`,
+      );
     }
   }
 
@@ -172,7 +234,19 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     for (const constraint of constraints) {
       const exists = await this.constraintExists(queryRunner, constraint.name);
       if (!exists) {
-        await queryRunner.query(constraint.query);
+        try {
+          await queryRunner.query(constraint.query);
+        } catch (err) {
+          const error = err as Error;
+          if (
+            !error.message?.includes('does not exist') &&
+            !error.message?.includes('relation')
+          ) {
+            console.warn(
+              `Warning creating constraint ${constraint.name}: ${error.message}`,
+            );
+          }
+        }
       }
     }
   }
@@ -194,12 +268,29 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "modules" DROP COLUMN IF EXISTS "faculty_id"`,
+
+    const facultyIdExists = await this.columnExists(
+      queryRunner,
+      'modules',
+      'faculty_id',
     );
-    await queryRunner.query(
-      `ALTER TABLE "modules" ADD "faculty" character varying`,
+    if (facultyIdExists) {
+      await queryRunner.query(
+        `ALTER TABLE "modules" DROP COLUMN IF EXISTS "faculty_id"`,
+      );
+    }
+
+    const facultyExists = await this.columnExists(
+      queryRunner,
+      'modules',
+      'faculty',
     );
+    if (!facultyExists) {
+      await queryRunner.query(
+        `ALTER TABLE "modules" ADD "faculty" character varying`,
+      );
+    }
+
     await queryRunner.query(
       `ALTER TABLE "books" DROP CONSTRAINT IF EXISTS "UQ_54337dc30d9bb2c3fadebc69094"`,
     );
