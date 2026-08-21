@@ -22,24 +22,6 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     return result && result.length > 0 && result[0]?.exists === true;
   }
 
-  private async tableExists(
-    queryRunner: QueryRunner,
-    table: string,
-  ): Promise<boolean> {
-    const result = (await queryRunner.query(
-      `
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = $1
-      );
-    `,
-      [table],
-    )) as { exists: boolean }[];
-
-    return result && result.length > 0 && result[0]?.exists === true;
-  }
-
   private async constraintExists(
     queryRunner: QueryRunner,
     constraintName: string,
@@ -58,6 +40,7 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // 1. Rename faculty to faculty_id in modules table if needed
     const facultyColumnExists = await this.columnExists(
       queryRunner,
       'modules',
@@ -105,7 +88,6 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
         (isbnType[0].data_type !== 'character varying' ||
           isbnType[0].character_maximum_length !== 20)
       ) {
-        // Drop constraint if it exists
         if (isbnConstraintExists) {
           await queryRunner.query(
             `ALTER TABLE "books" DROP CONSTRAINT IF EXISTS "UQ_54337dc30d9bb2c3fadebc69094"`,
@@ -134,22 +116,19 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     );
 
     if (!fkConstraintExists) {
-      try {
-        await queryRunner.query(`
-          ALTER TABLE "modules" 
-          ADD CONSTRAINT "FK_70de6abbb8d2dc5bae2ea096764" 
-          FOREIGN KEY ("faculty_id") REFERENCES "faculties"("id") ON DELETE SET NULL ON UPDATE NO ACTION
-        `);
-      } catch (err) {
-        const error = err as Error;
-        if (
-          !error.message?.includes(
-            'constraint "FK_70de6abbb8d2dc5bae2ea096764" already exists',
-          )
-        ) {
-          throw error;
-        }
-      }
+      await queryRunner.query(`
+        DO $$ 
+        BEGIN 
+          BEGIN
+            ALTER TABLE "modules" 
+            ADD CONSTRAINT "FK_70de6abbb8d2dc5bae2ea096764" 
+            FOREIGN KEY ("faculty_id") REFERENCES "faculties"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
+          EXCEPTION 
+            WHEN duplicate_object THEN 
+              RAISE NOTICE 'Constraint FK_70de6abbb8d2dc5bae2ea096764 already exists, skipping';
+          END;
+        END $$;
+      `);
     }
 
     const wishlistUserFkExists = await this.constraintExists(
@@ -189,15 +168,12 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "wishlist" DROP CONSTRAINT IF EXISTS "FK_512bf776587ad5fc4f804277d76"`,
     );
-
     await queryRunner.query(
       `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`,
     );
-
     await queryRunner.query(
       `ALTER TABLE "modules" DROP COLUMN IF EXISTS "faculty_id"`,
     );
-
     await queryRunner.query(
       `ALTER TABLE "modules" ADD "faculty" character varying`,
     );

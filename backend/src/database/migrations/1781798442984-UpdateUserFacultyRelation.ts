@@ -52,6 +52,7 @@ export class UpdateUserFacultyRelation1781798442984 implements MigrationInterfac
       'faculty_id',
     );
 
+    
     if (facultyExists && !facultyIdExists) {
       try {
         await queryRunner.query(
@@ -59,7 +60,6 @@ export class UpdateUserFacultyRelation1781798442984 implements MigrationInterfac
         );
       } catch (err) {
         const error = err as Error;
-
         if (!error.message?.includes('column "faculty" does not exist')) {
           throw error;
         }
@@ -110,7 +110,6 @@ export class UpdateUserFacultyRelation1781798442984 implements MigrationInterfac
     await queryRunner.query(
       `ALTER TABLE "users" DROP CONSTRAINT IF EXISTS "FK_a0842240f363f156f8ee9377fad"`,
     );
-
     await queryRunner.query(
       `ALTER TABLE "faculties" DROP CONSTRAINT IF EXISTS "FK_e7e42880536e292f61869f816cb"`,
     );
