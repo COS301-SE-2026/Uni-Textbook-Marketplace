@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
+import Image from 'next/image'
+import { Package } from 'lucide-react'
 
 import { api } from '@/lib/api'
 import { updateListingStatus, ListingSaleStatus } from '@/lib/listings.api'
@@ -206,63 +208,133 @@ export default function MyListingsPage() {
     }
 
     return (
-        <div className="container-content py-8 relative">
-
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-                <div>
-                    <h1>My Listings</h1>
-                    <p className="text-gray-500 text-sm">
-                        Manage your textbook listings
-                    </p>
+        <>
+            {/* Hero Section */}
+            <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
+                background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
+                
+            }}>
+                {/* Image Overlay */}
+                <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+                    <div className="relative w-full h-full">
+                        <Image
+                            src="/../../my_listings.png"
+                            alt="Student reading textbook"
+                            fill
+                            className="object-contain object-right"
+                            priority
+                            style={{ objectPosition: '100% 50%' }}
+                        />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0" style={{
+                            background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
+                        }} />
+                    </div>
                 </div>
-                <Link href="/listings/create">
-                    <button type="button" className="btn-primary">
-                        + New Listing
-                    </button>
-                </Link>
-            </div>
-
-            {statusError && (
-                <p className="text-sm text-red-600 mb-4">{statusError}</p>
-            )}
-
-            {/* Tabs */}
-            <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
-                {TABS.map(tab => (
-                    <button
-                        type="button"
-                        key={tab.value}
-                        onClick={() => setActiveTab(tab.value)}
-                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.value
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
-                    >
-                        {tab.label}
-                        {counts[tab.value] > 0 && (
-                            <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${activeTab === tab.value
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-gray-100 text-gray-500'
-                                }`}>
-                                {counts[tab.value]}
-                            </span>
-                        )}
-                    </button>
-                ))}
+                
+                {/* Glossy Overlay */}
+                <div className="absolute inset-0 opacity-20" style={{
+                    background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                }} />
+                
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
+                }} />
+                
+                {/* Decorative Grid */}
+                <div className="absolute inset-0 opacity-5" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                }} />
+                
+                {/* Glossy Highlight Line */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                }} />
+                
+                <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
+                    <div className="flex items-start gap-4">
+                        <div className="p-2 rounded-xl" style={{
+                            background: 'rgba(255,255,255,0.08)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                            <Package size={24} className="text-[#00B4D8]" />
+                        </div>
+                        <div>
+                            <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
+                                My Listings
+                            </h1>
+                            <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
+                                Manage your textbook listings
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Bottom Glossy Edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
+                }} />
             </div>
 
             {/* Content */}
-            {content}
+            <div className="container-content py-8 relative">
+                {/* Header with New Listing Button */}
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                    <div>
+                        
+                    </div>
+                    <Link href="/listings/create">
+                        <button type="button" className="btn-primary">
+                            + New Listing
+                        </button>
+                    </Link>
+                </div>
 
-            {selectedListingId && (
-                <EditPage
-                    onClick={closeEditPanel}
-                    PanelStatus={EditPanel}
-                    listingId={selectedListingId}
-                />
-            )}
+                {statusError && (
+                    <p className="text-sm text-red-600 mb-4">{statusError}</p>
+                )}
 
-        </div>
+                {/* Tabs */}
+                <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
+                    {TABS.map(tab => (
+                        <button
+                            type="button"
+                            key={tab.value}
+                            onClick={() => setActiveTab(tab.value)}
+                            className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
+                                activeTab === tab.value
+                                    ? 'border-[#00B4D8] text-[#00B4D8]'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            {tab.label}
+                            {counts[tab.value] > 0 && (
+                                <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${
+                                    activeTab === tab.value
+                                        ? 'bg-[#00B4D8] text-white'
+                                        : 'bg-gray-100 text-gray-500'
+                                }`}>
+                                    {counts[tab.value]}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content */}
+                {content}
+
+                {selectedListingId && (
+                    <EditPage
+                        onClick={closeEditPanel}
+                        PanelStatus={EditPanel}
+                        listingId={selectedListingId}
+                    />
+                )}
+            </div>
+        </>
     )
 }

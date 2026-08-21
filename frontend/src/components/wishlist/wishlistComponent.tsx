@@ -73,13 +73,13 @@ export default function WishlistComponent() {
             {/* Hero Section */}
             <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
                 background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.3)',
+                
             }}>
                 {/* Image Overlay */}
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                     <div className="relative w-full h-full">
                         <Image
-                            src="/../../wishlist_books.jpg"
+                            src="/../../wishlist_books.png"
                             alt="Student reading textbook"
                             fill
                             className="object-contain object-right"
