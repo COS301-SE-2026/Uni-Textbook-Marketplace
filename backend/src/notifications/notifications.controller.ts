@@ -53,10 +53,8 @@ export class NotificationsController {
 
   @Delete(':id/delete')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({summary: 'Delete a notification'})
-  deleteNotification(@Req() req: RequestWithUser, @Param('id') id: string){
-
-    return this.notificationService.deleteNotification(req.user.id,id);
-
+  @ApiOperation({ summary: 'Delete a notification' })
+  deleteNotification(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return this.notificationService.deleteNotification(req.user.id, id);
   }
 }

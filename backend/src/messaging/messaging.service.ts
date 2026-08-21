@@ -68,20 +68,19 @@ export class MessagingService {
       .where('listingId', '==', listingId)
       .limit(1)
       .get();
-    
+
     const buyer = await this.usersRepository.findOne({
       where: { id: buyerId },
     });
 
     if (!existingConversation.empty) {
-
       const event = new MessageEvent();
       event.userId = sellerId;
       event.notificationfrom = buyerId;
       event.entityType = 'message';
       event.messageInfo = `New message from ${buyer?.first_name} regarding listing ${listing.title}`;
 
-      this.eventEmitter.emit('messaging',event);
+      this.eventEmitter.emit('messaging', event);
 
       return {
         conversationId: existingConversation.docs[0].id,
@@ -108,7 +107,7 @@ export class MessagingService {
     event.messageInfo = `New conversation started by ${buyer?.first_name} regarding listing ${listing.title}`;
     event.new = true;
 
-    this.eventEmitter.emit('messaging',event);
+    this.eventEmitter.emit('messaging', event);
 
     return {
       conversationId: conversationRef.id,

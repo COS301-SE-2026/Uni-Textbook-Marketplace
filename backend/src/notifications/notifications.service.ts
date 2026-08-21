@@ -89,10 +89,9 @@ export class NotificationsService {
   }
 
   async notifyStudentofMessage(event: MessageEvent) {
-
     const noti = this.notificationRepo.create({
       user_id: { id: event.userId },
-      notification_from: { id: event.notificationfrom},
+      notification_from: { id: event.notificationfrom },
       entity_type: event.entityType,
       message_info: event.messageInfo,
     });
@@ -100,22 +99,20 @@ export class NotificationsService {
     await this.notificationRepo.save(noti);
   }
 
-  async deleteNotification(userId: string,notificationId: string){
-
+  async deleteNotification(userId: string, notificationId: string) {
     const notification = await this.notificationRepo.findOne({
       where: {
         id: notificationId,
-        user_id: {id: userId}
-      }
+        user_id: { id: userId },
+      },
     });
 
-    if(!notification){
+    if (!notification) {
       throw new NotFoundException('Notification not found');
     }
 
     await this.notificationRepo.remove(notification);
 
-    return "Notification successfuly deleted";
-    
+    return 'Notification successfuly deleted';
   }
 }

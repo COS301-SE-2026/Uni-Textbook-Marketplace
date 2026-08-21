@@ -10,17 +10,17 @@ export class ListingNotificationListener {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @OnEvent('listing.reviewed')
-  notifyStudentOfReview(event: AdminEvent) {
-    this.notificationsService.create(event);
+  async notifyStudentOfReview(event: AdminEvent) {
+    await this.notificationsService.create(event);
   }
 
   @OnEvent('listing.edit')
-  notifyAdminofEdit(event: EditEvent) {
-    this.notificationsService.notifyAdmin(event);
+  async notifyAdminofEdit(event: EditEvent) {
+    await this.notificationsService.notifyAdmin(event);
   }
 
   @OnEvent('messaging')
-  notifyStudentofMessage(event: MessageEvent){
-    this.notificationsService.notifyStudentofMessage(event);
+  async notifyStudentofMessage(event: MessageEvent) {
+    await this.notificationsService.notifyStudentofMessage(event);
   }
 }
