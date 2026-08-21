@@ -39,8 +39,7 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     return result && result.length > 0 && result[0]?.exists === true;
   }
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    // 1. Rename faculty to faculty_id in modules table if needed
+  private async renameFacultyColumn(queryRunner: QueryRunner): Promise<void> {
     const facultyColumnExists = await this.columnExists(
       queryRunner,
       'modules',
@@ -65,100 +64,124 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       }
     }
 
+    if (!facultyIdExists && !facultyColumnExists) {
+      await queryRunner.query(`ALTER TABLE "modules" ADD "faculty_id" uuid`);
+    }
+  }
+
+  private async updateBooksIsbnColumn(queryRunner: QueryRunner): Promise<void> {
     const isbnColumnExists = await this.columnExists(
       queryRunner,
       'books',
       'isbn',
     );
+    if (!isbnColumnExists) {
+      return;
+    }
+
+    const isbnType = (await queryRunner.query(`
+      SELECT data_type, character_maximum_length 
+      FROM information_schema.columns 
+      WHERE table_name = 'books' 
+      AND column_name = 'isbn'
+    `)) as { data_type: string; character_maximum_length: number }[];
+
+    const needsUpdate =
+      isbnType.length > 0 &&
+      (isbnType[0].data_type !== 'character varying' ||
+        isbnType[0].character_maximum_length !== 20);
+
+    if (!needsUpdate) {
+      return;
+    }
+
     const isbnConstraintExists = await this.constraintExists(
       queryRunner,
       'UQ_54337dc30d9bb2c3fadebc69094',
     );
 
-    if (isbnColumnExists) {
-      const isbnType = (await queryRunner.query(`
-        SELECT data_type, character_maximum_length 
-        FROM information_schema.columns 
-        WHERE table_name = 'books' 
-        AND column_name = 'isbn'
-      `)) as { data_type: string; character_maximum_length: number }[];
-
-      if (
-        isbnType.length > 0 &&
-        (isbnType[0].data_type !== 'character varying' ||
-          isbnType[0].character_maximum_length !== 20)
-      ) {
-        if (isbnConstraintExists) {
-          await queryRunner.query(
-            `ALTER TABLE "books" DROP CONSTRAINT IF EXISTS "UQ_54337dc30d9bb2c3fadebc69094"`,
-          );
-        }
-
-        await queryRunner.query(
-          `ALTER TABLE "books" DROP COLUMN IF EXISTS "isbn"`,
-        );
-        await queryRunner.query(
-          `ALTER TABLE "books" ADD "isbn" character varying(20)`,
-        );
-        await queryRunner.query(
-          `ALTER TABLE "books" ADD CONSTRAINT "UQ_54337dc30d9bb2c3fadebc69094" UNIQUE ("isbn")`,
-        );
-      }
+    if (isbnConstraintExists) {
+      await queryRunner.query(
+        `ALTER TABLE "books" DROP CONSTRAINT IF EXISTS "UQ_54337dc30d9bb2c3fadebc69094"`,
+      );
     }
 
-    if (!facultyIdExists && !facultyColumnExists) {
-      await queryRunner.query(`ALTER TABLE "modules" ADD "faculty_id" uuid`);
-    }
+    await queryRunner.query(`ALTER TABLE "books" DROP COLUMN IF EXISTS "isbn"`);
+    await queryRunner.query(
+      `ALTER TABLE "books" ADD "isbn" character varying(20)`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "books" ADD CONSTRAINT "UQ_54337dc30d9bb2c3fadebc69094" UNIQUE ("isbn")`,
+    );
+  }
 
+  private async addFacultyForeignKey(queryRunner: QueryRunner): Promise<void> {
     const fkConstraintExists = await this.constraintExists(
       queryRunner,
       'FK_70de6abbb8d2dc5bae2ea096764',
     );
 
-    if (!fkConstraintExists) {
-      await queryRunner.query(`
-        DO $$ 
-        BEGIN 
-          BEGIN
-            ALTER TABLE "modules" 
-            ADD CONSTRAINT "FK_70de6abbb8d2dc5bae2ea096764" 
-            FOREIGN KEY ("faculty_id") REFERENCES "faculties"("id") ON DELETE SET NULL ON UPDATE NO ACTION;
-          EXCEPTION 
-            WHEN duplicate_object THEN 
-              RAISE NOTICE 'Constraint FK_70de6abbb8d2dc5bae2ea096764 already exists, skipping';
-          END;
-        END $$;
-      `);
+    if (fkConstraintExists) {
+      return;
     }
 
-    const wishlistUserFkExists = await this.constraintExists(
-      queryRunner,
-      'FK_512bf776587ad5fc4f804277d76',
-    );
-    const wishlistListingFkExists = await this.constraintExists(
-      queryRunner,
-      'FK_cf8a72e62278a6520b4b923e305',
-    );
-
-    if (!wishlistUserFkExists) {
+    try {
       await queryRunner.query(`
-        DO $$ BEGIN
-          ALTER TABLE "wishlist" ADD CONSTRAINT "FK_512bf776587ad5fc4f804277d76" 
-          FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-          EXCEPTION WHEN duplicate_object THEN NULL;
-        END $$;
+        ALTER TABLE "modules" 
+        ADD CONSTRAINT "FK_70de6abbb8d2dc5bae2ea096764" 
+        FOREIGN KEY ("faculty_id") REFERENCES "faculties"("id") ON DELETE SET NULL ON UPDATE NO ACTION
       `);
+    } catch (err) {
+      const error = err as Error;
+      if (
+        !error.message?.includes(
+          'constraint "FK_70de6abbb8d2dc5bae2ea096764" already exists',
+        )
+      ) {
+        throw error;
+      }
     }
+  }
 
-    if (!wishlistListingFkExists) {
-      await queryRunner.query(`
-        DO $$ BEGIN
-          ALTER TABLE "wishlist" ADD CONSTRAINT "FK_cf8a72e62278a6520b4b923e305" 
-          FOREIGN KEY ("listings_id") REFERENCES "listings"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-          EXCEPTION WHEN duplicate_object THEN NULL;
-        END $$;
-      `);
+  private async recreateWishlistConstraints(
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    const constraints = [
+      {
+        name: 'FK_512bf776587ad5fc4f804277d76',
+        query: `
+          DO $$ BEGIN
+            ALTER TABLE "wishlist" ADD CONSTRAINT "FK_512bf776587ad5fc4f804277d76" 
+            FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+            EXCEPTION WHEN duplicate_object THEN NULL;
+          END $$;
+        `,
+      },
+      {
+        name: 'FK_cf8a72e62278a6520b4b923e305',
+        query: `
+          DO $$ BEGIN
+            ALTER TABLE "wishlist" ADD CONSTRAINT "FK_cf8a72e62278a6520b4b923e305" 
+            FOREIGN KEY ("listings_id") REFERENCES "listings"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+            EXCEPTION WHEN duplicate_object THEN NULL;
+          END $$;
+        `,
+      },
+    ];
+
+    for (const constraint of constraints) {
+      const exists = await this.constraintExists(queryRunner, constraint.name);
+      if (!exists) {
+        await queryRunner.query(constraint.query);
+      }
     }
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await this.renameFacultyColumn(queryRunner);
+    await this.updateBooksIsbnColumn(queryRunner);
+    await this.addFacultyForeignKey(queryRunner);
+    await this.recreateWishlistConstraints(queryRunner);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -177,7 +200,6 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "modules" ADD "faculty" character varying`,
     );
-
     await queryRunner.query(
       `ALTER TABLE "books" DROP CONSTRAINT IF EXISTS "UQ_54337dc30d9bb2c3fadebc69094"`,
     );

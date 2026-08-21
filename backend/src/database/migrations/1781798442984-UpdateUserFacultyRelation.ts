@@ -52,7 +52,6 @@ export class UpdateUserFacultyRelation1781798442984 implements MigrationInterfac
       'faculty_id',
     );
 
-    
     if (facultyExists && !facultyIdExists) {
       try {
         await queryRunner.query(

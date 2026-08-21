@@ -39,12 +39,34 @@ export class InitialSchema1778577459718 implements MigrationInterface {
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const enums = [
+      {
+        name: 'listings_condition_enum',
+        query: `CREATE TYPE "public"."listings_condition_enum" AS ENUM('new', 'good', 'fair', 'poor')`,
+      },
+      {
+        name: 'listings_annotation_level_enum',
+        query: `CREATE TYPE "public"."listings_annotation_level_enum" AS ENUM('none', 'light', 'heavy')`,
+      },
+      {
+        name: 'listings_status_enum',
+        query: `CREATE TYPE "public"."listings_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'SOFT_DELETED')`,
+      },
+    ];
+
+    for (const enumDef of enums) {
+      const exists = await this.typeExists(queryRunner, enumDef.name);
+      if (!exists) {
+        await queryRunner.query(enumDef.query);
+      }
+    }
+
     const tables = [
       'modules',
       'universities',
       'books',
-      'listings',
       'users',
+      'listings',
       'otps',
       'audit_log',
     ];
@@ -52,21 +74,7 @@ export class InitialSchema1778577459718 implements MigrationInterface {
     for (const table of tables) {
       const exists = await this.tableExists(queryRunner, table);
       if (!exists) {
-        // Table doesn't exist, create it
         await this.createTable(queryRunner, table);
-      }
-    }
-
-    const enums = [
-      'listings_condition_enum',
-      'listings_annotation_level_enum',
-      'listings_status_enum',
-    ];
-
-    for (const enumName of enums) {
-      const exists = await this.typeExists(queryRunner, enumName);
-      if (!exists) {
-        await this.createEnum(queryRunner, enumName);
       }
     }
 
@@ -124,9 +132,9 @@ export class InitialSchema1778577459718 implements MigrationInterface {
 
       books: `CREATE TABLE "books" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "isbn" character varying(13), "title" character varying NOT NULL, "author" character varying, "edition" integer, "publisher" character varying, CONSTRAINT "UQ_54337dc30d9bb2c3fadebc69094" UNIQUE ("isbn"), CONSTRAINT "PK_f3f2f25a099d24e12545b70b022" PRIMARY KEY ("id"))`,
 
-      listings: `CREATE TABLE "listings" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying(200), "condition" "public"."listings_condition_enum" NOT NULL, "annotation_level" "public"."listings_annotation_level_enum" NOT NULL, "price" numeric(10,2) NOT NULL, "reviewed_at" TIMESTAMP WITH TIME ZONE, "photo_urls" text array NOT NULL DEFAULT '{}', "status" "public"."listings_status_enum" NOT NULL DEFAULT 'PENDING', "has_notes" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "seller_id" uuid, "book_id" uuid, "module_id" uuid, "reviewed_by" uuid, CONSTRAINT "PK_520ecac6c99ec90bcf5a603cdcb" PRIMARY KEY ("id"))`,
-
       users: `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password_hash" character varying NOT NULL, "first_name" character varying NOT NULL, "last_name" character varying NOT NULL, "faculty" character varying, "is_verified" boolean NOT NULL DEFAULT false, "role" character varying NOT NULL DEFAULT 'student', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "university_id" uuid, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+
+      listings: `CREATE TABLE "listings" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying(200), "condition" "public"."listings_condition_enum" NOT NULL, "annotation_level" "public"."listings_annotation_level_enum" NOT NULL, "price" numeric(10,2) NOT NULL, "reviewed_at" TIMESTAMP WITH TIME ZONE, "photo_urls" text array NOT NULL DEFAULT '{}', "status" "public"."listings_status_enum" NOT NULL DEFAULT 'PENDING', "has_notes" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, "seller_id" uuid, "book_id" uuid, "module_id" uuid, "reviewed_by" uuid, CONSTRAINT "PK_520ecac6c99ec90bcf5a603cdcb" PRIMARY KEY ("id"))`,
 
       otps: `CREATE TABLE "otps" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "code" character varying(6) NOT NULL, "expires_at" TIMESTAMP WITH TIME ZONE NOT NULL, "used" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_91fef5ed60605b854a2115d2410" PRIMARY KEY ("id"))`,
 
@@ -135,21 +143,6 @@ export class InitialSchema1778577459718 implements MigrationInterface {
 
     if (queries[table]) {
       await queryRunner.query(queries[table]);
-    }
-  }
-
-  private async createEnum(
-    queryRunner: QueryRunner,
-    enumName: string,
-  ): Promise<void> {
-    const queries: Record<string, string> = {
-      listings_condition_enum: `CREATE TYPE "public"."listings_condition_enum" AS ENUM('new', 'good', 'fair', 'poor')`,
-      listings_annotation_level_enum: `CREATE TYPE "public"."listings_annotation_level_enum" AS ENUM('none', 'light', 'heavy')`,
-      listings_status_enum: `CREATE TYPE "public"."listings_status_enum" AS ENUM('PENDING', 'APPROVED', 'REJECTED', 'SOFT_DELETED')`,
-    };
-
-    if (queries[enumName]) {
-      await queryRunner.query(queries[enumName]);
     }
   }
 
@@ -179,13 +172,8 @@ export class InitialSchema1778577459718 implements MigrationInterface {
         await queryRunner.query(query);
       } catch (err) {
         const error = err as Error;
-
-        if (
-          !error.message?.includes('does not exist') &&
-          !error.message?.includes('does not exist')
-        ) {
+        if (!error.message?.includes('does not exist')) {
           console.warn(`Migration down warning: ${error.message}`);
-          console.warn(`Query: ${query.substring(0, 80)}...`);
         }
       }
     }
