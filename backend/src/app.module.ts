@@ -22,11 +22,13 @@ import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
+import { Report } from './database/entities/report.entity';
 
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
@@ -56,6 +58,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           Wishlist,
           Notifications,
           SavedSearch,
+          Report,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -71,6 +74,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     NotificationsModule,
     AdminModule,
     MessagingModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

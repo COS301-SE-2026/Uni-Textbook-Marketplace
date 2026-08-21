@@ -13,6 +13,7 @@ import {
 import { University } from './university.entity';
 import { Listing } from './listing.entity';
 import { Faculty } from './faculty.entity';
+import { Report } from './report.entity';
 
 @Entity('users')
 export class User {
@@ -73,4 +74,31 @@ export class User {
     nullable: true,
   })
   deleted_at!: Date;
+
+  @OneToMany(() => Report, (report) => report.reporter)
+  reports!: Report[];
+
+  @Column({
+    default: false,
+  })
+  is_banned!: boolean;
+
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+  })
+  banned_at!: Date | null;
+
+  @ManyToOne(() => User, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'banned_by' })
+  banned_by!: User | null;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  ban_reason!: string | null;
 }

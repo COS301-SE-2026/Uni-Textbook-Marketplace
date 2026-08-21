@@ -40,6 +40,7 @@ export class ListingsService {
     private readonly savedSearchesService: SavedSearchesService,
 
     private readonly eventEmitter: EventEmitter2,
+    private savedSearchesService: SavedSearchesService,
   ) {}
 
   async createListing(userId: string, dto: CreateListingDto) {

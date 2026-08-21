@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import {
   EntityManager,
@@ -24,6 +28,8 @@ export class AdminService {
     private readonly usersRepository: Repository<User>,
 
     private readonly eventEmitter: EventEmitter2,
+    @InjectRepository(AuditLog)
+    private readonly auditLogRepository: Repository<AuditLog>,
   ) {}
 
   private async updateListingStatus(
@@ -169,5 +175,56 @@ export class AdminService {
         role: 'admin',
       },
     });
+  }
+
+  async banUser(
+    userId: string,
+    adminId: string,
+    reason: string,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.is_banned) {
+      throw new BadRequestException('User is already banned');
+    }
+
+    const admin = await this.usersRepository.findOne({
+      where: {
+        id: adminId,
+      },
+    });
+
+    if (!admin) {
+      throw new NotFoundException('Admin user not found');
+    }
+
+    user.is_banned = true;
+    user.banned_at = new Date();
+    user.banned_by = admin;
+    user.ban_reason = reason;
+
+    //lets just return the users repo, safety issue
+    const savedUser = await this.usersRepository.save(user);
+
+    await this.auditLogRepository.save(
+      this.auditLogRepository.create({
+        entity_type: 'USER',
+        entity_id: user.id,
+        action: 'BAN_USER',
+        performedBy: admin,
+        reason,
+        notes: `User ${user.email} was banned.`,
+      }),
+    );
+
+    return savedUser;
   }
 }
