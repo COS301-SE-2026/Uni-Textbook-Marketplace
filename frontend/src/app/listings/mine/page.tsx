@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Image from 'next/image'
 import { Package } from 'lucide-react'
