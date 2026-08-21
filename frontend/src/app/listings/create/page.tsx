@@ -278,7 +278,7 @@ export default function CreateListingPage() {
 
             <div className="container-content py-8">
                 {/* Step tabs - Flag/Arrow shaped */}
-                <div className="flex my-8 w-full">
+                <div className="flex my-8 w-full gap-1">
                     {STEP_LABELS.map((label, i) => {
                         const stepNum = i + 1
                         const isActive = step === stepNum
@@ -289,7 +289,7 @@ export default function CreateListingPage() {
                                 {/* Flag/Arrow shape */}
                                 <div 
                                     className={`
-                                        relative flex items-center justify-center px-6 py-3
+                                        relative flex items-center justify-center px-4 py-3
                                         text-sm font-medium transition-all duration-300
                                         ${isActive 
                                             ? 'text-white' 
@@ -299,7 +299,7 @@ export default function CreateListingPage() {
                                         }
                                     `}
                                     style={{
-                                        clipPath: 'polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%)',
+                                        clipPath: 'polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%, 8% 50%)',
                                         background: isActive 
                                             ? 'linear-gradient(135deg, #00B4D8, #0096B4)' 
                                             : isCompleted 
@@ -312,27 +312,8 @@ export default function CreateListingPage() {
                                     <span className="relative z-10 flex items-center gap-2">
                                         {isCompleted && <span className="text-white text-sm">✓</span>}
                                         <span className="truncate">{label}</span>
-                                        {isActive && (
-                                            <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[24px] border-t-transparent border-l-[16px] border-l-[#00B4D8] border-b-[24px] border-b-transparent"></span>
-                                        )}
-                                        {isCompleted && (
-                                            <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[24px] border-t-transparent border-l-[16px] border-l-[#4CAF50] border-b-[24px] border-b-transparent"></span>
-                                        )}
                                     </span>
                                 </div>
-                                
-                                {/* Arrow pointer for next step indicator */}
-                                {i < STEP_LABELS.length - 1 && (
-                                    <div className="absolute -right-[1px] top-0 z-20 w-4 h-full">
-                                        <div 
-                                            className="w-full h-full"
-                                            style={{
-                                                clipPath: 'polygon(0% 0%, 100% 50%, 0% 100%)',
-                                                background: isActive || isCompleted ? '#ffffff' : '#e5e7eb',
-                                            }}
-                                        />
-                                    </div>
-                                )}
                             </div>
                         )
                     })}
@@ -359,7 +340,7 @@ export default function CreateListingPage() {
                     {step < 4 ? (
                         <Button onClick={nextStep} variant="primary" className="cursor-pointer">Next</Button>
                     ) : (
-                        <Button onClick={handleSubmit} variant="secondary" disabled={loading} className="cursor-pointer">
+                        <Button onClick={handleSubmit} variant="primary" disabled={loading} className="cursor-pointer">
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
                     )}

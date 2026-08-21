@@ -254,7 +254,7 @@ export default function ResetPassword() {
                                 Your password has been reset successfully.
                             </p>
                             <Button
-                                variant="secondary"
+                                variant="primary"
                                 onClick={() => router.push('/auth/login')}
                                 className="w-full cursor-pointer"
                             >

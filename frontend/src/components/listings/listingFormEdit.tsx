@@ -273,7 +273,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 <Button
                     type="submit"
                     disabled={saving}
-                    variant="secondary"
+                    variant="primary"
                 >
                     {saving ? "Saving..." : "Save changes"}
                 </Button>

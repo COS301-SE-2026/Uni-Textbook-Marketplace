@@ -371,7 +371,7 @@ export default function ListingDetailPage() {
                         />
                         <div className="flex justify-end gap-3">
                             <Button
-                                variant="secondary"
+                                variant="primary"
                                 onClick={() => {
                                     setShowMessageModal(false);
                                     setMessage("");
