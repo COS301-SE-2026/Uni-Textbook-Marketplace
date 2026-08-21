@@ -350,6 +350,30 @@
     font-family: 'Montserrat', sans-serif;
   }
 
+    .badge-new {
+    background-color: #E3F2FD;
+    color: #1565C0;
+    border: 1px solid #90CAF9;
+  }
+  
+  .badge-good {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #A5D6A7;
+  }
+  
+  .badge-fair {
+    background-color: #FFF3E0;
+    color: #E65100;
+    border: 1px solid #FFCC80;
+  }
+  
+  .badge-poor {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #EF9A9A;
+  }
+
   .badge-pending {
     background-color: #D0F0F7;
     color: #004F66;
