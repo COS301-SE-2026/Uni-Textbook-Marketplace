@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ChevronLeft, MessageCircle, Loader2 } from 'lucide-react';
 
 import { useAuth } from '@/context/AuthContext';
 import { useMessaging } from '@/hooks/useMessaging';
@@ -17,59 +18,108 @@ export default function MessagesMobile() {
         conversations,
         selectedConversation,
         messages,
+        loadingConversations,
+        loadingMessages,
         selectConversation,
         send,
     } = useMessaging();
 
     const [chatOpen, setChatOpen] = useState(false);
 
+    let conversationContent;
+
+    if (loadingConversations) {
+        conversationContent = (
+            <div className="flex-1 flex items-center justify-center gap-3">
+                <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
+                <p className="text-sm text-gray-500">Loading...</p>
+            </div>
+        );
+    } else if (conversations.length === 0) {
+        conversationContent = (
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+                <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                    <MessageCircle size={32} className="text-gray-400" />
+                </div>
+                <h2 className="text-lg font-semibold text-[#000f2b] dark:text-white">
+                    No conversations yet
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                    Start chatting by finding a textbook you&apos;re interested in.
+                </p>
+            </div>
+        );
+    } else {
+        conversationContent = (
+            <ConversationList
+                conversations={conversations}
+                selectedConversationId={selectedConversation?.conversationId}
+                onSelectConversation={(conversation) => {
+                    selectConversation(conversation);
+                    setChatOpen(true);
+                }}
+            />
+        );
+    }
+
     if (!chatOpen) {
         return (
-            <main className="min-h-screen bg-gray-50">
-                <header className="border-b bg-white p-4">
-                    <h1 className="text-xl font-semibold">
+            <main className="min-h-screen bg-gray-50 dark:bg-[#0a0f1a] flex flex-col">
+                <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-5">
+                    <h1 className="text-xl font-bold text-[#000f2b] dark:text-white">
                         Messages
                     </h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                        Your conversations
+                    </p>
                 </header>
-                <ConversationList
-                    conversations={conversations}
-                    selectedConversationId={
-                        selectedConversation?.conversationId
-                    }
-                    onSelectConversation={(conversation) => {
-                        selectConversation(conversation);
-                        setChatOpen(true);
-                    }}
-                />
+
+                {conversationContent}
             </main>
         );
     }
+
     return (
-        <main className="flex h-screen flex-col">
-            <div className="border-b bg-white p-4">
+        <main className="flex h-screen flex-col bg-gray-50 dark:bg-[#0a0f1a]">
+            {/* Header with Back Button */}
+            <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 flex-shrink-0">
                 <button
-                    type = "button"
+                    type="button"
                     onClick={() => setChatOpen(false)}
-                    className="mb-2 text-sm text-blue-600"
+                    className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1e293b] transition-colors cursor-pointer text-[#000f2b] dark:text-white"
+                    aria-label="Back to conversations"
                 >
-                    Back
+                    <ChevronLeft size={22} />
                 </button>
-                <ChatHeader
-                    title={`Conversation ${selectedConversation?.otherUser.firstName ?? selectedConversation?.otherUser.lastName}`}
-                    subtitle={selectedConversation?.listing.title ?? ''}
-                />
+                <div className="flex-1 min-w-0">
+                    <ChatHeader
+                        title={`${selectedConversation?.otherUser.firstName ?? ''} ${selectedConversation?.otherUser.lastName ?? ''}`}
+                        subtitle={selectedConversation?.listing.title ?? ''}
+                    />
+                </div>
             </div>
-            {selectedConversation?.lastMessage ? (
-                <ChatWindow
+
+            {/* Chat Window */}
+            <div className="flex-1 overflow-hidden">
+                {loadingMessages ? (
+                    <div className="flex h-full items-center justify-center gap-3">
+                        <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
+                        <p className="text-sm text-gray-500">Loading messages...</p>
+                    </div>
+                ) : selectedConversation?.lastMessage ? (
+                    <ChatWindow
                         messages={messages}
                         currentUserId={user?.id ?? ''}
                     />
                 ) : (
-                    <div className="flex flex-1 items-center justify-center bg-gray-50 text-gray-500">
-                        No messages yet.
+                    <div className="flex h-full items-center justify-center text-gray-500 dark:text-gray-400">
+                        <div className="text-center">
+                            <p className="text-sm">No messages yet.</p>
+                            <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
+                        </div>
                     </div>
-            )}
-
+                )}
+            </div>
 
             <MessageInput onSend={send} />
         </main>
