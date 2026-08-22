@@ -17,7 +17,7 @@ export default function ChatHeader({
     };
 
     return (
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-4 flex items-center gap-4">
+        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-4 flex items-center gap-4 min-h-[73px]">
             {/* Avatar */}
             {avatar ? (
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">

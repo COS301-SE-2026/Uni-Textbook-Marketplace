@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Button from '@/components/ui/Button';
+import { Send } from 'lucide-react';
 
 interface Props {
     onSend: (text: string) => void;
@@ -11,27 +12,29 @@ export default function MessageInput({
     onSend,
 }: Readonly<Props>) {
     const [text, setText] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const send = () => {
-        if (!text.trim()) {
-            return;
-        }
+        if (!text.trim()) return;
         onSend(text);
         setText('');
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            send();
+        }
+    };
+
     return (
         <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-5">
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
                 <input
+                    ref={inputRef}
                     value={text}
-                    onChange={(e) =>
-                        setText(e.target.value)
-                    }
-                    onKeyDown={(e) => {
-
-                        if(e.key === 'Enter') send();
-
-                    }}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className="
                         flex-1
                         rounded-full
@@ -43,13 +46,19 @@ export default function MessageInput({
                         px-5
                         py-3
                         focus:border-cyan-500
-                        focus:outline-none"
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-cyan-500/20
+                        transition-all
+                    "
                     placeholder="Type a message..."
                 />
                 <Button
                     onClick={send}
-                    className="rounded-full px-8">
-                    Send
+                    disabled={!text.trim()}
+                    className="rounded-full px-6 py-3 h-12 w-12 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Send size={18} />
                 </Button>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import type { Conversation } from '@/types/messaging';
-import {  MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import ConversationCard from './ConversationCard';
 
 interface Props {
@@ -24,7 +24,6 @@ export default function ConversationList({
                 <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
                     Your conversations
                 </p>
-                
             </div>
 
             {/* Conversation List */}
