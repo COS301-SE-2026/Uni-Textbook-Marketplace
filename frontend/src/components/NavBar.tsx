@@ -199,7 +199,7 @@ export default function NavBar() {
                           My Listings
                         </Link>
                       )}
-                      {/** 
+                      
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -208,7 +208,7 @@ export default function NavBar() {
                       >
                         Settings
                       </Link>
-                      */}
+                      
                       <div className="border-t border-[var(--card-border)]" />
                       <button
                         type="button"
