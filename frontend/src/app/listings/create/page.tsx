@@ -303,7 +303,7 @@ export default function CreateListingPage() {
                                         background: isActive 
                                             ? 'linear-gradient(135deg, #00B4D8, #0096B4)' 
                                             : isCompleted 
-                                                ? '#4CAF50' 
+                                                ? '#04505f' 
                                                 : '#e5e7eb',
                                         minHeight: '48px',
                                         width: '100%',
