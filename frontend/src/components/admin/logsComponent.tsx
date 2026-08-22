@@ -169,7 +169,7 @@ export default function LogsComponent() {
                     <Button variant='secondary' disabled={true} className='flex-1 cursor-default opacity-75'>
                         Total Logs: {total}
                     </Button>
-                    <Button variant='secondary' onClick={() => setFilters({ page: 1, limit: 20 })} className='flex-1 cursor-pointer'>
+                    <Button variant='primary' onClick={() => setFilters({ page: 1, limit: 20 })} className='flex-1 cursor-pointer'>
                         Clear filters
                     </Button>
                 </div>

@@ -353,55 +353,55 @@
     .badge-new {
     background-color: #E3F2FD;
     color: #1565C0;
-    border: 1px solid #90CAF9;
+    border: 3px solid #90CAF9;
   }
   
   .badge-good {
     background-color: #E8F5E9;
     color: #2E7D32;
-    border: 1px solid #A5D6A7;
+    border: 3px solid #A5D6A7;
   }
   
   .badge-fair {
     background-color: #FFF3E0;
     color: #E65100;
-    border: 1px solid #FFCC80;
+    border: 3px solid #FFCC80;
   }
   
   .badge-poor {
     background-color: #FFEBEE;
     color: #C62828;
-    border: 1px solid #EF9A9A;
+    border: 3px solid #EF9A9A;
   }
 
   .badge-pending {
     background-color: #D0F0F7;
     color: #004F66;
-    border: 1px solid  #d0f0f7a5;
+    border: 3px solid  #d0f0f7a5;
   }
 
   .badge-approved {
     background-color: #D0F0DC;
     color: #155E2E;
-    border: 1px solid #d0f0dca4;
+    border: 3px solid #2c6040a4;
   }
 
   .badge-rejected {
     background-color: #FDE8E8;
     color: #7F1D1D;
-    border: 1px solid #ef8a8a;
+    border: 3px solid #ef8a8a;
   }
 
   .badge-reserved {
     background-color: #e3c5ee;
     color: #2c0c39;
-    border: 1px solid #ab6ec3
+    border: 3px solid #ab6ec3
   }
 
   .badge-sold {
     background-color: #E2E8F0;
     color: #334155;
-    border: 1px solid #627b9f
+    border: 3px solid #627b9f
   }
 
   /* Form label */

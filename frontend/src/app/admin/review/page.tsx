@@ -150,7 +150,7 @@ function ListingRow({
             <BookCell listing={listing} />
             <ModuleCell module={listing.module} />
             <td className="px-4 py-3 font-semibold text-[#000f2b]">
-                R{listing.price.toFixed(2)}
+                R{Number(listing.price).toFixed(2)}
             </td>
             <td className="px-4 py-3">
                 <p className="font-medium text-sm">{listing.seller.first_name} {listing.seller.last_name}</p>
@@ -158,24 +158,24 @@ function ListingRow({
             </td>
             <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
             <td className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-600'}`}>
-                        {listing.status}
-                    </span>
-                    <ActionsCell
-                        listing={listing}
-                        actionLoading={actionLoading}
-                        onApprove={onApprove}
-                        onStartReject={onStartReject}
-                        onViewDetails={onViewDetails}
-                    />
-                </div>
+                {/* Status Badge */}
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium border mr-2 ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-600'}`}>
+                    {listing.status}
+                </span>
+                {/* Actions */}
+                <ActionsCell
+                    listing={listing}
+                    actionLoading={actionLoading}
+                    onApprove={onApprove}
+                    onStartReject={onStartReject}
+                    onViewDetails={onViewDetails}
+                />
             </td>
         </tr>
     )
 }
 
-function ToastList({ toasts }: { toasts: Toast[] }) {
+function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
             {toasts.map(t => (
@@ -201,11 +201,11 @@ function ListingsTable({
     onStartReject,
     onViewDetails,
 }: {
-    listings: AdminListing[]
-    actionLoading: string | null
-    onApprove: (id: string) => void
-    onStartReject: (id: string) => void
-    onViewDetails: (id: string) => void
+    readonly listings: AdminListing[]
+    readonly actionLoading: string | null
+    readonly onApprove: (id: string) => void
+    readonly onStartReject: (id: string) => void
+    readonly onViewDetails: (id: string) => void
 }) {
     if (listings.length === 0) {
         return (
@@ -264,12 +264,12 @@ function RejectionModal({
     onCancel,
     loading,
 }: {
-    listing: AdminListing | undefined
-    reason: string
-    setReason: (r: string) => void
-    onConfirm: () => void
-    onCancel: () => void
-    loading: boolean
+    readonly listing: AdminListing | undefined
+    readonly reason: string
+    readonly setReason: (r: string) => void
+    readonly onConfirm: () => void
+    readonly onCancel: () => void
+    readonly loading: boolean
 }) {
     return (
         <Modal
