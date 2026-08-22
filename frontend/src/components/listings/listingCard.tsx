@@ -175,26 +175,6 @@ export default function ListingCard({
                     </Badge>
                 </div>
 
-                {/* Sale Status Badge */}
-                {(listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
-                    <div className="absolute top-2 left-2">
-                        <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
-                            {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
-                        </Badge>
-                    </div>
-                )}
-
-                {/* Status badge */}
-                {showStatus && listing.status !== 'APPROVED' && (
-                    <div className="absolute top-2 left-2">
-                        {listing.status === 'PENDING' && (
-                            <Badge variant="pending">Pending</Badge>
-                        )}
-                        {listing.status === 'REJECTED' && (
-                            <Badge variant="rejected">Rejected</Badge>
-                        )}
-                    </div>
-                )}
             </div>
 
             {/* Content Section */}

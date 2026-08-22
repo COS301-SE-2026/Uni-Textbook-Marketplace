@@ -16,6 +16,7 @@ import { normalizeImage } from '@/lib/image'
 import FiltersTabs from '@/components/admin/filtersTabs'
 import { useRouter } from 'next/navigation'
 import { getMe } from '@/lib/auth.api'
+import { Shield, Loader2 } from 'lucide-react'
 
 
 interface Toast {
@@ -45,7 +46,7 @@ function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
                     {listing.photo_urls?.[0] ? (
                         <Image src={normalizeImage(listing.photo_urls[0])} alt="" fill className="object-cover" />
                     ) : (
-                        <span className="text-gray-300">📷</span>
+                        <span className="text-gray-300 text-xs">📷</span>
                     )}
                 </div>
                 <div>
@@ -65,7 +66,9 @@ function ModuleCell({ module }: Readonly<{ module: AdminListing['module'] }>) {
     }
     return (
         <td className="px-4 py-3">
-            <p className="font-mono text-xs">{module.code}</p>
+            <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+                {module.code}
+            </span>
         </td>
     )
 }
@@ -87,16 +90,31 @@ function ActionsCell({
 
     return (
         <td className="px-4 py-3">
-            <div className="flex gap-2">
-                <Button variant="primary" onClick={() => onViewDetails(listing.id)} disabled={isLoading}>
-                    {isLoading ? '...' : 'View'}
+            <div className="flex gap-1.5 flex-wrap">
+                <Button 
+                    variant="primary" 
+                    onClick={() => onViewDetails(listing.id)} 
+                    disabled={isLoading}
+                    className="text-xs px-3 py-1.5 cursor-pointer"
+                >
+                    {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'View'}
                 </Button>
                 {listing.status === 'PENDING' && (
                     <>
-                        <Button variant="primary" onClick={() => onApprove(listing.id)} disabled={isLoading}>
-                            {isLoading ? '...' : 'Approve'}
+                        <Button 
+                            variant="primary" 
+                            onClick={() => onApprove(listing.id)} 
+                            disabled={isLoading}
+                            className="text-xs px-3 py-1.5 cursor-pointer"
+                        >
+                            {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
                         </Button>
-                        <Button variant="danger" onClick={() => onStartReject(listing.id)} disabled={isLoading}>
+                        <Button 
+                            variant="danger" 
+                            onClick={() => onStartReject(listing.id)} 
+                            disabled={isLoading}
+                            className="text-xs px-3 py-1.5 cursor-pointer"
+                        >
                             Reject
                         </Button>
                     </>
@@ -120,26 +138,40 @@ function ListingRow({
     onStartReject: (id: string) => void
     onViewDetails: (id: string) => void
 }) {
-    return (
+    // Status badge colors
+    const statusColors = {
+        PENDING: 'bg-amber-100 text-amber-700 border-amber-300',
+        APPROVED: 'bg-green-100 text-green-700 border-green-300',
+        REJECTED: 'bg-red-100 text-red-700 border-red-300',
+    }
 
-        <tr className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+    return (
+        <tr className="border-b border-gray-100 hover:bg-gray-50/80 transition-colors duration-150">
             <BookCell listing={listing} />
             <ModuleCell module={listing.module} />
-            <td className="px-4 py-3 font-semibold">R{listing.price}</td>
+            <td className="px-4 py-3 font-semibold text-[#000f2b]">
+                R{listing.price.toFixed(2)}
+            </td>
             <td className="px-4 py-3">
-                <p className="font-medium">{listing.seller.first_name} {listing.seller.last_name}</p>
-                <p className="text-xs text-gray-400">{listing.seller.email}</p>
+                <p className="font-medium text-sm">{listing.seller.first_name} {listing.seller.last_name}</p>
+                <p className="text-xs text-gray-400 truncate max-w-[150px]">{listing.seller.email}</p>
             </td>
             <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
-            <ActionsCell
-                listing={listing}
-                actionLoading={actionLoading}
-                onApprove={onApprove}
-                onStartReject={onStartReject}
-                onViewDetails={onViewDetails}
-            />
+            <td className="px-4 py-3">
+                <div className="flex items-center gap-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-600'}`}>
+                        {listing.status}
+                    </span>
+                    <ActionsCell
+                        listing={listing}
+                        actionLoading={actionLoading}
+                        onApprove={onApprove}
+                        onStartReject={onStartReject}
+                        onViewDetails={onViewDetails}
+                    />
+                </div>
+            </td>
         </tr>
-
     )
 }
 
@@ -149,7 +181,11 @@ function ToastList({ toasts }: { toasts: Toast[] }) {
             {toasts.map(t => (
                 <div
                     key={t.id}
-                    className={`px-4 py-2 rounded text-white text-sm animate in slide-in-from-right-5 ${t.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}
+                    className={`px-4 py-2.5 rounded-xl text-white text-sm shadow-lg animate-in slide-in-from-right-5 backdrop-blur-sm ${
+                        t.type === 'success' 
+                            ? 'bg-green-600/90 border border-green-400/30' 
+                            : 'bg-red-600/90 border border-red-400/30'
+                    }`}
                 >
                     {t.message}
                 </div>
@@ -171,13 +207,23 @@ function ListingsTable({
     onStartReject: (id: string) => void
     onViewDetails: (id: string) => void
 }) {
+    if (listings.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                <Shield size={48} className="mb-4 opacity-30" />
+                <p className="text-sm font-medium">No listings found</p>
+                <p className="text-xs mt-1">Try adjusting your filter</p>
+            </div>
+        )
+    }
+
     return (
-        <div className="card overflow-x-auto p-0">
+        <div className="card overflow-x-auto p-0 shadow-sm hover:shadow-md transition-shadow duration-300">
             <table className="w-full text-sm">
                 <thead>
-                    <tr className="bg-gray-50">
+                    <tr className="bg-gray-50/80 border-b border-gray-200">
                         {TABLE_HEADERS.map(h => (
-                            <th key={h} className="text-left px-4 py-3 text-xs uppercase text-gray-500">
+                            <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                                 {h}
                             </th>
                         ))}
@@ -204,7 +250,7 @@ function LoadingSkeleton() {
     return (
         <div className="card p-4 space-y-3 animate-pulse">
             {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-10 bg-gray-100 rounded" />
+                <div key={i} className="h-12 bg-gray-100 rounded-lg" />
             ))}
         </div>
     )
@@ -237,7 +283,7 @@ function RejectionModal({
                 </p>
 
                 <textarea
-                    className="w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#00B4D8]/30 focus:border-[#00B4D8] transition-all"
                     rows={4}
                     placeholder="Enter reject reason..."
                     value={reason}
@@ -246,19 +292,20 @@ function RejectionModal({
                 />
 
                 <div className='flex justify-end gap-2'>
-                    <Button variant='secondary' onClick={onCancel}>
+                    <Button variant='secondary' onClick={onCancel} className="cursor-pointer">
                         Cancel
                     </Button>
 
-                    <Button variant='danger' onClick={onConfirm} disabled={!reason.trim() || loading}>
+                    <Button variant='danger' onClick={onConfirm} disabled={!reason.trim() || loading} className="cursor-pointer">
+                        {loading ? <Loader2 size={16} className="animate-spin mr-1" /> : null}
                         {loading ? 'Rejecting...' : 'Confirm Reject'}
                     </Button>
                 </div>
-
             </div>
         </Modal>
     )
 }
+
 function useToasts() {
     const [toasts, setToasts] = useState<Toast[]>([])
 
@@ -299,7 +346,7 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void, curr
         try {
             await approveListing(id)
             updateListingStatus(id, 'APPROVED',currentAdminId)
-            showToast('Listing approved', 'success')
+            showToast('Listing approved successfully', 'success')
         } catch {
             showToast('Failed to approve listing', 'error')
         } finally {
@@ -312,7 +359,7 @@ function useListings(showToast: (msg: string, type: Toast['type']) => void, curr
         try {
             await rejectListing(id, reason)
             updateListingStatus(id, 'REJECTED',currentAdminId)
-            showToast('Listing rejected', 'success')
+            showToast('Listing rejected successfully', 'success')
         } catch {
             showToast('Failed to reject listing', 'error')
         } finally {
@@ -393,13 +440,57 @@ export default function AdminReviewDashboard() {
         router.push(`/listings/${id}`)
     }
 
-
     return (
         <AdminRoute>
-            <div className="container-content py-8">
-                <ToastList toasts={toasts} />
+            {/* Hero Section */}
+            <div className="relative overflow-hidden w-full" style={{
+                background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
+            }}>
+                {/* Glossy Overlay */}
+                <div className="absolute inset-0 opacity-30" style={{
+                    background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                }} />
+                
+                {/* Decorative Grid */}
+                <div className="absolute inset-0 opacity-5" style={{
+                    backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                }} />
+                
+                {/* Glossy Highlight Line */}
+                <div className="absolute top-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
+                }} />
+                
+                <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl" style={{
+                            background: 'rgba(0, 180, 216, 0.08)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(0, 180, 216, 0.1)',
+                        }}>
+                            <Shield size={28} className="text-[#00B4D8]" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
+                                Admin Review Dashboard
+                            </h1>
+                            <p className="text-gray-500 text-sm md:text-base mt-0.5">
+                                Manage and moderate all textbook listings
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Bottom Glossy Edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
+                }} />
+            </div>
 
-                <h1 className="text-xl font-semibold">Admin Review Dashboard</h1>
+            <div className="container-content py-6">
+                <ToastList toasts={toasts} />
 
                 <FiltersTabs activeFilter={activeFilter} counts={counts} onChange={setActiveFilter} />
 

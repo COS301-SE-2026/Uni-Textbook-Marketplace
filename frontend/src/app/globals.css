@@ -377,26 +377,31 @@
   .badge-pending {
     background-color: #D0F0F7;
     color: #004F66;
+    border: 1px solid  #d0f0f7a5;
   }
 
   .badge-approved {
     background-color: #D0F0DC;
     color: #155E2E;
+    border: 1px solid #d0f0dca4;
   }
 
   .badge-rejected {
     background-color: #FDE8E8;
     color: #7F1D1D;
+    border: 1px solid #ef8a8a;
   }
 
   .badge-reserved {
-    background-color: #f3f300;
-    color: #78350F;
+    background-color: #e3c5ee;
+    color: #2c0c39;
+    border: 1px solid #ab6ec3
   }
 
   .badge-sold {
     background-color: #E2E8F0;
     color: #334155;
+    border: 1px solid #627b9f
   }
 
   /* Form label */

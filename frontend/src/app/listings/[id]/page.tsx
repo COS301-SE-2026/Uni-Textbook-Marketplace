@@ -135,7 +135,7 @@ export default function ListingDetailPage() {
             <Button
                 onClick={() => router.back()}
                 className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-200 mb-6 group"
-                variant='secondary'
+                variant='primary'
             >
                 <span className="transform group-hover:-translate-x-1 transition-transform duration-200">&larr;</span>
                 Back 
@@ -174,6 +174,7 @@ export default function ListingDetailPage() {
                         <div className="flex gap-2">
                             {listing.photo_urls.map((img, i) => (
                                 <button
+                                    type="button"
                                     key={i}
                                     onClick={() => setActiveImage(i)}
                                     className={`relative w-14 h-14 rounded border-2 overflow-hidden ${activeImage === i
@@ -324,7 +325,7 @@ export default function ListingDetailPage() {
                     <div className="flex gap-3 mt-8 flex-wrap">
                         <Button
                             onClick={() => setShowMessageModal(true)}
-                            variant='secondary'
+                            variant='primary'
                         >
                             MESSAGE SELLER
                         </Button>
