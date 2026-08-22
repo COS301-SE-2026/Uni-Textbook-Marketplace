@@ -17,7 +17,7 @@ export default function ConversationList({
     return (
         <aside className="w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] flex flex-col h-full flex-shrink-0">
             {/* Header */}
-            <div className="border-b border-gray-200 dark:border-gray-700 px-5 py-5">
+            <div className="border-b border-gray-200 dark:border-gray-700 px-5 py-4">
                 <h2 className="text-xl font-bold text-[#000f2b] dark:text-white">
                     Messages
                 </h2>

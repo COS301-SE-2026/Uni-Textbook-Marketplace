@@ -65,7 +65,7 @@ export default function MessagesMobile() {
     if (!chatOpen) {
         return (
             <main className="min-h-screen bg-gray-50 dark:bg-[#0a0f1a] flex flex-col">
-                <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-5">
+                <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-4">
                     <h1 className="text-xl font-bold text-[#000f2b] dark:text-white">
                         Messages
                     </h1>
@@ -100,7 +100,7 @@ export default function MessagesMobile() {
             </div>
 
             {/* Chat Window */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden dark:text-white">
                 {loadingMessages ? (
                     <div className="flex h-full items-center justify-center gap-3">
                         <Loader2 size={28} className="animate-spin text-[#00B4D8]" />

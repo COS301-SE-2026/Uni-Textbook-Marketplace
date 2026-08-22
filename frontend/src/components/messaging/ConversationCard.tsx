@@ -23,16 +23,17 @@ export default function ConversationCard({
                 text-left
                 transition-all
                 border-b
+                border-gray-200 dark:border-gray-700
 
                 ${
                     selected
-                        ? 'bg-cyan-50 border-l-4 border-l-cyan-500'
-                        : 'hover:bg-gray-50'
+                        ? 'bg-cyan-50 dark:bg-cyan-950/30 border-l-4 border-l-cyan-500'
+                        : 'hover:bg-gray-50 dark:hover:bg-[#1e293b]'
                 }
             `}
         >
             <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-slate-900">
+                <h3 className="font-semibold text-slate-900 dark:text-white">
                     {conversation.otherUser.firstName}{' '}
                     {conversation.otherUser.lastName}
                 </h3>
