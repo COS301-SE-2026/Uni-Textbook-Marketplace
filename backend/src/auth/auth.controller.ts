@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Delete,
   Body,
   Res,
   Get,
@@ -8,6 +9,7 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Patch,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response, Request as ExpressRequest } from 'express';
@@ -18,6 +20,8 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 interface AuthenticatedRequest extends ExpressRequest {
   user: {
@@ -130,6 +134,42 @@ export class AuthController {
   @Get('me')
   async getMe(@Request() req: AuthenticatedRequest) {
     return this.authService.getMe(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  @HttpCode(200)
+  async updateMe(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.authService.updateProfile(req.user.id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Patch('me/password')
+  @HttpCode(200)
+  async changePassword(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(req.user.id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  @HttpCode(200)
+  async deleteMe(
+    @Request() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.deactivateAccount(req.user.id);
+
+    res.clearCookie('access_token', this.getCookieOptions(0));
+    res.clearCookie('refresh_token', this.getCookieOptions(0));
+
+    return result;
   }
 
   @Throttle({ default: { limit: 4, ttl: 60000 } })
