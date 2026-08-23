@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface Props {
     title: string;
     subtitle: string;
@@ -20,8 +22,14 @@ export default function ChatHeader({
         <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-4 flex items-center gap-4 min-h-[73px]">
             {/* Avatar */}
             {avatar ? (
-                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                    <img src={avatar} alt={title} className="w-full h-full object-cover" />
+                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 relative">
+                    <Image
+                        src={avatar}
+                        alt={title}
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
             ) : (
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#0096B4] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">

@@ -22,7 +22,7 @@ export default function LoginDesktop() {
 
     const validate = () => {
         const e: Record<string, string> = {};
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
         if (!email.trim()) {
             e.email = "University email is required";
@@ -38,7 +38,7 @@ export default function LoginDesktop() {
         return Object.keys(e).length === 0;
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
         setServerError("");
         if (!validate()) return;
@@ -64,10 +64,10 @@ export default function LoginDesktop() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL - Grey Glossy */}
+                {/* LEFT PANEL */}
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
                     
-                    {/* Floating Glass Orbs - Decorative */}
+                    {/* Floating Glass Orbs */}
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -85,7 +85,7 @@ export default function LoginDesktop() {
 
                     {/* Content */}
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container with Glossy Effect */}
+                        {/* Logo Container */}
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -97,7 +97,7 @@ export default function LoginDesktop() {
                         >
                             <Logo className="w-20 h-auto" />
                             
-                            {/* Glossy Highlight on Logo Container */}
+                           
                             <div 
                                 className="absolute -top-px left-1/4 right-1/4 h-px"
                                 style={{
@@ -126,7 +126,7 @@ export default function LoginDesktop() {
                             BACK!
                         </h1>
 
-                        {/* Divider with Glossy Effect */}
+                        
                         <div className="relative w-24 h-px mb-6">
                             <div 
                                 className="absolute inset-0"
@@ -145,15 +145,15 @@ export default function LoginDesktop() {
                             Access your university marketplace account.
                         </p>
 
-                        {/* Features List without Emojis */}
+                       
                         <div className="mt-8 space-y-2.3 w-full max-w-xs">
                             {[
-                                { text: 'Secure & Verified Access' },
-                                { text: 'Manage Your Listings' },
-                                { text: 'Connect with Buyers' },
+                                { id: 'secure-access', text: 'Secure & Verified Access' },
+                                { id: 'manage-listings', text: 'Manage Your Listings' },
+                                { id: 'connect-buyers', text: 'Connect with Buyers' },
                             ].map((feature, index) => (
                                 <div 
-                                    key={index}
+                                    key={feature.id}
                                     className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                                     style={{
                                         background: 'rgba(0, 180, 216, 0.05)',
@@ -183,9 +183,11 @@ export default function LoginDesktop() {
                             }}
                         />
                     </div>
+
+
                 </div>
 
-                {/* RIGHT PANEL - Glossy */}
+                {/* RIGHT PANEL */}
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
@@ -202,6 +204,7 @@ export default function LoginDesktop() {
                     <div style={{ width: "100%", maxWidth: 420, padding: "0 1.5rem", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
                         <div>
                             <h2>Login</h2>
+
                             <p className="text-text-subtle mt-2">
                                 Enter your details to access your account
                             </p>
@@ -219,6 +222,8 @@ export default function LoginDesktop() {
                                     />
                                     {errors.email && <ErrorText>{errors.email}</ErrorText>}
                                 </div>
+
+                                
                                 <div>
                                     <label htmlFor="password-desktop" className="form-label">Password</label>
                                     <div style={{ position: "relative", width: "100%" }}>
@@ -251,7 +256,7 @@ export default function LoginDesktop() {
                                     {errors.password && <ErrorText>{errors.password}</ErrorText>}
                                 </div>
 
-                                {/* Forgot Password - Directly beneath password input */}
+                                {/* Forgot Password */}
                                 <div className="flex justify-end -mt-2">
                                     <button
                                         type="button"
@@ -265,7 +270,7 @@ export default function LoginDesktop() {
 
                                 {serverError && <ErrorText>{serverError}</ErrorText>}
 
-                                {/* Login Button - Moved down with spacing */}
+                                {/* Login Button */}
                                 <div style={{ marginTop: "3.5rem" }}>
                                     <Button 
                                         className="w-full cursor-pointer" 

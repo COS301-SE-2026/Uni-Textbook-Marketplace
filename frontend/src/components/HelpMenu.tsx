@@ -54,8 +54,8 @@ export default function HelpMenu() {
                             </p>
 
                             {/* Quick FAQs */}
-                            {QUICK_FAQS.map((faq, i) => (
-                                <div key={i} className="border-b border-[var(--card-border)] pb-4 last:border-0 last:pb-0">
+                            {QUICK_FAQS.map((faq) => (
+                                <div key={faq.q} className="border-b border-[var(--card-border)] pb-4 last:border-0 last:pb-0">
                                     <h3 className="font-semibold text-sm text-[var(--foreground)] flex items-start gap-2">
                                         <span className="text-[#00B4D8] font-bold">Q:</span>
                                         {faq.q}

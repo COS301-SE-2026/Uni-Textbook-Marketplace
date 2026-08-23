@@ -76,8 +76,12 @@ export default function LogsComponent() {
                             backdropFilter: 'blur(10px)',
                             border: '1px solid rgba(0, 180, 216, 0.1)',
                         }}>
+
+
                             <FileText size={28} className="text-[#00B4D8]" />
                         </div>
+
+
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
                                 Audit Logs
@@ -85,8 +89,11 @@ export default function LogsComponent() {
                             <p className="text-gray-500 text-sm md:text-base mt-0.5">
                                 Complete history of all admin actions
                             </p>
+
                         </div>
                     </div>
+
+
                 </div>
                 
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
@@ -99,6 +106,8 @@ export default function LogsComponent() {
                     className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-300'
                 >
                     <div>
+
+
                         <Select
                             label='Action'
                             name='action'
@@ -114,6 +123,8 @@ export default function LogsComponent() {
                             <option value='REJECT_LISTING'>Rejected</option>
                         </Select>
                     </div>
+
+
                     <div className='flex flex-row gap-4'>
                         <Input
                             label='Start Date'
@@ -140,6 +151,8 @@ export default function LogsComponent() {
                         />
 
                     </div>
+
+
                     <div>
                         <Select
                             label='Performed by'
@@ -158,6 +171,8 @@ export default function LogsComponent() {
 
                             ))}
                         </Select>
+
+
                     </div>
 
                 </Card>
@@ -172,6 +187,8 @@ export default function LogsComponent() {
                     <Button variant='primary' onClick={() => setFilters({ page: 1, limit: 20 })} className='flex-1 cursor-pointer'>
                         Clear filters
                     </Button>
+
+
                 </div>
 
                 <Card className='mt-6 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-0'>
@@ -180,6 +197,7 @@ export default function LogsComponent() {
                         loading={loading}
                     />
                 </Card>
+                
             </div>
         </>
     )

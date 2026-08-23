@@ -12,11 +12,11 @@ export default function SavedSearchesPage() {
 
   const routAttr = useRouter()
 
-  const [searches, setFilterSearches] = useState<SavedSearch[]>([])
+  const [searches, setSearches] = useState<SavedSearch[]>([])
 
   const [loading, setLoading] = useState(true)
 
-  const [deleting, setDeletFeat] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   const loadSearches = async () => {
 
@@ -27,7 +27,7 @@ export default function SavedSearchesPage() {
 console.log("Returned from API:", data);
 console.log("Is array?", Array.isArray(data));
 
-setFilterSearches(data);
+setSearches(data);
     } catch (error) {
 
       console.error('Failed to load saved searches', error)
@@ -63,14 +63,14 @@ setFilterSearches(data);
 
     if (!confirm('Are you sure you want to delete this saved search?')) return
 
-    setDeletFeat(id)
+    setDeleting(id)
 
 
     try {
 
 
       await deleteSavedSearch(id)
-      setFilterSearches(prev => prev.filter(s => s.id !== id))
+      setSearches(prev => prev.filter(s => s.id !== id))
 
 
     } catch (error) {
@@ -80,7 +80,7 @@ setFilterSearches(data);
       alert('Failed to delete search. Please try again.')
 
     } finally {
-      setDeletFeat(null)
+      setDeleting(null)
     }
   }
 
@@ -333,19 +333,11 @@ setFilterSearches(data);
 
             {searches.map((search) => (
 
-              <div
+              <button
                 key={search.id}
+                type="button"
                 className="card hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => searchPerform(search.filter_json)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    searchPerform(search.filter_json)
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-
               >
                 <div className="flex items-center justify-between">
 
@@ -404,7 +396,7 @@ setFilterSearches(data);
                 </div>
 
                 
-              </div>
+              </button>
 
             ))}
           </div>

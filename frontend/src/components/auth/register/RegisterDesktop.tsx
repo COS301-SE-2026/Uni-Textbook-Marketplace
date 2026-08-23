@@ -101,6 +101,7 @@ function OtpInput({
     const ref4 = React.useRef<HTMLInputElement>(null);
     const ref5 = React.useRef<HTMLInputElement>(null);
     const inputRefs = [ref0, ref1, ref2, ref3, ref4, ref5];
+    const inputKeys = ["first", "second", "third", "fourth", "fifth", "sixth"];
 
     const handleChange = (index: number, char: string) => {
         const digit = char.replace(/\D/g, "").slice(-1);
@@ -134,7 +135,7 @@ function OtpInput({
         <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap" }}>
             {value.map((digit, index) => (
                 <input
-                    key={`otp-desktop-${index}`}
+                    key={`otp-desktop-${inputKeys[index]}`}
                     ref={inputRefs[index]}
                     type="text"
                     inputMode="numeric"
@@ -270,50 +271,36 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
-    const handleNext = async () => {
-        if (loading) return;
-        setServerError("");
-        if (step === 1 && !validateStep1()) return;
-        if (step === 2 && !validateStep2()) return;
-        if (step === 3 && !validateStep3()) return;
-
-        if (step === 2) {
-            setLoading(true);
-            try {
-                setStep((s) => s + 1);
-            } catch (err) {
-                setServerError((err as ApiError).message);
-            } finally {
-                setLoading(false);
-            }
-            return;
-        }
-
-        if (step === 3) {
-            if (!validateStep3()) return;
-            setLoading(true);
-            try {
-                await registerUser({
-                    email: form.email,
-                    password: form.password,
-                    first_name: form.fullName,
-                    last_name: form.surname,
-                    university_id: form.university_id,
-                });
-                setStep((s) => s + 1);
-            } catch (err) {
-                setServerError((err as ApiError).message);
-            } finally {
-                setLoading(false);
-            }
-            return;
-        }
-
-        if (step < 4) {
+    const handleStep2 = async () => {
+        setLoading(true);
+        try {
             setStep((s) => s + 1);
-            return;
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        } finally {
+            setLoading(false);
         }
+    };
 
+    const handleStep3 = async () => {
+        setLoading(true);
+        try {
+            await registerUser({
+                email: form.email,
+                password: form.password,
+                first_name: form.fullName,
+                last_name: form.surname,
+                university_id: form.university_id,
+            });
+            setStep((s) => s + 1);
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStep4 = async () => {
         if (!validateStep4()) return;
         setLoading(true);
         try {
@@ -325,6 +312,31 @@ export default function RegisterDesktop() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleNext = async () => {
+        if (loading) return;
+        setServerError("");
+        if (step === 1 && !validateStep1()) return;
+        if (step === 2 && !validateStep2()) return;
+        if (step === 3 && !validateStep3()) return;
+
+        if (step === 2) {
+            await handleStep2();
+            return;
+        }
+
+        if (step === 3) {
+            await handleStep3();
+            return;
+        }
+
+        if (step < 4) {
+            setStep((s) => s + 1);
+            return;
+        }
+
+        await handleStep4();
     };
 
     const handleResendOtp = async () => {
@@ -368,6 +380,7 @@ export default function RegisterDesktop() {
                                 />
                                 {errors.surname && <ErrorText>{errors.surname}</ErrorText>}
                             </div>
+                            
                         </div>
                     </>
                 );
@@ -608,10 +621,10 @@ export default function RegisterDesktop() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-4xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL - Grey Glossy */}
+                {/* LEFT PANEL */}
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[550px]">
                     
-                    {/* Floating Glass Orbs - Decorative */}
+                    {/* Floating Glass Orbs */}
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -629,7 +642,7 @@ export default function RegisterDesktop() {
 
                     {/* Content */}
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container with Glossy Effect */}
+                        {/* Logo Container */}
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -641,7 +654,7 @@ export default function RegisterDesktop() {
                         >
                             <Logo className="w-20 h-auto" />
                             
-                            {/* Glossy Highlight on Logo Container */}
+                            
                             <div 
                                 className="absolute -top-px left-1/4 right-1/4 h-px"
                                 style={{
@@ -670,7 +683,7 @@ export default function RegisterDesktop() {
                             STUDENT COMMUNITY
                         </h1>
 
-                        {/* Divider with Glossy Effect */}
+                        
                         <div className="relative w-24 h-px mb-6">
                             <div 
                                 className="absolute inset-0"
@@ -688,15 +701,15 @@ export default function RegisterDesktop() {
                             Buy, sell and swap textbooks with verified students.
                         </p>
 
-                        {/* Features List without Emojis */}
+                       
                         <div className="mt-8 space-y-2.3 w-full max-w-xs">
                             {[
                                 { text: 'Verified Student Community' },
                                 { text: 'Affordable Used Textbooks' },
                                 { text: 'Direct Seller Messaging' },
-                            ].map((feature, index) => (
+                            ].map((feature) => (
                                 <div 
-                                    key={index}
+                                    key={feature.text}
                                     className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                                     style={{
                                         background: 'rgba(0, 180, 216, 0.05)',
@@ -728,13 +741,13 @@ export default function RegisterDesktop() {
                     </div>
                 </div>
 
-                {/* RIGHT PANEL - Glossy */}
+                {/* RIGHT PANEL */}
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
                 }}>
-                    {/* Subtle Glossy Overlay for Right Panel */}
+                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{

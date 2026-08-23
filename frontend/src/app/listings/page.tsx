@@ -305,6 +305,8 @@ function BrowseListingsContent() {
     return (
         <ProtectedRoute>
             <SidebarProvider>
+
+                
                 <div className="flex w-full">
 
                     <Sidebar 
@@ -315,6 +317,8 @@ function BrowseListingsContent() {
                     >
                         <SidebarContent className="p-4">
                             <SidebarGroup>
+
+
                                 <div className="mb-4 flex items-center justify-between">
                                     <SidebarGroupLabel className="p-0 text-base font-semibold text-foreground flex items-center gap-2">
                                         <Filter size={18} />
@@ -344,6 +348,8 @@ function BrowseListingsContent() {
                                     <label htmlFor="faculty-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Faculty
                                     </label>
+
+
                                     <Select
                                         id="faculty-filter"
                                         name="faculty"
@@ -366,6 +372,8 @@ function BrowseListingsContent() {
 
                                 {/* Module Code */}
                                 <div className="mb-4">
+
+
                                     <label htmlFor='moduleCode-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Module Code
                                     </label>
@@ -380,9 +388,13 @@ function BrowseListingsContent() {
 
                                 {/* Edition */}
                                 <div className="mb-4">
+
+
                                     <label htmlFor='edition-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Edition
                                     </label>
+
+
                                     <Select
                                         id="edition-filter"
                                         name="edition"
@@ -398,7 +410,9 @@ function BrowseListingsContent() {
 
                                 {/* Price Range */}
                                 <div className="mb-4">
-                                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+
+
+                                    <label htmlFor="priceMin-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Price Range (R)
                                     </label>
                                     <div className="flex items-center gap-2">
@@ -424,15 +438,20 @@ function BrowseListingsContent() {
 
                                 {/* Condition */}
                                 <div className="mb-4">
-                                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+
+
+                                    <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Condition
-                                    </label>
+                                    </span>
+
                                     <div className="flex flex-wrap gap-2">
                                         <ConditionBadge
                                             condition="new"
                                             selected={filters.condition === 'new'}
                                             onClick={() => handleConditionToggle('new')}
                                         />
+
+
                                         <ConditionBadge
                                             condition="good"
                                             selected={filters.condition === 'good'}
@@ -448,6 +467,8 @@ function BrowseListingsContent() {
                                             selected={filters.condition === 'poor'}
                                             onClick={() => handleConditionToggle('poor')}
                                         />
+
+
                                     </div>
                                 </div>
 
@@ -484,10 +505,15 @@ function BrowseListingsContent() {
                                     />
                                 </div>
                             </SidebarGroup>
+
+
+                            
                         </SidebarContent>
                     </Sidebar>
 
                     <SidebarInset className="flex-1">
+
+
                         {/* Hero Section */}
                         <div className="relative overflow-hidden h-[180px] md:h-[200px]" style={{
                             background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
@@ -533,6 +559,9 @@ function BrowseListingsContent() {
                             
                             <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center">
                                 <div className="flex items-start gap-4">
+
+
+
                                     <SidebarTrigger className="text-white hover:text-[#00B4D8] transition-colors cursor-pointer" />
                                     <div>
                                         <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
@@ -546,6 +575,7 @@ function BrowseListingsContent() {
 
                                 {/* Search Bar */}
                                 <div className="mt-3 max-w-2xl relative">
+
                                     <SearchBar
                                         onSearch={searchApplicte}
                                         initialQuery={filters.search}
@@ -561,6 +591,7 @@ function BrowseListingsContent() {
                         </div>
 
                         <div className="py-6 px-6 md:px-8 lg:px-12">
+
                             {/* Saved Searches */}
                             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                                 <div className="flex items-center gap-3">
@@ -589,8 +620,10 @@ function BrowseListingsContent() {
                             </main>
                         </div>
                     </SidebarInset>
+
                 </div>
             </SidebarProvider>
+
         </ProtectedRoute>
     )
 }
@@ -599,18 +632,27 @@ export default function BrowseListingsPage() {
     return (
         <Suspense fallback={
             <div className="container-content py-8">
+
+
                 <div className="mb-6">
                     <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+
+
                     <div className="h-4 w-64 bg-gray-100 rounded animate-pulse mt-2" />
                 </div>
                 <div className="flex flex-col md:flex-row gap-6">
+
                     <div className="w-full md:w-56 flex-shrink-0">
                         <div className="card flex flex-col gap-4">
+
+
+
                             <div className="h-6 w-20 bg-gray-200 rounded animate-pulse" />
                             {[1, 2, 3, 4, 5, 6].map((i) => (
                                 <div key={i} className="h-10 bg-gray-100 rounded animate-pulse" />
                             ))}
                         </div>
+
                     </div>
                     <div className="flex-1">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -618,12 +660,17 @@ export default function BrowseListingsPage() {
                                 <div key={i} className="card animate-pulse flex flex-col gap-3">
                                     <div className="h-40 bg-gray-200 rounded" />
                                     <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+
                                     <div className="h-3 bg-gray-100 rounded w-1/2" />
                                     <div className="h-4 bg-gray-200 rounded w-1/4" />
                                 </div>
+
                             ))}
                         </div>
                     </div>
+
+
                 </div>
             </div>
         }>

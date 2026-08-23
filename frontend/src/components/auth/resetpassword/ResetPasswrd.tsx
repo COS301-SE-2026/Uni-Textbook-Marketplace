@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { forgotPassword, verifyOtp } from "@/lib/auth.api";
 import { useRouter } from "next/navigation";
 
-function StepIndicator({ currentStep }: { currentStep: number }) {
+function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Details", "Verification", "Success"];
 
     return (
@@ -53,12 +53,21 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
     );
 }
 
+const OTP_INPUT_KEYS = [
+    "otp-first",
+    "otp-second",
+    "otp-third",
+    "otp-fourth",
+    "otp-fifth",
+    "otp-sixth",
+];
+
 function OtpInput({
     value,
     onChange,
 }: {
-    value: string[];
-    onChange: (value: string[]) => void;
+    readonly value: string[];
+    readonly onChange: (value: string[]) => void;
 }) {
     const refs = Array.from({ length: 6 }, () => React.createRef<HTMLInputElement>());
 
@@ -95,7 +104,7 @@ function OtpInput({
         <div className="flex justify-center gap-2 sm:gap-3">
             {value.map((digit, index) => (
                 <input
-                    key={index}
+                    key={OTP_INPUT_KEYS[index]}
                     ref={refs[index]}
                     type="text"
                     inputMode="numeric"
@@ -242,8 +251,7 @@ export default function ResetPassword() {
                 );
             case 3:
                 return (
-                    <>
-                        <div className="text-center py-4">
+                    <div className="text-center py-4">
                             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
                                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -260,12 +268,53 @@ export default function ResetPassword() {
                             >
                                 Login
                             </Button>
-                        </div>
-                    </>
+                    </div>
                 );
 
             default:
                 return null;
+        }
+    };
+
+    const handleStep1 = async () => {
+        if (!validateStep1()) return;
+
+        setLoading(true);
+        try {
+            const normalizedEmail = form.email.toLowerCase().trim();
+            await forgotPassword({
+                email: normalizedEmail,
+                password: form.password,
+            });
+            setStep(2);
+        } catch (error: unknown) {
+            const message = error instanceof Error
+                ? error.message
+                : "Unable to reset password. Please try again";
+            setServerError(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStep2 = async () => {
+        if (!validateStep2()) return;
+
+        setLoading(true);
+        try {
+            const otpCode = form.otp.join("");
+            await verifyOtp({
+                email: form.email.trim().toLowerCase(),
+                code: otpCode
+            });
+            setStep(3);
+        } catch (error: unknown) {
+            const message = error instanceof Error
+                ? error.message
+                : "Invalid OTP. Please try again.";
+            setServerError(message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -276,46 +325,9 @@ export default function ResetPassword() {
         setServerError("");
 
         if (step === 1) {
-            if (!validateStep1()) return;
-
-            setLoading(true);
-            try {
-                const normalizedEmail = form.email.toLowerCase().trim();
-                await forgotPassword({
-                    email: normalizedEmail,
-                    password: form.password,
-                });
-                setStep(2);
-            } catch (error: unknown) {
-                const message = error instanceof Error
-                    ? error.message
-                    : "Unable to reset password. Please try again";
-                setServerError(message);
-            } finally {
-                setLoading(false);
-            }
-            return;
-        }
-
-        if (step === 2) {
-            if (!validateStep2()) return;
-
-            setLoading(true);
-            try {
-                const otpCode = form.otp.join("");
-                await verifyOtp({
-                    email: form.email.trim().toLowerCase(),
-                    code: otpCode
-                });
-                setStep(3);
-            } catch (error: unknown) {
-                const message = error instanceof Error
-                    ? error.message
-                    : "Invalid OTP. Please try again.";
-                setServerError(message);
-            } finally {
-                setLoading(false);
-            }
+            await handleStep1();
+        } else if (step === 2) {
+            await handleStep2();
         }
     };
 
@@ -353,9 +365,9 @@ export default function ResetPassword() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL - Grey Glossy */}
+                {/* LEFT PANEL */}
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[450px]">
-                    {/* Floating Glass Orbs - Decorative */}
+                    {/* Floating Glass Orbs */}
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -372,7 +384,7 @@ export default function ResetPassword() {
                     />
                     {/* Content */}
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container with Glossy Effect */}
+                        {/* Logo Container */}
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -384,7 +396,7 @@ export default function ResetPassword() {
                         >
                             <Logo className="w-20 h-auto" />
                             
-                            {/* Glossy Highlight on Logo Container */}
+                            
                             <div 
                                 className="absolute -top-px left-1/4 right-1/4 h-px"
                                 style={{
@@ -411,7 +423,7 @@ export default function ResetPassword() {
                         >
                             YOUR ACCOUNT
                         </h1>
-                        {/* Divider with Glossy Effect */}
+                        
                         <div className="relative w-24 h-px mb-6">
                             <div 
                                 className="absolute inset-0"
@@ -429,15 +441,15 @@ export default function ResetPassword() {
                             Secure your account by creating a new password.
                         </p>
 
-                        {/* Features List without Emojis */}
+                        
                         <div className="mt-8 space-y-2.3 w-full max-w-xs">
                             {[
                                 { text: 'Reset Your Password' },
                                 { text: 'Secure Your Account' },
                                 { text: 'Regain Access' },
-                            ].map((feature, index) => (
+                            ].map((feature) => (
                                 <div 
-                                    key={index}
+                                    key={feature.text}
                                     className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                                     style={{
                                         background: 'rgba(0, 180, 216, 0.05)',
@@ -467,13 +479,13 @@ export default function ResetPassword() {
                         />
                     </div>
                 </div>
-                {/* RIGHT PANEL - Glossy */}
+                {/* RIGHT PANEL */}
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
                 }}>
-                    {/* Subtle Glossy Overlay for Right Panel */}
+                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
