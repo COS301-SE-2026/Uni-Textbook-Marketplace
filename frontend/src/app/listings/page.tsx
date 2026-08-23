@@ -48,48 +48,55 @@ const EMPTY_FILTERS: Filters = {
     search: '',
 }
 
+const CONDITION_STYLES: Record<string, { readonly selected: string; readonly unselected: string; readonly text: string; readonly border: string }> = {
+    new: {
+        selected: 'bg-[#2196F3]',
+        unselected: 'bg-[#E3F2FD] hover:bg-[#BBDEFB]',
+        text: 'text-[#1565C0]',
+        border: 'border-[#90CAF9]',
+    },
+    good: {
+        selected: 'bg-[#4CAF50]',
+        unselected: 'bg-[#E8F5E9] hover:bg-[#C8E6C9]',
+        text: 'text-[#2E7D32]',
+        border: 'border-[#A5D6A7]',
+    },
+    fair: {
+        selected: 'bg-[#FF9800]',
+        unselected: 'bg-[#FFF3E0] hover:bg-[#FFE0B2]',
+        text: 'text-[#E65100]',
+        border: 'border-[#FFCC80]',
+    },
+    poor: {
+        selected: 'bg-[#F44336]',
+        unselected: 'bg-[#FFEBEE] hover:bg-[#FFCDD2]',
+        text: 'text-[#C62828]',
+        border: 'border-[#EF9A9A]',
+    },
+    default: {
+        selected: 'bg-[#9E9E9E]',
+        unselected: 'bg-[#F5F5F5] hover:bg-[#E0E0E0]',
+        text: 'text-[#616161]',
+        border: 'border-[#BDBDBD]',
+    },
+}
+
 // Condition Badge Component
 function ConditionBadge({ 
     condition, 
     selected, 
     onClick 
 }: { 
-    condition: string
-    selected: boolean
-    onClick: () => void 
+    readonly condition: string
+    readonly selected: boolean
+    readonly onClick: () => void 
 }) {
     const getConditionStyles = (cond: string) => {
-        switch (cond) {
-            case 'new':
-                return {
-                    bg: selected ? 'bg-[#2196F3]' : 'bg-[#E3F2FD] hover:bg-[#BBDEFB]',
-                    text: selected ? 'text-white' : 'text-[#1565C0]',
-                    border: selected ? 'border-[#2196F3]' : 'border-[#90CAF9]'
-                }
-            case 'good':
-                return {
-                    bg: selected ? 'bg-[#4CAF50]' : 'bg-[#E8F5E9] hover:bg-[#C8E6C9]',
-                    text: selected ? 'text-white' : 'text-[#2E7D32]',
-                    border: selected ? 'border-[#4CAF50]' : 'border-[#A5D6A7]'
-                }
-            case 'fair':
-                return {
-                    bg: selected ? 'bg-[#FF9800]' : 'bg-[#FFF3E0] hover:bg-[#FFE0B2]',
-                    text: selected ? 'text-white' : 'text-[#E65100]',
-                    border: selected ? 'border-[#FF9800]' : 'border-[#FFCC80]'
-                }
-            case 'poor':
-                return {
-                    bg: selected ? 'bg-[#F44336]' : 'bg-[#FFEBEE] hover:bg-[#FFCDD2]',
-                    text: selected ? 'text-white' : 'text-[#C62828]',
-                    border: selected ? 'border-[#F44336]' : 'border-[#EF9A9A]'
-                }
-            default:
-                return {
-                    bg: selected ? 'bg-[#9E9E9E]' : 'bg-[#F5F5F5] hover:bg-[#E0E0E0]',
-                    text: selected ? 'text-white' : 'text-[#616161]',
-                    border: selected ? 'border-[#9E9E9E]' : 'border-[#BDBDBD]'
-                }
+        const conditionStyles = CONDITION_STYLES[cond] ?? CONDITION_STYLES.default
+        return {
+            bg: selected ? conditionStyles.selected : conditionStyles.unselected,
+            text: selected ? 'text-white' : conditionStyles.text,
+            border: selected ? conditionStyles.selected : conditionStyles.border,
         }
     }
 
@@ -98,6 +105,7 @@ function ConditionBadge({
 
     return (
         <button
+            type="button"
             onClick={onClick}
             className={`
                 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200
@@ -233,10 +241,72 @@ function BrowseListingsContent() {
         return count
     }
 
+    let listingsContent
+    if (loading) {
+        listingsContent = (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="card animate-pulse flex flex-col gap-3">
+                        <div className="h-40 rounded bg-gray-200" />
+                        <div className="h-4 w-3/4 rounded bg-gray-200" />
+
+
+                        <div className="h-3 w-1/2 rounded bg-gray-100" />
+                        <div className="h-4 w-1/4 rounded bg-gray-200" />
+
+                    </div>
+                ))}
+            </div>
+        )
+    } else if (listings.length === 0) {
+        listingsContent = (
+            <div className="flex h-64 flex-col items-center justify-center text-gray-400">
+                <svg className="mb-3 h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                </svg>
+                <p className="text-sm">No listings found</p>
+
+
+
+                <button
+                    type="submit"
+                    onClick={handleClear}
+                    className="mt-3 text-sm text-[#00B4D8] hover:underline cursor-pointer"
+                >
+                    Clear filters
+                </button>
+
+
+            </div>
+        )
+    } else {
+        listingsContent = (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {listings.map(listing => (
+                    <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        isLiked={likedIds.has(listing.id)}
+                    />
+
+
+                ))}
+            </div>
+        )
+    }
+
     return (
         <ProtectedRoute>
             <SidebarProvider>
                 <div className="flex w-full">
+
                     <Sidebar 
                         side='left' 
                         variant='sidebar' 
@@ -255,6 +325,8 @@ function BrowseListingsContent() {
                                             </span>
                                         )}
                                     </SidebarGroupLabel>
+
+
                                     <button
                                         type='submit'
                                         onClick={handleClear}
@@ -263,6 +335,8 @@ function BrowseListingsContent() {
                                         <X size={14} />
                                         Clear all
                                     </button>
+
+                                    
                                 </div>
 
                                 {/* Faculty */}
@@ -511,55 +585,7 @@ function BrowseListingsContent() {
                             </div>
 
                             <main className="flex-1">
-                                {loading ? (
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                        {Array.from({ length: 6 }).map((_, i) => (
-                                            <div
-                                                key={i}
-                                                className="card animate-pulse flex flex-col gap-3"
-                                            >
-                                                <div className="h-40 rounded bg-gray-200" />
-                                                <div className="h-4 w-3/4 rounded bg-gray-200" />
-                                                <div className="h-3 w-1/2 rounded bg-gray-100" />
-                                                <div className="h-4 w-1/4 rounded bg-gray-200" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : listings.length === 0 ? (
-                                    <div className="flex h-64 flex-col items-center justify-center text-gray-400">
-                                        <svg
-                                            className="mb-3 h-12 w-12"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={1}
-                                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                        <p className="text-sm">No listings found</p>
-                                        <button
-                                            type='submit'
-                                            onClick={handleClear}
-                                            className="mt-3 text-sm text-[#00B4D8] hover:underline cursor-pointer"
-                                        >
-                                            Clear filters
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                        {listings.map(listing => (
-                                            <ListingCard 
-                                                key={listing.id} 
-                                                listing={listing} 
-                                                isLiked={likedIds.has(listing.id)} 
-                                            />
-                                        ))}
-                                    </div>
-                                )}
+                                {listingsContent}
                             </main>
                         </div>
                     </SidebarInset>

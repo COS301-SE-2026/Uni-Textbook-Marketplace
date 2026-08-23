@@ -102,13 +102,19 @@ export default function ListingDetailPage() {
     if (loading) {
         return (
             <div className="container-content py-8">
+
                 <div className="animate-pulse flex flex-col md:flex-row gap-8">
                     <div className="w-full md:w-72 h-72 bg-gray-200 rounded-lg" />
+
+
                     <div className="flex-1 flex flex-col gap-4">
                         <div className="h-6 bg-gray-200 rounded w-2/3" />
                         <div className="h-4 bg-gray-100 rounded w-1/3" />
+
                         <div className="h-8 bg-gray-200 rounded w-1/4 mt-4" />
                     </div>
+
+
                 </div>
             </div>
         )
@@ -125,6 +131,7 @@ export default function ListingDetailPage() {
                 >
                     Back to listings
                 </Button>
+
             </div>
         )
     }
@@ -154,6 +161,7 @@ export default function ListingDetailPage() {
                                 className="object-cover"
                                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                             />
+
                         ) : (
                             <div className="flex items-center justify-center h-full text-gray-300">
                                 <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,6 +174,8 @@ export default function ListingDetailPage() {
                                         0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                     />
                                 </svg>
+
+
                             </div>
                         )}
                     </div>
@@ -190,6 +200,8 @@ export default function ListingDetailPage() {
                                         sizes="56px"
                                     />
                                 </button>
+
+
                             ))}
                         </div>
                     )}
@@ -228,6 +240,8 @@ export default function ListingDetailPage() {
                                     <td className="py-2 font-medium">
                                         {value}
                                     </td>
+
+
                                 </tr>
                             ))}
                         </tbody>
@@ -278,6 +292,8 @@ export default function ListingDetailPage() {
                                 </table>
                             )}
                         </AccordionSection>
+
+
                     ))}
 
 
@@ -290,12 +306,16 @@ export default function ListingDetailPage() {
                             Seller Information
                         </h4>
 
+
                         <div className="flex items-center gap-3 mb-3">
+
                             <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
                                 {listing.seller?.first_name?.[0]}{listing.seller?.last_name?.[0]}
                             </div>
                             <div>
                                 <p className="font-semibold text-sm">
+
+
                                     {listing.seller?.first_name} {listing.seller?.last_name}
                                 </p>
 
@@ -305,12 +325,15 @@ export default function ListingDetailPage() {
                                     </span>
                                 )}
                             </div>
+
+
                         </div>
                         <p>
                             {listing.seller?.university.name}
                         </p>
 
                     </div>
+
 
                     <div className="card">
                         <h4 className="font-semibold mb-1 text-sm">
@@ -329,6 +352,9 @@ export default function ListingDetailPage() {
                         >
                             MESSAGE SELLER
                         </Button>
+
+
+
                     </div>
                 </aside>
             </div>
@@ -348,6 +374,8 @@ export default function ListingDetailPage() {
                         <p className="text-sm text-gray-500 mt-1">
                             You will receive a reply in your messages.
                         </p>
+
+
                         <Button
                             onClick={() => {
                                 setShowMessageModal(false)
@@ -357,6 +385,8 @@ export default function ListingDetailPage() {
                         >
                             Close
                         </Button>
+
+
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
@@ -371,6 +401,8 @@ export default function ListingDetailPage() {
                             onChange={e => setMessage(e.target.value)}
                         />
                         <div className="flex justify-end gap-3">
+
+
                             <Button
                                 variant="primary"
                                 onClick={() => {
@@ -402,8 +434,12 @@ export default function ListingDetailPage() {
                             >
                                 Send Message
                             </Button>
+
+
                         </div>
                     </div>
+
+                    
                     
                 )}
             </Modal>

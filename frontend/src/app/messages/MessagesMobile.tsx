@@ -79,6 +79,43 @@ export default function MessagesMobile() {
         );
     }
 
+    let chatContent;
+
+    if (loadingMessages) {
+        chatContent = (
+            <div className="flex h-full items-center justify-center gap-3">
+
+                <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
+                <p className="text-sm text-gray-500">Loading messages...</p>
+
+
+            </div>
+        );
+    } else if (selectedConversation?.lastMessage) {
+        chatContent = (
+            <ChatWindow
+                messages={messages}
+                currentUserId={user?.id ?? ''}
+            />
+
+        );
+    } else {
+        chatContent = (
+            <div className="flex h-full items-center justify-center text-gray-500 dark:text-gray-400">
+                <div className="text-center">
+
+
+                    <p className="text-sm">No messages yet.</p>
+
+
+                    <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
+                </div>
+            </div>
+
+
+        );
+    }
+
     return (
         <main className="flex h-screen flex-col bg-gray-50 dark:bg-[#0a0f1a]">
             {/* Header with Back Button */}
@@ -90,6 +127,8 @@ export default function MessagesMobile() {
                     aria-label="Back to conversations"
                 >
                     <ChevronLeft size={22} />
+
+
                 </button>
                 <div className="flex-1 min-w-0">
                     <ChatHeader
@@ -97,28 +136,13 @@ export default function MessagesMobile() {
                         subtitle={selectedConversation?.listing.title ?? ''}
                     />
                 </div>
+
+                
             </div>
 
             {/* Chat Window */}
             <div className="flex-1 overflow-hidden dark:text-white">
-                {loadingMessages ? (
-                    <div className="flex h-full items-center justify-center gap-3">
-                        <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
-                        <p className="text-sm text-gray-500">Loading messages...</p>
-                    </div>
-                ) : selectedConversation?.lastMessage ? (
-                    <ChatWindow
-                        messages={messages}
-                        currentUserId={user?.id ?? ''}
-                    />
-                ) : (
-                    <div className="flex h-full items-center justify-center text-gray-500 dark:text-gray-400">
-                        <div className="text-center">
-                            <p className="text-sm">No messages yet.</p>
-                            <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
-                        </div>
-                    </div>
-                )}
+                {chatContent}
             </div>
 
             <MessageInput onSend={send} />

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCheck, Bell } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { getNotificationIcon, getNotificationRoute } from "@/utils/notificationRoutes";
 
@@ -30,17 +30,14 @@ export default function NotificationsPage() {
     const { notifications, unreadCount, isLoading, error, markRead, markAllRead } = useNotifications();
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-    // GET /notifications/mine has no server-side pagination yet no
-    // page/limit params) - this pages through the already-fetched flat
-    // array client-side. 
-    // Gift, you may add them and swap for real query params,
-    // rather than silently pretending this is server pagination.
     const visible = notifications.slice(0, visibleCount);
     const hasMore = visibleCount < notifications.length;
 
     return (
         <div className="container-content py-10">
             <div className="mb-6 flex items-center justify-between">
+
+
                 <div>
 
                     <h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>
@@ -48,6 +45,8 @@ export default function NotificationsPage() {
                         <p className="mt-1 text-sm text-[#4B4F58] dark:text-gray-400">
                             {unreadCount} unread
                         </p>
+
+
                     )}
                 </div>
 
@@ -60,6 +59,8 @@ export default function NotificationsPage() {
                         <CheckCheck className="h-4 w-4" aria-hidden="true" />
                         Mark all read
                     </button>
+
+
                 )}
             </div>
 
@@ -106,6 +107,8 @@ export default function NotificationsPage() {
                                             />
                                             <span className="flex-1">
 
+
+
                                             <span className="block text-sm text-[var(--foreground)]">
                                                 {notification.message_info}
                                             </span>
@@ -122,6 +125,8 @@ export default function NotificationsPage() {
 
                                             )}
                                     </Link>
+
+
                                 </li>
                             );
                         })}
@@ -138,6 +143,7 @@ export default function NotificationsPage() {
                 >
                     Load more
                 </button>
+
                 </div>
             )}
             </div>

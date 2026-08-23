@@ -134,6 +134,7 @@ export default function SettingsPage() {
             <label htmlFor="first_name" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
               First Name
             </label>
+
             <input
               id="first_name"
               type="text"
@@ -180,6 +181,7 @@ export default function SettingsPage() {
         </form>
       </section>
 
+
       {/* Change password */}
       <section className="rounded-[6px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-[var(--card-bg)] p-6">
         <h2 className="text-[1.125rem] font-semibold text-[#000f2b] dark:text-[var(--foreground)] mb-4">
@@ -193,6 +195,8 @@ export default function SettingsPage() {
             <label htmlFor="current_password" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
               Current Password
             </label>
+
+
             <input
               id="current_password"
               type="password"
@@ -219,6 +223,7 @@ export default function SettingsPage() {
               className="w-full rounded-[4px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-transparent px-3 py-2 text-[#3a3a3a] dark:text-[var(--foreground)] focus:outline-none focus:border-[#00B4D8] focus:ring-2 focus:ring-[rgba(0,180,216,0.15)]"
             />
           </div>
+
           <div>
 
 
@@ -312,6 +317,7 @@ export default function SettingsPage() {
 
 
             </div>
+            
           </div>
         )}
       </section>

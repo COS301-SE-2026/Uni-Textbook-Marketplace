@@ -214,6 +214,8 @@ export default function CreateListingPage() {
                 {/* Image Overlay */}
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                     <div className="relative w-full h-full">
+
+
                         <Image
                             src="/../../sell.png"
                             alt="Student reading textbook"
@@ -226,8 +228,11 @@ export default function CreateListingPage() {
                         <div className="absolute inset-0" style={{
                             background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
                         }} />
+
                     </div>
                 </div>
+
+
                 
                 {/* Glossy Overlay */}
                 <div className="absolute inset-0 opacity-20" style={{
@@ -238,6 +243,7 @@ export default function CreateListingPage() {
                 <div className="absolute inset-0 opacity-10" style={{
                     backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
                 }} />
+
                 
                 {/* Decorative Grid */}
                 <div className="absolute inset-0 opacity-5" style={{
@@ -252,6 +258,8 @@ export default function CreateListingPage() {
                 
                 <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
                     <div className="flex items-start gap-4">
+
+
                         <div className="p-2 rounded-xl" style={{
                             background: 'rgba(255,255,255,0.08)',
                             backdropFilter: 'blur(10px)',
@@ -260,6 +268,8 @@ export default function CreateListingPage() {
                             <PlusCircle size={24} className="text-[#00B4D8]" />
                         </div>
                         <div>
+
+
                             <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                                 Sell Your Textbook
                             </h1>
@@ -267,6 +277,8 @@ export default function CreateListingPage() {
                                 Fill in the details below to create your listing
                             </p>
                         </div>
+
+
                     </div>
                 </div>
                 
@@ -313,6 +325,8 @@ export default function CreateListingPage() {
                                         <span className="truncate">{label}</span>
                                     </span>
                                 </div>
+
+
                             </div>
                         )
                     })}
@@ -342,6 +356,8 @@ export default function CreateListingPage() {
                         <Button onClick={handleSubmit} variant="primary" disabled={loading} className="cursor-pointer">
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
+
+
                     )}
                 </div>
 
@@ -363,8 +379,11 @@ export default function CreateListingPage() {
                     >
                         View My Listings
                     </button>
+
+
                 </div>
             </Modal>
+            
         </ProtectedRoute>
     )
 }

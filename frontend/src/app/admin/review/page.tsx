@@ -41,7 +41,10 @@ function formatDate(dateString: string): string {
 function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
     return (
         <td className="px-4 py-3">
+
             <div className="flex items-center gap-3">
+
+
                 <div className="relative w-10 h-12 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
                     {listing.photo_urls?.[0] ? (
                         <Image src={normalizeImage(listing.photo_urls[0])} alt="" fill className="object-cover" />
@@ -50,11 +53,15 @@ function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
                     )}
                 </div>
                 <div>
+
+
                     <p className="font-medium line-clamp-1 max-w-[180px]">{listing.book.title}</p>
                     <p className="text-xs text-gray-400">
                         {listing.book.edition} Ed · ISBN {listing.book.isbn}
                     </p>
                 </div>
+
+
             </div>
         </td>
     )
@@ -69,6 +76,7 @@ function ModuleCell({ module }: Readonly<{ module: AdminListing['module'] }>) {
             <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
                 {module.code}
             </span>
+
         </td>
     )
 }
@@ -91,6 +99,8 @@ function ActionsCell({
     return (
         <td className="px-4 py-3">
             <div className="flex gap-1.5 flex-wrap">
+
+
                 <Button 
                     variant="primary" 
                     onClick={() => onViewDetails(listing.id)} 
@@ -99,6 +109,8 @@ function ActionsCell({
                 >
                     {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'View'}
                 </Button>
+
+
                 {listing.status === 'PENDING' && (
                     <>
                         <Button 
@@ -109,6 +121,8 @@ function ActionsCell({
                         >
                             {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
                         </Button>
+
+
                         <Button 
                             variant="danger" 
                             onClick={() => onStartReject(listing.id)} 
@@ -120,6 +134,8 @@ function ActionsCell({
                     </>
                 )}
             </div>
+
+
         </td>
     )
 }
@@ -149,6 +165,7 @@ function ListingRow({
         <tr className="border-b border-gray-100 hover:bg-gray-50/80 transition-colors duration-150">
             <BookCell listing={listing} />
             <ModuleCell module={listing.module} />
+
             <td className="px-4 py-3 font-semibold text-[#000f2b]">
                 R{Number(listing.price).toFixed(2)}
             </td>
@@ -156,6 +173,9 @@ function ListingRow({
                 <p className="font-medium text-sm">{listing.seller.first_name} {listing.seller.last_name}</p>
                 <p className="text-xs text-gray-400 truncate max-w-[150px]">{listing.seller.email}</p>
             </td>
+
+
+
             <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
             <td className="px-4 py-3">
                 {/* Status Badge */}
@@ -171,6 +191,8 @@ function ListingRow({
                     onViewDetails={onViewDetails}
                 />
             </td>
+
+
         </tr>
     )
 }
@@ -178,6 +200,7 @@ function ListingRow({
 function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+
             {toasts.map(t => (
                 <div
                     key={t.id}
@@ -187,8 +210,10 @@ function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
                             : 'bg-red-600/90 border border-red-400/30'
                     }`}
                 >
+
                     {t.message}
                 </div>
+
             ))}
         </div>
     )
@@ -211,8 +236,11 @@ function ListingsTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400">
                 <Shield size={48} className="mb-4 opacity-30" />
+
                 <p className="text-sm font-medium">No listings found</p>
+                
                 <p className="text-xs mt-1">Try adjusting your filter</p>
+
             </div>
         )
     }
@@ -228,6 +256,7 @@ function ListingsTable({
                             </th>
                         ))}
                     </tr>
+
                 </thead>
                 <tbody>
                     {listings.map(listing => (
@@ -242,6 +271,8 @@ function ListingsTable({
                     ))}
                 </tbody>
             </table>
+
+
         </div>
     )
 }
@@ -296,11 +327,15 @@ function RejectionModal({
                         Cancel
                     </Button>
 
+
+
                     <Button variant='danger' onClick={onConfirm} disabled={!reason.trim() || loading} className="cursor-pointer">
                         {loading ? <Loader2 size={16} className="animate-spin mr-1" /> : null}
                         {loading ? 'Rejecting...' : 'Confirm Reject'}
                     </Button>
                 </div>
+
+
             </div>
         </Modal>
     )
@@ -451,12 +486,16 @@ export default function AdminReviewDashboard() {
                 <div className="absolute inset-0 opacity-30" style={{
                     background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
                 }} />
+
+
                 
                 {/* Decorative Grid */}
                 <div className="absolute inset-0 opacity-5" style={{
                     backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
                     backgroundSize: '40px 40px',
                 }} />
+
+
                 
                 {/* Glossy Highlight Line */}
                 <div className="absolute top-0 left-0 right-0 h-px" style={{
@@ -480,6 +519,8 @@ export default function AdminReviewDashboard() {
                                 Manage and moderate all textbook listings
                             </p>
                         </div>
+
+
                     </div>
                 </div>
                 
@@ -487,6 +528,7 @@ export default function AdminReviewDashboard() {
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
                 }} />
+
             </div>
 
             <div className="container-content py-6">
@@ -515,6 +557,8 @@ export default function AdminReviewDashboard() {
                     loading={actionLoading === rejectionTarget}
                 />
             </div>
+
         </AdminRoute>
+
     )
 }

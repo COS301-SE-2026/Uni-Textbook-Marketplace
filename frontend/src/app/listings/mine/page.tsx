@@ -102,10 +102,15 @@ export default function MyListingsPage() {
     if (loading) {
         content = (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+
                 {Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="card animate-pulse flex flex-col gap-3">
                         <div className="h-40 bg-gray-200 rounded" />
                         <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+
+
                         <div className="h-3 bg-gray-100 rounded w-1/2" />
                     </div>
                 ))}
@@ -134,6 +139,7 @@ export default function MyListingsPage() {
                     />
                 </svg>
                 <p className="text-sm">
+
                     {activeTab === 'ALL'
                         ? "You haven't listed any textbooks yet."
                         : `No ${activeTab.toLowerCase()} listings.`}
@@ -143,6 +149,8 @@ export default function MyListingsPage() {
                         <button type="button" className="btn-primary mt-4">
                             Create your first listing
                         </button>
+
+
                     </Link>
                 )}
             </div>
@@ -150,6 +158,8 @@ export default function MyListingsPage() {
     } else {
         content = (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+
                 {filtered.map(listing => {
                     const isUpdatingStatus = statusUpdatingId === listing.id
 
@@ -168,6 +178,8 @@ export default function MyListingsPage() {
                                     >
                                         Edit
                                     </Button>
+
+
                                 )}
 
                                 {listing.status === 'APPROVED' && listing.listing_status !== 'SOLD' && (
@@ -180,6 +192,8 @@ export default function MyListingsPage() {
                                             >
                                                 {isUpdatingStatus ? 'Updating...' : 'Mark Reserved'}
                                             </Button>
+
+
                                         )}
                                         {listing.listing_status === 'RESERVED' && (
                                             <Button
@@ -189,6 +203,8 @@ export default function MyListingsPage() {
                                             >
                                                 {isUpdatingStatus ? 'Updating...' : 'Un-reserve'}
                                             </Button>
+
+
                                         )}
                                         <Button
                                             variant='primary'
@@ -197,13 +213,18 @@ export default function MyListingsPage() {
                                         >
                                             {isUpdatingStatus ? 'Updating...' : 'Mark Sold'}
                                         </Button>
+
+
                                     </>
                                 )}
                             </div>
+
                         </div>
                     )
                 })}
             </div>
+
+
         )
     }
 
@@ -217,6 +238,8 @@ export default function MyListingsPage() {
                 {/* Image Overlay */}
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                     <div className="relative w-full h-full">
+
+
                         <Image
                             src="/../../my_listings.png"
                             alt="Student reading textbook"
@@ -225,11 +248,15 @@ export default function MyListingsPage() {
                             priority
                             style={{ objectPosition: '100% 50%' }}
                         />
+
+
                         {/* Gradient overlay */}
                         <div className="absolute inset-0" style={{
                             background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
                         }} />
                     </div>
+
+
                 </div>
                 
                 {/* Glossy Overlay */}
@@ -262,6 +289,8 @@ export default function MyListingsPage() {
                         }}>
                             <Package size={24} className="text-[#00B4D8]" />
                         </div>
+
+
                         <div>
                             <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                                 My Listings
@@ -269,8 +298,12 @@ export default function MyListingsPage() {
                             <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
                                 Manage your textbook listings
                             </p>
+
+
                         </div>
                     </div>
+
+
                 </div>
                 
                 {/* Bottom Glossy Edge */}
@@ -278,6 +311,8 @@ export default function MyListingsPage() {
                     background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
                 }} />
             </div>
+
+
 
             {/* Content */}
             <div className="container-content py-8 relative">
@@ -290,6 +325,8 @@ export default function MyListingsPage() {
                         <button type="button" className="btn-primary">
                             + New Listing
                         </button>
+
+
                     </Link>
                 </div>
 
@@ -321,6 +358,8 @@ export default function MyListingsPage() {
                                 </span>
                             )}
                         </button>
+
+                        
                     ))}
                 </div>
 

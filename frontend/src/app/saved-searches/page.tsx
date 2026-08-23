@@ -160,13 +160,20 @@ setFilterSearches(data);
 
     <ProtectedRoute>
       {/* Hero Section */}
+
       <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
         background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.3)',
       }}>
+
+
         {/* Image Overlay */}
         <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+
           <div className="relative w-full h-full">
+
+
+
             <Image
               src="/../../search.png"
               alt="Student reading textbook"
@@ -180,6 +187,8 @@ setFilterSearches(data);
               background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
             }} />
           </div>
+
+
         </div>
         
         {/* Glossy Overlay */}
@@ -212,6 +221,8 @@ setFilterSearches(data);
             }}>
               <Bookmark size={24} className="text-[#00B4D8]" />
             </div>
+
+
             <div>
               <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                 Saved Searches
@@ -220,6 +231,8 @@ setFilterSearches(data);
                 Your saved filter combinations for quick access
               </p>
             </div>
+
+
           </div>
         </div>
         
@@ -230,7 +243,10 @@ setFilterSearches(data);
       </div>
 
       <div className="container-content py-8">
+
         <div className="mb-6">
+
+
           <Button
             variant="primary"
             onClick={() => routAttr.back()}
@@ -239,6 +255,8 @@ setFilterSearches(data);
             <ArrowLeft size={16} className="mr-1" />
             Back
           </Button>
+
+
 
           <div className="flex items-center justify-between">
             <div>
@@ -253,10 +271,12 @@ setFilterSearches(data);
               <Search size={16} />
               New Search
             </button>
+
+
           </div>
         </div>
 
-        {loading ? (
+        {loading && (
 
           <div className="space-y-4">
 
@@ -264,6 +284,8 @@ setFilterSearches(data);
               <div key={i} className="card animate-pulse">
 
                 <div className="flex items-center justify-between">
+
+
                   <div className="space-y-2 flex-1">
 
                     <div className="h-5 bg-gray-200 rounded w-3/4" />
@@ -279,7 +301,9 @@ setFilterSearches(data);
             ))}
           </div>
 
-        ) : searches.length === 0 ? (
+        )}
+
+        {!loading && searches.length === 0 && (
 
           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
             <Bookmark size={48} className="mb-4" strokeWidth={1} />
@@ -297,9 +321,15 @@ setFilterSearches(data);
               Go to Browse
             </button>
 
+
+
           </div>
-        ) : (
+        )}
+
+        {!loading && searches.length > 0 && (
           <div className="space-y-3">
+
+
 
             {searches.map((search) => (
 
@@ -307,6 +337,14 @@ setFilterSearches(data);
                 key={search.id}
                 className="card hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => searchPerform(search.filter_json)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    searchPerform(search.filter_json)
+                  }
+                }}
+                role="button"
+                tabIndex={0}
 
               >
                 <div className="flex items-center justify-between">
@@ -317,12 +355,18 @@ setFilterSearches(data);
 
 
                       <Bookmark size={16} className="text-[#00B4D8] flex-shrink-0" />
+
+
                       <p className="font-medium text-sm truncate">
+
+
                         {filterPackaged(search.filter_json)}
                       </p>
                     </div>
 
                     <p className="text-xs text-gray-400 mt-1">
+
+
                       Saved {dateStandard(search.created_at)}
                     </p>
                   </div>
@@ -344,16 +388,22 @@ setFilterSearches(data);
                       className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors disabled:opacity-50 cursor-pointer"
                       aria-label="Delete saved search"
                     >
+
+
                       {deleting === search.id ? (
                         <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
                       ) : (
                         <Trash2 size={16} />
+
+
                       )}
                     </button>
 
                   </div>
 
                 </div>
+
+                
               </div>
 
             ))}

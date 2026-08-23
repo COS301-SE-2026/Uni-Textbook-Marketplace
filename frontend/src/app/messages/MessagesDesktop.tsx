@@ -27,16 +27,24 @@ export default function MessagesDesktop() {
     if (loadingConversations) {
         emptyState = (
             <div className="flex flex-col items-center justify-center gap-3">
+
+                
                 <Loader2 size={32} className="animate-spin text-[#00B4D8]" />
+
+
                 <p className="text-sm text-gray-500">Loading conversations...</p>
             </div>
         );
     } else if (conversations.length === 0) {
         emptyState = (
             <div className="flex flex-col items-center justify-center text-center px-6">
+
+
                 <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
                     <MessageCircle size={32} className="text-gray-400" />
                 </div>
+
+
                 <h2 className="text-2xl font-bold text-[#000f2b] dark:text-white">
                     No conversations yet
                 </h2>
@@ -48,21 +56,63 @@ export default function MessagesDesktop() {
     } else {
         emptyState = (
             <div className="flex flex-1 flex-col items-center justify-center text-center px-6">
+
+
+
                 <div className="w-20 h-20 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                     <MessageCircle size={32} className="text-[#00B4D8]" />
                 </div>
+
+
                 <h2 className="text-2xl font-bold text-[#000f2b] dark:text-white">
                     Your Messages
                 </h2>
+
+
                 <p className="mt-3 max-w-sm text-center text-gray-500 dark:text-gray-400">
                     Select a conversation to view messages and continue chatting with buyers and sellers.
                 </p>
+            </div>
+
+
+        );
+    }
+
+    let chatContent;
+
+    if (loadingMessages) {
+        chatContent = (
+            <div className="flex flex-1 items-center justify-center gap-3">
+                <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
+                <p className="text-sm text-gray-500">Loading messages...</p>
+            </div>
+        );
+    } else if (selectedConversation?.lastMessage) {
+        chatContent = (
+            <ChatWindow
+                messages={messages}
+                currentUserId={user?.id ?? ''}
+            />
+
+
+        );
+    } else {
+        chatContent = (
+            <div className="flex flex-1 items-center justify-center text-gray-500 dark:text-gray-400">
+                <div className="text-center">
+
+
+                    <p className="text-sm">No messages yet.</p>
+                    <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
+                </div>
             </div>
         );
     }
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0a0f1a] p-6 md:p-8">
+
+
             <div className="mx-auto flex h-[85vh] max-w-7xl overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] shadow-xl">
                 <ConversationList
                     conversations={conversations}
@@ -71,6 +121,8 @@ export default function MessagesDesktop() {
                     }
                     onSelectConversation={selectConversation}
                 />
+
+                
                 <section className="flex flex-1 flex-col">
                     {selectedConversation ? (
                         <>
@@ -78,24 +130,9 @@ export default function MessagesDesktop() {
                                 title={`${selectedConversation.otherUser.firstName} ${selectedConversation.otherUser.lastName}`}
                                 subtitle={selectedConversation.listing.title}
                             />
-                            {loadingMessages ? (
-                                <div className="flex flex-1 items-center justify-center gap-3">
-                                    <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
-                                    <p className="text-sm text-gray-500">Loading messages...</p>
-                                </div>
-                            ) : selectedConversation?.lastMessage ? (
-                                <ChatWindow
-                                    messages={messages}
-                                    currentUserId={user?.id ?? ''}
-                                />
-                            ) : (
-                                <div className="flex flex-1 items-center justify-center text-gray-500 dark:text-gray-400">
-                                    <div className="text-center">
-                                        <p className="text-sm">No messages yet.</p>
-                                        <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
-                                    </div>
-                                </div>
-                            )}
+
+
+                            {chatContent}
                             <MessageInput onSend={send} />
                         </>
                     ) : (
@@ -104,7 +141,11 @@ export default function MessagesDesktop() {
                         </div>
                     )}
                 </section>
+
+
+
             </div>
+
         </main>
     );
 }
