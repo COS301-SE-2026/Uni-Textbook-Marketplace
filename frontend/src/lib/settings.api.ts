@@ -20,6 +20,10 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<AuthUse
     return api.patch<AuthUser>('/auth/me', data);
 }
 
+export async function changePassword(data: ChangePasswordPayload): Promise<MessageResponse> {
+    return api.patch<MessageResponse>('/auth/me/password', data);
+}
+
 export async function deleteAccount(): Promise<MessageResponse> {
     return api.delete<MessageResponse>('/auth/me');
 }
