@@ -239,6 +239,43 @@ export class ListingsService {
     return uuidRegex.test(uuid);
   }
 
+  private createRejectedListingChanges(
+    dto: EditListingDto,
+    listing: Listing,
+  ): string[] {
+    const changes: string[] = [];
+    const updates = [
+      {
+        shouldAdd: !!dto.title && dto.title !== listing.title,
+        message: `Title: "${listing.title}" : "${dto.title}"`,
+      },
+      {
+        shouldAdd: !!dto.price && dto.price !== listing.price,
+        message: `Price: ${listing.price} : ${dto.price}`,
+      },
+      {
+        shouldAdd: !!dto.condition && dto.condition !== listing.condition,
+        message: `Condition: ${listing.condition} : ${dto.condition}`,
+      },
+      {
+        shouldAdd: !!dto.description && dto.description !== listing.description,
+        message: 'Description updated',
+      },
+      {
+        shouldAdd: !!dto.photo_urls && dto.photo_urls !== listing.photo_urls,
+        message: 'Photos updated',
+      },
+    ];
+
+    for (const update of updates) {
+      if (update.shouldAdd) {
+        changes.push(update.message);
+      }
+    }
+
+    return changes;
+  }
+
   async editlisting(dto: EditListingDto) {
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
@@ -248,23 +285,7 @@ export class ListingsService {
     if (!listing) throw new NotFoundException('listing not found');
 
     if (listing.status === ListingStatus.REJECTED) {
-      const changes: string[] = [];
-
-      if (dto.title && dto.title !== listing.title) {
-        changes.push(`Title: "${listing.title}" : "${dto.title}"`);
-      }
-      if (dto.price && dto.price !== listing.price) {
-        changes.push(`Price: ${listing.price} : ${dto.price}`);
-      }
-      if (dto.condition && dto.condition !== listing.condition) {
-        changes.push(`Condition: ${listing.condition} : ${dto.condition}`);
-      }
-      if (dto.description && dto.description !== listing.description) {
-        changes.push(`Description updated`);
-      }
-      if (dto.photo_urls && dto.photo_urls !== listing.photo_urls) {
-        changes.push(`Photos updated`);
-      }
+      this.createRejectedListingChanges(dto, listing);
     }
 
     Object.assign(listing, dto);

@@ -283,6 +283,14 @@ export default function CreateListingPage() {
                         const stepNum = i + 1
                         const isActive = step === stepNum
                         const isCompleted = step > stepNum
+                        const textColor = isActive || isCompleted ? 'text-white' : 'text-gray-500'
+                        let background = '#e5e7eb'
+                        if (isCompleted) {
+                            background = '#04505f'
+                        }
+                        if (isActive) {
+                            background = 'linear-gradient(135deg, #00B4D8, #0096B4)'
+                        }
 
                         return (
                             <div key={label} className="flex-1 relative">
@@ -291,20 +299,11 @@ export default function CreateListingPage() {
                                     className={`
                                         relative flex items-center justify-center px-4 py-3
                                         text-sm font-medium transition-all duration-300
-                                        ${isActive 
-                                            ? 'text-white' 
-                                            : isCompleted 
-                                                ? 'text-white' 
-                                                : 'text-gray-500'
-                                        }
+                                        ${textColor}
                                     `}
                                     style={{
                                         clipPath: 'polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%, 8% 50%)',
-                                        background: isActive 
-                                            ? 'linear-gradient(135deg, #00B4D8, #0096B4)' 
-                                            : isCompleted 
-                                                ? '#04505f' 
-                                                : '#e5e7eb',
+                                        background,
                                         minHeight: '48px',
                                         width: '100%',
                                     }}

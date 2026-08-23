@@ -922,11 +922,14 @@ describe('ListingsController Integration Tests', () => {
                 listing_status: ListingsStatus.SOLD,
             });
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch(`/listings/${listing.id}/status`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ listing_status: ListingsStatus.AVAILABLE })
                 .expect(400);
+
+            expect(response.body).toBeDefined();
+            expect(response.body.message).toBeDefined();
         });
 
         it('should reject changing status on a listing that has not been approved yet', async () => {
@@ -942,11 +945,13 @@ describe('ListingsController Integration Tests', () => {
                 listing_status: ListingsStatus.AVAILABLE,
             });
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch(`/listings/${listing.id}/status`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ listing_status: ListingsStatus.RESERVED })
                 .expect(400);
+
+            expect(response.body).toBeDefined();
         });
 
         it('should reject a non-owner attempting to change status', async () => {
@@ -963,11 +968,14 @@ describe('ListingsController Integration Tests', () => {
                 listing_status: ListingsStatus.AVAILABLE,
             });
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch(`/listings/${listing.id}/status`)
                 .set('Authorization', `Bearer ${otherToken}`)
                 .send({ listing_status: ListingsStatus.RESERVED })
                 .expect(403);
+
+            expect(response.body).toBeDefined();
+            expect(response.body.message).toBeDefined();
         });
 
         it('should return 401 for an unauthenticated status change request', async () => {
@@ -982,10 +990,12 @@ describe('ListingsController Integration Tests', () => {
                 listing_status: ListingsStatus.AVAILABLE,
             });
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch(`/listings/${listing.id}/status`)
                 .send({ listing_status: ListingsStatus.RESERVED })
                 .expect(401);
+
+            expect(response.body).toBeDefined();
         });
 
         it('should return 404 when the listing does not exist', async () => {
@@ -994,11 +1004,13 @@ describe('ListingsController Integration Tests', () => {
             const user = await createVerifiedUser(university.id, faculty.id);
             const token = getAuthToken(user);
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch('/listings/00000000-0000-0000-0000-000000000000/status')
                 .set('Authorization', `Bearer ${token}`)
                 .send({ listing_status: ListingsStatus.RESERVED })
                 .expect(404);
+
+            expect(response.body).toBeDefined();
         });
 
         it('should reject an admin attempting to change a listing status (student-only route)', async () => {
@@ -1015,11 +1027,13 @@ describe('ListingsController Integration Tests', () => {
                 listing_status: ListingsStatus.AVAILABLE,
             });
 
-            await request(app.getHttpServer())
+            const response = await request(app.getHttpServer())
                 .patch(`/listings/${listing.id}/status`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({ listing_status: ListingsStatus.RESERVED })
                 .expect(403);
+
+            expect(response.body).toBeDefined();
         });
     });
 
