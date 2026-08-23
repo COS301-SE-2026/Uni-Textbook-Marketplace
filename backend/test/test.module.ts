@@ -23,6 +23,7 @@ import { SavedSearch } from '../src/database/entities/saved_search.entity';
 import { MessagingModule } from '../src/messaging/messaging.module';
 import { Notifications } from '../src/database/entities/notifications.entity';
 import { Wishlist } from '../src/database/entities/wishlist.entity';
+import { Report } from 'src/database/entities/report.entity';
 
 @Module({
     imports: [
@@ -44,7 +45,7 @@ import { Wishlist } from '../src/database/entities/wishlist.entity';
                     synchronize: true,
                     dropSchema: true,
                     entities: [
-                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,
+                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,
                     ],
                     logging: false,
                 };
