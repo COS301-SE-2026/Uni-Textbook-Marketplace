@@ -162,7 +162,108 @@ export default function SettingsPage() {
 
 
 
-          
+          {profileStatus && (
+            <p className={`text-sm ${profileStatus.type === 'success' ? 'text-green-700 dark:text-green-400' : 'text-[#7f1d1d] dark:text-red-400'}`}>
+              {profileStatus.text}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={savingProfile}
+            className="rounded-[4px] bg-[#00B4D8] hover:bg-[#0096B4] disabled:opacity-60 text-white font-semibold text-sm px-7 py-3"
+          >
+            {savingProfile ? 'Saving...' : 'Save Changes'}
+          </button>
+
+
+        </form>
+      </section>
+
+      {/* Change password */}
+      <section className="rounded-[6px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-[var(--card-bg)] p-6">
+        <h2 className="text-[1.125rem] font-semibold text-[#000f2b] dark:text-[var(--foreground)] mb-4">
+          Change Password
+        </h2>
+
+
+
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="current_password" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
+              Current Password
+            </label>
+            <input
+              id="current_password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              className="w-full rounded-[4px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-transparent px-3 py-2 text-[#3a3a3a] dark:text-[var(--foreground)] focus:outline-none focus:border-[#00B4D8] focus:ring-2 focus:ring-[rgba(0,180,216,0.15)]"
+            />
+          </div>
+
+
+
+          <div>
+            <label htmlFor="new_password" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
+              New Password
+            </label>
+            <input
+              id="new_password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              minLength={8}
+              required
+              className="w-full rounded-[4px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-transparent px-3 py-2 text-[#3a3a3a] dark:text-[var(--foreground)] focus:outline-none focus:border-[#00B4D8] focus:ring-2 focus:ring-[rgba(0,180,216,0.15)]"
+            />
+          </div>
+          <div>
+
+
+            <label htmlFor="confirm_password" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
+              Confirm New Password
+            </label>
+            <input
+              id="confirm_password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              minLength={8}
+              required
+              className="w-full rounded-[4px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-transparent px-3 py-2 text-[#3a3a3a] dark:text-[var(--foreground)] focus:outline-none focus:border-[#00B4D8] focus:ring-2 focus:ring-[rgba(0,180,216,0.15)]"
+            />
+          </div>
+
+
+          {passwordStatus && (
+            <p className={`text-sm ${passwordStatus.type === 'success' ? 'text-green-700 dark:text-green-400' : 'text-[#7f1d1d] dark:text-red-400'}`}>
+              {passwordStatus.text}
+            </p>
+
+
+
+          )}
+
+          <button
+            type="submit"
+            disabled={savingPassword}
+            className="rounded-[4px] bg-[#00B4D8] hover:bg-[#0096B4] disabled:opacity-60 text-white font-semibold text-sm px-7 py-3"
+          >
+            {savingPassword ? 'Updating...' : 'Update Password'}
+          </button>
+
+
+        </form>
+      </section>
+
+      {/* Danger zone */}
+
+      <section className="rounded-[6px] border border-[#fca5a5] dark:border-red-900 bg-white dark:bg-[var(--card-bg)] p-6">
+        <h2 className="text-[1.125rem] font-semibold text-[#7f1d1d] dark:text-red-400 mb-2">
+          Danger Zone
+        </h2>
         <p className="text-sm text-[#4B4F58] dark:text-[var(--foreground)] mb-4">
           Deleting your account deactivates it immediately. You will be logged out and will
           no longer be able to log back in. This cannot be undone from within the app.
