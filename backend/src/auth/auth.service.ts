@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
   Inject,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -158,6 +159,8 @@ export class AuthService {
         password_hash: true,
         role: true,
         is_verified: true,
+        is_banned: true,
+        ban_reason: true,
       },
       where: {
         email,
@@ -173,6 +176,14 @@ export class AuthService {
       dto.password,
       user.password_hash,
     );
+
+    if (user.is_banned) {
+      throw new ForbiddenException(
+        `Your account has been banned. Reason: ${
+          user.ban_reason ?? 'No reason provided.'
+        }`,
+      );
+    }
 
     if (!passwordValid) {
       throw new UnauthorizedException('Invalid email or password.');

@@ -15,29 +15,26 @@ interface RequestWithUser extends Request {
 @ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationsController {
+  constructor(private readonly notificationService: NotificationsService) {}
 
-    constructor(
-        private readonly notificationService: NotificationsService
-    ) {}
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Returns user notifications' })
+  mynotifications(@Req() req: RequestWithUser) {
+    return this.notificationService.mynotifications(req.user.id);
+  }
 
-    @Get('mine')
-    @UseGuards(JwtAuthGuard)
-    @ApiOperation({summary: 'Returns user notifications'})
-    mynotifications(@Req() req: RequestWithUser){
-        return this.notificationService.mynotifications(req.user.id)
-    }
+  @Patch(':id/read')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Marks the notification read' })
+  readNoti(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return this.notificationService.readNoti(req.user.id, id);
+  }
 
-    @Patch(':id/read')
-    @UseGuards(JwtAuthGuard)
-    @ApiOperation({summary: 'Marks the notification read'})
-    readNoti(@Req() req: RequestWithUser, @Param('id') id: string){
-        return this.notificationService.readNoti(req.user.id, id);
-    }
-
-    @Patch('read-all')
-    @UseGuards(JwtAuthGuard)
-    @ApiOperation({summary: 'Marks all the notification read'})
-    readAll(@Req() req: RequestWithUser){
-        return this.notificationService.readAll(req.user.id);
-    }
+  @Patch('read-all')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Marks all the notification read' })
+  readAll(@Req() req: RequestWithUser) {
+    return this.notificationService.readAll(req.user.id);
+  }
 }
