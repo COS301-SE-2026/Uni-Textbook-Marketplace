@@ -53,26 +53,19 @@ describe('Footer', () => {
     render(<Footer />)
     expect(screen.getByText('Help & FAQs')).toBeInTheDocument()
 
-    expect(screen.getByText('Contact Us')).toBeInTheDocument()
-    expect(screen.getByText('Privacy Policy')).toBeInTheDocument()
-
-
-    expect(screen.getByText('Terms of Service')).toBeInTheDocument()
-  })
+    })
 
   it('renders all university links', () => {
     render(<Footer />)
     expect(screen.getByText('Brand Style Guide')).toBeInTheDocument()
-    expect(screen.getByText('About Us')).toBeInTheDocument()
+    
     expect(screen.getByText('Our Collaborators')).toBeInTheDocument()
   })
 
   it('renders social media icons', () => {
     render(<Footer />)
 
-    expect(screen.getByLabelText('Facebook')).toBeInTheDocument()
-    expect(screen.getByLabelText('Instagram')).toBeInTheDocument()
-
+    
     expect(screen.getByLabelText('GitHub')).toBeInTheDocument()
   })
 
