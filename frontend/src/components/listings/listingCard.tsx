@@ -168,13 +168,35 @@ export default function ListingCard({
                     background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
                 }} />
 
-                {/* Condition Badge */}
+                {/* Condition Badge - Top Right */}
                 <div className="absolute top-2 right-2">
                     <Badge variant={conditionVariant}>
                         {CONDITION_LABEL[listing.condition]}
                     </Badge>
                 </div>
 
+                {/* Status Badge */}
+                {showStatus && listing.status !== 'APPROVED' && (
+                    <div className="absolute top-2 left-2">
+
+                        {listing.status === 'PENDING' && (
+                            <Badge variant="pending">Pending</Badge>
+                        )}
+                        {listing.status === 'REJECTED' && (
+                            <Badge variant="rejected">Rejected</Badge>
+                        )}
+                    </div>
+                    
+                )}
+
+                {/* Sale Status Badge */}
+                {listing.status === 'APPROVED' && (listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
+                    <div className="absolute top-2 left-2">
+                        <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
+                            {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
+                        </Badge>
+                    </div>
+                )}
             </div>
 
             {/* Content Section */}
@@ -198,6 +220,7 @@ export default function ListingCard({
 
                 {/* Price */}
                 <div className="flex items-center justify-between mt-auto pt-1">
+
                     <span className="font-bold text-lg text-[#000f2b] dark:text-white">
                         R{parseFloat(String(listing.price)).toFixed(2)}
                     </span>
@@ -209,16 +232,19 @@ export default function ListingCard({
                 {listing.seller && (
                     <div className="flex items-center gap-1 text-xs">
                         <span className="text-gray-500">
+
                             {listing.seller.first_name} {listing.seller.last_name}
                         </span>
+                        
                         {listing.seller.is_verified && (
                             <span className="text-[#00B4D8] font-medium">• Verified ✓</span>
                         )}
                     </div>
+
                 )}
             </div>
 
-            {/* Hover Effect */}
+            
             <div className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
                 boxShadow: 'inset 0 0 0 2px rgba(0,180,216,0.3)',
             }} />
