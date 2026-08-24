@@ -76,10 +76,12 @@ const CONDITION_VARIANT: Record<Listing['condition'], 'new' | 'good' | 'fair' | 
 export default function ListingCard({
     listing,
     showStatus = false,
+
     isLiked: initialIsliked = false,
     removeClick = false,
 }: ListingCardProps) {
     const router = useRouter()
+
     const [isLiked, setIsLiked] = useState(initialIsliked)
 
     const handleClick = () => {
@@ -128,12 +130,12 @@ export default function ListingCard({
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
             }}
         >
-            {/* Glossy Effect Overlay */}
+            
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                 background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
             }} />
 
-            {/* Image - Full top section, no box */}
+            
             <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
                 {image ? (
                     <Image
@@ -163,19 +165,19 @@ export default function ListingCard({
                     </svg>
                 )}
 
-                {/* Gradient overlay */}
+                
                 <div className="absolute bottom-0 left-0 right-0 h-12" style={{
                     background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
                 }} />
 
-                {/* Condition Badge - Top Right */}
+                
                 <div className="absolute top-2 right-2">
                     <Badge variant={conditionVariant}>
                         {CONDITION_LABEL[listing.condition]}
                     </Badge>
                 </div>
 
-                {/* Status Badge */}
+                
                 {showStatus && listing.status !== 'APPROVED' && (
                     <div className="absolute top-2 left-2">
 
@@ -189,36 +191,40 @@ export default function ListingCard({
                     
                 )}
 
-                {/* Sale Status Badge */}
+                
                 {listing.status === 'APPROVED' && (listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
                     <div className="absolute top-2 left-2">
                         <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
                             {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
                         </Badge>
+
+
                     </div>
                 )}
             </div>
 
-            {/* Content Section */}
+            
             <div className="flex flex-col gap-1 px-3 pb-3 flex-1">
-                {/* Title */}
+                
                 <p className="font-semibold text-sm line-clamp-1 text-[#1a1a2e] dark:text-white">
                     {listing.title}
                 </p>
 
-                {/* Book details */}
+
+
+                
                 <p className="text-xs text-gray-500">
                     {listing.book?.edition} Edition • {listing.module?.code}
                 </p>
 
-                {/* Author */}
+                
                 {listing.book?.author && (
                     <p className="text-xs text-gray-400 truncate">
                         {listing.book.author}
                     </p>
                 )}
 
-                {/* Price */}
+                
                 <div className="flex items-center justify-between mt-auto pt-1">
 
                     <span className="font-bold text-lg text-[#000f2b] dark:text-white">
@@ -226,11 +232,15 @@ export default function ListingCard({
                     </span>
 
                     <Heartbutton liked={isLiked} onClick={handleLike} />
+
+
                 </div>
 
                 {/* Seller badge */}
                 {listing.seller && (
                     <div className="flex items-center gap-1 text-xs">
+
+
                         <span className="text-gray-500">
 
                             {listing.seller.first_name} {listing.seller.last_name}

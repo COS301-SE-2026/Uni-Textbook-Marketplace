@@ -98,6 +98,8 @@ export default function AuditLogTable({ logs, loading }: AuditLogTableProps) {
                             <td className="py-3 px-4">
                                 {getActionBadge(log.action)}
                             </td>
+
+                            
                             <td className="py-3 px-4">
                                 <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
                                     {log.entity_type.replace(/_/g, ' ').toLowerCase()}

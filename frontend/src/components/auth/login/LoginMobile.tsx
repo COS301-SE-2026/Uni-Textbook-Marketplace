@@ -46,6 +46,8 @@ export default function LoginMobile() {
         try {
             const normalizedEmail = email.toLowerCase().trim();
             await loginUser({ email: normalizedEmail, password });
+
+
             const me = await getMe();
             login(me);
             router.push('/listings');
@@ -71,7 +73,7 @@ export default function LoginMobile() {
                     borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6)',
                 }}>
-                    {/* Glossy Overlay */}
+                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
@@ -85,7 +87,7 @@ export default function LoginMobile() {
                         }}
                     />
                     
-                    {/* Floating Glass Orbs - Decorative */}
+                    
                     <div 
                         className="absolute top-4 right-4 w-20 h-20 rounded-full opacity-10"
                         style={{
@@ -101,7 +103,7 @@ export default function LoginMobile() {
                         }}
                     />
 
-                    {/* Content */}
+                    
                     <div className="relative z-10 flex flex-col items-center">
                         <div 
                             className="relative mb-4 p-3 rounded-2xl"
@@ -120,6 +122,8 @@ export default function LoginMobile() {
                                 }}
                             />
                         </div>
+
+
                         <h2 
                             className="text-center font-bold"
                             style={{
@@ -154,13 +158,14 @@ export default function LoginMobile() {
                     </div>
                 </div>
 
-                {/* Bottom Panel - Content */}
+                
                 <div className="w-full px-6 py-8 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
                 }}>
                     <div className="relative z-10">
                         <h2 style={{ fontSize: "1.25rem" }}>Login</h2>
+
                         <p className="text-text-subtle mt-2" style={{ fontSize: "0.9rem" }}>
                             Enter your details to access your account
                         </p>
@@ -178,6 +183,8 @@ export default function LoginMobile() {
                                 />
                                 {errors.email && <ErrorText>{errors.email}</ErrorText>}
                             </div>
+
+
                             <div>
                                 <label htmlFor="password-mobile" className="form-label">Password</label>
                                 <div style={{ position: "relative", width: "100%" }}>
@@ -193,6 +200,8 @@ export default function LoginMobile() {
                                         }}
                                         className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all w-full box-border"
                                     />
+
+
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((p) => !p)}
@@ -207,11 +216,15 @@ export default function LoginMobile() {
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
+
+
                                 {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
 
-                            {/* Forgot Password - Directly beneath password input */}
+                            
                             <div className="flex justify-end -mt-2">
+
+
                                 <button
                                     type="button"
                                     className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
@@ -224,7 +237,7 @@ export default function LoginMobile() {
 
                             {serverError && <ErrorText>{serverError}</ErrorText>}
 
-                            {/* Login Button */}
+                            
                             <div style={{ marginTop: "2rem" }}>
                                 <Button className="w-full cursor-pointer" disabled={loading} type="submit">
                                     {loading ? "Logging in…" : "Login"}

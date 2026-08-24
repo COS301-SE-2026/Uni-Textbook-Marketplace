@@ -53,7 +53,7 @@ export default function LogsComponent() {
 
     return (
         <>
-            {/* Hero Section */}
+            
             <div className="relative overflow-hidden w-full" style={{
                 background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
@@ -71,6 +71,8 @@ export default function LogsComponent() {
                 
                 <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
                     <div className="flex items-center gap-4">
+
+
                         <div className="p-3 rounded-2xl" style={{
                             background: 'rgba(0, 180, 216, 0.08)',
                             backdropFilter: 'blur(10px)',
@@ -184,6 +186,8 @@ export default function LogsComponent() {
                     <Button variant='secondary' disabled={true} className='flex-1 cursor-default opacity-75'>
                         Total Logs: {total}
                     </Button>
+
+                    
                     <Button variant='primary' onClick={() => setFilters({ page: 1, limit: 20 })} className='flex-1 cursor-pointer'>
                         Clear filters
                     </Button>

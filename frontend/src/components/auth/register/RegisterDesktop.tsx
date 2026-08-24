@@ -34,6 +34,8 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                 return (
                     <React.Fragment key={stepNum}>
                         <div className="flex flex-col items-center">
+
+
                             <div
                                 style={{
                                     width: "2.25rem",
@@ -66,6 +68,8 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                             >
                                 {label}
                             </span>
+
+
                         </div>
 
                         {index < steps.length - 1 && (
@@ -96,8 +100,11 @@ function OtpInput({
 }>) {
     const ref0 = React.useRef<HTMLInputElement>(null);
     const ref1 = React.useRef<HTMLInputElement>(null);
+
+
     const ref2 = React.useRef<HTMLInputElement>(null);
     const ref3 = React.useRef<HTMLInputElement>(null);
+
     const ref4 = React.useRef<HTMLInputElement>(null);
     const ref5 = React.useRef<HTMLInputElement>(null);
     const inputRefs = [ref0, ref1, ref2, ref3, ref4, ref5];
@@ -165,6 +172,8 @@ function OtpInput({
                 />
             ))}
         </div>
+
+
     );
 }
 
@@ -319,6 +328,8 @@ export default function RegisterDesktop() {
         setServerError("");
         if (step === 1 && !validateStep1()) return;
         if (step === 2 && !validateStep2()) return;
+
+
         if (step === 3 && !validateStep3()) return;
 
         if (step === 2) {
@@ -370,6 +381,7 @@ export default function RegisterDesktop() {
                                 />
                                 {errors.fullName && <ErrorText>{errors.fullName}</ErrorText>}
                             </div>
+
                             <div>
                                 <Input
                                     label="Surname"
@@ -418,6 +430,7 @@ export default function RegisterDesktop() {
                                         </option>
                                     ))}
                                 </Select>
+
                                 {errors.university && (
                                     <ErrorText>{errors.university}</ErrorText>
                                 )}
@@ -442,6 +455,8 @@ export default function RegisterDesktop() {
                                     </p>
                                 )}
                             </div>
+
+
                         </div>
                     </>
                 );
@@ -454,6 +469,7 @@ export default function RegisterDesktop() {
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
+
                             <div>
                                 <label htmlFor="reg-password" className="form-label">Password</label>
                                 <div style={{ position: "relative" }}>
@@ -490,6 +506,7 @@ export default function RegisterDesktop() {
                             </div>
 
                             <div>
+
                                 <label htmlFor="reg-confirm-password" className="form-label">Confirm Password</label>
                                 <div style={{ position: "relative" }}>
                                     <input
@@ -559,6 +576,7 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>OTP Verification</h2>
+
                         <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
                             Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
                         </p>
@@ -607,6 +625,7 @@ export default function RegisterDesktop() {
                                 >
                                     {loading ? "Verifying..." : "REGISTER"}
                                 </Button>
+
                             </div>
                         </div>
                     </>
@@ -621,10 +640,10 @@ export default function RegisterDesktop() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-4xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL */}
+                
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[550px]">
                     
-                    {/* Floating Glass Orbs */}
+                    
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -640,9 +659,9 @@ export default function RegisterDesktop() {
                         }}
                     />
 
-                    {/* Content */}
+                    
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container */}
+                        
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -663,7 +682,7 @@ export default function RegisterDesktop() {
                             />
                         </div>
 
-                        {/* Brand Name */}
+                        
                         <h1 
                             className="text-3xl font-bold tracking-wide mb-2"
                             style={{
@@ -685,6 +704,7 @@ export default function RegisterDesktop() {
 
                         
                         <div className="relative w-24 h-px mb-6">
+
                             <div 
                                 className="absolute inset-0"
                                 style={{
@@ -703,6 +723,7 @@ export default function RegisterDesktop() {
 
                        
                         <div className="mt-8 space-y-2.3 w-full max-w-xs">
+
                             {[
                                 { text: 'Verified Student Community' },
                                 { text: 'Affordable Used Textbooks' },
@@ -727,11 +748,13 @@ export default function RegisterDesktop() {
                                     <span className="text-[#1a1a2e]/80 text-sm font-medium">
                                         {feature.text}
                                     </span>
+
                                 </div>
                             ))}
                         </div>
 
-                        {/* Bottom Accent */}
+                        
+                        
                         <div 
                             className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
                             style={{
@@ -739,9 +762,11 @@ export default function RegisterDesktop() {
                             }}
                         />
                     </div>
+
                 </div>
 
-                {/* RIGHT PANEL */}
+                
+                
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',

@@ -41,11 +41,14 @@ export default function LoginDesktop() {
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
         setServerError("");
+
         if (!validate()) return;
         setLoading(true);
         try {
             const normalizedEmail = email.toLowerCase().trim();
             await loginUser({ email: normalizedEmail, password });
+
+
             const me = await getMe();
             login(me);
             router.push('/listings');
@@ -64,10 +67,10 @@ export default function LoginDesktop() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL */}
+                
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
                     
-                    {/* Floating Glass Orbs */}
+                    
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -83,9 +86,9 @@ export default function LoginDesktop() {
                         }}
                     />
 
-                    {/* Content */}
+                    
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container */}
+                        
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -106,7 +109,7 @@ export default function LoginDesktop() {
                             />
                         </div>
 
-                        {/* Brand Name */}
+                        
                         <h1 
                             className="text-3xl font-bold tracking-wide mb-2"
                             style={{
@@ -175,7 +178,7 @@ export default function LoginDesktop() {
                             ))}
                         </div>
 
-                        {/* Bottom Accent */}
+                        
                         <div 
                             className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
                             style={{
@@ -187,13 +190,13 @@ export default function LoginDesktop() {
 
                 </div>
 
-                {/* RIGHT PANEL */}
+                
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
                 }}>
-                    {/* Subtle Glossy Overlay for Right Panel */}
+                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
@@ -226,6 +229,7 @@ export default function LoginDesktop() {
                                 
                                 <div>
                                     <label htmlFor="password-desktop" className="form-label">Password</label>
+
                                     <div style={{ position: "relative", width: "100%" }}>
                                         <input
                                             id="password-desktop"
@@ -256,7 +260,7 @@ export default function LoginDesktop() {
                                     {errors.password && <ErrorText>{errors.password}</ErrorText>}
                                 </div>
 
-                                {/* Forgot Password */}
+                                
                                 <div className="flex justify-end -mt-2">
                                     <button
                                         type="button"
@@ -270,7 +274,7 @@ export default function LoginDesktop() {
 
                                 {serverError && <ErrorText>{serverError}</ErrorText>}
 
-                                {/* Login Button */}
+                                
                                 <div style={{ marginTop: "3.5rem" }}>
                                     <Button 
                                         className="w-full cursor-pointer" 
@@ -280,9 +284,11 @@ export default function LoginDesktop() {
                                     >
                                         {loading ? "Logging in…" : "Login"}
                                     </Button>
+
                                 </div>
                             </form>
                         </div>
+                        
                     </div>
                 </div>
 

@@ -19,7 +19,10 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
 
                 return (
                     <React.Fragment key={stepNum}>
+
+
                         <div className="flex flex-col items-center">
+
                             <div
                                 className={`w-9 h-9 rounded-full border-2 flex items-center justify-center font-bold text-sm transition-all duration-200 ${
                                     active || complete
@@ -37,6 +40,8 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                             >
                                 {label}
                             </span>
+
+
                         </div>
 
                         {index < steps.length - 1 && (
@@ -50,6 +55,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                 );
             })}
         </div>
+
     );
 }
 
@@ -74,6 +80,7 @@ function OtpInput({
     const handleChange = (index: number, val: string) => {
         const digit = val.replace(/\D/g, "").slice(-1);
         const next = [...value];
+
         next[index] = digit;
         onChange(next);
 
@@ -90,13 +97,16 @@ function OtpInput({
 
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
+
         const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
         const next = [...value];
+
         pasted.split("").forEach((char, i) => {
             next[i] = char;
         });
         onChange(next);
         const focusIndex = Math.min(pasted.length, 5);
+
         refs[focusIndex].current?.focus();
     };
 
@@ -135,8 +145,10 @@ export default function ResetPassword() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [serverError, setServerError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
     const [showConfirm, setShowConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const router = useRouter();
 
     const setField = (
@@ -156,7 +168,9 @@ export default function ResetPassword() {
                         <p className="text-text-subtle mb-6">Enter your email and new password</p>
 
                         <div className="space-y-5">
+
                             <div>
+
                                 <Input
                                     label="Email"
                                     type="email"
@@ -170,6 +184,8 @@ export default function ResetPassword() {
                             <div>
                                 <label htmlFor="re-password" className="form-label">Password</label>
                                 <div className="relative">
+
+
                                     <input
                                         id="re-password"
                                         type={showPassword ? "text" : "password"}
@@ -185,12 +201,16 @@ export default function ResetPassword() {
                                     >
                                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
+
+
                                 </div>
                                 {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
 
                             <div>
                                 <label htmlFor="re-confirm-password" className="form-label">Confirm Password</label>
+
+
                                 <div className="relative">
                                     <input
                                         id="re-confirm-password"
@@ -207,6 +227,8 @@ export default function ResetPassword() {
                                     >
                                         {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
+
+
                                 </div>
                                 {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
                             </div>
@@ -218,6 +240,7 @@ export default function ResetPassword() {
                             >
                                 {loading ? "Loading..." : "Next"}
                             </Button>
+
                         </div>
                     </>
                 );
@@ -246,21 +269,29 @@ export default function ResetPassword() {
                             >
                                 {loading ? "Verifying..." : "Verify OTP"}
                             </Button>
+
+
                         </div>
                     </>
                 );
             case 3:
                 return (
                     <div className="text-center py-4">
+
+
                             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
                                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
+
                             <h2 className="text-2xl font-semibold mb-2">Success</h2>
                             <p className="text-text-subtle mb-6">
                                 Your password has been reset successfully.
                             </p>
+
                             <Button
                                 variant="primary"
                                 onClick={() => router.push('/auth/login')}
@@ -268,6 +299,7 @@ export default function ResetPassword() {
                             >
                                 Login
                             </Button>
+
                     </div>
                 );
 
@@ -365,9 +397,11 @@ export default function ResetPassword() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
-                {/* LEFT PANEL */}
+                
+                
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[450px]">
-                    {/* Floating Glass Orbs */}
+                    
+                    
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -382,9 +416,11 @@ export default function ResetPassword() {
                             filter: 'blur(60px)',
                         }}
                     />
-                    {/* Content */}
+                    
+                    
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* Logo Container */}
+                        
+                        
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -404,7 +440,8 @@ export default function ResetPassword() {
                                 }}
                             />
                         </div>
-                        {/* Brand Name */}
+                        
+                        
                         <h1 
                             className="text-3xl font-bold tracking-wide mb-2"
                             style={{
@@ -470,7 +507,8 @@ export default function ResetPassword() {
                                 </div>
                             ))}
                         </div>
-                        {/* Bottom Accent */}
+                        
+                        
                         <div 
                             className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
                             style={{
@@ -479,7 +517,8 @@ export default function ResetPassword() {
                         />
                     </div>
                 </div>
-                {/* RIGHT PANEL */}
+                
+                
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
@@ -499,6 +538,7 @@ export default function ResetPassword() {
                             <ErrorText className="mt-4">{serverError}</ErrorText>
                         )}
                     </div>
+                    
                 </div>
 
             </Card>

@@ -169,19 +169,25 @@ function StepOne({ form, errors, set, step }: Readonly<StepProps>) {
     return (
         <>
             <h2 style={{ fontSize: "1.25rem" }}>Create an account</h2>
+
             <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.9rem" }}>Fill in your details to get started</p>
             <StepIndicator currentStep={step} />
+
             <div className="space-y-4">
+
                 <div>
                     <Input label="Full Name(s)" type="text" placeholder="Enter your full name(s)"
                         value={form.fullName} onChange={(e) => set("fullName", e.target.value)} />
                     {errors.fullName && <ErrorText>{errors.fullName}</ErrorText>}
                 </div>
+
                 <div>
+
                     <Input label="Surname" type="text" placeholder="Enter your surname"
                         value={form.surname} onChange={(e) => set("surname", e.target.value)} />
                     {errors.surname && <ErrorText>{errors.surname}</ErrorText>}
                 </div>
+
             </div>
         </>
     );
@@ -256,6 +262,8 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
             <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.9rem" }}>Create your password</p>
             <StepIndicator currentStep={step} />
             <div className="space-y-4">
+
+
                 <div>
                     <label htmlFor="reg-password-mobile" className="form-label">Password</label>
                     <div style={{ position: "relative" }}>
@@ -266,6 +274,8 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             onChange={(e) => set("password", e.target.value)}
                             className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
                         />
+
+
                         <button type="button" onClick={() => setShowPassword((p) => !p)}
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             style={{
@@ -276,11 +286,16 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
+
+
                     {errors.password && <ErrorText>{errors.password}</ErrorText>}
                 </div>
                 <div>
+
                     <label htmlFor="reg-confirm-password-mobile" className="form-label">Confirm Password</label>
                     <div style={{ position: "relative" }}>
+
+
                         <input id="reg-confirm-password-mobile"
                             type={showConfirm ? "text" : "password"}
                             placeholder="Confirm your password"
@@ -297,9 +312,12 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             }}>
                             {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
+
+
                     </div>
                     {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
                 </div>
+
                 <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                     <input type="checkbox" id="terms-mobile"
                         checked={form.agreedToTerms}
@@ -316,6 +334,7 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                         <a href="/privacy" className="text-primary" style={{ fontWeight: 500 }}>Privacy Policy</a>
                     </label>
                 </div>
+
                 {errors.terms && <ErrorText>{errors.terms}</ErrorText>}
             </div>
         </>
@@ -334,11 +353,15 @@ function StepFour({ form, errors, set, step, otpTimer, timerActive, handleNext, 
     return (
         <>
             <h2 style={{ fontSize: "1.25rem" }}>OTP Verification</h2>
+
             <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.85rem" }}>
                 Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
             </p>
+
+
             <StepIndicator currentStep={step} />
             <div>
+
                 <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
                 {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem", fontSize: "0.75rem" }}>
@@ -357,10 +380,14 @@ function StepFour({ form, errors, set, step, otpTimer, timerActive, handleNext, 
                         Resend OTP code
                     </button>
                 </div>
+
+
                 <div style={{ marginTop: "1.5rem" }}>
                     <Button className="w-full cursor-pointer" onClick={handleNext} disabled={loading}>
                         {loading ? "Verifying..." : "REGISTER"}
                     </Button>
+
+
                 </div>
             </div>
         </>
@@ -529,14 +556,16 @@ export default function RegisterMobile() {
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
             <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto shadow-2xl p-0">
                 
-                {/* Top Panel - Glossy Header */}
+                
+                
                 <div className="w-full relative overflow-hidden px-6 py-8 flex flex-col items-center justify-center" style={{
                     background: 'linear-gradient(145deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)',
                     backdropFilter: 'blur(10px)',
                     borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6)',
                 }}>
-                    {/* Glossy Overlay */}
+                    
+                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
@@ -550,7 +579,8 @@ export default function RegisterMobile() {
                         }}
                     />
                     
-                    {/* Content */}
+                    
+                    
                     <div className="relative z-10 flex flex-col items-center">
                         <div 
                             className="relative mb-4 p-3 rounded-2xl"
@@ -603,7 +633,8 @@ export default function RegisterMobile() {
                     </div>
                 </div>
 
-                {/* Bottom Panel - Content */}
+                
+                
                 <div className="w-full px-6 py-8 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
@@ -634,6 +665,7 @@ export default function RegisterMobile() {
                                 <Button onClick={handleNext} disabled={loading} className="px-6 cursor-pointer">
                                     Next
                                 </Button>
+                                
                             </div>
                         )}
                     </div>
