@@ -142,6 +142,7 @@ function BrowseListingsContent() {
     const initialFilters = getInitialFilters()
     const [filters, setFilters] = useState<Filters>(initialFilters)
     const [applied, setApplied] = useState<Filters>(initialFilters)
+
     const [total, setTotal] = useState(0)
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
 
@@ -150,9 +151,12 @@ function BrowseListingsContent() {
             const params = new URLSearchParams()
             if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
+
             if (f.moduleCode) params.set('moduleCode', f.moduleCode)
             if (f.edition) params.set('edition', f.edition)
             if (f.priceMin) params.set('priceMin', f.priceMin)
+
+
             if (f.priceMax) params.set('priceMax', f.priceMax)
             if (f.condition) params.set('condition', f.condition)
             if (f.annotationLevel) params.set('annotationLevel', f.annotationLevel)
@@ -177,6 +181,7 @@ function BrowseListingsContent() {
             const { listings: data, total: count } = await fetchListings(applied)
             setListings(data)
             setTotal(count)
+
             setLoading(false)
         }
         loadListings()
@@ -250,6 +255,7 @@ function BrowseListingsContent() {
                 {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="card animate-pulse flex flex-col gap-3">
                         <div className="h-40 rounded bg-gray-200" />
+
                         <div className="h-4 w-3/4 rounded bg-gray-200" />
 
 
@@ -343,7 +349,7 @@ function BrowseListingsContent() {
                                     
                                 </div>
 
-                                {/* Faculty */}
+                                
                                 <div className="mb-4">
                                     <label htmlFor="faculty-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Faculty
@@ -370,7 +376,7 @@ function BrowseListingsContent() {
                                     </Select>
                                 </div>
 
-                                {/* Module Code */}
+                                
                                 <div className="mb-4">
 
 
@@ -386,7 +392,7 @@ function BrowseListingsContent() {
                                     />
                                 </div>
 
-                                {/* Edition */}
+                                
                                 <div className="mb-4">
 
 
@@ -408,7 +414,7 @@ function BrowseListingsContent() {
                                     </Select>
                                 </div>
 
-                                {/* Price Range */}
+                                
                                 <div className="mb-4">
 
 
@@ -436,7 +442,7 @@ function BrowseListingsContent() {
                                     </div>
                                 </div>
 
-                                {/* Condition */}
+                                
                                 <div className="mb-4">
 
 
@@ -472,7 +478,7 @@ function BrowseListingsContent() {
                                     </div>
                                 </div>
 
-                                {/* Annotation Level */}
+                                
                                 <div className="mb-4">
                                     <label htmlFor='annotationLevel-filter' className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Annotation Level
@@ -514,11 +520,11 @@ function BrowseListingsContent() {
                     <SidebarInset className="flex-1">
 
 
-                        {/* Hero Section */}
+                        
                         <div className="relative overflow-hidden h-[180px] md:h-[200px]" style={{
                             background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
                         }}>
-                            {/* Image Overlay */}
+                            
                             <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                                 <div className="relative w-full h-full">
                                     <Image
@@ -536,23 +542,23 @@ function BrowseListingsContent() {
                                 </div>
                             </div>
                             
-                            {/* Glossy Overlay */}
+                            
                             <div className="absolute inset-0 opacity-20" style={{
                                 background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
                             }} />
                             
-                            {/* Background Pattern */}
+                            
                             <div className="absolute inset-0 opacity-10" style={{
                                 backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
                             }} />
                             
-                            {/* Decorative Grid */}
+                            
                             <div className="absolute inset-0 opacity-5" style={{
                                 backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
                                 backgroundSize: '40px 40px',
                             }} />
                             
-                            {/* Glossy Highlight Line */}
+                            
                             <div className="absolute top-0 left-0 right-0 h-px" style={{
                                 background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
                             }} />
@@ -573,7 +579,7 @@ function BrowseListingsContent() {
                                     </div>
                                 </div>
 
-                                {/* Search Bar */}
+                                
                                 <div className="mt-3 max-w-2xl relative">
 
                                     <SearchBar
@@ -592,7 +598,7 @@ function BrowseListingsContent() {
 
                         <div className="py-6 px-6 md:px-8 lg:px-12">
 
-                            {/* Saved Searches */}
+                            
                             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                                 <div className="flex items-center gap-3">
                                     {!loading && (
@@ -604,7 +610,7 @@ function BrowseListingsContent() {
 
                                 <div className="flex items-center gap-3">
 
-                                    {/* Saved Searches Button */}
+                                    
                                     <Link
                                         href="/saved-searches"
                                         className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#00B4D8] border border-[#00B4D8] rounded-lg hover:bg-[#00B4D8] hover:text-white transition-all duration-200 cursor-pointer hover:shadow-lg hover:shadow-[#00B4D8]/20"
@@ -613,12 +619,15 @@ function BrowseListingsContent() {
                                         Saved Searches
                                     </Link>
                                 </div>
+
                             </div>
 
                             <main className="flex-1">
                                 {listingsContent}
                             </main>
                         </div>
+
+
                     </SidebarInset>
 
                 </div>
@@ -656,6 +665,7 @@ export default function BrowseListingsPage() {
                     </div>
                     <div className="flex-1">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            
                             {[1, 2, 3, 4, 5, 6].map((i) => (
                                 <div key={i} className="card animate-pulse flex flex-col gap-3">
                                     <div className="h-40 bg-gray-200 rounded" />

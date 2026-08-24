@@ -27,6 +27,7 @@ export default function SettingsPage() {
   const [savingPassword, setSavingPassword] = useState(false);
 
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
 
@@ -80,6 +81,7 @@ export default function SettingsPage() {
       await changePassword({
         current_password: currentPassword,
         new_password: newPassword,
+
         confirm_password: confirmPassword,
       });
 
@@ -105,6 +107,7 @@ export default function SettingsPage() {
 
     try {
       await deleteAccount();
+
       await logout();
 
     } catch (err) {
@@ -122,7 +125,7 @@ export default function SettingsPage() {
         Settings
       </h1>
 
-      {/* Account details */}
+      
 
       <section className="rounded-[6px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-[var(--card-bg)] p-6">
         <h2 className="text-[1.125rem] font-semibold text-[#000f2b] dark:text-[var(--foreground)] mb-4">
@@ -179,10 +182,11 @@ export default function SettingsPage() {
 
 
         </form>
+
       </section>
 
 
-      {/* Change password */}
+      
       <section className="rounded-[6px] border border-[#dddddd] dark:border-[var(--card-border)] bg-white dark:bg-[var(--card-bg)] p-6">
         <h2 className="text-[1.125rem] font-semibold text-[#000f2b] dark:text-[var(--foreground)] mb-4">
           Change Password
@@ -191,6 +195,8 @@ export default function SettingsPage() {
 
 
         <form onSubmit={handlePasswordSubmit} className="space-y-4">
+
+
           <div>
             <label htmlFor="current_password" className="block text-sm font-medium text-[#3a3a3a] dark:text-[var(--foreground)] mb-1">
               Current Password
@@ -263,7 +269,7 @@ export default function SettingsPage() {
         </form>
       </section>
 
-      {/* Danger zone */}
+      
 
       <section className="rounded-[6px] border border-[#fca5a5] dark:border-red-900 bg-white dark:bg-[var(--card-bg)] p-6">
         <h2 className="text-[1.125rem] font-semibold text-[#7f1d1d] dark:text-red-400 mb-2">
@@ -295,6 +301,7 @@ export default function SettingsPage() {
             <p className="text-sm font-medium text-[#7f1d1d] dark:text-red-400">
               Are you sure? This will deactivate your account right away.
             </p>
+            
             <div className="flex gap-3">
               <button
                 type="button"

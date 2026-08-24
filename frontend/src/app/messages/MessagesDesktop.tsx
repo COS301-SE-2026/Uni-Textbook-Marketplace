@@ -103,6 +103,7 @@ export default function MessagesDesktop() {
 
 
                     <p className="text-sm">No messages yet.</p>
+                    
                     <p className="text-xs text-gray-400 mt-1">Start the conversation!</p>
                 </div>
             </div>

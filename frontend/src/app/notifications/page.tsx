@@ -112,6 +112,7 @@ export default function NotificationsPage() {
                                             <span className="block text-sm text-[var(--foreground)]">
                                                 {notification.message_info}
                                             </span>
+
                                             <span className="mt-1 block text-xs text-[#4B4F58] dark:text-gray-400">
                                                 {timeAgo(notification.created_at)}
                                             </span>
@@ -134,8 +135,10 @@ export default function NotificationsPage() {
                 )}
 
             </div>
+            
             {hasMore && (
                 <div className="mt-6 flex justify-center">
+
                 <button
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}

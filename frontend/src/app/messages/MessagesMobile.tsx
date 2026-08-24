@@ -38,9 +38,13 @@ export default function MessagesMobile() {
     } else if (conversations.length === 0) {
         conversationContent = (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+
+
                 <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
                     <MessageCircle size={32} className="text-gray-400" />
                 </div>
+
+
                 <h2 className="text-lg font-semibold text-[#000f2b] dark:text-white">
                     No conversations yet
                 </h2>
@@ -65,7 +69,11 @@ export default function MessagesMobile() {
     if (!chatOpen) {
         return (
             <main className="min-h-screen bg-gray-50 dark:bg-[#0a0f1a] flex flex-col">
+
+
                 <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-4">
+
+
                     <h1 className="text-xl font-bold text-[#000f2b] dark:text-white">
                         Messages
                     </h1>
@@ -86,6 +94,7 @@ export default function MessagesMobile() {
             <div className="flex h-full items-center justify-center gap-3">
 
                 <Loader2 size={28} className="animate-spin text-[#00B4D8]" />
+
                 <p className="text-sm text-gray-500">Loading messages...</p>
 
 
@@ -118,8 +127,9 @@ export default function MessagesMobile() {
 
     return (
         <main className="flex h-screen flex-col bg-gray-50 dark:bg-[#0a0f1a]">
-            {/* Header with Back Button */}
+            
             <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 flex-shrink-0">
+
                 <button
                     type="button"
                     onClick={() => setChatOpen(false)}
@@ -130,6 +140,7 @@ export default function MessagesMobile() {
 
 
                 </button>
+
                 <div className="flex-1 min-w-0">
                     <ChatHeader
                         title={`${selectedConversation?.otherUser.firstName ?? ''} ${selectedConversation?.otherUser.lastName ?? ''}`}
@@ -140,12 +151,13 @@ export default function MessagesMobile() {
                 
             </div>
 
-            {/* Chat Window */}
+            
             <div className="flex-1 overflow-hidden dark:text-white">
                 {chatContent}
             </div>
 
             <MessageInput onSend={send} />
+            
         </main>
     );
 }
