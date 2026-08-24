@@ -12,10 +12,13 @@ export default function MessageInput({
     onSend,
 }: Readonly<Props>) {
     const [text, setText] = useState('');
+
     const inputRef = useRef<HTMLInputElement>(null);
 
     const send = () => {
         if (!text.trim()) return;
+
+
         onSend(text);
         setText('');
     };
@@ -30,6 +33,8 @@ export default function MessageInput({
     return (
         <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-5">
             <div className="flex gap-3 items-center">
+
+
                 <input
                     ref={inputRef}
                     value={text}
@@ -59,8 +64,12 @@ export default function MessageInput({
                     className="rounded-full px-6 py-3 h-12 w-12 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <Send size={18} />
+
+
                 </Button>
             </div>
+
+            
         </div>
     );
 }

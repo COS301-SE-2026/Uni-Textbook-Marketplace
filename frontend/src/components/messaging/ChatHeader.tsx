@@ -20,7 +20,7 @@ export default function ChatHeader({
 
     return (
         <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-4 flex items-center gap-4 min-h-[73px]">
-            {/* Avatar */}
+            
             {avatar ? (
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 relative">
                     <Image
@@ -31,6 +31,8 @@ export default function ChatHeader({
                         className="w-full h-full object-cover"
                     />
                 </div>
+
+
             ) : (
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#0096B4] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                     {getInitials(title)}
@@ -39,6 +41,9 @@ export default function ChatHeader({
             
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
+
+
+
                     <h2 className="text-lg font-semibold text-[#000f2b] dark:text-white truncate">
                         {title}
                     </h2>
@@ -46,6 +51,8 @@ export default function ChatHeader({
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" />
                     )}
                 </div>
+
+                
                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                     {subtitle}
                 </p>
