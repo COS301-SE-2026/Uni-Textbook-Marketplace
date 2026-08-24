@@ -5,7 +5,7 @@ import ListingForm, { ListingFormData } from "./listingForm";
 import AccordionSection from "@/components/ui/AccordionSection"
 import { getMyListings, uploadImages, editListing, type EditListingData } from "@/lib/listings.api";
 import { Button, Modal } from "../ui";
-import  Fields  from "@/components/ui/Fields"
+import Fields from "@/components/ui/Fields"
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
 
@@ -60,7 +60,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     photo_urls: string[];
                     description?: string;
                     book: { id: string; isbn?: string; title: string; author?: string; edition?: number; publisher?: string };
-                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name : string} };
+                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name: string } };
                 };
 
                 if (!cancelled) {
@@ -78,7 +78,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                         faculty: data.module?.faculty?.name ?? "",
                         semester: data.module?.semester.toString() ?? "",
 
-                        listingTitle:data.title ?? "",
+                        listingTitle: data.title ?? "",
                         condition: data.condition,
                         annotationLevel: data.annotation_level,
                         has_notes: data.has_notes,
@@ -94,7 +94,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 }
             } catch (err) {
                 if (!cancelled) {
-                    console.error('something went wrong',err)
+                    console.error('something went wrong', err)
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -184,7 +184,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
             setSuccess(true);
 
         } catch (err) {
-            console.error('failed to edit',err);
+            console.error('failed to edit', err);
         } finally {
             setSaving(false);
         }
@@ -232,7 +232,14 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {existingImageUrls.map((url, index) => (
                                     <div key={url} className="relative group">
-                                        <Image src={url} alt="listing" className="w-full h-32 object-cover rounded" />
+                                        <div className="relative w-full h-32">
+                                            <Image
+                                                src={url}
+                                                alt="listing"
+                                                fill
+                                                className="object-cover rounded"
+                                            />
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveExistingImage(index)}

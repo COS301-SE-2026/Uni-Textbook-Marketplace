@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -20,8 +29,12 @@ export class NotificationsController {
   @Get('mine')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Returns user notifications' })
-  mynotifications(@Req() req: RequestWithUser) {
-    return this.notificationService.mynotifications(req.user.id);
+  mynotifications(
+    @Req() req: RequestWithUser,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.notificationService.mynotifications(req.user.id, page, limit);
   }
 
   @Patch(':id/read')
@@ -36,5 +49,12 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Marks all the notification read' })
   readAll(@Req() req: RequestWithUser) {
     return this.notificationService.readAll(req.user.id);
+  }
+
+  @Delete(':id/delete')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete a notification' })
+  deleteNotification(@Req() req: RequestWithUser, @Param('id') id: string) {
+    return this.notificationService.deleteNotification(req.user.id, id);
   }
 }

@@ -6,7 +6,9 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm'; // Added DeepPartial
+import { Repository, DeepPartial } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EditEvent } from './events/edit.event';
 
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
@@ -23,19 +25,21 @@ export class ListingsService {
   [x: string]: any;
   constructor(
     @InjectRepository(Listing)
-    private listingRepo: Repository<Listing>,
+    private readonly listingRepo: Repository<Listing>,
 
     @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private readonly userRepo: Repository<User>,
 
     @InjectRepository(Book)
-    private bookRepo: Repository<Book>,
+    private readonly bookRepo: Repository<Book>,
 
     @InjectRepository(ModuleEntity)
-    private moduleRepo: Repository<ModuleEntity>,
+    private readonly moduleRepo: Repository<ModuleEntity>,
 
     @Inject(forwardRef(() => SavedSearchesService))
-    private savedSearchesService: SavedSearchesService,
+    private readonly savedSearchesService: SavedSearchesService,
+
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createListing(userId: string, dto: CreateListingDto) {
@@ -224,9 +228,43 @@ export class ListingsService {
   async editlisting(dto: EditListingDto) {
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
+      relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
+    console.log('in services on listing ', listing);
+
     if (!listing) throw new NotFoundException('listing not found');
+
+    if (listing.status === ListingStatus.REJECTED) {
+      const event = new EditEvent();
+
+      event.adminId = listing.reviewer.id;
+      event.entityType = 'Edited listing';
+      event.listingId = listing.id;
+      event.studentId = listing.seller.id;
+
+      const changes: string[] = [];
+
+      if (dto.title && dto.title !== listing.title) {
+        changes.push(`Title: "${listing.title}" : "${dto.title}"`);
+      }
+      if (dto.price && dto.price !== listing.price) {
+        changes.push(`Price: ${listing.price} : ${dto.price}`);
+      }
+      if (dto.condition && dto.condition !== listing.condition) {
+        changes.push(`Condition: ${listing.condition} : ${dto.condition}`);
+      }
+      if (dto.description && dto.description !== listing.description) {
+        changes.push(`Description updated`);
+      }
+      if (dto.photo_urls && dto.photo_urls !== listing.photo_urls) {
+        changes.push(`Photos updated`);
+      }
+
+      event.message = `Listing has been edited. Changes: ${changes.join('; ')}`;
+      listing.status = ListingStatus.PENDING;
+      this.eventEmitter.emit('listing.edit', event);
+    }
 
     Object.assign(listing, dto);
 
