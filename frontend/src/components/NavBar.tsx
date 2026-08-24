@@ -30,7 +30,7 @@ const adminNavLinks = [
 ]
 
 
-export default function NavBar() {
+export default function NavBar() { // NOSONAR - navigation markup intentionally combines responsive and role-based variants
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const pathname = usePathname()
 
@@ -73,8 +73,11 @@ export default function NavBar() {
         isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
       }`}>
         <div className="container-content">
+
           <div className="flex items-center justify-between h-[70px]">
-            <Link href="/" className="flex items-center gap-2 no-underline">
+            <Link href="/" className="flex items-center gap-2 no-underline">  
+
+
               <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
               <div className="leading-tight">
                 <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
@@ -84,7 +87,8 @@ export default function NavBar() {
                   Marketplace
                 </span>
               </div>
-            </Link>
+            </Link> 
+
           </div>
         </div>
       </nav>
@@ -102,10 +106,13 @@ export default function NavBar() {
       <div className="container-content">
         <div className="flex items-center justify-between h-[70px]">
 
-          {/* LEFT: Logo */}
+          
           <Link href="/" className="flex items-center gap-2 no-underline">
+
             <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
             <div className="leading-tight">
+
+
               <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                 Uni Textbook
               </span>
@@ -120,21 +127,24 @@ export default function NavBar() {
           {/* MIDDLE: Nav links (desktop only) */}
           {isAuthenticated && (
             <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8]
-                  ${pathname === link.href
-                      ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
-                      : isTransparent ? 'text-white' : 'text-[var(--foreground)]'
-                    }`}
-                >
+              {navLinks.map((link) => {
+                let linkClassName = 'text-[var(--foreground)]';
+                if (pathname === link.href) {
+                  linkClassName = 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1';
+                } else if (isTransparent) {
+                  linkClassName = 'text-white';
+                }
 
-
-                  {link.label.toUpperCase()}
-                </Link>
-              ))}
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8] ${linkClassName}`}
+                  >
+                    {link.label.toUpperCase()}
+                  </Link>
+                );
+              })}
             </div>
           )}
 
@@ -159,13 +169,16 @@ export default function NavBar() {
                     aria-label="User menu"
                     aria-expanded={userMenuOpen}
                   >
+
                     <div className="w-9 h-9 rounded-full bg-[#00B4D8] flex items-center
                                     justify-center text-[#000f2b] dark:text-white text-sm font-bold">
                       {initials}
                     </div>
+
                     <span className="text-sm font-medium text-[var(--foreground)]">
                       {user.first_name}
                     </span>
+
 
                     <ChevronDown
                       size={16}
@@ -199,7 +212,7 @@ export default function NavBar() {
                           My Listings
                         </Link>
                       )}
-                      {/** 
+                      
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -208,7 +221,7 @@ export default function NavBar() {
                       >
                         Settings
                       </Link>
-                      */}
+                      
                       <div className="border-t border-[var(--card-border)]" />
                       <button
                         type="button"
@@ -222,6 +235,8 @@ export default function NavBar() {
                       >
                         Log Out
                       </button>
+
+
                     </div>
                   )}
                 </div>
@@ -244,6 +259,7 @@ export default function NavBar() {
                 >
                   Login
                 </Link>
+                
               </>
             )}
           </div>

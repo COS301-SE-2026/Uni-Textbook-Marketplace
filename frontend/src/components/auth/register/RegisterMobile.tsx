@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
 import { getMe } from '@/lib/auth.api';
 
-//  Types
+// Types
 interface FormData {
     fullName: string;
     surname: string;
@@ -22,7 +22,7 @@ interface FormData {
     agreedToTerms: boolean;
 }
 
-//  Step Indicator
+// Step Indicator
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
     return (
@@ -47,6 +47,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                                     fontWeight: 700,
                                     fontSize: "0.8rem",
                                     flexShrink: 0,
+                                    transition: "border-color 0.3s, color 0.3s",
                                 }}
                             >
                                 {isCompleted ? <Check size={13} strokeWidth={3} /> : stepNum}
@@ -61,6 +62,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                                     whiteSpace: "pre-line",
                                     lineHeight: 1.2,
                                     width: "3.5rem",
+                                    transition: "color 0.3s",
                                 }}
                             >
                                 {label}
@@ -74,6 +76,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                                     backgroundColor: stepNum < currentStep ? "#00B4D8" : "#d1d5db",
                                     margin: "0 0.15rem",
                                     marginBottom: "1.3rem",
+                                    transition: "background-color 0.3s",
                                 }}
                             />
                         )}
@@ -84,7 +87,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     );
 }
 
-//  OTP Input
+// OTP Input
 function OtpInput({ value, onChange }: Readonly<{ value: string[]; onChange: (val: string[]) => void }>) {
     const ref0 = React.useRef<HTMLInputElement>(null);
     const ref1 = React.useRef<HTMLInputElement>(null);
@@ -129,25 +132,32 @@ function OtpInput({ value, onChange }: Readonly<{ value: string[]; onChange: (va
                         textAlign: "center", fontSize: "1.1rem", fontWeight: 600,
                         border: digit ? "2px solid #00B4D8" : "2px solid #dddddd",
                         borderRadius: "0.5rem", outline: "none",
-                        transition: "border-color 0.15s", color: "#000f2b",
+                        transition: "border-color 0.15s, box-shadow 0.15s",
+                        color: "#000f2b",
+                        backgroundColor: "#ffffff",
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = "#00B4D8"; }}
-                    onBlur={(e) => { e.target.style.borderColor = digit ? "#00B4D8" : "#dddddd"; }}
+                    onFocus={(e) => { 
+                        e.target.style.borderColor = "#00B4D8";
+                        e.target.style.boxShadow = "0 0 0 3px rgba(0, 180, 216, 0.15)";
+                    }}
+                    onBlur={(e) => { 
+                        e.target.style.borderColor = digit ? "#00B4D8" : "#dddddd";
+                        e.target.style.boxShadow = "none";
+                    }}
                 />
             ))}
         </div>
     );
 }
 
-//  Dot color helper
+// Dot color helper
 function getDotColor(n: number, step: number): string {
     if (n === step) return "#ffffff";
     if (n < step) return "#00B4D8";
     return "#9ca3af";
 }
 
-//  Per-step render helpers
-
+// Per-step render helpers
 type StepProps = {
     form: FormData;
     errors: Record<string, string>;
@@ -158,20 +168,26 @@ type StepProps = {
 function StepOne({ form, errors, set, step }: Readonly<StepProps>) {
     return (
         <>
-            <h2>Create an account</h2>
-            <p className="text-text-subtle mt-1 mb-5">Fill in your details to get started</p>
+            <h2 style={{ fontSize: "1.25rem" }}>Create an account</h2>
+
+            <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.9rem" }}>Fill in your details to get started</p>
             <StepIndicator currentStep={step} />
+
             <div className="space-y-4">
+
                 <div>
                     <Input label="Full Name(s)" type="text" placeholder="Enter your full name(s)"
                         value={form.fullName} onChange={(e) => set("fullName", e.target.value)} />
                     {errors.fullName && <ErrorText>{errors.fullName}</ErrorText>}
                 </div>
+
                 <div>
+
                     <Input label="Surname" type="text" placeholder="Enter your surname"
                         value={form.surname} onChange={(e) => set("surname", e.target.value)} />
                     {errors.surname && <ErrorText>{errors.surname}</ErrorText>}
                 </div>
+
             </div>
         </>
     );
@@ -186,8 +202,8 @@ type StepTwoProps = Readonly<StepProps & {
 function StepTwo({ form, errors, set, step, universities, selectedDomain, setSelectedDomain }: StepTwoProps) {
     return (
         <>
-            <h2>Enter university details</h2>
-            <p className="text-text-subtle mt-1 mb-5">Select & Fill in your details to get started</p>
+            <h2 style={{ fontSize: "1.25rem" }}>Enter university details</h2>
+            <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.9rem" }}>Select & Fill in your details to get started</p>
             <StepIndicator currentStep={step} />
             <div className="space-y-4">
                 {/* University Select */}
@@ -242,10 +258,12 @@ type StepThreeProps = Readonly<StepProps & {
 function StepThree({ form, errors, set, step, showPassword, setShowPassword, showConfirm, setShowConfirm }: StepThreeProps) {
     return (
         <>
-            <h2>Password</h2>
-            <p className="text-text-subtle mt-1 mb-5">Create your password</p>
+            <h2 style={{ fontSize: "1.25rem" }}>Password</h2>
+            <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.9rem" }}>Create your password</p>
             <StepIndicator currentStep={step} />
             <div className="space-y-4">
+
+
                 <div>
                     <label htmlFor="reg-password-mobile" className="form-label">Password</label>
                     <div style={{ position: "relative" }}>
@@ -254,8 +272,10 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             placeholder="Create your password"
                             value={form.password}
                             onChange={(e) => set("password", e.target.value)}
-                            className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                            className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
                         />
+
+
                         <button type="button" onClick={() => setShowPassword((p) => !p)}
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             style={{
@@ -266,17 +286,22 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
+
+
                     {errors.password && <ErrorText>{errors.password}</ErrorText>}
                 </div>
                 <div>
+
                     <label htmlFor="reg-confirm-password-mobile" className="form-label">Confirm Password</label>
                     <div style={{ position: "relative" }}>
+
+
                         <input id="reg-confirm-password-mobile"
                             type={showConfirm ? "text" : "password"}
                             placeholder="Confirm your password"
                             value={form.confirmPassword}
                             onChange={(e) => set("confirmPassword", e.target.value)}
-                            className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                            className="w-full box-border border border-[#dddddd] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all"
                         />
                         <button type="button" onClick={() => setShowConfirm((p) => !p)}
                             aria-label={showConfirm ? "Hide password" : "Show password"}
@@ -287,9 +312,12 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                             }}>
                             {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
+
+
                     </div>
                     {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
                 </div>
+
                 <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                     <input type="checkbox" id="terms-mobile"
                         checked={form.agreedToTerms}
@@ -306,6 +334,7 @@ function StepThree({ form, errors, set, step, showPassword, setShowPassword, sho
                         <a href="/privacy" className="text-primary" style={{ fontWeight: 500 }}>Privacy Policy</a>
                     </label>
                 </div>
+
                 {errors.terms && <ErrorText>{errors.terms}</ErrorText>}
             </div>
         </>
@@ -323,12 +352,16 @@ type StepFourProps = Readonly<StepProps & {
 function StepFour({ form, errors, set, step, otpTimer, timerActive, handleNext, handleResendOtp, loading }: StepFourProps) {
     return (
         <>
-            <h2>OTP Verification</h2>
+            <h2 style={{ fontSize: "1.25rem" }}>OTP Verification</h2>
+
             <p className="text-text-subtle mt-1 mb-5" style={{ fontSize: "0.85rem" }}>
                 Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
             </p>
+
+
             <StepIndicator currentStep={step} />
             <div>
+
                 <OtpInput value={form.otp} onChange={(val) => set("otp", val)} />
                 {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem", fontSize: "0.75rem" }}>
@@ -341,22 +374,27 @@ function StepFour({ form, errors, set, step, otpTimer, timerActive, handleNext, 
                     <button type="button" onClick={handleResendOtp} disabled={timerActive}
                         style={{
                             color: timerActive ? "#9ca3af" : "#00B4D8", background: "none", border: "none",
-                            cursor: timerActive ? "default" : "pointer", fontSize: "0.75rem", fontWeight: 500
+                            cursor: timerActive ? "default" : "pointer", fontSize: "0.75rem", fontWeight: 500,
+                            transition: "color 0.2s",
                         }}>
                         Resend OTP code
                     </button>
                 </div>
+
+
                 <div style={{ marginTop: "1.5rem" }}>
-                    <Button className="w-full" onClick={handleNext} disabled={loading}>
+                    <Button className="w-full cursor-pointer" onClick={handleNext} disabled={loading}>
                         {loading ? "Verifying..." : "REGISTER"}
                     </Button>
+
+
                 </div>
             </div>
         </>
     );
 }
 
-//  Main Component
+// Main Component
 export default function RegisterMobile() {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<FormData>({
@@ -446,7 +484,6 @@ export default function RegisterMobile() {
         if (step === 2) {
             setLoading(true);
             try {
-
                 setStep((s) => s + 1);
             } catch (err) {
                 setServerError((err as ApiError).message);
@@ -455,8 +492,6 @@ export default function RegisterMobile() {
             }
             return;
         }
-
-
 
         if (step === 3) {
             if (!validateStep3()) return;
@@ -519,41 +554,121 @@ export default function RegisterMobile() {
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
-            <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto">
-                <div className="w-full border-b border-border bg-cyan-50 px-6 py-8 flex flex-col items-center justify-center">
-                    <Logo className="w-14 h-auto mb-4" />
-                    <h2 className="text-center">Join our student community</h2>
-                    <p className="text-center text-text-subtle mt-3 text-sm">
-                        Buy, sell and swap textbooks with verified students.
-                    </p>
-                </div>
-                <div className="w-full px-6 py-8">
-                    {renderStepContent()}
-                    {serverError && <div style={{ marginTop: "1rem" }}><ErrorText>{serverError}</ErrorText></div>}
-                    {step !== 4 && (
-                        <div style={{
-                            display: "flex", alignItems: "center", justifyContent: "flex-end",
-                            gap: "0.5rem", marginTop: "1.75rem"
-                        }}>
-                            <div style={{ display: "flex", gap: "0.35rem", marginRight: "0.4rem" }}>
-                                {[1, 2, 3, 4].map((n) => (
-                                    <div key={n} style={{
-                                        width: "1.5rem", height: "1.5rem", borderRadius: "50%",
-                                        border: n <= step ? "2px solid #00B4D8" : "2px solid #9ca3af",
-                                        display: "flex", alignItems: "center", justifyContent: "center",
-                                        fontSize: "0.65rem", fontWeight: 700,
-                                        color: getDotColor(n, step),
-                                        backgroundColor: n === step ? "#00B4D8" : "transparent",
-                                    }}>
-                                        {n}
-                                    </div>
-                                ))}
-                            </div>
-                            <Button onClick={handleNext} disabled={loading} className="px-6">
-                                Next
-                            </Button>
+            <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto shadow-2xl p-0">
+                
+                
+                
+                <div className="w-full relative overflow-hidden px-6 py-8 flex flex-col items-center justify-center" style={{
+                    background: 'linear-gradient(145deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)',
+                    backdropFilter: 'blur(10px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                }}>
+                    
+                    
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 70%)',
+                        }}
+                    />
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255, 255, 255, 0.1) 100px, rgba(255, 255, 255, 0.1) 102px)',
+                        }}
+                    />
+                    
+                    
+                    
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div 
+                            className="relative mb-4 p-3 rounded-2xl"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.06)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                            }}
+                        >
+                            <Logo className="w-14 h-auto" />
+                            <div 
+                                className="absolute -top-px left-1/4 right-1/4 h-px"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                }}
+                            />
                         </div>
-                    )}
+                        <h2 
+                            className="text-center font-bold"
+                            style={{
+                                fontSize: "1.25rem",
+                                color: '#1a1a2e',
+                                textShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
+                            }}
+                        >
+                            JOIN OUR
+                        </h2>
+                        <h2 
+                            className="text-center font-bold mb-1"
+                            style={{
+                                fontSize: "1.25rem",
+                                color: '#00B4D8',
+                                textShadow: '0 2px 20px rgba(0, 180, 216, 0.2)',
+                            }}
+                        >
+                            STUDENT COMMUNITY
+                        </h2>
+                        <div className="relative w-16 h-px my-2">
+                            <div 
+                                className="absolute inset-0"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent)',
+                                }}
+                            />
+                        </div>
+                        <p className="text-center text-[#4B4F58]/80 text-sm">
+                            Buy, sell and swap textbooks with verified students.
+                        </p>
+                    </div>
+                </div>
+
+                
+                
+                <div className="w-full px-6 py-8 relative" style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(5px)',
+                }}>
+                    <div className="relative z-10">
+                        {renderStepContent()}
+                        {serverError && <div style={{ marginTop: "1rem" }}><ErrorText>{serverError}</ErrorText></div>}
+                        {step !== 4 && (
+                            <div style={{
+                                display: "flex", alignItems: "center", justifyContent: "flex-end",
+                                gap: "0.5rem", marginTop: "1.75rem"
+                            }}>
+                                <div style={{ display: "flex", gap: "0.35rem", marginRight: "0.4rem" }}>
+                                    {[1, 2, 3, 4].map((n) => (
+                                        <div key={n} style={{
+                                            width: "1.5rem", height: "1.5rem", borderRadius: "50%",
+                                            border: n <= step ? "2px solid #00B4D8" : "2px solid #9ca3af",
+                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                            fontSize: "0.65rem", fontWeight: 700,
+                                            color: getDotColor(n, step),
+                                            backgroundColor: n === step ? "#00B4D8" : "transparent",
+                                            transition: "all 0.3s",
+                                        }}>
+                                            {n}
+                                        </div>
+                                    ))}
+                                </div>
+                                <Button onClick={handleNext} disabled={loading} className="px-6 cursor-pointer">
+                                    Next
+                                </Button>
+                                
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </main>

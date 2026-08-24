@@ -15,6 +15,8 @@ import { IsNull, Repository } from 'typeorm';
 
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 import { OtpService } from './otp.service';
 import type { IEmailService } from '../email/email.interface';
@@ -293,6 +295,90 @@ export class AuthService {
     }
 
     return result;
+  }
+
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    if (dto.first_name === undefined && dto.last_name === undefined) {
+      throw new BadRequestException('No changes provided');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    if (dto.first_name !== undefined) {
+      user.first_name = dto.first_name;
+    }
+    if (dto.last_name !== undefined) {
+      user.last_name = dto.last_name;
+    }
+
+    await this.userRepository.save(user);
+
+    return {
+      id: user.id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+    };
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    if (dto.new_password !== dto.confirm_password) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    const user = await this.userRepository.findOne({
+      select: {
+        id: true,
+        password_hash: true,
+      },
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const currentValid = await bcrypt.compare(
+      dto.current_password,
+      user.password_hash,
+    );
+
+    if (!currentValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    const password_hash = await bcrypt.hash(
+      dto.new_password,
+      this.BCRYPT_ROUNDS,
+    );
+
+    await this.userRepository.update(
+      { id: userId },
+      { password_hash, updated_at: new Date() },
+    );
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  async deactivateAccount(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    await this.userRepository.softDelete(userId);
+
+    return { message: 'Account deactivated successfully.' };
   }
 
   async forgotPassword(dto: ForgotPasswordDto) {

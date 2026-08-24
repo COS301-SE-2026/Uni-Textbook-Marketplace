@@ -20,6 +20,7 @@ import { Roles } from '../auth/decorator/roles.decorator';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
+import { UpdateListingStatusDto } from './dto/updateListingStatus.dto';
 
 interface AuthenticatedUser {
   id: string;
@@ -69,6 +70,25 @@ export class ListingsController {
   @Roles('student')
   async editlisting(@Body() dto: EditListingDto) {
     return this.listingsService.editlisting(dto);
+  }
+
+  //ListingStatus updates
+  @Patch(':id/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('student')
+  @ApiOperation({
+    summary: "Updates a listing's sale status (RESERVED, SOLD, WITHDRAWN)",
+  })
+  updateListingStatus(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateListingStatusDto,
+  ) {
+    return this.listingsService.updateListingStatus(
+      req.user.id,
+      id,
+      dto.listing_status,
+    );
   }
 
   @Get('admin/all')

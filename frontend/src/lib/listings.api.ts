@@ -55,6 +55,8 @@ export interface EditListingData {
   description?: string;
 }
 
+export type ListingSaleStatus = 'AVAILABLE' | 'RESERVED' | 'SOLD' | 'WITHDRAWN';
+
 export interface ListingDetailResponse {
   id:string;
   title?: string
@@ -134,6 +136,13 @@ export async function createListing(data: CreateListingData) {
 
 export async function editListing(data: EditListingData) {
   return api.patch('/listings/editlist', data);
+}
+
+export async function updateListingStatus(
+  id: string,
+  listing_status: ListingSaleStatus,
+) {
+  return api.patch(`/listings/${id}/status`, { listing_status });
 }
 
 export async function getListings(queryParams?: string): Promise<{ listings: any[]; total: number }> {

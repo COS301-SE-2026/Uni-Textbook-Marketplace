@@ -6,26 +6,7 @@ import { BookOpen, Mail, MapPin } from 'lucide-react'
 
 
 const SOCIAL_ICONS = [
-  { name: 'Facebook', href: '#', icon: (props: any) => (
-
-
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-
-        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-      </svg>
-  )},
-  { name: 'Instagram', href: '#', icon: (props: any) => (
-
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-
-    </svg>
-    )
-  },
+  
   { name: 'GitHub', href:'https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace',
     icon: (props: any) => (
 
@@ -50,17 +31,13 @@ const FOOTER_DIVISIONS = [
       { label: 'Browse Listing', href: '/listings'},
       { label: 'Sell a Textbook', href: '/listings/create'},
 
-      { label: 'My Listings', href: '/auth/login'},
+      { label: 'My Listings', href: '/listings/mine'},
     ],
   },
   {
     title: 'Support',
     links: [
       { label: 'Help & FAQs', href: '/help' },
-      { label: 'Contact Us', href: '/contact' },
-
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Terms of Service', href: '/terms' },
 
     ],
   },
@@ -69,7 +46,7 @@ const FOOTER_DIVISIONS = [
     links: [
       { label: 'Brand Style Guide', href: '/brand' },
 
-      { label: 'About Us', href: '/about' },
+      
       { label: 'Our Collaborators', href: '/https://www2.agilebridge.co.za/our-company/' },
     ],
   },
@@ -116,7 +93,7 @@ export default function Footer() {
                 const Icon = item.icon;
                 return(
 
-                  <a key={idx}
+                  <a key={item.href}
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"

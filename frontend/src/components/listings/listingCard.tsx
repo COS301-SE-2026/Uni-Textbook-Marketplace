@@ -52,10 +52,10 @@ export interface Listing {
 }
 
 interface ListingCardProps {
-    listing: Listing
-    showStatus?: boolean
-    isLiked?: boolean
-    removeClick?: boolean
+    readonly listing: Listing
+    readonly showStatus?: boolean
+    readonly isLiked?: boolean
+    readonly removeClick?: boolean
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -65,24 +65,27 @@ const CONDITION_LABEL: Record<Listing['condition'], string> = {
     poor: 'Poor',
 }
 
+// Condition badge variant mapping
+const CONDITION_VARIANT: Record<Listing['condition'], 'new' | 'good' | 'fair' | 'poor'> = {
+    new: 'new',
+    good: 'good',
+    fair: 'fair',
+    poor: 'poor',
+}
+
 export default function ListingCard({
     listing,
     showStatus = false,
+
     isLiked: initialIsliked = false,
     removeClick = false,
 }: ListingCardProps) {
     const router = useRouter()
-    const [isLiked, setIsLiked] = useState(initialIsliked)
-    /* const [prevInitialIsliked, setPrevInitialIsliked] = useState(initialIsliked)
 
-    if (prevInitialIsliked !== initialIsliked){
-        setPrevInitialIsliked(initialIsliked)
-        setIsLiked(initialIsliked)
-    } */
+    const [isLiked, setIsLiked] = useState(initialIsliked)
 
     const handleClick = () => {
         if (removeClick) return
-
         router.push(`/listings/${listing.id}`)
     }
 
@@ -113,20 +116,33 @@ export default function ListingCard({
                 ? raw.replace('./', '/')
                 : raw ?? '/images/placeholder.png'
 
+    const conditionVariant = CONDITION_VARIANT[listing.condition]
+
     return (
         <div
             onClick={handleClick}
-            className={`card hover:shadow-md transition-shadow duration-200 flex flex-col gap-3 relative ${!removeClick ? 'cursor-pointer' : ''
-                }`}
+            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden ${
+                !removeClick ? 'cursor-pointer' : ''
+            }`}
+            style={{
+                height: '420px',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
+            }}
         >
-            {/* Image */}
-            <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+            
+            <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+            }} />
+
+            
+            <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
                 {image ? (
                     <Image
                         src={image}
                         alt={listing.title}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
                     <svg
@@ -148,56 +164,100 @@ export default function ListingCard({
                         />
                     </svg>
                 )}
+
+                
+                <div className="absolute bottom-0 left-0 right-0 h-12" style={{
+                    background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
+                }} />
+
+                
+                <div className="absolute top-2 right-2">
+                    <Badge variant={conditionVariant}>
+                        {CONDITION_LABEL[listing.condition]}
+                    </Badge>
+                </div>
+
+                
+                {showStatus && listing.status !== 'APPROVED' && (
+                    <div className="absolute top-2 left-2">
+
+                        {listing.status === 'PENDING' && (
+                            <Badge variant="pending">Pending</Badge>
+                        )}
+                        {listing.status === 'REJECTED' && (
+                            <Badge variant="rejected">Rejected</Badge>
+                        )}
+                    </div>
+                    
+                )}
+
+                
+                {listing.status === 'APPROVED' && (listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
+                    <div className="absolute top-2 left-2">
+                        <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
+                            {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
+                        </Badge>
+
+
+                    </div>
+                )}
             </div>
 
-            {/* Title */}
-            <div className="flex flex-col gap-1">
-                <p className="font-semibold text-sm line-clamp-2">
+            
+            <div className="flex flex-col gap-1 px-3 pb-3 flex-1">
+                
+                <p className="font-semibold text-sm line-clamp-1 text-[#1a1a2e] dark:text-white">
                     {listing.title}
                 </p>
 
+
+
+                
                 <p className="text-xs text-gray-500">
                     {listing.book?.edition} Edition • {listing.module?.code}
                 </p>
-            </div>
 
-            {/* Price + like button */}
-            <div className="flex items-center justify-between mt-auto">
-                <span className="font-bold text-base">
-                    R{parseFloat(String(listing.price)).toFixed(2)}
-                </span>
+                
+                {listing.book?.author && (
+                    <p className="text-xs text-gray-400 truncate">
+                        {listing.book.author}
+                    </p>
+                )}
 
-                <Heartbutton liked={isLiked} onClick={handleLike} />
+                
+                <div className="flex items-center justify-between mt-auto pt-1">
 
-            </div>
+                    <span className="font-bold text-lg text-[#000f2b] dark:text-white">
+                        R{parseFloat(String(listing.price)).toFixed(2)}
+                    </span>
 
-            {/* Seller badge */}
-            {listing.seller && (
-                <div className="text-xs text-green-600 font-medium">
-                    {listing.seller.first_name} {listing.seller.last_name}
-                    {listing.seller.is_verified && ' • Verified'}
+                    <Heartbutton liked={isLiked} onClick={handleLike} />
+
+
                 </div>
-            )}
 
-            {/* condition */}
-            <div className="absolute right-0 top-0">
-                <Badge variant='approved'>
-                    {CONDITION_LABEL[listing.condition]}
-                </Badge>
+                {/* Seller badge */}
+                {listing.seller && (
+                    <div className="flex items-center gap-1 text-xs">
+
+
+                        <span className="text-gray-500">
+
+                            {listing.seller.first_name} {listing.seller.last_name}
+                        </span>
+                        
+                        {listing.seller.is_verified && (
+                            <span className="text-[#00B4D8] font-medium">• Verified ✓</span>
+                        )}
+                    </div>
+
+                )}
             </div>
 
-            {/* Status badge */}
-            {showStatus && listing.status !== 'APPROVED' && (
-                <div className="absolute top-2 left-2">
-                    {listing.status === 'PENDING' && (
-                        <Badge variant="pending">Pending</Badge>
-                    )}
-                    {listing.status === 'REJECTED' && (
-                        <Badge variant="rejected">Rejected</Badge>
-                    )}
-                </div>
-            )}
+            
+            <div className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                boxShadow: 'inset 0 0 0 2px rgba(0,180,216,0.3)',
+            }} />
         </div>
     )
-
 }

@@ -16,7 +16,7 @@ export default function UITestPage() {
         <h3>Buttons</h3>
         <div className="flex flex-wrap gap-4">
           <Button>Primary</Button>
-          <Button variant="secondary">Secondary</Button>
+          <Button variant="primary">Secondary</Button>
           <Button variant="danger">Danger</Button>
         </div>
       </Card>
