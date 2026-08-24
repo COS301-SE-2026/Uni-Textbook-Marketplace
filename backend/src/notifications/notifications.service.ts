@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
 import { Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
+import { EditEvent } from '../listings/events/edit.event';
+import { MessageEvent } from '../messaging/events/message.event';
 
 @Injectable()
 export class NotificationsService {
@@ -22,15 +24,29 @@ export class NotificationsService {
     await this.notificationRepo.save(noti);
   }
 
-  async mynotifications(userId: string) {
-    const notifications = await this.notificationRepo.find({
+  async mynotifications(userId: string, page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [notifications, total] = await this.notificationRepo.findAndCount({
       where: { user_id: { id: userId } },
-      relations: ['entity_id'],
+      relations: ['entity_id', 'user_id', 'notification_from'],
+      skip,
+      take: limit,
+      order: { created_at: 'DESC' },
     });
 
-    if (notifications.length === 0) throw new NotFoundException();
+    if (notifications.length === 0)
+      throw new NotFoundException('No notifications found');
 
-    return notifications;
+    return {
+      data: notifications,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async readNoti(userId: string, id: string) {
@@ -58,5 +74,45 @@ export class NotificationsService {
     );
 
     return { updated: notifications.affected ?? 0 };
+  }
+
+  async notifyAdmin(event: EditEvent) {
+    const noti = this.notificationRepo.create({
+      user_id: { id: event.adminId },
+      notification_from: { id: event.studentId },
+      entity_type: event.entityType,
+      entity_id: { id: event.listingId },
+      message_info: event.message,
+    });
+
+    await this.notificationRepo.save(noti);
+  }
+
+  async notifyStudentofMessage(event: MessageEvent) {
+    const noti = this.notificationRepo.create({
+      user_id: { id: event.userId },
+      notification_from: { id: event.notificationfrom },
+      entity_type: event.entityType,
+      message_info: event.messageInfo,
+    });
+
+    await this.notificationRepo.save(noti);
+  }
+
+  async deleteNotification(userId: string, notificationId: string) {
+    const notification = await this.notificationRepo.findOne({
+      where: {
+        id: notificationId,
+        user_id: { id: userId },
+      },
+    });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+
+    await this.notificationRepo.remove(notification);
+
+    return 'Notification successfuly deleted';
   }
 }

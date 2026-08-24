@@ -19,7 +19,29 @@ async function fetchNotifications(): Promise<Notification[]> {
     if (!res.ok) {
         throw new Error("Failed to load notifications");
     }
-    return res.json();
+
+    const data = await res.json();
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (data && typeof data === 'object' && Array.isArray(data.items)) {
+        return data.items;
+    }
+
+    if (data && typeof data === 'object') {
+
+
+        for (const key of ['notifications', 'data', 'results']) {
+            if (Array.isArray(data[key])) {
+                return data[key];
+            }
+        }
+    }
+    
+    console.warn('Unexpected notification response shape:', data);
+    return [];
 }
 
 async function markReadRequest(id: string): Promise<void> {
@@ -43,6 +65,17 @@ async function markAllReadRequest(): Promise<void> {
     if (!res.ok) throw new Error("Failed to mark all as read");
 }
 
+async function deleteNotification(id: string): Promise<void> {
+
+    const res = await fetch(`${API_URL}/notifications/${id}/delete`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+
+    if (!res.ok) throw new Error('failed to delete');
+
+}
+ 
 
 const POLL_INTERVAL_MS = 15000;
 
@@ -54,6 +87,7 @@ interface UseNotificationsResult {
     markRead: (id: string) => Promise<void>;
     markAllRead: () => Promise<void>;
     refresh: () => Promise<void>;
+    deleteNotif: (id: string) => Promise<void>;
 }
 
 export function useNotifications(): UseNotificationsResult {
@@ -67,12 +101,13 @@ export function useNotifications(): UseNotificationsResult {
 
         try {
             const items = await fetchNotifications();
-            setNotifications(items);
+            setNotifications(Array.isArray(items) ? items : []);
             setError(null);
 
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something wrong occurred");
 
+            setNotifications([]);
         } finally {
             setIsLoading(false);
         }
@@ -115,27 +150,36 @@ export function useNotifications(): UseNotificationsResult {
         return () => clearInterval(interval);
     }, [refresh]);
 
-    const unreadCount = notifications.filter((n) => !n.is_read).length;
+    const unreadCount = Array.isArray(notifications) 
+    ? notifications.filter((n) => !n.is_read).length 
+    : 0;
 
     const markRead = useCallback(
-        async (id: string) => {
-            setNotifications((prev) =>
-                prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-            );
+    async (id: string) => {
 
-            try {
-                await markReadRequest(id);
-            } catch {
+      setNotifications((prev) => {
+        if (!Array.isArray(prev)) return [];
 
-                refresh();
-            }
-        },
-        [refresh]
-    );
+        return prev.map((n) => (n.id === id ? { ...n, is_read: true } : n));
+      });
+
+      try {
+        await markReadRequest(id);
+      } catch {
+
+        refresh();
+      }
+    },
+    
+    [refresh]
+  );
 
 
     const markAllRead = useCallback(async () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+        setNotifications((prev) => {
+            if (!Array.isArray(prev)) return [];
+            return prev.map((n) => ({ ...n, is_read: true }));
+        });
 
         try {
             await markAllReadRequest();
@@ -144,5 +188,22 @@ export function useNotifications(): UseNotificationsResult {
         }
     }, [refresh]);
 
-    return { notifications, unreadCount, isLoading, error, markRead, markAllRead, refresh };
+    const deleteNotif  = useCallback(async (id: string) => {
+
+        try {
+            await deleteNotification(id);
+        } catch {
+            refresh();
+        }
+    }, [refresh]);
+
+    return { notifications: Array.isArray(notifications) ? notifications : [],
+        unreadCount, 
+        isLoading, 
+        error, 
+        markRead, 
+        markAllRead, 
+        refresh,
+        deleteNotif,
+    };
 }

@@ -10,6 +10,7 @@ import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { SavedSearchesService } from '../saved_search/saved_search.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('ListingsService', () => {
   let service: ListingsService;
@@ -133,6 +134,12 @@ describe('ListingsService', () => {
         {
           provide: SavedSearchesService,
           useValue: mockSavedSearchesService,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: {
+            emit: jest.fn(),
+          },
         },
       ],
     }).compile();
