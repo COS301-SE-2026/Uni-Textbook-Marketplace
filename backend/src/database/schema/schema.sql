@@ -185,6 +185,22 @@ CREATE TABLE notifications(
 );
 
 
+-- create cases table 
+CREATE TABLE cases (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    appeal_message TEXT,
+    status VARCHAR(20) DEFAULT 'pending'
+        CHECK (status IN ('pending', 'upheld', 'reversed')),
+    reviewed_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+
+
+
 -- indexes
 
 
@@ -242,3 +258,10 @@ CREATE INDEX idx_listings_performed_at ON listings(performed_at DESC);
 
 -- index to query audit logs by date range
 CREATE INDEX idx_audit_performed_at ON audit_log(performed_at DESC);
+
+-- indexes for cases table 
+CREATE INDEX idx_cases_user_id ON cases(user_id);
+CREATE INDEX idx_cases_status ON cases(status);
+CREATE INDEX idx_cases_user_status ON cases(user_id, status);
+CREATE INDEX idx_cases_reviewed_by ON cases(reviewed_by);
+CREATE INDEX idx_cases_created_at ON cases(created_at DESC);

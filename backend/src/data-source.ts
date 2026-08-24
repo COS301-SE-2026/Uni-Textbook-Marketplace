@@ -12,6 +12,7 @@ import { OTP } from './database/entities/otps.entity';
 import { AuditLog } from './database/entities/audit_log.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
+import { Case } from './database/entities/case.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { Report } from './database/entities/report.entity';
 
@@ -33,6 +34,7 @@ export const AppDataSource = new DataSource({
     AuditLog,
     SavedSearch,
     Wishlist,
+    Case,
     Notifications,
     Report,
   ],
