@@ -481,4 +481,254 @@ describe('Saved Search Setup & Filter Matching', () => {
       });
     });
   });
+  describe('Search, Faculty & Combined Filters', () => {
+    describe('Search Filter', () => {
+      it('should match by listing title', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'Clean Code Textbook',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by partial listing title', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'Clean',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by book title via search', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'Clean Code',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by author via search', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'Robert C. Martin',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by ISBN via search', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: '978-0132350884',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by module code via search', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'CS101',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by module name via search', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'Introduction to Computer Science',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match when search term not found', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          search: 'NonExistentTerm',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('Faculty and University Filters', () => {
+      it('should match by faculty name', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          faculty: 'Computer Science',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by partial faculty name', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          faculty: 'Computer',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by university_id', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          university_id: 'univ-1',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match by wrong university_id', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          university_id: 'univ-2',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should match by faculty_id', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          faculty_id: 'fac-1',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match by wrong faculty_id', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          faculty_id: 'fac-2',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('Combined Filters', () => {
+      it('should match when all filters match', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          condition: 'good',
+          annotationLevel: 'light',
+          priceMin: '30',
+          priceMax: '50',
+          book_title: 'Clean Code',
+          author: 'Robert C. Martin',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should reject when moduleCode does not match', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS102',
+          condition: 'good',
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should reject when condition does not match', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          condition: 'new',
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should reject when price is out of range', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          condition: 'good',
+          priceMin: '50',
+          priceMax: '100',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should reject when book title does not match', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          condition: 'good',
+          book_title: 'Wrong Title',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should handle case-insensitive text matching in combined filters', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          book_title: 'clean code',
+          author: 'robert c. martin',
+          faculty: 'computer science',
+          search: 'clean code textbook',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should handle all filters together', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          modules: ['CS101', 'CS102'],
+          faculty: 'Computer Science',
+          book_title: 'Clean Code',
+          author: 'Robert C. Martin',
+          isbn: '978-0132350884',
+          edition: '1',
+          priceMin: '30',
+          priceMax: '50',
+          condition: 'good',
+          annotationLevel: 'light',
+          search: 'Clean',
+          university_id: 'univ-1',
+          faculty_id: 'fac-1',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+    });
+  });
 });
