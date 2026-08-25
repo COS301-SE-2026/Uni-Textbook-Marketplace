@@ -6,6 +6,9 @@ import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import Heartbutton from '../icons/Heartbutton'
 import { save, remove } from '@/lib/wishlist.api'
+import { createReport } from '@/lib/reports.api'
+import { Button } from '@/components/ui/Button'
+
 
 export type ListingStatus =
     | 'APPROVED' | 'PENDING' | 'REJECTED' | 'SOFT_DELETED'
@@ -80,6 +83,17 @@ export default function ListingCard({
         setIsLiked(initialIsliked)
     } */
 
+    const [showReportModal, setShowReportModal] = useState(false)
+    const [reportReason, setReportReason] = useState('')
+    const [isReporting, setIsReporting] = useState(false)
+
+    const reportReasons = [
+        'Fraud',
+        'Misleading information',
+        'Duplicate listing',
+        'Other',
+    ]
+
     const handleClick = () => {
         if (removeClick) return
 
@@ -101,6 +115,32 @@ export default function ListingCard({
         } catch (error) {
             console.error('Failed to update wishlist', error)
             setIsLiked(!liked)
+        }
+    }
+
+
+    const handleReport = async () => {
+        if (!reportReason) {
+            return
+        }
+
+        setIsReporting(true)
+
+        try {
+            await createReport({
+                listing_id: listing.id,
+                reason: reportReason,
+            })
+
+            alert('Report submitted successfully')
+
+            setShowReportModal(false)
+            setReportReason('')
+        } catch (error) {
+            console.error('Failed to report listing', error)
+            alert('Failed to submit report')
+        } finally {
+            setIsReporting(false)
         }
     }
 
@@ -197,6 +237,79 @@ export default function ListingCard({
                     )}
                 </div>
             )}
+
+            <Button
+                type="button"
+                variant="danger"
+                onClick={(e) => {
+                    e.stopPropagation()
+                    setShowReportModal(true)
+                }}
+            >
+                Report
+            </Button>
+
+            {showReportModal && (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <h2 className="text-lg font-semibold mb-2">
+                        Report Listing
+                    </h2>
+
+                    <p className="text-sm text-gray-500 mb-4">
+                        Why are you reporting this listing?
+                    </p>
+
+                    <div className="flex flex-col gap-2">
+                        {reportReasons.map((reason) => (
+                            <label
+                                key={reason}
+                                className="flex items-center gap-2 cursor-pointer"
+                            >
+                                <input
+                                    type="radio"
+                                    name={`report-reason-${listing.id}`}
+                                    value={reason}
+                                    checked={reportReason === reason}
+                                    onChange={(e) =>
+                                        setReportReason(e.target.value)
+                                    }
+                                />
+
+                                <span className="text-sm">
+                                    {reason}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+
+                    <div className="flex justify-end gap-3 mt-6">
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                setShowReportModal(false)
+                                setReportReason('')
+                            }}
+                            disabled={isReporting}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="danger"
+                            onClick={handleReport}
+                            disabled={!reportReason || isReporting}
+                        >
+                            {isReporting ? 'Submitting...' : 'Submit Report'}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        )}
         </div>
     )
 
