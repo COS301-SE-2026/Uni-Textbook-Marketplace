@@ -13,6 +13,9 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notifications)
     private readonly notificationRepo: Repository<Notifications>,
+    
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
   ) {}
 
   async create(event: AdminEvent) {
@@ -121,13 +124,11 @@ export class NotificationsService {
   async emit(event: ReportEvent) {
     if (event.action === 'REPORT_CREATED') {
       //admins 
-      const admins = await this.notificationRepo.manager
-        .getRepository(User)
-        .find({
-          where: {
-            role: 'admin',
-          },
-        });
+      const admins = await this.userRepo.find({
+        where: {
+          role: 'admin',
+        },
+      });
 
       for (const admin of admins) {
         const notification = this.notificationRepo.create({
