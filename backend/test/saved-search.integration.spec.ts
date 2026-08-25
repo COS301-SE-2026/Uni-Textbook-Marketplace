@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { INestApplication } from '@nestjs/common';
 
 import { TestModule } from './test.module';
 import { SavedSearchesService } from '.././src/saved_search/saved_search.service';
-
+import { ListingsService } from '.././src/listings/listings.service';
 import { SavedSearch } from '.././src/database/entities/saved_search.entity';
 import { User } from '.././src/database/entities/users.entity';
 import { Listing, ListingStatus } from '.././src/database/entities/listing.entity';
@@ -13,7 +13,7 @@ import { Book } from '.././src/database/entities/book.entity';
 import { Module as ModuleEntity } from '.././src/database/entities/module.entity';
 import { Faculty } from '.././src/database/entities/faculty.entity';
 import { University } from '.././src/database/entities/university.entity';
-
+import { Notification } from '.././src/database/entities/notifications.entity';
 import { SavedSearchFiltersDto } from '.././src/saved_search/dto/saved_search.dto';
 
 describe('Saved Search Setup & Filter Matching', () => {
@@ -266,6 +266,219 @@ describe('Saved Search Setup & Filter Matching', () => {
       
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
+    });
+  });
+   describe('Price Range & Book Filters', () => {
+    describe('Price Range Filters', () => {
+      it('should match when price is between min and max', () => {
+        const listing = createTestListing({ price: 45.99 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match when price is exactly at min', () => {
+        const listing = createTestListing({ price: 30 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match when price is exactly at max', () => {
+        const listing = createTestListing({ price: 50 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should reject when price is below min', () => {
+        const listing = createTestListing({ price: 25 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should reject when price is above max', () => {
+        const listing = createTestListing({ price: 60 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '30',
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should match when only min is specified', () => {
+        const listing = createTestListing({ price: 45 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '40',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match when only max is specified', () => {
+        const listing = createTestListing({ price: 35 });
+        const filter: SavedSearchFiltersDto = {
+          priceMax: '50',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should handle priceMin as number', () => {
+        const listing = createTestListing({ price: 45 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: 30 as any,
+          priceMax: 50 as any,
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should handle price with decimal values', () => {
+        const listing = createTestListing({ price: 45.99 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '45.50',
+          priceMax: '46.00',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should handle empty string price values', () => {
+        const listing = createTestListing({ price: 45 });
+        const filter: SavedSearchFiltersDto = {
+          priceMin: '',
+          priceMax: '',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('Book Filters', () => {
+      it('should match by exact book title', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          book_title: 'Clean Code',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by partial book title', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          book_title: 'Clean',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match by wrong book title', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          book_title: 'Wrong Title',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should match by exact author', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          author: 'Robert C. Martin',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by partial author name', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          author: 'Martin',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by exact ISBN', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          isbn: '978-0132350884',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should match by ISBN case-insensitively', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          isbn: '978-0132350884'.toLowerCase(),
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match by wrong ISBN', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          isbn: '978-0132350885',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
+
+      it('should match by edition', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          edition: '1',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
+
+      it('should not match by wrong edition', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          edition: '2',
+        };
+        
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(false);
+      });
     });
   });
 });
