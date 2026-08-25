@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
+import { ReportEvent } from '../reports/events/report.events';
+import { User } from '../database/entities/users.entity';
 
 @Injectable()
 export class NotificationsService {
@@ -114,5 +116,41 @@ export class NotificationsService {
     await this.notificationRepo.remove(notification);
 
     return 'Notification successfuly deleted';
+  }
+
+  async emit(event: ReportEvent) {
+    if (event.action === 'REPORT_CREATED') {
+      //admins 
+      const admins = await this.notificationRepo.manager
+        .getRepository(User)
+        .find({
+          where: {
+            role: 'admin',
+          },
+        });
+
+      for (const admin of admins) {
+        const notification = this.notificationRepo.create({
+          user_id: admin,
+          notification_from: { id: event.reporterId },
+          entity_type: event.action,
+          entity_id: { id: event.listingId },
+          message_info: event.message,
+        });
+
+        await this.notificationRepo.save(notification);
+      }
+
+      return;
+    }
+
+    const notification = this.notificationRepo.create({
+      user_id: { id: event.reporterId },
+      entity_type: event.action,
+      entity_id: { id: event.listingId },
+      message_info: event.message,
+    });
+
+    await this.notificationRepo.save(notification);
   }
 }
