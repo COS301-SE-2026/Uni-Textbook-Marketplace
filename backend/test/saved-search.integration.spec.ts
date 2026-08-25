@@ -731,4 +731,317 @@ describe('Saved Search Setup & Filter Matching', () => {
       });
     });
   });
+  describe('findMatchingSavedSearches & Event Integration', () => {
+    beforeEach(async () => {
+      
+      await savedSearchRepo.delete({});
+      await notificationRepo.delete({});
+      await listingRepo.delete({});
+    });
+
+    describe('findMatchingSavedSearches', () => {
+      it('should find matching saved searches for a listing', async () => {
+        
+        const savedSearch1 = await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS101', condition: 'good' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const savedSearch2 = await savedSearchRepo.save({
+          user_id: testUser2.id,
+          filter_json: { moduleCode: 'CS101', priceMin: '30', priceMax: '50' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const savedSearch3 = await savedSearchRepo.save({
+          user_id: testUser3.id,
+          filter_json: { moduleCode: 'CS102' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const listing = createTestListing();
+
+        const matches = await savedSearchService.findMatchingSavedSearches(listing);
+
+        expect(matches).toHaveLength(2);
+        expect(matches.map(m => m.userId)).toContain(testUser1.id);
+        expect(matches.map(m => m.userId)).toContain(testUser2.id);
+        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch1.id);
+        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch2.id);
+        expect(matches.map(m => m.savedSearchId)).not.toContain(savedSearch3.id);
+      });
+
+      it('should return empty array when no saved searches match', async () => {
+        await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS999' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const listing = createTestListing();
+        const matches = await savedSearchService.findMatchingSavedSearches(listing);
+        
+        expect(matches).toHaveLength(0);
+      });
+
+      it('should throw NotFoundException when listing is null', async () => {
+        await expect(savedSearchService.findMatchingSavedSearches(null as any))
+          .rejects
+          .toThrow('Listing not found');
+      });
+    });
+
+    describe('Event Emission on Listing Creation', () => {
+      it('should emit events when listing matches saved searches', async () => {
+        const eventSpy = jest.fn();
+        eventEmitter.on('saved-search.match', eventSpy);
+
+        
+        await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS101', priceMin: '30', priceMax: '50' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        await savedSearchRepo.save({
+          user_id: testUser2.id,
+          filter_json: { moduleCode: 'CS101', condition: 'good' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        
+        const createDto = {
+          title: 'Integration Test Textbook',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good' as const,
+          annotationLevel: 'light' as const,
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        };
+
+        const listing = await listingsService.createListing(testUser1.id, createDto);
+
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        
+        expect(eventSpy).toHaveBeenCalledTimes(2);
+        expect(eventSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            userId: testUser1.id,
+            listingId: listing.id,
+            listingTitle: 'Integration Test Textbook',
+          })
+        );
+        expect(eventSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            userId: testUser2.id,
+            listingId: listing.id,
+            listingTitle: 'Integration Test Textbook',
+          })
+        );
+
+        eventEmitter.off('saved-search.match', eventSpy);
+      });
+
+      it('should not emit events when no saved searches match', async () => {
+        const eventSpy = jest.fn();
+        eventEmitter.on('saved-search.match', eventSpy);
+
+        await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS999' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const createDto = {
+          title: 'No Match Textbook',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good' as const,
+          annotationLevel: 'light' as const,
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        };
+
+        await listingsService.createListing(testUser1.id, createDto);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        expect(eventSpy).not.toHaveBeenCalled();
+
+        eventEmitter.off('saved-search.match', eventSpy);
+      });
+    });
+
+    describe('Notification Creation', () => {
+      it('should create notifications for matching saved searches', async () => {
+        
+        await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS101', priceMin: '30', priceMax: '50' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        await savedSearchRepo.save({
+          user_id: testUser2.id,
+          filter_json: { moduleCode: 'CS101', condition: 'good' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const createDto = {
+          title: 'Notification Test Textbook',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good' as const,
+          annotationLevel: 'light' as const,
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        };
+
+        await listingsService.createListing(testUser1.id, createDto);
+
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const notifications = await notificationRepo.find({
+          where: { type: 'SAVED_SEARCH_MATCH' },
+        });
+
+        expect(notifications.length).toBeGreaterThanOrEqual(2);
+        
+        const user1Notifications = notifications.filter(n => n.user_id === testUser1.id);
+        const user2Notifications = notifications.filter(n => n.user_id === testUser2.id);
+        
+        expect(user1Notifications.length).toBeGreaterThan(0);
+        expect(user2Notifications.length).toBeGreaterThan(0);
+        
+        const notification = user1Notifications[0];
+        expect(notification.title).toBe('New Listing Match Found! 🎉');
+        expect(notification.message).toContain('Notification Test Textbook');
+        expect(notification.data.listingId).toBeDefined();
+        expect(notification.data.savedSearchId).toBeDefined();
+      });
+    });
+
+    describe('End-to-End Flow', () => {
+      it('should complete full flow: create saved search → create listing → get notification', async () => {
+       
+        const savedSearch = await savedSearchService.createSavedSearch(
+          testUser1.id,
+          {
+            filter_json: {
+              moduleCode: 'CS101',
+              condition: 'good',
+              priceMin: '30',
+              priceMax: '50',
+            },
+          }
+        );
+
+        expect(savedSearch).toBeDefined();
+
+        
+        const createDto = {
+          title: 'End-to-End Test Textbook',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good' as const,
+          annotationLevel: 'light' as const,
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        };
+
+        const listing = await listingsService.createListing(testUser2.id, createDto);
+        expect(listing).toBeDefined();
+
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        
+        const notifications = await notificationRepo.find({
+          where: { 
+            user_id: testUser1.id,
+            type: 'SAVED_SEARCH_MATCH',
+          },
+          order: { created_at: 'DESC' },
+        });
+
+        expect(notifications.length).toBeGreaterThan(0);
+        
+        const notification = notifications[0];
+        expect(notification.message).toContain('End-to-End Test Textbook');
+        expect(notification.data.listingId).toBe(listing.id);
+        expect(notification.data.savedSearchId).toBe(savedSearch.id);
+
+        
+        expect(notification.data).toMatchObject({
+          listingId: listing.id,
+          savedSearchId: savedSearch.id,
+          matchDate: expect.any(String),
+        });
+      });
+
+      it('should handle multiple users with different saved searches', async () => {
+        // Create different saved searches for different users
+        await savedSearchRepo.save({
+          user_id: testUser1.id,
+          filter_json: { moduleCode: 'CS101', priceMin: '30', priceMax: '50' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        await savedSearchRepo.save({
+          user_id: testUser2.id,
+          filter_json: { moduleCode: 'CS101', condition: 'good' },
+          created_at: new Date(),
+        } as SavedSearch);
+
+        await savedSearchRepo.save({
+          user_id: testUser3.id,
+          filter_json: { moduleCode: 'CS102' }, // Won't match
+          created_at: new Date(),
+        } as SavedSearch);
+
+        const createDto = {
+          title: 'Multiple Users Test',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good' as const,
+          annotationLevel: 'light' as const,
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        };
+
+        await listingsService.createListing(testUser1.id, createDto);
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const notifications = await notificationRepo.find({
+          where: { type: 'SAVED_SEARCH_MATCH' },
+          order: { created_at: 'DESC' },
+        });
+
+        
+        const user1Notifs = notifications.filter(n => n.user_id === testUser1.id);
+        const user2Notifs = notifications.filter(n => n.user_id === testUser2.id);
+        const user3Notifs = notifications.filter(n => n.user_id === testUser3.id);
+
+        expect(user1Notifs.length).toBeGreaterThan(0);
+        expect(user2Notifs.length).toBeGreaterThan(0);
+        expect(user3Notifs.length).toBe(0);
+      });
+    });
+  })
 });
