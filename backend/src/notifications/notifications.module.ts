@@ -4,7 +4,7 @@ import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
-import { User } from 'src/database/entities/users.entity';
+import { User } from '../database/entities/users.entity';
 import { ReportNotificationListener } from './listeners/report.notification.listener';
 
 @Module({

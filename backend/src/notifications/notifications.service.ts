@@ -130,17 +130,19 @@ export class NotificationsService {
         },
       });
 
-      for (const admin of admins) {
-        const notification = this.notificationRepo.create({
+      
+      const notification = admins.map((admin) =>
+        this.notificationRepo.create({
           user_id: admin,
           notification_from: { id: event.reporterId },
           entity_type: event.action,
           entity_id: { id: event.listingId },
           message_info: event.message,
-        });
+        }),
+      );
 
-        await this.notificationRepo.save(notification);
-      }
+      await this.notificationRepo.save(notification);
+    
 
       return;
     }
