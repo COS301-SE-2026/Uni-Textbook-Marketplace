@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import {EventEmitterModule} from '@nestjs/event-emitter';
 import { ListingsController } from './listings.controller';
 import { ListingsService } from './listings.service';
 import { AdminService } from '../admin/admin.service';
@@ -17,6 +17,7 @@ import { AuditLog } from 'src/database/entities/audit_log.entity';
   imports: [
     TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity, AuditLog]),
     forwardRef(() => SavedSearchesModule),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [ListingsController],
   providers: [ListingsService, AdminService, RolesGuard, JwtAuthGuard],
