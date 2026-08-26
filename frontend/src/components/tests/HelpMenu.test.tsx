@@ -190,4 +190,104 @@ describe('HelpMenu', () => {
       });
     });
 
+
+    it('closes the modal when clicking the backdrop', async () => {
+
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      expect(screen.getByText('Quick Help')).toBeInTheDocument();
+      
+      
+      const backdrop = screen.getByRole('presentation');
+      await user.click(backdrop);
+      
+      await waitFor(() => {
+
+        expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes the modal when clicking the "View full help center" link', async () => {
+
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+
+      await user.click(screen.getByRole('button', { name: /help/i }));
+
+
+      expect(screen.getByText('Quick Help')).toBeInTheDocument();
+
+      const helpLink = screen.getByTestId('help-link');
+      await user.click(helpLink);
+      
+      await waitFor(() => {
+        expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+      });
+    });
+
+
+    it('closes the modal when pressing Escape key', async () => {
+      const user = userEvent.setup();
+
+
+
+      render(<HelpMenu />);
+      
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      expect(screen.getByText('Quick Help')).toBeInTheDocument();
+
+
+       await user.keyboard('{Escape}');
+      
+      await waitFor(() => {
+
+
+      expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('accessibility', () => {
+    it('has correct aria-label on help button', () => {
+      render(<HelpMenu />);
+      
+      const helpButton = screen.getByRole('button', { name: /help/i });
+
+
+      expect(helpButton).toHaveAttribute('aria-label', 'Help');
+    });
+
+    it('has correct ARIA roles on modal', async () => {
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+
+      const backdrop = screen.getByRole('presentation');
+      expect(backdrop).toBeInTheDocument();
+
+
+       const modal = screen.getByText('Quick Help').closest('div[class*="bg-[var(--card-bg)]"]');
+      expect(modal).toBeInTheDocument();
+
+
+    });
+
+    it('sets focus on the modal when opened', async () => {
+      const user = userEvent.setup();
+
+
+      render(<HelpMenu />);
+      
+      const helpButton = screen.getByRole('button', { name: /help/i });
+
+      
+      await user.click(helpButton);
+
+
+
 }
