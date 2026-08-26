@@ -37,32 +37,48 @@ describe('Saved Search Integration Tests', () => {
   let testUniversity: University;
   let testFaculty: Faculty;
 
-  beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [TestModule],
-    }).compile();
+    beforeAll(async () => {
+    try {
+      const module: TestingModule = await Test.createTestingModule({
+        imports: [TestModule],
+      }).compile();
 
-    app = module.createNestApplication();
-    await app.init();
+      app = module.createNestApplication();
+      await app.init();
 
-    dataSource = module.get(DataSource);
-    savedSearchService = module.get(SavedSearchesService);
-    listingsService = module.get(ListingsService);
-    savedSearchRepo = dataSource.getRepository(SavedSearch);
-    listingRepo = dataSource.getRepository(Listing);
-    userRepo = dataSource.getRepository(User);
-    bookRepo = dataSource.getRepository(Book);
-    moduleRepo = dataSource.getRepository(ModuleEntity);
-    notificationRepo = dataSource.getRepository(Notifications);
-    eventEmitter = module.get(EventEmitter2);
+      dataSource = module.get(DataSource);
+      savedSearchService = module.get(SavedSearchesService);
+      listingsService = module.get(ListingsService);
+      savedSearchRepo = dataSource.getRepository(SavedSearch);
+      listingRepo = dataSource.getRepository(Listing);
+      userRepo = dataSource.getRepository(User);
+      bookRepo = dataSource.getRepository(Book);
+      moduleRepo = dataSource.getRepository(ModuleEntity);
+      notificationRepo = dataSource.getRepository(Notifications);
+      eventEmitter = module.get(EventEmitter2);
 
-    await setupTestData();
-  });
+      await setupTestData();
+    } catch (error) {
+      console.error('Error in beforeAll:', error);
+      throw error;
+    }
+  }, 60000)
 
-  afterAll(async () => {
-    await dataSource.dropDatabase();
-    await app.close();
-  });
+ afterAll(async () => {
+  try {
+    if (dataSource && dataSource.isInitialized) {
+      
+      if (process.env.NODE_ENV === 'test') {
+        await dataSource.dropDatabase();
+      }
+    }
+    if (app) {
+      await app.close();
+    }
+  } catch (error) {
+    console.error('Error in afterAll:', error);
+  }
+});
 
   async function setupTestData() {
     testUniversity = await userRepo.save({

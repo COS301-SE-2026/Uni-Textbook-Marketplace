@@ -11,7 +11,7 @@ import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SavedSearchesModule } from '../saved_search/saved_search.module';
-import { AuditLog } from 'src/database/entities/audit_log.entity';
+import { AuditLog } from '../database/entities/audit_log.entity';
 
 @Module({
   imports: [
