@@ -4,28 +4,32 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { INestApplication } from '@nestjs/common';
 
 import { TestModule } from './test.module';
-import { SavedSearchesService } from '.././src/saved_search/saved_search.service';
-import { ListingsService } from '.././src/listings/listings.service';
-import { SavedSearch } from '.././src/database/entities/saved_search.entity';
-import { User } from '.././src/database/entities/users.entity';
-import { Listing, ListingStatus } from '.././src/database/entities/listing.entity';
-import { Book } from '.././src/database/entities/book.entity';
-import { Module as ModuleEntity } from '.././src/database/entities/module.entity';
-import { Faculty } from '.././src/database/entities/faculty.entity';
-import { University } from '.././src/database/entities/university.entity';
-import { Notifications } from '.././src/database/entities/notifications.entity';
-import { SavedSearchFiltersDto } from '.././src/saved_search/dto/saved_search.dto';
+import { SavedSearchesService } from '../src/saved_search/saved_search.service';
+import { ListingsService } from '../src/listings/listings.service';
+import { SavedSearch } from '../src/database/entities/saved_search.entity';
+import { User } from '../src/database/entities/users.entity';
+import { Listing, ListingStatus } from '../src/database/entities/listing.entity';
+import { Book } from '../src/database/entities/book.entity';
+import { Module as ModuleEntity } from '../src/database/entities/module.entity';
+import { Faculty } from '../src/database/entities/faculty.entity';
+import { University } from '../src/database/entities/university.entity';
+import { Notifications } from '../src/database/entities/notifications.entity';
+import { SavedSearchFiltersDto } from '../src/saved_search/dto/saved_search.dto';
 
 describe('Saved Search Integration Tests', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let savedSearchService: SavedSearchesService;
   let listingsService: ListingsService;
+  
+  
   let savedSearchRepo: Repository<SavedSearch>;
   let listingRepo: Repository<Listing>;
   let userRepo: Repository<User>;
   let bookRepo: Repository<Book>;
   let moduleRepo: Repository<ModuleEntity>;
+  let universityRepo: Repository<University>;  
+  let facultyRepo: Repository<Faculty>;        
   let notificationRepo: Repository<Notifications>;
   let eventEmitter: EventEmitter2;
 
@@ -37,7 +41,7 @@ describe('Saved Search Integration Tests', () => {
   let testUniversity: University;
   let testFaculty: Faculty;
 
-    beforeAll(async () => {
+  beforeAll(async () => {
     try {
       const module: TestingModule = await Test.createTestingModule({
         imports: [TestModule],
@@ -49,11 +53,15 @@ describe('Saved Search Integration Tests', () => {
       dataSource = module.get(DataSource);
       savedSearchService = module.get(SavedSearchesService);
       listingsService = module.get(ListingsService);
+      
+      
       savedSearchRepo = dataSource.getRepository(SavedSearch);
       listingRepo = dataSource.getRepository(Listing);
       userRepo = dataSource.getRepository(User);
       bookRepo = dataSource.getRepository(Book);
       moduleRepo = dataSource.getRepository(ModuleEntity);
+      universityRepo = dataSource.getRepository(University);  
+      facultyRepo = dataSource.getRepository(Faculty);        
       notificationRepo = dataSource.getRepository(Notifications);
       eventEmitter = module.get(EventEmitter2);
 
@@ -62,92 +70,94 @@ describe('Saved Search Integration Tests', () => {
       console.error('Error in beforeAll:', error);
       throw error;
     }
-  }, 60000)
-
- afterAll(async () => {
-  try {
-    if (dataSource && dataSource.isInitialized) {
-      
-      if (process.env.NODE_ENV === 'test') {
-        await dataSource.dropDatabase();
-      }
-    }
-    if (app) {
-      await app.close();
-    }
-  } catch (error) {
-    console.error('Error in afterAll:', error);
-  }
-});
+  }, 60000);
 
   async function setupTestData() {
-    testUniversity = await userRepo.save({
-      id: 'univ-1',
-      name: 'Test University',
-      email_domain: 'test.edu',
-    } as University);
+    try {
+      // Create University 
+      const universityData = {
+        name: 'Test University',
+        email_domain: 'test.edu',
+      };
+      testUniversity = await universityRepo.save(universityData);
+      console.log('University created:', testUniversity.id);
 
-    testFaculty = await userRepo.save({
-      id: 'fac-1',
-      name: 'Computer Science',
-      university: testUniversity,
-    } as Faculty);
+      // Create Faculty
+      const facultyData = {
+        name: 'Computer Science',
+        university: testUniversity,
+      };
+      testFaculty = await facultyRepo.save(facultyData);
+      console.log('Faculty created:', testFaculty.id);
 
-    testModule = await moduleRepo.save({
-      id: 'mod-1',
-      code: 'CS101',
-      name: 'Introduction to Computer Science',
-      faculty: testFaculty,
-      university: testUniversity,
-      semester: 1,
-    } as ModuleEntity);
+      //Create Module
+      const moduleData = {
+        code: 'CS101',
+        name: 'Introduction to Computer Science',
+        faculty: testFaculty,
+        university: testUniversity,
+        semester: 1,
+      };
+      testModule = await moduleRepo.save(moduleData);
+      console.log('Module created:', testModule.id);
 
-    testBook = await bookRepo.save({
-      id: 'book-1',
-      isbn: '978-0132350884',
-      title: 'Clean Code',
-      author: 'Robert C. Martin',
-      edition: 1,
-      publisher: 'Prentice Hall',
-    } as Book);
+      // Create Book 
+      const bookData = {
+        isbn: '978-0132350884',
+        title: 'Clean Code',
+        author: 'Robert C. Martin',
+        edition: 1,
+        publisher: 'Prentice Hall',
+      };
+      testBook = await bookRepo.save(bookData);
+      console.log('Book created:', testBook.id);
 
-    testUser1 = await userRepo.save({
-      id: 'user-1',
-      email: 'user1@test.com',
-      password_hash: 'hashed',
-      first_name: 'Test',
-      last_name: 'User1',
-      is_verified: true,
-      role: 'student',
-      university: testUniversity,
-      faculty: testFaculty,
-    } as User);
+      // Create Users
+      const user1Data = {
+        email: 'user1@test.com',
+        password_hash: 'hashed_password_1',
+        first_name: 'Test',
+        last_name: 'User1',
+        is_verified: true,
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      };
+      testUser1 = await userRepo.save(user1Data);
+      console.log('User1 created:', testUser1.id, testUser1.email);
 
-    testUser2 = await userRepo.save({
-      id: 'user-2',
-      email: 'user2@test.com',
-      password_hash: 'hashed',
-      first_name: 'Test',
-      last_name: 'User2',
-      is_verified: true,
-      role: 'student',
-      university: testUniversity,
-      faculty: testFaculty,
-    } as User);
+      const user2Data = {
+        email: 'user2@test.com',
+        password_hash: 'hashed_password_2',
+        first_name: 'Test',
+        last_name: 'User2',
+        is_verified: true,
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      };
+      testUser2 = await userRepo.save(user2Data);
+      console.log('User2 created:', testUser2.id, testUser2.email);
 
-    testUser3 = await userRepo.save({
-      id: 'user-3',
-      email: 'user3@test.com',
-      password_hash: 'hashed',
-      first_name: 'Test',
-      last_name: 'User3',
-      is_verified: true,
-      role: 'student',
-      university: testUniversity,
-      faculty: testFaculty,
-    } as User);
+      const user3Data = {
+        email: 'user3@test.com',
+        password_hash: 'hashed_password_3',
+        first_name: 'Test',
+        last_name: 'User3',
+        is_verified: true,
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      };
+      testUser3 = await userRepo.save(user3Data);
+      console.log('User3 created:', testUser3.id, testUser3.email);
+
+      console.log('All test data setup complete!');
+    } catch (error) {
+      console.error('Error setting up test data:', error);
+      throw error;
+    }
   }
-
   function createTestListing(overrides: Partial<Listing> = {}): Listing {
     return {
       id: 'listing-test-1',
@@ -628,15 +638,15 @@ describe('Saved Search Integration Tests', () => {
         expect(result).toBe(true);
       });
 
-      it('should match by university_id', () => {
-        const listing = createTestListing();
+        it('should match by university_id', () => {
+         const listing = createTestListing();
         const filter: SavedSearchFiltersDto = {
-          university_id: 'univ-1',
-        };
-        
-        const result = savedSearchService.matchesFilter(listing, filter);
-        expect(result).toBe(true);
-      });
+         university_id: testUniversity.id,  
+       };
+    
+    const result = savedSearchService.matchesFilter(listing, filter);
+    expect(result).toBe(true);
+  });
 
       it('should not match by wrong university_id', () => {
         const listing = createTestListing();
@@ -648,15 +658,15 @@ describe('Saved Search Integration Tests', () => {
         expect(result).toBe(false);
       });
 
-      it('should match by faculty_id', () => {
-        const listing = createTestListing();
-        const filter: SavedSearchFiltersDto = {
-          faculty_id: 'fac-1',
-        };
-        
-        const result = savedSearchService.matchesFilter(listing, filter);
-        expect(result).toBe(true);
-      });
+        it('should match by faculty_id', () => {
+    const listing = createTestListing();
+    const filter: SavedSearchFiltersDto = {
+      faculty_id: testFaculty.id,  
+    };
+    
+    const result = savedSearchService.matchesFilter(listing, filter);
+    expect(result).toBe(true);
+  });
 
       it('should not match by wrong faculty_id', () => {
         const listing = createTestListing();
@@ -750,69 +760,78 @@ describe('Saved Search Integration Tests', () => {
         expect(result).toBe(true);
       });
 
-      it('should handle all filters together', () => {
-        const listing = createTestListing();
-        const filter: SavedSearchFiltersDto = {
-          moduleCode: 'CS101',
-          modules: ['CS101', 'CS102'],
-          faculty: 'Computer Science',
-          book_title: 'Clean Code',
-          author: 'Robert C. Martin',
-          isbn: '978-0132350884',
-          edition: '1',
-          priceMin: '30',
-          priceMax: '50',
-          condition: 'good',
-          annotationLevel: 'light',
-          search: 'Clean',
-          university_id: 'univ-1',
-          faculty_id: 'fac-1',
-        };
-        
-        const result = savedSearchService.matchesFilter(listing, filter);
-        expect(result).toBe(true);
-      });
+        it('should handle all filters together', () => {
+    const listing = createTestListing();
+    const filter: SavedSearchFiltersDto = {
+      moduleCode: 'CS101',
+      modules: ['CS101', 'CS102'],
+      faculty: 'Computer Science',
+      book_title: 'Clean Code',
+      author: 'Robert C. Martin',
+      isbn: testBook.isbn, 
+      edition: '1',
+      priceMin: '30',
+      priceMax: '50',
+      condition: 'good',
+      annotationLevel: 'light',
+      search: 'Clean',
+      university_id: testUniversity.id,  
+      faculty_id: testFaculty.id,        
+    };
+    
+    const result = savedSearchService.matchesFilter(listing, filter);
+    expect(result).toBe(true);
+  });
     });
   });
 
   
   describe('findMatchingSavedSearches & Event Integration', () => {
     beforeEach(async () => {
+    try {
       
-      await savedSearchRepo.delete({});
-      await notificationRepo.delete({});
-      await listingRepo.delete({});
-    });
+      await notificationRepo.createQueryBuilder().delete().where('1=1').execute();
+      
+      
+      await savedSearchRepo.createQueryBuilder().delete().where('1=1').execute();
+      
+      
+      await listingRepo.createQueryBuilder().delete().where('1=1').execute();
+      
+      console.log('Cleanup complete');
+    } catch (error) {
+      console.error('Error in cleanup:', error);
+      throw error;
+    }
+  });
 
-    describe('findMatchingSavedSearches', () => {
-      it('should find matching saved searches for a listing', async () => {
-        
-        const savedSearch1 = await createSavedSearch(testUser1.id, {
-          moduleCode: 'CS101',
-          condition: 'good'
-        });
-
-        const savedSearch2 = await createSavedSearch(testUser2.id, {
-          moduleCode: 'CS101',
-          priceMin: '30',
-          priceMax: '50'
-        });
-
-        const savedSearch3 = await createSavedSearch(testUser3.id, {
-          moduleCode: 'CS102'
-        });
-
-        const listing = createTestListing();
-
-        const matches = await savedSearchService.findMatchingSavedSearches(listing);
-
-        expect(matches).toHaveLength(2);
-        expect(matches.map(m => m.userId)).toContain(testUser1.id);
-        expect(matches.map(m => m.userId)).toContain(testUser2.id);
-        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch1.id);
-        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch2.id);
-        expect(matches.map(m => m.savedSearchId)).not.toContain(savedSearch3.id);
+  describe('findMatchingSavedSearches', () => {
+    it('should find matching saved searches for a listing', async () => {
+      const savedSearch1 = await createSavedSearch(testUser1.id, {
+        moduleCode: 'CS101',
+        condition: 'good'
       });
+
+      const savedSearch2 = await createSavedSearch(testUser2.id, {
+        moduleCode: 'CS101',
+        priceMin: '30',
+        priceMax: '50'
+      });
+
+      const savedSearch3 = await createSavedSearch(testUser3.id, {
+        moduleCode: 'CS102'
+      });
+
+      const listing = createTestListing();
+      const matches = await savedSearchService.findMatchingSavedSearches(listing);
+
+      expect(matches).toHaveLength(2);
+      expect(matches.map(m => m.userId)).toContain(testUser1.id);
+      expect(matches.map(m => m.userId)).toContain(testUser2.id);
+      expect(matches.map(m => m.savedSearchId)).toContain(savedSearch1.id);
+      expect(matches.map(m => m.savedSearchId)).toContain(savedSearch2.id);
+      expect(matches.map(m => m.savedSearchId)).not.toContain(savedSearch3.id);
+    });
 
       it('should return empty array when no saved searches match', async () => {
         await createSavedSearch(testUser1.id, {

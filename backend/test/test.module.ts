@@ -10,6 +10,7 @@ import { ModuleModule } from '../src/modules/module.module';
 import { BooksModule } from '../src/books/books.module';
 import { AdminModule } from '../src/admin/admin.module';
 import { SavedSearchesModule } from '../src/saved_search/saved_search.module';
+import { NotificationsModule } from '../src/notifications/notifications.module';
 
 import { User } from '../src/database/entities/users.entity';
 import { Listing } from '../src/database/entities/listing.entity';
@@ -24,6 +25,7 @@ import { MessagingModule } from '../src/messaging/messaging.module';
 import { Notifications } from '../src/database/entities/notifications.entity';
 import { Wishlist } from '../src/database/entities/wishlist.entity';
 import { Report } from '../src/database/entities/report.entity';
+import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-search-match.listener';
 
 @Module({
     imports: [
@@ -58,6 +60,8 @@ import { Report } from '../src/database/entities/report.entity';
         AdminModule,
         SavedSearchesModule,
         MessagingModule,
+         NotificationsModule,
     ],
+    providers: [SavedSearchMatchListener],
 })
 export class TestModule {}
