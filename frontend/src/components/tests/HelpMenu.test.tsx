@@ -288,6 +288,115 @@ describe('HelpMenu', () => {
       
       await user.click(helpButton);
 
+      const closeButton = screen.getByRole('button', { name: /close/i });
+
+      expect(closeButton).toBeInTheDocument();
+
+
+    });
+
+    it('uses semantic heading elements', async () => {
+      const user = userEvent.setup();
+
+
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const heading = screen.getByRole('heading', { name: /Quick Help/i });
+      expect(heading).toBeInTheDocument();
+
+
+
+      expect(heading.tagName).toBe('H2');
+    });
+
+
+    it('uses semantic heading for FAQ questions', async () => {
+      const user = userEvent.setup();
+
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const faqHeading = screen.getByRole('heading', { name: /How do I create a listing\?/i });
+      expect(faqHeading).toBeInTheDocument();
+
+
+
+      expect(faqHeading.tagName).toBe('H3');
+    });
+
+    it('has correct ARIA labels on icon buttons', () => {
+      render(<HelpMenu />);
+      
+      const closeButton = screen.getByRole('button', { name: /close/i });
+
+
+      expect(closeButton).toHaveAttribute('aria-label', 'Close');
+    });
+  });
+
+  describe('styles and animations', () => {
+    it('applies correct hover styles to help button', () => {
+      render(<HelpMenu />);
+      
+      const helpButton = screen.getByRole('button', { name: /help/i });
+      expect(helpButton).toHaveClass(
+        'hover:bg-[#0096B4]',
+        'hover:shadow-xl',
+        'transition-all',
+        'duration-300'
+      );
+    });
+
+    it('applies scale animation to icon on hover', () => {
+      render(<HelpMenu />);
+      
+      const helpIcon = screen.getByTestId('help-circle-icon');
+
+      expect(helpIcon).toHaveClass('group-hover:scale-110');
+    });
+
+    it('applies fade-in animation to modal', async () => {
+
+
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const backdrop = screen.getByRole('presentation');
+
+
+
+      expect(backdrop).toHaveClass('animate-in', 'fade-in', 'duration-200');
+    });
+
+    it('applies transition effects to close button', () => {
+      render(<HelpMenu />);
+      
+      const closeButton = screen.getByRole('button', { name: /close/i });
+
+
+      expect(closeButton).toHaveClass('transition-colors');
+    });
+
+    it('applies dark mode classes correctly', async () => {
+
+
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const closeButton = screen.getByRole('button', { name: /close/i });
+
+      
+      expect(closeButton).toHaveClass('dark:hover:bg-gray-800');
+    });
+  });
+
 
 
 }
