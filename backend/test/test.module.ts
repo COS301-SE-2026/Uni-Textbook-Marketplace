@@ -46,6 +46,7 @@ import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-s
                     url: dbUrl,
                     synchronize: true,
                     dropSchema: true,
+                    migrationsRun: false,
                     entities: [
                         User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,
                     ],
