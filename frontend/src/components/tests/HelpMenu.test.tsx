@@ -397,6 +397,93 @@ describe('HelpMenu', () => {
     });
   });
 
+  describe('edge cases', () => {
 
 
-}
+    it('handles multiple open/close toggles correctly', async () => {
+      const user = userEvent.setup();
+
+      render(<HelpMenu />);
+      
+      const helpButton = screen.getByRole('button', { name: /help/i })
+
+      await user.click(helpButton);
+      expect(screen.getByText('Quick Help')).toBeInTheDocument();
+
+
+      await user.click(screen.getByRole('button', { name: /close/i }));
+      await waitFor(() => {
+
+
+        expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+      });
+
+
+      await user.click(helpButton);
+      expect(screen.getByText('Quick Help')).toBeInTheDocument();
+    });
+
+    it('handles FAQ list rendering with correct Q: prefix', async () => {
+      const user = userEvent.setup();
+
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const qPrefixes = screen.getAllByText('Q:');
+      expect(qPrefixes).toHaveLength(3);
+
+
+      qPrefixes.forEach((prefix) => {
+        expect(prefix).toHaveClass('text-[#00B4D8]');
+      });
+    });
+
+    it('renders the ChevronRight icon in the help link', async () => {
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const chevronIcon = screen.getByTestId('chevron-right-icon');
+
+
+
+      expect(chevronIcon).toBeInTheDocument();
+    });
+
+    it('applies correct brand colors to elements', async () => {
+      const user = userEvent.setup();
+      render(<HelpMenu />);
+      
+      await user.click(screen.getByRole('button', { name: /help/i }));
+      
+      const helpCircle = screen.getByTestId('help-circle-icon');
+
+
+      expect(helpCircle).toHaveClass('text-[#00B4D8]');
+      
+      const helpButton = screen.getByRole('button', { name: /help/i });
+
+
+      expect(helpButton).toHaveClass('bg-[#00B4D8]');
+    });
+  });
+
+  describe('performance', () => {
+    it('does not re-render modal content when closed', () => {
+
+
+      const { rerender } = render(<HelpMenu />);
+
+
+      expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+
+      rerender(<HelpMenu />);
+      expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
+    });
+
+    
+  });
+});
+
