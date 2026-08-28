@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import HelpMenu from '../HelpMenu';
 
 
+
 jest.mock('next/link', () => {
   return ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: () => void }) => (
     <a href={href} onClick={onClick} data-testid="help-link">
@@ -14,28 +15,37 @@ jest.mock('next/link', () => {
 jest.mock('lucide-react', () => ({
   HelpCircle: ({ className, size }: { className?: string; size?: number }) => (
     <svg data-testid="help-circle-icon" className={className} width={size} height={size}>
+
       <title>Help Circle</title>
     </svg>
   ),
   X: ({ className, size }: { className?: string; size?: number }) => (
     <svg data-testid="x-icon" className={className} width={size} height={size}>
+
       <title>Close</title>
+      
     </svg>
   ),
   ChevronRight: ({ className, size }: { className?: string; size?: number }) => (
     <svg data-testid="chevron-right-icon" className={className} width={size} height={size}>
+
+
       <title>Chevron Right</title>
     </svg>
   ),
 }));
 
 describe('HelpMenu', () => {
+
+
   describe('rendering', () => {
     it('renders the help button', () => {
       render(<HelpMenu />);
       
       const helpButton = screen.getByRole('button', { name: /help/i });
       expect(helpButton).toBeInTheDocument();
+
+
       expect(helpButton).toHaveClass('fixed', 'bottom-6', 'right-6');
     });
 
@@ -43,6 +53,8 @@ describe('HelpMenu', () => {
       render(<HelpMenu />);
       
       const helpIcon = screen.getByTestId('help-circle-icon');
+
+
       expect(helpIcon).toBeInTheDocument();
     });
 
@@ -50,34 +62,50 @@ describe('HelpMenu', () => {
       render(<HelpMenu />);
       
       const modal = screen.queryByText(/Quick Help/i);
+
+
       expect(modal).not.toBeInTheDocument();
     });
   });
 
   describe('interaction - opening modal', () => {
     it('opens the modal when help button is clicked', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       const helpButton = screen.getByRole('button', { name: /help/i });
+
+
       await user.click(helpButton);
       
       const modalTitle = screen.getByText(/Quick Help/i);
+
+
       expect(modalTitle).toBeInTheDocument();
     });
 
     it('shows the modal with correct title', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
+
+
       expect(screen.getByText(/Here are answers to the most common questions/i)).toBeInTheDocument();
     });
 
     it('displays all FAQ items', async () => {
+
+
+
       const user = userEvent.setup();
+
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
@@ -95,6 +123,8 @@ describe('HelpMenu', () => {
 
     it('displays FAQ answers correctly', async () => {
       const user = userEvent.setup();
+
+
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
@@ -111,14 +141,19 @@ describe('HelpMenu', () => {
     });
 
     it('shows the full help center link', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const helpLink = screen.getByTestId('help-link');
+
       expect(helpLink).toBeInTheDocument();
       expect(helpLink).toHaveAttribute('href', '/help');
+
+
       expect(helpLink).toHaveTextContent('View full help center');
     });
 
@@ -129,20 +164,29 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const closeButton = screen.getByRole('button', { name: /close/i });
+
+
       expect(closeButton).toBeInTheDocument();
+
+
+
       expect(closeButton.querySelector('[data-testid="x-icon"]')).toBeInTheDocument();
     });
   });
 
   describe('interaction - closing modal', () => {
     it('closes the modal when close button is clicked', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
 
       await user.click(screen.getByRole('button', { name: /help/i }));
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
 
+
       const closeButton = screen.getByRole('button', { name: /close/i });
+
       await user.click(closeButton);
       
       await waitFor(() => {
@@ -151,13 +195,19 @@ describe('HelpMenu', () => {
     });
 
     it('closes the modal when clicking the backdrop', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
+
+
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
       
       const backdrop = screen.getByRole('presentation');
+
+
       await user.click(backdrop);
       
       await waitFor(() => {
@@ -166,10 +216,14 @@ describe('HelpMenu', () => {
     });
 
     it('closes the modal when clicking the "View full help center" link', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
 
       await user.click(screen.getByRole('button', { name: /help/i }));
+
+
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
 
       const helpLink = screen.getByTestId('help-link');
@@ -182,14 +236,20 @@ describe('HelpMenu', () => {
 
     it('closes the modal when pressing Escape key', async () => {
       const user = userEvent.setup();
+
+
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
+
+
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
 
       await user.keyboard('{Escape}');
       
       await waitFor(() => {
+
+
         expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
       });
     });
@@ -197,19 +257,27 @@ describe('HelpMenu', () => {
 
   describe('accessibility', () => {
     it('has correct aria-label on help button', () => {
+
+
       render(<HelpMenu />);
       
       const helpButton = screen.getByRole('button', { name: /help/i });
+
+
       expect(helpButton).toHaveAttribute('aria-label', 'Help');
     });
 
     it('has correct ARIA roles on modal', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
 
       const backdrop = screen.getByRole('presentation');
+
+
       expect(backdrop).toBeInTheDocument();
 
       const modal = screen.getByText('Quick Help').closest('div[class*="bg-[var(--card-bg)]"]');
@@ -217,13 +285,19 @@ describe('HelpMenu', () => {
     });
 
     it('sets focus on the modal when opened', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       const helpButton = screen.getByRole('button', { name: /help/i });
+
+
       await user.click(helpButton);
 
       const closeButton = screen.getByRole('button', { name: /close/i });
+
+
       expect(closeButton).toBeInTheDocument();
     });
 
@@ -234,6 +308,8 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const heading = screen.getByRole('heading', { name: /Quick Help/i });
+
+
       expect(heading).toBeInTheDocument();
       expect(heading.tagName).toBe('H2');
     });
@@ -246,6 +322,8 @@ describe('HelpMenu', () => {
       
       const faqHeading = screen.getByRole('heading', { name: /How do I create a listing\?/i });
       expect(faqHeading).toBeInTheDocument();
+
+
       expect(faqHeading.tagName).toBe('H3');
     });
 
@@ -256,11 +334,15 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const closeButton = screen.getByRole('button', { name: /close/i });
+
+
       expect(closeButton).toHaveAttribute('aria-label', 'Close');
     });
   });
 
   describe('styles and animations', () => {
+
+
     it('applies correct hover styles to help button', () => {
       render(<HelpMenu />);
       
@@ -277,6 +359,7 @@ describe('HelpMenu', () => {
       render(<HelpMenu />);
       
       const helpIcon = screen.getByTestId('help-circle-icon');
+
       expect(helpIcon).toHaveClass('group-hover:scale-110');
     });
 
@@ -287,6 +370,8 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const backdrop = screen.getByRole('presentation');
+
+
       expect(backdrop).toHaveClass('animate-in', 'fade-in', 'duration-200');
     });
 
@@ -297,6 +382,8 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const closeButton = screen.getByRole('button', { name: /close/i });
+
+
       expect(closeButton).toHaveClass('transition-colors');
     });
 
@@ -307,18 +394,23 @@ describe('HelpMenu', () => {
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const closeButton = screen.getByRole('button', { name: /close/i });
+
+
       expect(closeButton).toHaveClass('dark:hover:bg-gray-800');
     });
   });
 
   describe('edge cases', () => {
     it('handles multiple open/close toggles correctly', async () => {
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       const helpButton = screen.getByRole('button', { name: /help/i });
 
       await user.click(helpButton);
+
+
       expect(screen.getByText('Quick Help')).toBeInTheDocument();
 
       await user.click(screen.getByRole('button', { name: /close/i }));
@@ -331,12 +423,16 @@ describe('HelpMenu', () => {
     });
 
     it('handles FAQ list rendering with correct Q: prefix', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const qPrefixes = screen.getAllByText('Q:');
+
+
       expect(qPrefixes).toHaveLength(3);
       qPrefixes.forEach((prefix) => {
         expect(prefix).toHaveClass('text-[#00B4D8]');
@@ -344,12 +440,15 @@ describe('HelpMenu', () => {
     });
 
     it('renders the ChevronRight icon in the help link', async () => {
+
+
       const user = userEvent.setup();
       render(<HelpMenu />);
       
       await user.click(screen.getByRole('button', { name: /help/i }));
       
       const chevronIcon = screen.getByTestId('chevron-right-icon');
+
       expect(chevronIcon).toBeInTheDocument();
     });
 
@@ -361,6 +460,8 @@ describe('HelpMenu', () => {
       
       
       const helpCircles = screen.getAllByTestId('help-circle-icon');
+
+
       expect(helpCircles[1]).toHaveClass('text-[#00B4D8]');
       
       const helpButton = screen.getByRole('button', { name: /help/i });
@@ -370,11 +471,14 @@ describe('HelpMenu', () => {
 
   describe('performance', () => {
     it('does not re-render modal content when closed', () => {
+
+
       const { rerender } = render(<HelpMenu />);
 
       expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
 
       rerender(<HelpMenu />);
+
       expect(screen.queryByText('Quick Help')).not.toBeInTheDocument();
     });
   });
