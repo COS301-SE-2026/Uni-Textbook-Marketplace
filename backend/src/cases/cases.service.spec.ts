@@ -431,4 +431,146 @@ describe('CasesService', () => {
       });
     });
   });
-});
+    describe('Admin Review Tests', () => {
+    describe('reviewCase', () => {
+      it('should uphold a ban and keep user banned', async () => {
+       
+        caseRepo.findOne.mockResolvedValue(mockCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(mockResolvedCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        
+        const result = await service.reviewCase(
+          'case-123',
+          'admin-123',
+          'upheld',
+          'User clearly violated platform rules'
+        );
+
+        
+        expect(result.status).toBe('upheld');
+        expect(result.reviewed_by).toBe('admin-123');
+        expect(userRepo.update).not.toHaveBeenCalled();
+        expect(auditLogRepo.create).toHaveBeenCalledWith({
+          entity_type: 'CASE',
+          entity_id: 'case-123',
+          action: 'REJECT',
+          performed_by: mockAdmin,
+          notes: expect.stringContaining('upheld'),
+          reason: 'User clearly violated platform rules',
+        });
+        expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
+      });
+
+      it('should reverse a ban and unban the user when decision is reversed', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(mockCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(mockReversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        
+        const result = await service.reviewCase(
+          'case-123',
+          'admin-123',
+          'reversed',
+          'User showed genuine remorse and provided valid evidence'
+        );
+
+        
+        expect(result.status).toBe('reversed');
+        expect(result.reviewed_by).toBe('admin-123');
+        expect(userRepo.update).toHaveBeenCalledWith(
+          { id: 'user-123' },
+          {
+            is_banned: false,
+            banned_at: null as any,
+            banned_by: null as any,
+            ban_reason: null as any,
+          }
+        );
+        expect(auditLogRepo.create).toHaveBeenCalledWith({
+          entity_type: 'USER',
+          entity_id: 'user-123',
+          action: 'UPDATE',
+          performed_by: mockAdmin,
+          notes: expect.stringContaining('unbanned after appeal review'),
+          reason: 'Decision: reversed. Admin notes: User showed genuine remorse and provided valid evidence',
+        });
+        expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
+      });
+
+      it('should throw NotFoundException if case does not exist', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(null);
+
+        
+        await expect(service.reviewCase('invalid-case', 'admin-123', 'upheld'))
+          .rejects
+          .toThrow(NotFoundException);
+      });
+
+      it('should throw BadRequestException if case is already reviewed', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(mockResolvedCase);
+
+        
+        await expect(service.reviewCase('case-123', 'admin-123', 'reversed'))
+          .rejects
+          .toThrow(BadRequestException);
+        await expect(service.reviewCase('case-123', 'admin-123', 'reversed'))
+          .rejects
+          .toThrow('This case has already been reviewed. Status: upheld');
+      });
+
+      it('should throw NotFoundException if admin does not exist', async () => {
+       
+        caseRepo.findOne.mockResolvedValue(mockCase);
+        userRepo.findOne.mockResolvedValue(null);
+
+        
+        await expect(service.reviewCase('case-123', 'invalid-admin', 'upheld'))
+          .rejects
+          .toThrow(NotFoundException);
+      });
+
+      it('should handle admin notes being undefined', async () => {
+       
+        caseRepo.findOne.mockResolvedValue(mockCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(mockResolvedCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        
+        const result = await service.reviewCase(
+          'case-123',
+          'admin-123',
+          'upheld',
+          undefined
+        );
+
+        
+        expect(result.status).toBe('upheld');
+        expect(auditLogRepo.create).toHaveBeenCalledWith({
+          entity_type: 'CASE',
+          entity_id: 'case-123',
+          action: 'REJECT',
+          performed_by: mockAdmin,
+          notes: expect.stringContaining('upheld'),
+          reason: undefined,
+        });
+      });
+    });
+  });
+})
