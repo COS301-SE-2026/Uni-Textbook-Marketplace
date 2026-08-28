@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
+import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
 
 @Injectable()
 export class NotificationsService {
@@ -21,6 +22,16 @@ export class NotificationsService {
       message_info: event.description,
     });
 
+    await this.notificationRepo.save(noti);
+  }
+
+  async createFromSavedSearch(event: SavedSearchMatchEvent) {
+    const noti = this.notificationRepo.create({
+      user_id: { id: event.userId },
+      entity_type: 'SAVED_SEARCH_MATCH',
+      entity_id: { id: event.listingId },
+      message_info: `New listing "${event.listingTitle}" matches your saved search!`,
+    });
     await this.notificationRepo.save(noti);
   }
 
