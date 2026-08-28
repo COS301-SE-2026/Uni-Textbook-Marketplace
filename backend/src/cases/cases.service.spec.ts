@@ -320,4 +320,115 @@ describe('CasesService', () => {
       });
     });
   });
+    describe('Retrieval Tests', () => {
+    describe('getUserCases', () => {
+      it('should return all cases for a user', async () => {
+        
+        const mockCases = [
+          { ...mockCase, id: 'case-1', status: 'pending' } as Case,
+          { ...mockCase, id: 'case-2', status: 'upheld', reviewed_by: 'admin-123' } as Case,
+        ];
+        caseRepo.find.mockResolvedValue(mockCases);
+
+        
+        const result = await service.getUserCases('user-123');
+
+        
+        expect(result).toHaveLength(2);
+        expect(result[0].id).toBe('case-1');
+        expect(result[1].id).toBe('case-2');
+        expect(caseRepo.find).toHaveBeenCalledWith({
+          where: { user_id: 'user-123' },
+          order: { created_at: 'DESC' },
+        });
+      });
+
+      it('should return empty array if user has no cases', async () => {
+    
+        caseRepo.find.mockResolvedValue([]);
+
+        
+        const result = await service.getUserCases('user-123');
+
+        
+        expect(result).toHaveLength(0);
+        expect(caseRepo.find).toHaveBeenCalled();
+      });
+    });
+
+    describe('getCaseById', () => {
+      it('should return a case if it belongs to the user', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(mockCase);
+
+    
+        const result = await service.getCaseById('case-123', 'user-123');
+
+        
+        expect(result).toBeDefined();
+        expect(result.id).toBe('case-123');
+        expect(result.user_id).toBe('user-123');
+        expect(caseRepo.findOne).toHaveBeenCalledWith({
+          where: {
+            id: 'case-123',
+            user_id: 'user-123',
+          },
+        });
+      });
+
+      it('should throw NotFoundException if case does not exist', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(null);
+
+        
+        await expect(service.getCaseById('case-123', 'user-123'))
+          .rejects
+          .toThrow(NotFoundException);
+      });
+
+      it('should throw NotFoundException if case belongs to another user', async () => {
+        
+        caseRepo.findOne.mockResolvedValue(null);
+
+        
+        await expect(service.getCaseById('case-123', 'different-user'))
+          .rejects
+          .toThrow(NotFoundException);
+      });
+    });
+
+    describe('getPendingCases', () => {
+      it('should return all pending cases ordered by oldest first', async () => {
+        
+        const pendingCases = [
+          { ...mockCase, id: 'case-1', status: 'pending', created_at: new Date('2026-08-01') } as Case,
+          { ...mockCase, id: 'case-2', status: 'pending', created_at: new Date('2026-08-02') } as Case,
+        ];
+        caseRepo.find.mockResolvedValue(pendingCases);
+
+        
+        const result = await service.getPendingCases();
+
+        
+        expect(result).toHaveLength(2);
+        expect(result[0].status).toBe('pending');
+        expect(result[1].status).toBe('pending');
+        expect(caseRepo.find).toHaveBeenCalledWith({
+          where: { status: 'pending' },
+          order: { created_at: 'ASC' },
+        });
+      });
+
+      it('should return empty array if no pending cases', async () => {
+        
+        caseRepo.find.mockResolvedValue([]);
+
+        
+        const result = await service.getPendingCases();
+
+        
+        expect(result).toHaveLength(0);
+      });
+    });
+  });
 });
