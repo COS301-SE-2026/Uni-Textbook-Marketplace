@@ -2,12 +2,12 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Case } from '../database/entities/case.entity';
 import { User } from '../database/entities/users.entity';
+import { AuditLog } from '../database/entities/audit_log.entity';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { CaseResponseDto } from './dto/case-response.dto';
 
@@ -19,6 +19,9 @@ export class CasesService {
 
     @InjectRepository(User)
     private userRepo: Repository<User>,
+
+    @InjectRepository(AuditLog)
+    private auditLogRepo: Repository<AuditLog>,
   ) {}
 
   async createAppeal(
@@ -59,6 +62,16 @@ export class CasesService {
     });
 
     const savedCase = await this.caseRepo.save(newCase);
+
+    const auditLog = this.auditLogRepo.create({
+      entity_type: 'CASE',
+      entity_id: savedCase.id,
+      action: 'CREATE',
+      notes: `User ${user.email} submitted an appeal`,
+      reason: dto.appeal_message.substring(0, 200),
+    });
+    await this.auditLogRepo.save(auditLog);
+
     return CaseResponseDto.fromEntity(savedCase);
   }
 
@@ -67,13 +80,12 @@ export class CasesService {
       where: {
         user_id: userId,
       },
-      relations: ['user', 'reviewer'],
       order: {
         created_at: 'DESC',
       },
     });
 
-    return cases.map((c) => CaseResponseDto.fromEntity(c));
+    return CaseResponseDto.fromEntities(cases);
   }
 
   async getCaseById(caseId: string, userId: string): Promise<CaseResponseDto> {
@@ -82,7 +94,6 @@ export class CasesService {
         id: caseId,
         user_id: userId,
       },
-      relations: ['user', 'reviewer'],
     });
 
     if (!caseEntity) {
@@ -97,13 +108,12 @@ export class CasesService {
       where: {
         status: 'pending',
       },
-      relations: ['user', 'reviewer'],
       order: {
-        created_at: 'ASC',
+        created_at: 'ASC', // Oldest first
       },
     });
 
-    return cases.map((c) => CaseResponseDto.fromEntity(c));
+    return CaseResponseDto.fromEntities(cases);
   }
 
   async reviewCase(
@@ -114,7 +124,6 @@ export class CasesService {
   ): Promise<CaseResponseDto> {
     const caseEntity = await this.caseRepo.findOne({
       where: { id: caseId },
-      relations: ['user'],
     });
 
     if (!caseEntity) {
@@ -135,13 +144,21 @@ export class CasesService {
       throw new NotFoundException('Admin not found');
     }
 
+    const user = await this.userRepo.findOne({
+      where: { id: caseEntity.user_id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     caseEntity.status = decision;
     caseEntity.reviewed_by = adminId;
     caseEntity.reviewed_at = new Date();
 
     await this.caseRepo.save(caseEntity);
 
-    //If decision is REVERSED, we will unban the user
+    // If decision is REVERSED, we unban the user
     if (decision === 'reversed') {
       await this.userRepo.update(
         { id: caseEntity.user_id },
@@ -152,6 +169,27 @@ export class CasesService {
           ban_reason: null,
         },
       );
+
+      // Log the unban in audit log
+      const auditLog = this.auditLogRepo.create({
+        entity_type: 'USER',
+        entity_id: user.id,
+        action: 'UPDATE',
+        performedBy: admin,
+        notes: `User ${user.email} was unbanned after appeal review. Case ID: ${caseId}`,
+        reason: `Decision: ${decision}. Admin notes: ${adminNotes || 'No notes provided'}`,
+      });
+      await this.auditLogRepo.save(auditLog);
+    } else {
+      const auditLog = this.auditLogRepo.create({
+        entity_type: 'CASE',
+        entity_id: caseId,
+        action: 'REJECT',
+        performedBy: admin,
+        notes: `Appeal for user ${user.email} was upheld (ban remains)`,
+        reason: adminNotes || 'Ban upheld after appeal review',
+      });
+      await this.auditLogRepo.save(auditLog);
     }
 
     return CaseResponseDto.fromEntity(caseEntity);
