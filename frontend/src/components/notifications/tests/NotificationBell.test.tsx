@@ -192,4 +192,86 @@ describe('NotificationBell', () => {
       });
     });
 
-  )}
+    it('does not close dropdown when clicking inside it', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      const dropdown = screen.getByTestId('notification-dropdown');
+      await user.click(dropdown);
+      
+      expect(dropdown).toBeInTheDocument();
+    });
+
+    it('toggles dropdown on bell click', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      
+      
+      await user.click(bellButton);
+      expect(screen.getByTestId('notification-dropdown')).toBeInTheDocument();
+      
+      
+      await user.click(bellButton);
+      await waitFor(() => {
+        expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
+      });
+    });
+
+    it('passes props correctly to NotificationDropdown', async () => {
+      const user = userEvent.setup();
+      const mockNotifications = [
+        { 
+          id: '1', 
+          entity_type: 'listing_approved', 
+          message_info: 'Listing approved',
+          is_read: false,
+          created_at: new Date().toISOString(),
+          entity_id: 'listing-123',
+        },
+        { 
+          id: '2', 
+          entity_type: 'new_message', 
+          message_info: 'New message from Gift',
+          is_read: true,
+          created_at: new Date().toISOString(),
+          entity_id: 'conv-456',
+        },
+      ];
+
+      mockUseNotifications.mockReturnValue({
+        notifications: mockNotifications,
+        unreadCount: 1,
+        isLoading: true,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      expect(screen.getByTestId('dropdown-notifications-count')).toHaveTextContent('2');
+      expect(screen.getByTestId('dropdown-loading')).toHaveTextContent('loading');
+    });
