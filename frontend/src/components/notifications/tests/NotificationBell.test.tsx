@@ -275,3 +275,95 @@ describe('NotificationBell', () => {
       expect(screen.getByTestId('dropdown-notifications-count')).toHaveTextContent('2');
       expect(screen.getByTestId('dropdown-loading')).toHaveTextContent('loading');
     });
+
+    it('calls onNavigate when dropdown triggers navigation', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      const navigateBtn = screen.getByTestId('navigate-btn');
+      await user.click(navigateBtn);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('loading state', () => {
+    it('handles loading state in dropdown', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: true,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      expect(screen.getByTestId('dropdown-loading')).toHaveTextContent('loading');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles undefined notifications gracefully', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: undefined as any,
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      expect(screen.getByTestId('dropdown-notifications-count')).toHaveTextContent('0');
+    });
+
+    it('applies correct hover styles', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveClass('hover:text-[#00B4D8]');
+      expect(button).toHaveClass('hover:bg-[#F5F5F5]');
+    });
+
+    it('handles dark mode classes', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+    });
+
+    
+
