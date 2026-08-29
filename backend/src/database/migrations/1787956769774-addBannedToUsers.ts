@@ -5,12 +5,12 @@ export class AddBannedToUsers1787956769774 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "saved_searches" DROP CONSTRAINT "saved_searches_user_id_fkey"`);
-        await queryRunner.query(`DROP INDEX "public"."idx_saved_search_user"`);
-        await queryRunner.query(`DROP INDEX "public"."idx_saved_search_created_at"`);
-        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT "listings_condition_check"`);
-        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT "listings_annotation_level_check"`);
-        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT "listings_price_check"`);
-        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT "listings_status_check"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "public"."idx_saved_search_user"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "public"."idx_saved_search_created_at"`);
+        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_condition_check"`);
+        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_annotation_level_check"`);
+        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_price_check"`);
+        await queryRunner.query(`ALTER TABLE "listings" DROP CONSTRAINT IF EXISTS "listings_status_check"`);
         await queryRunner.query(`ALTER TABLE "audit_log" DROP CONSTRAINT "audit_log_action_check"`);
         await queryRunner.query(`CREATE TYPE "public"."reports_status_enum" AS ENUM('PENDING', 'REVIEWED')`);
         await queryRunner.query(`CREATE TABLE "reports" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "reason" text NOT NULL, "status" "public"."reports_status_enum" NOT NULL DEFAULT 'PENDING', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "reporter_id" uuid NOT NULL, "listing_id" uuid NOT NULL, CONSTRAINT "PK_d9013193989303580053c0b5ef6" PRIMARY KEY ("id"))`);
