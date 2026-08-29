@@ -365,5 +365,59 @@ describe('NotificationBell', () => {
       });
     });
 
+
+    render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveClass('dark:hover:bg-gray-800');
+    });
+  });
+
+  describe('accessibility', () => {
+    it('sets aria-expanded correctly', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      
+      await user.click(button);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('handles keyboard navigation', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      
+      await user.tab();
+      expect(button).toHaveFocus();
+      
+      await user.keyboard('{Enter}');
+      expect(screen.getByTestId('notification-dropdown')).toBeInTheDocument();
+      
+      await user.keyboard('{Enter}');
+      await waitFor(() => {
+        expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
+      });
+    });
+  });
     
 
