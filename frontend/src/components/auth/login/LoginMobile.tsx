@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Logo from "@/components/icons/Logo";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, ErrorText } from "@/components/ui";
 import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/lib/auth.api"
 import type { ApiError } from "@/lib/api";
@@ -46,6 +46,8 @@ export default function LoginMobile() {
         try {
             const normalizedEmail = email.toLowerCase().trim();
             await loginUser({ email: normalizedEmail, password });
+
+
             const me = await getMe();
             login(me);
             router.push('/listings');
@@ -62,18 +64,109 @@ export default function LoginMobile() {
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
-            <div className="card w-full max-w-[900px] min-h-[500px] flex flex-col overflow-hidden mx-auto">
-                <div className="w-full border-b border-border bg-cyan-50 px-6 py-8 flex flex-col items-center justify-center">
-                    <Logo className="w-16 h-auto mb-6" />
-                    <h2 className="text-center">Welcome back!</h2>
-                    <p className="text-center text-text-subtle mt-4">
-                        Access your university marketplace account.
-                    </p>
+            <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto shadow-2xl p-0">
+                
+                {/* Top Panel - Glossy Header */}
+                <div className="w-full relative overflow-hidden px-6 py-8 flex flex-col items-center justify-center" style={{
+                    background: 'linear-gradient(145deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)',
+                    backdropFilter: 'blur(10px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                }}>
+                    
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 70%)',
+                        }}
+                    />
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255, 255, 255, 0.1) 100px, rgba(255, 255, 255, 0.1) 102px)',
+                        }}
+                    />
+                    
+                    
+                    <div 
+                        className="absolute top-4 right-4 w-20 h-20 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(0, 180, 216, 0.3), transparent 70%)',
+                            filter: 'blur(40px)',
+                        }}
+                    />
+                    <div 
+                        className="absolute bottom-4 left-4 w-24 h-24 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%)',
+                            filter: 'blur(40px)',
+                        }}
+                    />
+
+                    
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div 
+                            className="relative mb-4 p-3 rounded-2xl"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.06)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                            }}
+                        >
+                            <Logo className="w-14 h-auto" />
+                            <div 
+                                className="absolute -top-px left-1/4 right-1/4 h-px"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                }}
+                            />
+                        </div>
+
+
+                        <h2 
+                            className="text-center font-bold"
+                            style={{
+                                fontSize: "1.25rem",
+                                color: '#1a1a2e',
+                                textShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
+                            }}
+                        >
+                            WELCOME
+                        </h2>
+                        <h2 
+                            className="text-center font-bold mb-1"
+                            style={{
+                                fontSize: "1.25rem",
+                                color: '#00B4D8',
+                                textShadow: '0 2px 20px rgba(0, 180, 216, 0.2)',
+                            }}
+                        >
+                            BACK!
+                        </h2>
+                        <div className="relative w-16 h-px my-2">
+                            <div 
+                                className="absolute inset-0"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent)',
+                                }}
+                            />
+                        </div>
+                        <p className="text-center text-[#4B4F58]/80 text-sm">
+                            Access your university marketplace account.
+                        </p>
+                    </div>
                 </div>
-                <div className="w-full px-6 py-8 flex items-center justify-center">
-                    <div className="w-full max-w-md mx-auto">
-                        <h2>Login</h2>
-                        <p className="text-text-subtle mt-2">
+
+                
+                <div className="w-full px-6 py-8 relative" style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(5px)',
+                }}>
+                    <div className="relative z-10">
+                        <h2 style={{ fontSize: "1.25rem" }}>Login</h2>
+
+                        <p className="text-text-subtle mt-2" style={{ fontSize: "0.9rem" }}>
                             Enter your details to access your account
                         </p>
                         <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
@@ -88,12 +181,10 @@ export default function LoginMobile() {
                                         if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
                                     }}
                                 />
-                                {errors.email && (
-                                    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
-                                        {errors.email}
-                                    </p>
-                                )}
+                                {errors.email && <ErrorText>{errors.email}</ErrorText>}
                             </div>
+
+
                             <div>
                                 <label htmlFor="password-mobile" className="form-label">Password</label>
                                 <div style={{ position: "relative", width: "100%" }}>
@@ -102,13 +193,15 @@ export default function LoginMobile() {
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Enter your password"
                                         value={password}
-                                        style={{ width: "87%", paddingRight: "2.75rem" }}
+                                        style={{ width: "100%", paddingRight: "2.75rem" }}
                                         onChange={(e) => {
                                             setPassword(e.target.value);
                                             if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
                                         }}
-                                        className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
+                                        className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all w-full box-border"
                                     />
+
+
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((p) => !p)}
@@ -123,30 +216,33 @@ export default function LoginMobile() {
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
-                                {errors.password && (
-                                    <p style={{ color: "red", fontSize: "0.75rem", marginTop: "0.25rem", fontWeight: 500 }}>
-                                        {errors.password}
-                                    </p>
-                                )}
+
+
+                                {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
-                            {serverError && (
-                                <p style={{ color: "red", fontSize: "0.75rem", fontWeight: 500 }}>
-                                    {serverError}
-                                </p>
-                            )}
-                            <div className="flex justify-end">
+
+                            
+                            <div className="flex justify-end -mt-2">
+
+
                                 <button
                                     type="button"
-                                    className="text-sm text-primary hover:text-[#00B4D8]"
-                                    style={{ margin: "15px", background: "none", border: "none", cursor: "pointer" }}
+                                    className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
+                                    style={{ background: "none", border: "none", padding: "0.25rem 0" }}
                                     onClick={forgotPass}
                                 >
                                     Forgot Password?
                                 </button>
                             </div>
-                            <Button className="w-full" disabled={loading}>
-                                {loading ? "Logging in…" : "Login"}
-                            </Button>
+
+                            {serverError && <ErrorText>{serverError}</ErrorText>}
+
+                            
+                            <div style={{ marginTop: "2rem" }}>
+                                <Button className="w-full cursor-pointer" disabled={loading} type="submit">
+                                    {loading ? "Logging in…" : "Login"}
+                                </Button>
+                            </div>
                         </form>
                     </div>
                 </div>

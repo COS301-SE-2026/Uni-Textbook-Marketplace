@@ -342,20 +342,7 @@ export default function LandingPage() {
                 <Link href="/auth/register" className="btn-primary">
                   Get Started
                 </Link>
-                <Link
-                  href="/auth/login"
-                  className="px-7 py-3 text-sm font-semibold text-white border-2 
-                       border-white/40 rounded hover:border-white 
-                       transition-all duration-200 no-underline"
-                >
-                  Buy
-                </Link>
-                <Link href="/auth/login"
-                  className="px-7 py-3 text-sm font-semibold text-white border-2
-                      border-white/40 rounded hover:border-white
-                      transition-all duration-200 no-underline">
-                  Sell
-                </Link>
+
 
               </div>
             </div>

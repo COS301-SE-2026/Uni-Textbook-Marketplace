@@ -81,17 +81,14 @@ export default function NotificationsPage() {
         [notifications]
     )
 
-    // GET /notifications/mine has no server-side pagination yet no
-    // page/limit params) - this pages through the already-fetched flat
-    // array client-side. 
-    // Gift, you may add them and swap for real query params,
-    // rather than silently pretending this is server pagination.
-    const visible = filtered.slice(0, visibleCount);
-    const hasMore = visibleCount < filtered.length;
+    const visible = notifications.slice(0, visibleCount);
+    const hasMore = visibleCount < notifications.length;
 
     return (
         <div className="container-content py-10">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="mb-6 flex items-center justify-between">
+
+
                 <div>
 
                     <h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>
@@ -99,6 +96,8 @@ export default function NotificationsPage() {
                         <p className="mt-1 text-sm text-[#4B4F58] dark:text-gray-400">
                             {unreadCount} unread
                         </p>
+
+
                     )}
                 </div>
 

@@ -350,19 +350,58 @@
     font-family: 'Montserrat', sans-serif;
   }
 
+    .badge-new {
+    background-color: #E3F2FD;
+    color: #1565C0;
+    border: 3px solid #90CAF9;
+  }
+  
+  .badge-good {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 3px solid #A5D6A7;
+  }
+  
+  .badge-fair {
+    background-color: #FFF3E0;
+    color: #9A3412;
+    border: 3px solid #FFCC80;
+  }
+  
+  .badge-poor {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 3px solid #EF9A9A;
+  }
+
   .badge-pending {
     background-color: #D0F0F7;
     color: #004F66;
+    border: 3px solid  #d0f0f7a5;
   }
 
   .badge-approved {
     background-color: #D0F0DC;
     color: #155E2E;
+    border: 3px solid #2c6040a4;
   }
 
   .badge-rejected {
     background-color: #FDE8E8;
     color: #7F1D1D;
+    border: 3px solid #ef8a8a;
+  }
+
+  .badge-reserved {
+    background-color: #e3c5ee;
+    color: #2c0c39;
+    border: 3px solid #ab6ec3
+  }
+
+  .badge-sold {
+    background-color: #E2E8F0;
+    color: #334155;
+    border: 3px solid #627b9f
   }
 
   /* Form label */
@@ -397,6 +436,50 @@
         #000f2b 0%,
         #006D8A 50%,
         #00B4D8 100%);
+  }
+
+  .card-glossy-grey {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+      145deg,
+      #f8f9fa 0%,
+      #e9ecef 50%,
+      #dee2e6 100%
+    );
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+
+  .card-glossy-grey::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 30% 20%,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.1) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .card-glossy-grey::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 100px,
+      rgba(255, 255, 255, 0.1) 100px,
+      rgba(255, 255, 255, 0.1) 102px
+    );
+    pointer-events: none;
   }
 }
 

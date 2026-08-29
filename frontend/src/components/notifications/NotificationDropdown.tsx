@@ -21,6 +21,7 @@ function timeAgo(isoDate: string): string {
     
     if (minutes < 1) return "just now";
     if (minutes < 60) return `${minutes}m ago`;
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h ago`;
     
@@ -36,7 +37,9 @@ export function NotificationDropdown({
     onMarkAllRead,
     onNavigate,
 }: NotificationDropdownProps) {
+
     const visible = notifications.slice(0, VISIBLE_COUNT);
+
     const hasUnread = notifications.some((n) => !n.is_read);
 
     return (
@@ -44,6 +47,7 @@ export function NotificationDropdown({
             className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
         >
             <div className="flex items-center justify-between border-b border-[var(--card-border)] px-4 py-3">
+
                 <h2 className="text-sm font-semibold text-[var(--foreground)]">Notifications</h2>
                 {hasUnread && (
                     <button type="button"
@@ -118,6 +122,7 @@ export function NotificationDropdown({
             >
                 View All
             </Link>
+            
         </div>
     );
 }
