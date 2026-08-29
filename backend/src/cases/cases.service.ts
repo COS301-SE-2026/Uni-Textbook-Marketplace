@@ -4,12 +4,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike, FindOptionsWhere } from 'typeorm';
 import { Case } from '../database/entities/case.entity';
 import { User } from '../database/entities/users.entity';
 import { AuditLog } from '../database/entities/audit_log.entity';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { CaseResponseDto } from './dto/case-response.dto';
+import { PaginatedCasesDto } from './dto/paginated-cases.dto';
 
 @Injectable()
 export class CasesService {
@@ -28,6 +29,7 @@ export class CasesService {
     userId: string,
     dto: CreateCaseDto,
   ): Promise<CaseResponseDto> {
+    
     const user = await this.userRepo.findOne({
       where: { id: userId },
     });
@@ -85,7 +87,7 @@ export class CasesService {
       },
     });
 
-    return CaseResponseDto.fromEntities(cases);
+    return cases.map((caseEntity) => CaseResponseDto.fromEntity(caseEntity));
   }
 
   async getCaseById(caseId: string, userId: string): Promise<CaseResponseDto> {
@@ -109,11 +111,52 @@ export class CasesService {
         status: 'pending',
       },
       order: {
-        created_at: 'ASC', // Oldest first
+        created_at: 'ASC',
       },
     });
 
-    return CaseResponseDto.fromEntities(cases);
+    return cases.map((caseEntity) => CaseResponseDto.fromEntity(caseEntity));
+  }
+
+  async getAllCases(
+    page: number = 1,
+    limit: number = 20,
+    status?: string,
+    search?: string,
+  ): Promise<PaginatedCasesDto> {
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(100, Math.max(1, limit));
+    const skip = (validPage - 1) * validLimit;
+
+    const where: FindOptionsWhere<Case> = {};
+
+    if (status && ['pending', 'upheld', 'reversed'].includes(status)) {
+      where.status = status;
+    }
+
+    if (search) {
+      where.appeal_message = ILike(`%${search}%`);
+    }
+
+    const [cases, total] = await this.caseRepo.findAndCount({
+      where,
+      order: {
+        created_at: 'DESC',
+      },
+      skip,
+      take: validLimit,
+    });
+
+    const data = cases.map((caseEntity) =>
+      CaseResponseDto.fromEntity(caseEntity),
+    );
+
+    return PaginatedCasesDto.fromPaginatedResult({
+      data,
+      total,
+      page: validPage,
+      limit: validLimit,
+    });
   }
 
   async reviewCase(
@@ -158,7 +201,6 @@ export class CasesService {
 
     await this.caseRepo.save(caseEntity);
 
-    // If decision is REVERSED, we unban the user
     if (decision === 'reversed') {
       await this.userRepo.update(
         { id: caseEntity.user_id },
@@ -170,11 +212,10 @@ export class CasesService {
         },
       );
 
-      // Log the unban in audit log
       const auditLog = this.auditLogRepo.create({
         entity_type: 'USER',
         entity_id: user.id,
-        action: 'UPDATE',
+        action: 'UNBAN_USER',
         performedBy: admin,
         notes: `User ${user.email} was unbanned after appeal review. Case ID: ${caseId}`,
         reason: `Decision: ${decision}. Admin notes: ${adminNotes || 'No notes provided'}`,
@@ -184,7 +225,7 @@ export class CasesService {
       const auditLog = this.auditLogRepo.create({
         entity_type: 'CASE',
         entity_id: caseId,
-        action: 'REJECT',
+        action: 'UPHOLD_BAN',
         performedBy: admin,
         notes: `Appeal for user ${user.email} was upheld (ban remains)`,
         reason: adminNotes || 'Ban upheld after appeal review',

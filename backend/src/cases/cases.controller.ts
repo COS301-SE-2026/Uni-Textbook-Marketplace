@@ -6,10 +6,19 @@ import {
   Body,
   Param,
   Req,
+  Query,
   UseGuards,
+  HttpCode,
+  HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -17,6 +26,7 @@ import { Roles } from '../auth/decorator/roles.decorator';
 import { CasesService } from './cases.service';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { CaseResponseDto } from './dto/case-response.dto';
+import { PaginatedCasesDto } from './dto/paginated-cases.dto';
 
 interface AuthenticatedUser {
   id: string;
@@ -29,13 +39,14 @@ interface RequestWithUser extends Request {
 }
 
 @ApiTags('Cases')
+@ApiBearerAuth()
 @Controller('cases')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
-  //POST /cases which is only accessible to users with is_banned = true
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Submit an appeal as a banned user',
     description:
@@ -49,14 +60,6 @@ export class CasesController {
   @ApiResponse({
     status: 400,
     description: 'User is not banned or already has a pending appeal',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - user not logged in',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - user is not banned',
   })
   async createAppeal(
     @Req() req: RequestWithUser,
@@ -117,6 +120,54 @@ export class CasesController {
   })
   async getPendingCases(): Promise<CaseResponseDto[]> {
     return this.casesService.getPendingCases();
+  }
+
+  @Get('admin')
+  @Roles('admin')
+  @ApiOperation({
+    summary: 'ADMIN ONLY - Get all cases with pagination',
+    description: 'Returns all cases with pagination for admin dashboard',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Paginated list of cases',
+    type: PaginatedCasesDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - admin access required',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 20, max: 100)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    description: 'Filter by status (pending, upheld, reversed)',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search in appeal message',
+  })
+  async getAllCases(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 20,
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+  ): Promise<PaginatedCasesDto> {
+    return this.casesService.getAllCases(page, limit, status, search);
   }
 
   @Patch(':id/review')

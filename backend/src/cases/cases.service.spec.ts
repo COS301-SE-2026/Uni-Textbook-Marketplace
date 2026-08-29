@@ -24,7 +24,6 @@ describe('CasesService', () => {
 
  
 
-  
   const mockUniversity: University = {
     id: 'univ-1',
     name: 'University of Pretoria',
@@ -33,7 +32,6 @@ describe('CasesService', () => {
     modules: [],
   } as University;
 
-  
   const mockFaculty: Faculty = {
     id: 'fac-1',
     name: 'Engineering, Built Environment and IT',
@@ -42,7 +40,6 @@ describe('CasesService', () => {
     created_at: new Date(),
   } as Faculty;
 
- 
   const mockListing: Listing = {
     id: 'listing-1',
     title: 'Test Listing',
@@ -65,7 +62,6 @@ describe('CasesService', () => {
     reports: [],
   } as Listing;
 
-  
   const mockReport: Report = {
     id: 'report-1',
     reporter: null as any,
@@ -75,7 +71,6 @@ describe('CasesService', () => {
     created_at: new Date(),
   } as Report;
 
-  
   const mockUser: User = {
     id: 'user-123',
     email: 'banned@test.com',
@@ -99,7 +94,6 @@ describe('CasesService', () => {
     deleted_at: null as any,
   } as User;
 
- 
   const mockAdmin: User = {
     id: 'admin-123',
     email: 'admin@test.com',
@@ -123,7 +117,6 @@ describe('CasesService', () => {
     deleted_at: null as any,
   } as User;
 
- 
   const mockNonBannedUser: User = {
     ...mockUser,
     id: 'user-456',
@@ -140,14 +133,14 @@ describe('CasesService', () => {
     entity_type: 'CASE',
     entity_id: 'case-123',
     action: 'CREATE',
-    performedBy: null as any,
+    performedBy: null as any,  
     performed_at: new Date(),
     notes: 'Test audit log entry',
     reason: null as any,
   } as AuditLog;
 
- 
-  const mockCase: Case = {
+  
+  const createPendingCase = (): Case => ({
     id: 'case-123',
     user_id: 'user-123',
     user: mockUser,
@@ -159,10 +152,9 @@ describe('CasesService', () => {
     created_at: new Date('2026-08-28T10:00:00Z'),
     updated_at: null as any,
     deleted_at: null as any,
-  } as Case;
+  } as Case);
 
-  
-  const mockResolvedCase: Case = {
+  const createUpheldCase = (): Case => ({
     id: 'case-123',
     user_id: 'user-123',
     user: mockUser,
@@ -174,10 +166,9 @@ describe('CasesService', () => {
     created_at: new Date('2026-08-28T10:00:00Z'),
     updated_at: new Date('2026-08-29T10:00:00Z'),
     deleted_at: null as any,
-  } as Case;
+  } as Case);
 
-  
-  const mockReversedCase: Case = {
+  const createReversedCase = (): Case => ({
     id: 'case-123',
     user_id: 'user-123',
     user: mockUser,
@@ -189,9 +180,9 @@ describe('CasesService', () => {
     created_at: new Date('2026-08-28T10:00:00Z'),
     updated_at: new Date('2026-08-29T10:00:00Z'),
     deleted_at: null as any,
-  } as Case;
+  } as Case);
 
- 
+
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -236,17 +227,15 @@ describe('CasesService', () => {
     jest.clearAllMocks();
   });
 
-
+ 
   describe('Access Control Tests', () => {
     describe('createAppeal - Access Control', () => {
       it('should throw NotFoundException if user does not exist', async () => {
-       
         userRepo.findOne.mockResolvedValue(null);
         const dto: CreateCaseDto = {
           appeal_message: 'Test appeal message',
         };
 
-        
         await expect(service.createAppeal('non-existent-user', dto))
           .rejects
           .toThrow(NotFoundException);
@@ -256,13 +245,11 @@ describe('CasesService', () => {
       });
 
       it('should throw BadRequestException if user is not banned', async () => {
-        
         userRepo.findOne.mockResolvedValue(mockNonBannedUser);
         const dto: CreateCaseDto = {
           appeal_message: 'Test appeal message',
         };
 
-       
         await expect(service.createAppeal('user-456', dto))
           .rejects
           .toThrow(BadRequestException);
@@ -272,14 +259,12 @@ describe('CasesService', () => {
       });
 
       it('should throw BadRequestException if user already has a pending appeal', async () => {
-        
         userRepo.findOne.mockResolvedValue(mockUser);
-        caseRepo.findOne.mockResolvedValue(mockCase);
+        caseRepo.findOne.mockResolvedValue(createPendingCase());
         const dto: CreateCaseDto = {
           appeal_message: 'Test appeal message',
         };
 
-        
         await expect(service.createAppeal('user-123', dto))
           .rejects
           .toThrow(BadRequestException);
@@ -289,51 +274,54 @@ describe('CasesService', () => {
       });
 
       it('should allow a banned user with no pending appeal to submit', async () => {
-        
-        userRepo.findOne.mockResolvedValue(mockUser);
-        caseRepo.findOne.mockResolvedValue(null);
-        caseRepo.create.mockReturnValue(mockCase);
-        caseRepo.save.mockResolvedValue(mockCase);
-        auditLogRepo.create.mockReturnValue(mockAuditLog);
-        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+     
+      const mockCase = {
+        ...createPendingCase(),
+        appeal_message: 'I believe I was banned unfairly...',
+      } as Case;
+      
+      userRepo.findOne.mockResolvedValue(mockUser);
+      caseRepo.findOne.mockResolvedValue(null);
+      caseRepo.create.mockReturnValue(mockCase);
+      caseRepo.save.mockResolvedValue(mockCase);
+      auditLogRepo.create.mockReturnValue(mockAuditLog);
+      auditLogRepo.save.mockResolvedValue(mockAuditLog);
 
-        const dto: CreateCaseDto = {
-          appeal_message: 'I believe I was banned unfairly...',
-        };
+      const dto: CreateCaseDto = {
+        appeal_message: 'I believe I was banned unfairly...',
+      };
 
-       
-        const result = await service.createAppeal('user-123', dto);
+      const result = await service.createAppeal('user-123', dto);
 
-        
-        expect(result).toBeDefined();
-        expect(result.user_id).toBe('user-123');
-        expect(result.status).toBe('pending');
-        expect(result.appeal_message).toBe('I believe I was banned unfairly...');
-        expect(caseRepo.create).toHaveBeenCalledWith({
-          user_id: 'user-123',
-          appeal_message: dto.appeal_message,
-          status: 'pending',
-        });
-        expect(caseRepo.save).toHaveBeenCalledWith(mockCase);
-        expect(auditLogRepo.create).toHaveBeenCalled();
-        expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
+      expect(result).toBeDefined();
+      expect(result.user_id).toBe('user-123');
+      expect(result.status).toBe('pending');
+      
+      expect(result.appeal_message).toBe('I believe I was banned unfairly...');
+      expect(caseRepo.create).toHaveBeenCalledWith({
+        user_id: 'user-123',
+        appeal_message: dto.appeal_message,
+        status: 'pending',
       });
+      expect(caseRepo.save).toHaveBeenCalledWith(mockCase);
+      expect(auditLogRepo.create).toHaveBeenCalled();
+      expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
     });
   });
-    describe('Retrieval Tests', () => {
+});
+
+
+  describe('Retrieval Tests', () => {
     describe('getUserCases', () => {
       it('should return all cases for a user', async () => {
-        
         const mockCases = [
-          { ...mockCase, id: 'case-1', status: 'pending' } as Case,
-          { ...mockCase, id: 'case-2', status: 'upheld', reviewed_by: 'admin-123' } as Case,
+          { ...createPendingCase(), id: 'case-1', status: 'pending' } as Case,
+          { ...createPendingCase(), id: 'case-2', status: 'upheld', reviewed_by: 'admin-123' } as Case,
         ];
         caseRepo.find.mockResolvedValue(mockCases);
 
-        
         const result = await service.getUserCases('user-123');
 
-        
         expect(result).toHaveLength(2);
         expect(result[0].id).toBe('case-1');
         expect(result[1].id).toBe('case-2');
@@ -344,13 +332,10 @@ describe('CasesService', () => {
       });
 
       it('should return empty array if user has no cases', async () => {
-    
         caseRepo.find.mockResolvedValue([]);
 
-        
         const result = await service.getUserCases('user-123');
 
-        
         expect(result).toHaveLength(0);
         expect(caseRepo.find).toHaveBeenCalled();
       });
@@ -358,13 +343,11 @@ describe('CasesService', () => {
 
     describe('getCaseById', () => {
       it('should return a case if it belongs to the user', async () => {
-        
+        const mockCase = createPendingCase();
         caseRepo.findOne.mockResolvedValue(mockCase);
 
-    
         const result = await service.getCaseById('case-123', 'user-123');
 
-        
         expect(result).toBeDefined();
         expect(result.id).toBe('case-123');
         expect(result.user_id).toBe('user-123');
@@ -377,20 +360,16 @@ describe('CasesService', () => {
       });
 
       it('should throw NotFoundException if case does not exist', async () => {
-        
         caseRepo.findOne.mockResolvedValue(null);
 
-        
         await expect(service.getCaseById('case-123', 'user-123'))
           .rejects
           .toThrow(NotFoundException);
       });
 
       it('should throw NotFoundException if case belongs to another user', async () => {
-        
         caseRepo.findOne.mockResolvedValue(null);
 
-        
         await expect(service.getCaseById('case-123', 'different-user'))
           .rejects
           .toThrow(NotFoundException);
@@ -399,17 +378,14 @@ describe('CasesService', () => {
 
     describe('getPendingCases', () => {
       it('should return all pending cases ordered by oldest first', async () => {
-        
         const pendingCases = [
-          { ...mockCase, id: 'case-1', status: 'pending', created_at: new Date('2026-08-01') } as Case,
-          { ...mockCase, id: 'case-2', status: 'pending', created_at: new Date('2026-08-02') } as Case,
+          { ...createPendingCase(), id: 'case-1', status: 'pending', created_at: new Date('2026-08-01') } as Case,
+          { ...createPendingCase(), id: 'case-2', status: 'pending', created_at: new Date('2026-08-02') } as Case,
         ];
         caseRepo.find.mockResolvedValue(pendingCases);
 
-        
         const result = await service.getPendingCases();
 
-        
         expect(result).toHaveLength(2);
         expect(result[0].status).toBe('pending');
         expect(result[1].status).toBe('pending');
@@ -420,30 +396,30 @@ describe('CasesService', () => {
       });
 
       it('should return empty array if no pending cases', async () => {
-        
         caseRepo.find.mockResolvedValue([]);
 
-        
         const result = await service.getPendingCases();
 
-        
         expect(result).toHaveLength(0);
       });
     });
   });
-    describe('Admin Review Tests', () => {
-    describe('reviewCase', () => {
-      it('should uphold a ban and keep user banned', async () => {
-       
-        caseRepo.findOne.mockResolvedValue(mockCase);
+
+
+  describe('Case Decision Logic & Audit Log Tests', () => {
+    describe('reviewCase - Upheld Decision', () => {
+      it('should uphold a ban and keep user banned with UPHOLD_BAN audit log', async () => {
+        const pendingCase = createPendingCase();
+        const upheldCase = createUpheldCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
         userRepo.findOne
           .mockResolvedValueOnce(mockAdmin)
           .mockResolvedValueOnce(mockUser);
-        caseRepo.save.mockResolvedValue(mockResolvedCase);
+        caseRepo.save.mockResolvedValue(upheldCase);
         auditLogRepo.create.mockReturnValue(mockAuditLog);
         auditLogRepo.save.mockResolvedValue(mockAuditLog);
 
-        
         const result = await service.reviewCase(
           'case-123',
           'admin-123',
@@ -451,33 +427,38 @@ describe('CasesService', () => {
           'User clearly violated platform rules'
         );
 
-        
         expect(result.status).toBe('upheld');
         expect(result.reviewed_by).toBe('admin-123');
+        expect(result.reviewed_at).toBeDefined();
         expect(userRepo.update).not.toHaveBeenCalled();
+
+        
         expect(auditLogRepo.create).toHaveBeenCalledWith({
           entity_type: 'CASE',
           entity_id: 'case-123',
-          action: 'REJECT',
-          performed_by: mockAdmin,
+          action: 'UPHOLD_BAN',
+          performedBy: mockAdmin,  
           notes: expect.stringContaining('upheld'),
           reason: 'User clearly violated platform rules',
         });
         expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
       });
+    });
 
-      it('should reverse a ban and unban the user when decision is reversed', async () => {
+    describe('reviewCase - Reversed Decision (Unban)', () => {
+      it('should reverse a ban and unban the user with UNBAN_USER audit log', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
         
-        caseRepo.findOne.mockResolvedValue(mockCase);
+        caseRepo.findOne.mockResolvedValue(pendingCase);
         userRepo.findOne
           .mockResolvedValueOnce(mockAdmin)
           .mockResolvedValueOnce(mockUser);
-        caseRepo.save.mockResolvedValue(mockReversedCase);
+        caseRepo.save.mockResolvedValue(reversedCase);
         userRepo.update.mockResolvedValue({ affected: 1 } as any);
         auditLogRepo.create.mockReturnValue(mockAuditLog);
         auditLogRepo.save.mockResolvedValue(mockAuditLog);
 
-        
         const result = await service.reviewCase(
           'case-123',
           'admin-123',
@@ -485,92 +466,299 @@ describe('CasesService', () => {
           'User showed genuine remorse and provided valid evidence'
         );
 
-        
         expect(result.status).toBe('reversed');
         expect(result.reviewed_by).toBe('admin-123');
+
         expect(userRepo.update).toHaveBeenCalledWith(
           { id: 'user-123' },
           {
             is_banned: false,
-            banned_at: null as any,
-            banned_by: null as any,
-            ban_reason: null as any,
+            banned_at: null,
+            banned_by: null,
+            ban_reason: null,
           }
         );
+
+        
         expect(auditLogRepo.create).toHaveBeenCalledWith({
           entity_type: 'USER',
           entity_id: 'user-123',
-          action: 'UPDATE',
-          performed_by: mockAdmin,
+          action: 'UNBAN_USER',
+          performedBy: mockAdmin,  
           notes: expect.stringContaining('unbanned after appeal review'),
           reason: 'Decision: reversed. Admin notes: User showed genuine remorse and provided valid evidence',
         });
         expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
       });
 
-      it('should throw NotFoundException if case does not exist', async () => {
+      it('should handle admin notes being undefined when reversing', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
         
-        caseRepo.findOne.mockResolvedValue(null);
-
-        
-        await expect(service.reviewCase('invalid-case', 'admin-123', 'upheld'))
-          .rejects
-          .toThrow(NotFoundException);
-      });
-
-      it('should throw BadRequestException if case is already reviewed', async () => {
-        
-        caseRepo.findOne.mockResolvedValue(mockResolvedCase);
-
-        
-        await expect(service.reviewCase('case-123', 'admin-123', 'reversed'))
-          .rejects
-          .toThrow(BadRequestException);
-        await expect(service.reviewCase('case-123', 'admin-123', 'reversed'))
-          .rejects
-          .toThrow('This case has already been reviewed. Status: upheld');
-      });
-
-      it('should throw NotFoundException if admin does not exist', async () => {
-       
-        caseRepo.findOne.mockResolvedValue(mockCase);
-        userRepo.findOne.mockResolvedValue(null);
-
-        
-        await expect(service.reviewCase('case-123', 'invalid-admin', 'upheld'))
-          .rejects
-          .toThrow(NotFoundException);
-      });
-
-      it('should handle admin notes being undefined', async () => {
-       
-        caseRepo.findOne.mockResolvedValue(mockCase);
+        caseRepo.findOne.mockResolvedValue(pendingCase);
         userRepo.findOne
           .mockResolvedValueOnce(mockAdmin)
           .mockResolvedValueOnce(mockUser);
-        caseRepo.save.mockResolvedValue(mockResolvedCase);
+        caseRepo.save.mockResolvedValue(reversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
         auditLogRepo.create.mockReturnValue(mockAuditLog);
         auditLogRepo.save.mockResolvedValue(mockAuditLog);
 
-        
         const result = await service.reviewCase(
           'case-123',
           'admin-123',
-          'upheld',
+          'reversed',
           undefined
         );
 
+        expect(result.status).toBe('reversed');
         
-        expect(result.status).toBe('upheld');
         expect(auditLogRepo.create).toHaveBeenCalledWith({
-          entity_type: 'CASE',
-          entity_id: 'case-123',
-          action: 'REJECT',
-          performed_by: mockAdmin,
-          notes: expect.stringContaining('upheld'),
-          reason: undefined,
+          entity_type: 'USER',
+          entity_id: 'user-123',
+          action: 'UNBAN_USER',
+          performedBy: mockAdmin,  
+          notes: expect.stringContaining('unbanned after appeal review'),
+          reason: 'Decision: reversed. Admin notes: No notes provided',
         });
       });
     });
+
+    describe('reviewCase - Audit Log Action Verification', () => {
+      it('should use UPHOLD_BAN action when decision is upheld', async () => {
+        const pendingCase = createPendingCase();
+        const upheldCase = createUpheldCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(upheldCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'upheld', 'Ban upheld');
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            action: 'UPHOLD_BAN',
+            entity_type: 'CASE',
+            entity_id: 'case-123',
+            performedBy: mockAdmin,  
+          })
+        );
+      });
+
+      it('should use UNBAN_USER action when decision is reversed', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(reversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'reversed', 'User unbanned');
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            action: 'UNBAN_USER',
+            entity_type: 'USER',
+            entity_id: 'user-123',
+            performedBy: mockAdmin, 
+          })
+        );
+      });
+    });
+
+    describe('reviewCase - Error Handling', () => {
+      it('should throw NotFoundException if case does not exist', async () => {
+        caseRepo.findOne.mockResolvedValue(null);
+
+        await expect(
+          service.reviewCase('invalid-case', 'admin-123', 'upheld')
+        ).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw BadRequestException if case is already reviewed', async () => {
+        const upheldCase = createUpheldCase();
+        caseRepo.findOne.mockResolvedValue(upheldCase);
+
+        await expect(
+          service.reviewCase('case-123', 'admin-123', 'reversed')
+        ).rejects.toThrow(BadRequestException);
+      });
+
+      it('should throw NotFoundException if admin does not exist', async () => {
+        const pendingCase = createPendingCase();
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne.mockResolvedValue(null);
+
+        await expect(
+          service.reviewCase('case-123', 'invalid-admin', 'upheld')
+        ).rejects.toThrow(NotFoundException);
+      });
+
+      it('should throw NotFoundException if user who submitted appeal does not exist', async () => {
+        const pendingCase = createPendingCase();
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(null);
+
+        await expect(
+          service.reviewCase('case-123', 'admin-123', 'reversed')
+        ).rejects.toThrow(NotFoundException);
+      });
+    });
+
+    describe('reviewCase - User Status After Decision', () => {
+      it('should keep is_banned = true when decision is upheld', async () => {
+        const pendingCase = createPendingCase();
+        const upheldCase = createUpheldCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(upheldCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'upheld', 'Ban upheld');
+
+        expect(userRepo.update).not.toHaveBeenCalled();
+      });
+
+      it('should set is_banned = false and clear ban fields when decision is reversed', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(reversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'reversed', 'User unbanned');
+
+        expect(userRepo.update).toHaveBeenCalledWith(
+          { id: 'user-123' },
+          {
+            is_banned: false,
+            banned_at: null,
+            banned_by: null,
+            ban_reason: null,
+          }
+        );
+      });
+    });
+
+    describe('reviewCase - Audit Log Reason Field', () => {
+      it('should include admin notes in audit log reason field for upheld decision', async () => {
+        const pendingCase = createPendingCase();
+        const upheldCase = createUpheldCase();
+        const adminNotes = 'User provided valid evidence of innocence';
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(upheldCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'upheld', adminNotes);
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            reason: adminNotes,
+            performedBy: mockAdmin,  
+          })
+        );
+      });
+
+      it('should include admin notes in audit log reason field for reversed decision', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
+        const adminNotes = 'User was wrongly banned';
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(reversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'reversed', adminNotes);
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            reason: expect.stringContaining(adminNotes),
+            performedBy: mockAdmin,  
+          })
+        );
+      });
+
+      it('should use default message when admin notes are not provided for upheld', async () => {
+        const pendingCase = createPendingCase();
+        const upheldCase = createUpheldCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(upheldCase);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'upheld', undefined);
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            reason: 'Ban upheld after appeal review',
+            performedBy: mockAdmin,  
+          })
+        );
+      });
+
+      it('should use default message when admin notes are not provided for reversed', async () => {
+        const pendingCase = createPendingCase();
+        const reversedCase = createReversedCase();
+        
+        caseRepo.findOne.mockResolvedValue(pendingCase);
+        userRepo.findOne
+          .mockResolvedValueOnce(mockAdmin)
+          .mockResolvedValueOnce(mockUser);
+        caseRepo.save.mockResolvedValue(reversedCase);
+        userRepo.update.mockResolvedValue({ affected: 1 } as any);
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
+
+        await service.reviewCase('case-123', 'admin-123', 'reversed', undefined);
+
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            reason: 'Decision: reversed. Admin notes: No notes provided',
+            performedBy: mockAdmin, 
+          })
+        );
+      });
+    });
   });
-})
+});
