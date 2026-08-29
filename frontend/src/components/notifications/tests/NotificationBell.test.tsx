@@ -29,4 +29,167 @@ jest.mock('../NotificationDropdown', () => ({
 
 const mockUseNotifications = useNotifications as jest.MockedFunction<typeof useNotifications>;
 
+describe('NotificationBell', () => {
+  const mockMarkRead = jest.fn();
+  const mockMarkAllRead = jest.fn();
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('rendering', () => {
+    it('renders the bell icon', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      expect(bellButton).toBeInTheDocument();
+      expect(bellButton.querySelector('svg')).toBeInTheDocument();
+    });
+
+    it('renders unread count badge when there are unread notifications', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 5,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const badge = screen.getByText('5');
+      expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass('bg-[#00B4D8]');
+    });
+
+    it('shows "9+" when unread count exceeds 9', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 15,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const badge = screen.getByText('9+');
+      expect(badge).toBeInTheDocument();
+    });
+
+    it('does not render badge when there are no unread notifications', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const badge = screen.queryByText(/\d/);
+      expect(badge).not.toBeInTheDocument();
+    });
+
+    it('updates aria-label with unread count', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 3,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Notifications, 3 unread');
+    });
+
+    it('uses generic aria-label when no unread notifications', () => {
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Notifications');
+    });
+  });
+
+  describe('interaction', () => {
+    it('opens dropdown when bell is clicked', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [
+          { 
+            id: '1', 
+            entity_type: 'listing_approved', 
+            message_info: 'Listing approved',
+            is_read: false,
+            created_at: new Date().toISOString(),
+            entity_id: 'listing-123',
+          },
+        ],
+        unreadCount: 1,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(<NotificationBell />);
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      const dropdown = screen.getByTestId('notification-dropdown');
+      expect(dropdown).toBeInTheDocument();
+    });
+
+    it('closes dropdown when clicking outside', async () => {
+      const user = userEvent.setup();
+      mockUseNotifications.mockReturnValue({
+        notifications: [],
+        unreadCount: 0,
+        isLoading: false,
+        markRead: mockMarkRead,
+        markAllRead: mockMarkAllRead,
+      });
+
+      render(
+        <div>
+          <div data-testid="outside-element">Outside</div>
+          <NotificationBell />
+        </div>
+      );
+      
+      const bellButton = screen.getByRole('button', { name: /notifications/i });
+      await user.click(bellButton);
+      
+      const dropdown = screen.getByTestId('notification-dropdown');
+      expect(dropdown).toBeInTheDocument();
+      
+      
+      const outsideElement = screen.getByTestId('outside-element');
+      await user.click(outsideElement);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
+      });
+    });
+
+  )}
