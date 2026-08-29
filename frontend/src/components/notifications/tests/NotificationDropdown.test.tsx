@@ -162,4 +162,139 @@ describe('NotificationDropdown', () => {
       expect(screen.getByText('Mark all read')).toBeInTheDocument();
       expect(screen.getByTestId('check-check-icon')).toBeInTheDocument();
     });
-  )}
+  
+    it('hides "Mark all read" button when all notifications are read', () => {
+      const notifications = createNotifications(3).map(n => ({ ...n, is_read: true }));
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.queryByText('Mark all read')).not.toBeInTheDocument();
+    });
+
+    it('renders "View All" link', () => {
+      render(
+        <NotificationDropdown
+          notifications={[]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText('View All')).toBeInTheDocument();
+      const link = screen.getByTestId('mock-link');
+      expect(link).toHaveAttribute('href', '/notifications');
+    });
+  });
+
+  describe('time formatting', () => {
+    it('shows "just now" for notifications less than 1 minute old', () => {
+      const notification = {
+        ...baseNotification,
+        created_at: new Date().toISOString(),
+      };
+
+      render(
+        <NotificationDropdown
+          notifications={[notification]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText('just now')).toBeInTheDocument();
+    });
+
+    it('shows "Xm ago" for notifications less than 1 hour old', () => {
+      const notification = {
+        ...baseNotification,
+        created_at: new Date(Date.now() - 30 * 60000).toISOString(),
+      };
+
+      render(
+        <NotificationDropdown
+          notifications={[notification]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText('30m ago')).toBeInTheDocument();
+    });
+
+    it('shows "Xh ago" for notifications less than 24 hours old', () => {
+      const notification = {
+        ...baseNotification,
+        created_at: new Date(Date.now() - 5 * 3600000).toISOString(),
+      };
+
+      render(
+        <NotificationDropdown
+          notifications={[notification]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText('5h ago')).toBeInTheDocument();
+    });
+
+    it('shows "Xd ago" for notifications older than 24 hours', () => {
+      const notification = {
+        ...baseNotification,
+        created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+      };
+
+      render(
+        <NotificationDropdown
+          notifications={[notification]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText('3d ago')).toBeInTheDocument();
+    });
+  });
+
+  describe('interaction', () => {
+    it('calls onMarkRead when clicking an unread notification', async () => {
+      const user = userEvent.setup();
+      const notifications = [
+        { ...baseNotification, id: 'notif-1', is_read: false },
+        { ...baseNotification, id: 'notif-2', is_read: true },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const links = screen.getAllByTestId('mock-link');
+      await user.click(links[0]); 
+
+      expect(mockOnMarkRead).toHaveBeenCalledWith('notif-1');
+      expect(mockOnNavigate).toHaveBeenCalled();
+    });
+
