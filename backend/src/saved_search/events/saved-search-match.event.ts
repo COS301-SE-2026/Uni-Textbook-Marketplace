@@ -4,4 +4,6 @@ export class SavedSearchMatchEvent {
   listingId: string;
   listingTitle: string;
   matchDate: Date;
+  studentEmail: string;
+  name: string;
 }
