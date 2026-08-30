@@ -5,6 +5,8 @@ import { NotificationsController } from './notifications.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
 import { SavedSearchMatchListener } from './listeners/saved-search-match.listener';
+import { EMAIL_SERVICE } from '../email/email.interface';
+import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Notifications])],
@@ -13,7 +15,11 @@ import { SavedSearchMatchListener } from './listeners/saved-search-match.listene
     NotificationsService,
     ListingNotificationListener,
     SavedSearchMatchListener,
+    {
+      provide: EMAIL_SERVICE,
+      useClass: MailtrapEmailProvider,
+    },
   ],
   exports: [NotificationsService],
 })
-export class NotificationsModule {}
+export class NotificationsModule { }
