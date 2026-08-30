@@ -64,7 +64,6 @@ export class CasesService {
 
     const savedCase = await this.caseRepo.save(newCase);
 
-    // FIXED: Added performedBy to the audit log
     const auditLog = this.auditLogRepo.create({
       entity_type: 'CASE',
       entity_id: savedCase.id,
@@ -190,6 +189,7 @@ export class CasesService {
 
     const user = await this.userRepo.findOne({
       where: { id: caseEntity.user_id },
+      relations: ['banned_by'],
     });
 
     if (!user) {
@@ -203,15 +203,11 @@ export class CasesService {
     await this.caseRepo.save(caseEntity);
 
     if (decision === 'reversed') {
-      await this.userRepo.update(
-        { id: caseEntity.user_id },
-        {
-          is_banned: false,
-          banned_at: null,
-          banned_by: null,
-          ban_reason: null,
-        },
-      );
+      user.is_banned = false;
+      user.banned_at = null;
+      user.banned_by = null;
+      user.ban_reason = null;
+      await this.userRepo.save(user);
 
       const auditLog = this.auditLogRepo.create({
         entity_type: 'USER',

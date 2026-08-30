@@ -458,8 +458,10 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
 
       
       for (const log of auditLogs) {
-        expect(log.performedBy).toBeDefined();
-        expect(log.performedBy.id).toBe(adminUser.id);
+  expect(log.performedBy).toBeDefined();
+  
+  expect(log.performedBy.id).toBe(adminUser.id);
+
       }
     });
   });
