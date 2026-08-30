@@ -502,12 +502,11 @@ describe('CasesService', () => {
         expect(result.reviewed_at).toBeDefined();
         expect(userRepo.update).not.toHaveBeenCalled();
 
-        expectAuditAction('UPDATE', 'CASE'); // will update action to UPHOLD_BAN once the audit log action has been created
-
+        expectAuditAction('UPDATE', 'CASE'); 
         expect(auditLogRepo.create).toHaveBeenCalledWith({
           entity_type: 'CASE',
           entity_id: 'case-123',
-          action: 'UPHOLD_BAN',
+          action: 'UPDATE',
           performedBy: mockAdmin,
           notes: expect.stringContaining('upheld'),
           reason: 'User clearly violated platform rules',

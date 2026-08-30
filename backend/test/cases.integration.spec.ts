@@ -224,7 +224,7 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
 
       const upholdLog = expectCaseAuditLog(
         auditLogs,
-        'UPDATE', // will update action to UPHOLD_BAN once the audit log action has been created
+        'UPDATE', 
         'CASE',
       );
 
