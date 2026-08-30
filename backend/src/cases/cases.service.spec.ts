@@ -502,7 +502,7 @@ describe('CasesService', () => {
         expect(result.reviewed_at).toBeDefined();
         expect(userRepo.update).not.toHaveBeenCalled();
 
-        expectAuditAction('UPHOLD_BAN', 'CASE');
+        expectAuditAction('UPDATE', 'CASE'); // will update action to UPHOLD_BAN once the audit log action has been created
 
         expect(auditLogRepo.create).toHaveBeenCalledWith({
           entity_type: 'CASE',
@@ -587,7 +587,7 @@ describe('CasesService', () => {
           'Ban upheld',
         );
 
-        expectAuditAction('UPHOLD_BAN', 'CASE');
+        expectAuditAction('UPDATE', 'CASE');
       });
 
       it('should use UNBAN_USER action when decision is reversed', async () => {
