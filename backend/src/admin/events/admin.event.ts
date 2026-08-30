@@ -5,4 +5,5 @@ export class AdminEvent {
   listingId: string;
   studentId: string;
   description: string;
+  studentEmail: string;
 }
