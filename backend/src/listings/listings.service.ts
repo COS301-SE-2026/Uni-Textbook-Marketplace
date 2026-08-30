@@ -2,9 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
-  Inject,
-  forwardRef,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeepPartial } from 'typeorm';
@@ -23,7 +21,6 @@ import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
-import { SavedSearchesService } from '../saved_search/saved_search.service';
 
 const LISTING_STATUS_TRANSITIONS: Record<ListingsStatus, ListingsStatus[]> = {
   [ListingsStatus.AVAILABLE]: [
@@ -53,9 +50,6 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private readonly moduleRepo: Repository<ModuleEntity>,
-
-    @Inject(forwardRef(() => SavedSearchesService))
-    private readonly savedSearchesService: SavedSearchesService,
 
     private readonly eventEmitter: EventEmitter2,
   ) {}
@@ -91,48 +85,7 @@ export class ListingsService {
 
     const savedListing = await this.listingRepo.save(listing);
 
-    this.checkSavedSearchMatches(savedListing).catch((error: unknown) => {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error('Error checking saved search matches:', errorMessage);
-    });
-
     return savedListing;
-  }
-
-  private async checkSavedSearchMatches(listing: Listing): Promise<void> {
-    try {
-      const matches =
-        await this.savedSearchesService.findMatchingSavedSearches(listing);
-
-      if (matches.length === 0) {
-        console.log(`No saved search matches found for listing ${listing.id}`);
-        return;
-      }
-      console.log(
-        `Found ${matches.length} saved search matches for listing ${listing.id}`,
-      );
-
-      for (const match of matches) {
-        console.log(
-          `User ${match.userId} has a saved search match for listing ${listing.id}`,
-        );
-       this.eventEmitter.emit('saved-search.match', {
-          userId: match.userId,
-          savedSearchId: match.savedSearchId,
-          listingId: listing.id,
-          listingTitle: listing.title || 'New Listing Available',
-          matchDate: new Date(),
-        });
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error(
-        `Error checking saved search matches for listing ${listing.id}:`,
-        errorMessage,
-      );
-    }
   }
 
   //get the validated ones
@@ -286,7 +239,6 @@ export class ListingsService {
       relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
-    console.log('in services on listing ', listing);
 
     if (!listing) throw new NotFoundException('listing not found');
 
@@ -298,23 +250,7 @@ export class ListingsService {
       event.listingId = listing.id;
       event.studentId = listing.seller.id;
 
-      const changes: string[] = [];
-
-      if (dto.title && dto.title !== listing.title) {
-        changes.push(`Title: "${listing.title}" : "${dto.title}"`);
-      }
-      if (dto.price && dto.price !== listing.price) {
-        changes.push(`Price: ${listing.price} : ${dto.price}`);
-      }
-      if (dto.condition && dto.condition !== listing.condition) {
-        changes.push(`Condition: ${listing.condition} : ${dto.condition}`);
-      }
-      if (dto.description && dto.description !== listing.description) {
-        changes.push(`Description updated`);
-      }
-      if (dto.photo_urls && dto.photo_urls !== listing.photo_urls) {
-        changes.push(`Photos updated`);
-      }
+      const changes = this.createRejectedListingChanges(dto,listing);
 
       event.message = `Listing has been edited. Changes: ${changes.join('; ')}`;
       listing.status = ListingStatus.PENDING;
