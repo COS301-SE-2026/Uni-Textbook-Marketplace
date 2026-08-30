@@ -24,6 +24,7 @@ import { MessagingModule } from '../src/messaging/messaging.module';
 import { Notifications } from '../src/database/entities/notifications.entity';
 import { Wishlist } from '../src/database/entities/wishlist.entity';
 import { Report } from 'src/database/entities/report.entity';
+import { CasesModule } from 'src/cases/cases.module';
 
 @Module({
     imports: [
@@ -58,6 +59,7 @@ import { Report } from 'src/database/entities/report.entity';
         AdminModule,
         SavedSearchesModule,
         MessagingModule,
+        CasesModule,
     ],
 })
 export class TestModule {}

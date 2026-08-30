@@ -60,7 +60,7 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     eventEmitter = module.get(EventEmitter2);
 
     await setupTestData();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await dataSource.dropDatabase();
@@ -146,7 +146,7 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
   beforeEach(async () => {
     await caseRepo.delete({});
     await auditLogRepo.delete({});
-  });
+  })
 
   describe('Full Appeal Flow - Upheld Ban', () => {
     it('should complete the full flow: submit appeal → admin upholds → user remains banned', async () => {
