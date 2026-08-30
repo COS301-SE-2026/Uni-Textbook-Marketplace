@@ -13,6 +13,7 @@ import { SavedSearchesModule } from '../src/saved_search/saved_search.module';
 
 import { User } from '../src/database/entities/users.entity';
 import { Listing } from '../src/database/entities/listing.entity';
+import { Case } from 'src/database/entities/case.entity';
 import { Book } from '../src/database/entities/book.entity';
 import { Module as ModuleEntity } from '../src/database/entities/module.entity';
 import { University } from '../src/database/entities/university.entity';
@@ -46,7 +47,7 @@ import { CasesModule } from 'src/cases/cases.module';
                     synchronize: true,
                     dropSchema: true,
                     entities: [
-                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,
+                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,Case
                     ],
                     logging: false,
                 };
