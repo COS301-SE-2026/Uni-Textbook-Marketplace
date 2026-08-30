@@ -27,7 +27,12 @@ CREATE TABLE users (
 
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
-    deleted_at TIMESTAMPTZ
+    deleted_at TIMESTAMPTZ,
+
+    is_banned BOOLEAN DEFAULT false,
+    banned_at TIMESTAMPTZ,
+    banned_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    ban_reason TEXT NULL
 );
 
 

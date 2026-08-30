@@ -10,6 +10,7 @@ import { ModuleModule } from '../src/modules/module.module';
 import { BooksModule } from '../src/books/books.module';
 import { AdminModule } from '../src/admin/admin.module';
 import { SavedSearchesModule } from '../src/saved_search/saved_search.module';
+import { NotificationsModule } from '../src/notifications/notifications.module';
 
 import { User } from '../src/database/entities/users.entity';
 import { Listing } from '../src/database/entities/listing.entity';
@@ -25,6 +26,7 @@ import { Notifications } from '../src/database/entities/notifications.entity';
 import { Wishlist } from '../src/database/entities/wishlist.entity';
 import { Report } from 'src/database/entities/report.entity';
 import { CasesModule } from 'src/cases/cases.module';
+import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-search-match.listener';
 
 @Module({
     imports: [
@@ -45,6 +47,7 @@ import { CasesModule } from 'src/cases/cases.module';
                     url: dbUrl,
                     synchronize: true,
                     dropSchema: true,
+                    migrationsRun: false,
                     entities: [
                         User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,
                     ],
@@ -60,6 +63,8 @@ import { CasesModule } from 'src/cases/cases.module';
         SavedSearchesModule,
         MessagingModule,
         CasesModule,
+         NotificationsModule,
     ],
+    providers: [SavedSearchMatchListener],
 })
 export class TestModule {}
