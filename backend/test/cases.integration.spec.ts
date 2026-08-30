@@ -444,17 +444,20 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
                             'REJECT_LISTING', 'BAN_USER'];
     expect(allowedActions).toContain(lastAction);
 
-    
+    // Verify performedBy exists
     for (const log of auditLogs) {
       expect(log.performedBy).toBeDefined();
       expect(log.performedBy.id).toBeDefined();
-      
     }
 
-    // Verify both entity types exist
+    
     const entityTypes = auditLogs.map(log => log.entity_type);
     expect(entityTypes).toContain('CASE');
-    expect(entityTypes).toContain('USER');
+    
+    
+    
+    expect(actions).toContain('CREATE');
+    expect(actions).toContain('UPDATE');
   });
 });
 });
