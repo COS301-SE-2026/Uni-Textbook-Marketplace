@@ -2,7 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeepPartial } from 'typeorm';
@@ -239,7 +239,6 @@ export class ListingsService {
       relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
-
     if (!listing) throw new NotFoundException('listing not found');
 
     if (listing.status === ListingStatus.REJECTED) {
@@ -250,7 +249,7 @@ export class ListingsService {
       event.listingId = listing.id;
       event.studentId = listing.seller.id;
 
-      const changes = this.createRejectedListingChanges(dto,listing);
+      const changes = this.createRejectedListingChanges(dto, listing);
 
       event.message = `Listing has been edited. Changes: ${changes.join('; ')}`;
       listing.status = ListingStatus.PENDING;

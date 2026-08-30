@@ -1,37 +1,32 @@
 interface NotificationEmailContent {
-
   subject: string;
   text: string;
   bodyHtml: string;
 }
 
 interface ListingNotificationData {
-
   recipientName: string;
   listingTitle: string;
   reason?: string;
 }
 
 interface MessageNotificationData {
-
   recipientName: string;
   senderName: string;
   listingTitle?: string;
   messagePreview: string;
-
 }
 
 interface SavedSearchMatchData {
-
   recipientName: string;
   listingTitle: string;
   listingId?: string;
 }
 
-export function approveListingTemplate(data: ListingNotificationData): NotificationEmailContent {
-
+export function approveListingTemplate(
+  data: ListingNotificationData,
+): NotificationEmailContent {
   return {
-
     subject: 'Your listing has been approved',
     text: `Hi ${data.recipientName}, your listing "${data.listingTitle}" is now approved and live on Uni Textbook Marketplace.`,
     bodyHtml: `
@@ -60,15 +55,14 @@ export function approveListingTemplate(data: ListingNotificationData): Notificat
                 <p style="margin:0;">Students can now find and message you about it.</p>
                 </td>
             </tr>
-        `
-  }
-
+        `,
+  };
 }
 
-export function rejectedListingTemplate(data: ListingNotificationData & { reason?: string }): NotificationEmailContent {
-
+export function rejectedListingTemplate(
+  data: ListingNotificationData & { reason?: string },
+): NotificationEmailContent {
   return {
-
     subject: 'Your listing was not approved',
     text: `Hi ${data.recipientName}, your listing "${data.listingTitle}" was not approved.${data.reason ? `Reason: ${data.reason}` : ''}`,
     bodyHtml: `
@@ -87,10 +81,11 @@ export function rejectedListingTemplate(data: ListingNotificationData & { reason
                                 <span style="font-family:'Montserrat', Helvetica, Arial, sans-serif; font-size:14px; font-weight:700; color:#7F1D1D; display:block; margin-bottom:${data.reason ? '6px' : '0'};">
                                 "${data.listingTitle}" was not approved, reason:
                                 </span>
-                                ${data.reason
-        ? `<span style="font-family:'Montserrat', Helvetica, Arial, sans-serif; font-size:13px; color:#7F1D1D;">${data.reason}</span>`
-        : ''
-      }
+                                ${
+                                  data.reason
+                                    ? `<span style="font-family:'Montserrat', Helvetica, Arial, sans-serif; font-size:13px; color:#7F1D1D;">${data.reason}</span>`
+                                    : ''
+                                }
                             </td>
                         </tr>
                     </table>
@@ -102,22 +97,25 @@ export function rejectedListingTemplate(data: ListingNotificationData & { reason
                     <p style="margin:0;">You can edit and it will be re-evaluated</p>
                 </td>
             </tr>
-            `
-  }
+            `,
+  };
 }
 
-export function newMessageTemplate(data: MessageNotificationData): NotificationEmailContent {
-
+export function newMessageTemplate(
+  data: MessageNotificationData,
+): NotificationEmailContent {
   return {
-
     subject: `New message from ${data.senderName}`,
     text: `Hi ${data.recipientName}, ${data.senderName} sent you a message about ${data.listingTitle}`,
     bodyHtml: `
 
       <tr>
         <td style="padding:8px 30px 0 30px; font-family:'Montserrat', Helvetica, Arial, sans-serif; font-size:16px; line-height:1.6; color:#3a3a3a;">
-          <p style="margin:0 0 20px 0;">Hi ${data.recipientName}, you've got a new message${data.listingTitle ? ` about <strong>${data.listingTitle}</strong>` : ''
-      }.</p>
+          <p style="margin:0 0 20px 0;">Hi ${data.recipientName}, you've got a new message${
+            data.listingTitle
+              ? ` about <strong>${data.listingTitle}</strong>`
+              : ''
+          }.</p>
         </td>
       </tr>
 
@@ -140,10 +138,10 @@ export function newMessageTemplate(data: MessageNotificationData): NotificationE
   };
 }
 
-export function listingEditedTemplate(data: ListingNotificationData & { changesSummary: string }): NotificationEmailContent {
-
+export function listingEditedTemplate(
+  data: ListingNotificationData & { changesSummary: string },
+): NotificationEmailContent {
   return {
-
     subject: 'A listing you follow was updated',
     text: `Hi ${data.recipientName}, "${data.listingTitle}" was updated: ${data.changesSummary}`,
     bodyHtml: `
@@ -172,10 +170,10 @@ export function listingEditedTemplate(data: ListingNotificationData & { changesS
   };
 }
 
-export function savedSearchMatchTemplate(data: SavedSearchMatchData): NotificationEmailContent {
-
+export function savedSearchMatchTemplate(
+  data: SavedSearchMatchData,
+): NotificationEmailContent {
   return {
-
     subject: 'A new listing matches your saved search',
     text: `Hi ${data.recipientName}, a new listing "${data.listingTitle}" matches one of your saved searches on Uni Textbook Marketplace.`,
     bodyHtml: `
@@ -205,7 +203,6 @@ export function savedSearchMatchTemplate(data: SavedSearchMatchData): Notificati
                 <p style="margin:0;">Check it out before it's gone.</p>
                 </td>
             </tr>
-        `
-  }
-
+        `,
+  };
 }

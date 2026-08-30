@@ -8,9 +8,6 @@ import { Repository, In, DataSource } from 'typeorm';
 import { SavedSearch } from '../database/entities/saved_search.entity';
 import { User } from '../database/entities/users.entity';
 import { Listing } from '../database/entities/listing.entity';
-import { Book } from '../database/entities/book.entity';
-import { Module as ModuleEntity } from '../database/entities/module.entity';
-
 import {
   CreateSavedSearchDto,
   GetSavedSearchesQueryDto,
@@ -22,12 +19,9 @@ export class SavedSearchesService {
   private savedSearchRepository: Repository<SavedSearch>;
   private userRepository: Repository<User>;
 
-
   constructor(private dataSource: DataSource) {
-
     this.savedSearchRepository = this.dataSource.getRepository(SavedSearch);
     this.userRepository = this.dataSource.getRepository(User);
-    
   }
 
   private toNumber(value: string | number | undefined | null): number | null {

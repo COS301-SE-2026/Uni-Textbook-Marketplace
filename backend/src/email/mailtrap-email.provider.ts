@@ -3,7 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { Transporter } from 'nodemailer';
 import { IEmailService } from './email.interface';
-import { approveListingTemplate, rejectedListingTemplate , newMessageTemplate, listingEditedTemplate , savedSearchMatchTemplate} from './email.templates';
+import {
+  approveListingTemplate,
+  rejectedListingTemplate,
+  newMessageTemplate,
+  listingEditedTemplate,
+  savedSearchMatchTemplate,
+} from './email.templates';
 import { wrapEmailPage } from './wrapper';
 
 @Injectable()
@@ -183,15 +189,16 @@ export class MailtrapEmailProvider implements IEmailService {
   }
 
   async sendNotificationEmail(
-
     to: string,
-    entityType: 'APPROVE_LISTING' | 'REJECT_LISTING' | 'message' | 'Edited listing' | 'SAVED_SEARCH_MATCH',
+    entityType:
+      | 'APPROVE_LISTING'
+      | 'REJECT_LISTING'
+      | 'message'
+      | 'Edited listing'
+      | 'SAVED_SEARCH_MATCH',
     data: any,
-
   ): Promise<void> {
-
-    if (this.isTestEnvironment || !this.transporter){
-      
+    if (this.isTestEnvironment || !this.transporter) {
       this.logger.log(`[TEST MODE] Would send ${entityType} email to ${to}`);
       return;
     }
@@ -203,7 +210,6 @@ export class MailtrapEmailProvider implements IEmailService {
     }
 
     const content = {
-
       APPROVE_LISTING: approveListingTemplate,
       REJECT_LISTING: rejectedListingTemplate,
       message: newMessageTemplate,
@@ -211,24 +217,17 @@ export class MailtrapEmailProvider implements IEmailService {
       SAVED_SEARCH_MATCH: savedSearchMatchTemplate,
     }[entityType](data);
 
-    try{
-
+    try {
       await this.transporter.sendMail({
-        
         from: fromEmail,
         to,
         subject: content.subject,
         text: content.text,
         html: wrapEmailPage(content.bodyHtml),
-
       });
-
     } catch (error) {
-
       this.logger.error(`Failed to send OTP email to ${to}`, error);
       throw new Error('Could not send verification email');
-      
     }
-
   }
 }

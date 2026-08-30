@@ -16,11 +16,10 @@ export class NotificationsService {
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
-  ) { }
+  ) {}
 
   //for notifying student of their listing
   async create(event: AdminEvent) {
-
     const noti = this.notificationRepo.create({
       user_id: { id: event.studentId },
       entity_type: event.action,
@@ -31,7 +30,6 @@ export class NotificationsService {
     await this.notificationRepo.save(noti);
 
     if (event.action == 'REJECT_LISTING') {
-
       await this.emailService.sendNotificationEmail(
         event.studentEmail,
         event.action,
@@ -40,7 +38,7 @@ export class NotificationsService {
           listingTitle: event.title,
           reason: event.description,
         },
-      )
+      );
     }
 
     await this.emailService.sendNotificationEmail(
@@ -50,12 +48,10 @@ export class NotificationsService {
         recipientName: event.name,
         listingTitle: event.title,
       },
-    )
-
+    );
   }
 
   async createFromSavedSearch(event: SavedSearchMatchEvent) {
-
     const noti = this.notificationRepo.create({
       user_id: { id: event.userId },
       entity_type: 'SAVED_SEARCH_MATCH',
@@ -71,7 +67,7 @@ export class NotificationsService {
         recipientName: event.name,
         listingTitle: event.listingTitle,
       },
-    )
+    );
   }
 
   async mynotifications(userId: string, page: number = 1, limit: number = 10) {
@@ -156,7 +152,7 @@ export class NotificationsService {
         listingTitle: event.listingTitle,
         senderName: event.messageFrom,
       },
-    )
+    );
   }
 
   async deleteNotification(userId: string, notificationId: string) {

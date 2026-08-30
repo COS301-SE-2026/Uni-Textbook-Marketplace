@@ -33,7 +33,7 @@ export class AdminService {
     private readonly auditLogRepository: Repository<AuditLog>,
 
     private readonly savedSearchesService: SavedSearchesService,
-  ) { }
+  ) {}
 
   private async updateListingStatus(
     id: string,
@@ -42,68 +42,66 @@ export class AdminService {
     action: 'APPROVE_LISTING' | 'REJECT_LISTING',
     reason?: string,
   ) {
-    const { savedlisting, listing, event } = await this.entityManager.transaction(async (manager) => {
+    const { savedlisting, listing, event } =
+      await this.entityManager.transaction(async (manager) => {
+        const listingRepository = manager.getRepository(Listing);
+        const auditLogRepository = manager.getRepository(AuditLog);
+        const userRepository = manager.getRepository(User);
 
-      const listingRepository = manager.getRepository(Listing);
-      const auditLogRepository = manager.getRepository(AuditLog);
-      const userRepository = manager.getRepository(User);
+        const admin = await userRepository.findOne({
+          where: { id: userId },
+        });
 
-      const admin = await userRepository.findOne({
-        where: { id: userId },
+        if (!admin) {
+          throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        const listing = await listingRepository.findOne({
+          where: { id },
+          relations: ['seller'],
+        });
+
+        if (!listing) {
+          throw new NotFoundException(`Listing with ID ${id} not found`);
+        }
+
+        listing.status = status;
+        listing.reviewer = admin;
+        listing.reviewed_at = new Date();
+
+        const savedlisting = await listingRepository.save(listing);
+
+        const auditLog = auditLogRepository.create({
+          entity_type: 'listing',
+          entity_id: listing.id,
+          action: action,
+          performedBy: admin,
+          notes: listing.title,
+          reason: reason,
+        });
+
+        await auditLogRepository.save(auditLog);
+
+        const event = new AdminEvent();
+        event.title = listing.title;
+        event.action = action;
+        event.description = reason ?? 'Your listing is now approved and live.';
+        event.listingId = listing.id;
+        event.studentId = listing.seller.id;
+        event.name = `${listing.seller.first_name} ${listing.seller.last_name}`;
+        event.studentEmail = listing.seller.email;
+        this.eventEmitter.emit('listing.reviewed', event);
+
+        return { savedlisting, listing, event };
       });
-
-      if (!admin) {
-        throw new NotFoundException(`User with ID ${userId} not found`);
-      }
-
-      const listing = await listingRepository.findOne({
-        where: { id },
-        relations: ['seller'],
-      });
-
-      if (!listing) {
-        throw new NotFoundException(`Listing with ID ${id} not found`);
-      }
-
-      listing.status = status;
-      listing.reviewer = admin;
-      listing.reviewed_at = new Date();
-
-      const savedlisting = await listingRepository.save(listing);
-
-      const auditLog = auditLogRepository.create({
-        entity_type: 'listing',
-        entity_id: listing.id,
-        action: action,
-        performedBy: admin,
-        notes: listing.title,
-        reason: reason,
-      });
-
-      await auditLogRepository.save(auditLog);
-
-      const event = new AdminEvent();
-      event.title = listing.title;
-      event.action = action;
-      event.description = reason ?? 'Your listing is now approved and live.';
-      event.listingId = listing.id;
-      event.studentId = listing.seller.id;
-      event.name = `${listing.seller.first_name} ${listing.seller.last_name}`;
-      event.studentEmail = listing.seller.email;
-      this.eventEmitter.emit('listing.reviewed', event);
-
-      return { savedlisting,listing, event };
-    });
 
     this.eventEmitter.emit('listing.reviewed', event);
 
     if (action == 'APPROVE_LISTING') {
-
       this.checkSavedSearchMatches(listing).catch((error: unknown) => {
-
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.error('Error checking saved search matches:', errorMessage);
-
       });
     }
 
@@ -111,10 +109,8 @@ export class AdminService {
   }
 
   private async getName(id: string) {
-
     const person = await this.usersRepository.findOneBy({ id });
     return person ? { name: person.first_name, email: person.email } : null;
-
   }
 
   private async checkSavedSearchMatches(listing: Listing): Promise<void> {
@@ -140,12 +136,13 @@ export class AdminService {
           name: user?.name,
           studentEmail: user?.email,
           listingId: listing.id,
-          listingTitle: listing.title || 'New Listing Available that matches your saved search',
+          listingTitle:
+            listing.title ||
+            'New Listing Available that matches your saved search',
           matchDate: new Date(),
         });
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
       }
     } catch (error) {
       const errorMessage =

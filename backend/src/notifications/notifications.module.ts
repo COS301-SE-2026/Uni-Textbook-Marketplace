@@ -22,4 +22,4 @@ import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
   ],
   exports: [NotificationsService],
 })
-export class NotificationsModule { }
+export class NotificationsModule {}

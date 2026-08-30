@@ -8,7 +8,11 @@ import { ReportsModule } from '../reports/reports.module';
 import { SavedSearchesModule } from '../saved_search/saved_search.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuditLog, User]), ReportsModule,SavedSearchesModule],
+  imports: [
+    TypeOrmModule.forFeature([AuditLog, User]),
+    ReportsModule,
+    SavedSearchesModule,
+  ],
   controllers: [AdminController],
   providers: [AdminService],
 })
