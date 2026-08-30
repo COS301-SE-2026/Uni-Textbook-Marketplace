@@ -143,14 +143,36 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     } as any as Listing);
   }
 
+  async function getCaseAuditLogs(caseId: string) {
+    return auditLogRepo.find({
+      where: { entity_id: caseId },
+      relations: ['performedBy'],
+      order: { performed_at: 'ASC' },
+    });
+  }
+
+  function expectCaseAuditLog(
+    auditLogs: AuditLog[],
+    action: string,
+    entityType: string,
+  ) {
+    const log = auditLogs.find(entry => entry.action === action);
+
+    expect(log).toBeDefined();
+    expect(log?.entity_type).toBe(entityType);
+
+    return log;
+  }
+
   beforeEach(async () => {
     await caseRepo.delete({});
     await auditLogRepo.delete({});
-  })
+  });
 
   describe('Full Appeal Flow - Upheld Ban', () => {
     it('should complete the full flow: submit appeal → admin upholds → user remains banned', async () => {
-      const appealMessage = 'I believe I was banned unfairly. I was not aware that selling notes was against the platform rules.';
+      const appealMessage =
+        'I believe I was banned unfairly. I was not aware that selling notes was against the platform rules.';
 
       const submittedCase = await casesService.createAppeal(bannedUser.id, {
         appeal_message: appealMessage,
@@ -168,7 +190,8 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(dbCase).toBeDefined();
       expect(dbCase?.status).toBe('pending');
 
-      const adminNotes = 'User clearly violated rule 3.2 about selling notes. Ban upheld.';
+      const adminNotes =
+        'User clearly violated rule 3.2 about selling notes. Ban upheld.';
 
       const reviewedCase = await casesService.reviewCase(
         submittedCase.id,
@@ -188,24 +211,23 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       });
 
       expect(userAfterUphold?.is_banned).toBe(true);
-      expect(userAfterUphold?.ban_reason).toBe('Violated platform rules - selling prohibited items');
+      expect(userAfterUphold?.ban_reason).toBe(
+        'Violated platform rules - selling prohibited items',
+      );
       expect(userAfterUphold?.banned_by).toBeDefined();
 
-      const auditLogs = await auditLogRepo.find({
-        where: { entity_id: submittedCase.id },
-        relations: ['performedBy'],
-        order: { performed_at: 'ASC' },
-      });
+      const auditLogs = await getCaseAuditLogs(submittedCase.id);
 
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-      const createLog = auditLogs.find(log => log.action === 'CREATE');
-      expect(createLog).toBeDefined();
-      expect(createLog?.entity_type).toBe('CASE');
+      expectCaseAuditLog(auditLogs, 'CREATE', 'CASE');
 
-      const upholdLog = auditLogs.find(log => log.action === 'UPHOLD_BAN');
-      expect(upholdLog).toBeDefined();
-      expect(upholdLog?.entity_type).toBe('CASE');
+      const upholdLog = expectCaseAuditLog(
+        auditLogs,
+        'UPHOLD_BAN',
+        'CASE',
+      );
+
       expect(upholdLog?.reason).toBe(adminNotes);
     });
   });
@@ -231,11 +253,15 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     });
 
     it('should complete the full flow: submit appeal → admin reverses → user is reinstated', async () => {
-      const appealMessage = 'I apologize for my behavior. I understand the rules now and promise to follow them.';
+      const appealMessage =
+        'I apologize for my behavior. I understand the rules now and promise to follow them.';
 
-      const submittedCase = await casesService.createAppeal(reinstatedUser.id, {
-        appeal_message: appealMessage,
-      });
+      const submittedCase = await casesService.createAppeal(
+        reinstatedUser.id,
+        {
+          appeal_message: appealMessage,
+        },
+      );
 
       expect(submittedCase).toBeDefined();
       expect(submittedCase.user_id).toBe(reinstatedUser.id);
@@ -248,7 +274,8 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(dbCase).toBeDefined();
       expect(dbCase?.status).toBe('pending');
 
-      const adminNotes = 'User showed genuine remorse and provided valid evidence. Ban lifted.';
+      const adminNotes =
+        'User showed genuine remorse and provided valid evidence. Ban lifted.';
 
       const reviewedCase = await casesService.reviewCase(
         submittedCase.id,
@@ -272,21 +299,12 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(userAfterReversal?.banned_at).toBeNull();
       expect(userAfterReversal?.banned_by).toBeNull();
 
-      const auditLogs = await auditLogRepo.find({
-        where: { entity_id: submittedCase.id },
-        relations: ['performedBy'],
-        order: { performed_at: 'ASC' },
-      });
+      const auditLogs = await getCaseAuditLogs(submittedCase.id);
 
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-      const createLog = auditLogs.find(log => log.action === 'CREATE');
-      expect(createLog).toBeDefined();
-      expect(createLog?.entity_type).toBe('CASE');
-
-      const unbanLog = auditLogs.find(log => log.action === 'UNBAN_USER');
-      expect(unbanLog).toBeDefined();
-      expect(unbanLog?.entity_type).toBe('USER');
+      expectCaseAuditLog(auditLogs, 'CREATE', 'CASE');
+      expectCaseAuditLog(auditLogs, 'UNBAN_USER', 'USER');
 
       const finalUser = await userRepo.findOne({
         where: { id: reinstatedUser.id },
@@ -316,8 +334,10 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       await expect(
         casesService.createAppeal(nonBannedUser.id, {
           appeal_message: 'I want to appeal',
-        })
-      ).rejects.toThrow('You are not banned. Appeals are only for banned users.');
+        }),
+      ).rejects.toThrow(
+        'You are not banned. Appeals are only for banned users.',
+      );
     });
 
     it('should not allow a user to have multiple pending appeals', async () => {
@@ -331,8 +351,10 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       await expect(
         casesService.createAppeal(bannedUser.id, {
           appeal_message: 'Second appeal',
-        })
-      ).rejects.toThrow('You already have a pending appeal. Please wait for it to be reviewed.');
+        }),
+      ).rejects.toThrow(
+        'You already have a pending appeal. Please wait for it to be reviewed.',
+      );
     });
 
     it('should not allow reviewing a case that is already reviewed', async () => {
@@ -353,7 +375,7 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
           adminUser.id,
           'reversed',
           'Should not work',
-        )
+        ),
       ).rejects.toThrow('This case has already been reviewed. Status: upheld');
     });
   });
@@ -375,9 +397,12 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         faculty: testFaculty,
       } as User);
 
-      const submittedCase = await casesService.createAppeal(freshBannedUser.id, {
-        appeal_message: 'Full audit trail test',
-      });
+      const submittedCase = await casesService.createAppeal(
+        freshBannedUser.id,
+        {
+          appeal_message: 'Full audit trail test',
+        },
+      );
 
       await casesService.reviewCase(
         submittedCase.id,
@@ -386,11 +411,7 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         'User was wrongly banned',
       );
 
-      const auditLogs = await auditLogRepo.find({
-        where: { entity_id: submittedCase.id },
-        relations: ['performedBy'],
-        order: { performed_at: 'ASC' },
-      });
+      const auditLogs = await getCaseAuditLogs(submittedCase.id);
 
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
