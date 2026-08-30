@@ -30,7 +30,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
   let facultyRepo: Repository<Faculty>;
   let eventEmitter: EventEmitter2;
 
-  // Test data
   let testUniversity: University;
   let testFaculty: Faculty;
   let testModule: ModuleEntity;
@@ -38,8 +37,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
   let testListing: Listing;
   let bannedUser: User;
   let adminUser: User;
-
-
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -71,117 +68,106 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
   });
 
   async function setupTestData() {
-  
-  testUniversity = await universityRepo.save({
-    name: 'Test University',
-    email_domain: 'test.edu',
-  } as University);
+    testUniversity = await universityRepo.save({
+      name: 'Test University',
+      email_domain: 'test.edu',
+    } as University);
 
-  
-  testFaculty = await facultyRepo.save({
-    name: 'Computer Science',
-    university: testUniversity,
-  } as Faculty);
+    testFaculty = await facultyRepo.save({
+      name: 'Computer Science',
+      university: testUniversity,
+    } as Faculty);
 
-  
-  testModule = await moduleRepo.save({
-    code: 'CS101',
-    name: 'Introduction to Computer Science',
-    faculty: testFaculty,
-    university: testUniversity,
-    semester: 1,
-  } as ModuleEntity);
+    testModule = await moduleRepo.save({
+      code: 'CS101',
+      name: 'Introduction to Computer Science',
+      faculty: testFaculty,
+      university: testUniversity,
+      semester: 1,
+    } as ModuleEntity);
 
-  
-  testBook = await bookRepo.save({
-    isbn: '978-0132350884',
-    title: 'Clean Code',
-    author: 'Robert C. Martin',
-    edition: 1,
-    publisher: 'Prentice Hall',
-  } as Book);
+    testBook = await bookRepo.save({
+      isbn: '978-0132350884',
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      edition: 1,
+      publisher: 'Prentice Hall',
+    } as Book);
 
-  
-  adminUser = await userRepo.save({
-    email: 'admin@test.com',
-    password_hash: 'hashed_admin_password',
-    first_name: 'Admin',
-    last_name: 'User',
-    is_verified: true,
-    is_banned: false,
-    role: 'admin',
-    university: testUniversity,
-    faculty: testFaculty,
-  } as User);
+    adminUser = await userRepo.save({
+      email: 'admin@test.com',
+      password_hash: 'hashed_admin_password',
+      first_name: 'Admin',
+      last_name: 'User',
+      is_verified: true,
+      is_banned: false,
+      role: 'admin',
+      university: testUniversity,
+      faculty: testFaculty,
+    } as User);
 
-  
-  bannedUser = await userRepo.save({
-    email: 'banned@test.com',
-    password_hash: 'hashed_password',
-    first_name: 'Banned',
-    last_name: 'User',
-    is_verified: true,
-    is_banned: true,
-    banned_at: new Date(),
-    banned_by: adminUser,
-    ban_reason: 'Violated platform rules - selling prohibited items',
-    role: 'student',
-    university: testUniversity,
-    faculty: testFaculty,
-  } as User);
+    bannedUser = await userRepo.save({
+      email: 'banned@test.com',
+      password_hash: 'hashed_password',
+      first_name: 'Banned',
+      last_name: 'User',
+      is_verified: true,
+      is_banned: true,
+      banned_at: new Date(),
+      banned_by: adminUser,
+      ban_reason: 'Violated platform rules - selling prohibited items',
+      role: 'student',
+      university: testUniversity,
+      faculty: testFaculty,
+    } as User);
 
-  
-  testListing = await listingRepo.save({
-    title: 'Clean Code Textbook',
-    seller: bannedUser,
-    book: testBook,
-    module: testModule,
-    condition: 'good',
-    annotation_level: 'light',
-    price: 45.99,
-    reviewer: null as any,
-    reviewed_at: null as any,
-    photo_urls: [],
-    status: ListingStatus.APPROVED,
-    listing_status: 'AVAILABLE' as any,
-    has_notes: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null as any,
-    description: 'Great condition textbook',
-    reports: [],
-  } as any as Listing); 
-}
+    testListing = await listingRepo.save({
+      title: 'Clean Code Textbook',
+      seller: bannedUser,
+      book: testBook,
+      module: testModule,
+      condition: 'good',
+      annotation_level: 'light',
+      price: 45.99,
+      reviewer: null as any,
+      reviewed_at: null as any,
+      photo_urls: [],
+      status: ListingStatus.APPROVED,
+      listing_status: 'AVAILABLE' as any,
+      has_notes: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null as any,
+      description: 'Great condition textbook',
+      reports: [],
+    } as any as Listing);
+  }
 
-   describe('Full Appeal Flow - Upheld Ban', () => {
+  beforeEach(async () => {
+    await caseRepo.delete({});
+    await auditLogRepo.delete({});
+  });
+
+  describe('Full Appeal Flow - Upheld Ban', () => {
     it('should complete the full flow: submit appeal → admin upholds → user remains banned', async () => {
-      
       const appealMessage = 'I believe I was banned unfairly. I was not aware that selling notes was against the platform rules.';
 
       const submittedCase = await casesService.createAppeal(bannedUser.id, {
         appeal_message: appealMessage,
       });
 
-      
       expect(submittedCase).toBeDefined();
       expect(submittedCase.user_id).toBe(bannedUser.id);
       expect(submittedCase.status).toBe('pending');
       expect(submittedCase.appeal_message).toBe(appealMessage);
 
-      console.log(`Step 1: Appeal submitted with ID: ${submittedCase.id}`);
-
-    
       const dbCase = await caseRepo.findOne({
         where: { id: submittedCase.id },
       });
 
       expect(dbCase).toBeDefined();
       expect(dbCase?.status).toBe('pending');
-      expect(dbCase?.appeal_message).toBe(appealMessage);
 
-      console.log(`Step 2: Case found in database with status: ${dbCase?.status}`);
-
-      
       const adminNotes = 'User clearly violated rule 3.2 about selling notes. Ban upheld.';
 
       const reviewedCase = await casesService.reviewCase(
@@ -191,15 +177,11 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         adminNotes,
       );
 
-      
       expect(reviewedCase).toBeDefined();
       expect(reviewedCase.status).toBe('upheld');
       expect(reviewedCase.reviewed_by).toBe(adminUser.id);
       expect(reviewedCase.reviewed_at).toBeDefined();
 
-      console.log(`Step 3: Case reviewed - Status: ${reviewedCase.status}`);
-
-     
       const userAfterUphold = await userRepo.findOne({
         where: { id: bannedUser.id },
         relations: ['banned_by'],
@@ -209,49 +191,29 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(userAfterUphold?.ban_reason).toBe('Violated platform rules - selling prohibited items');
       expect(userAfterUphold?.banned_by).toBeDefined();
 
-      console.log(`Step 4: User remains banned (is_banned = ${userAfterUphold?.is_banned})`);
-
-      
       const auditLogs = await auditLogRepo.find({
         where: { entity_id: submittedCase.id },
         relations: ['performedBy'],
         order: { performed_at: 'ASC' },
       });
 
-      
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-      
       const createLog = auditLogs.find(log => log.action === 'CREATE');
       expect(createLog).toBeDefined();
       expect(createLog?.entity_type).toBe('CASE');
 
-      
       const upholdLog = auditLogs.find(log => log.action === 'UPHOLD_BAN');
       expect(upholdLog).toBeDefined();
       expect(upholdLog?.entity_type).toBe('CASE');
       expect(upholdLog?.reason).toBe(adminNotes);
-
-      console.log(`Step 5: Audit logs created: CREATE + UPHOLD_BAN`);
-
-      
-
-      console.log(`Step 6: Notification event fired (verified via audit log)`);
-
-    
-      console.log('Full appeal flow (upheld) completed successfully!');
-      console.log(`   - Case ID: ${submittedCase.id}`);
-      console.log(`   - User: ${bannedUser.email} (is_banned: ${userAfterUphold?.is_banned})`);
-      console.log(`   - Case Status: ${reviewedCase.status}`);
-      console.log(`   - Audit Logs: ${auditLogs.length} entries`);
     });
   });
 
-    describe('Full Appeal Flow - Reversed (User Reinstated)', () => {
+  describe('Full Appeal Flow - Reversed (User Reinstated)', () => {
     let reinstatedUser: User;
 
     beforeAll(async () => {
-      
       reinstatedUser = await userRepo.save({
         email: 'reinstated@test.com',
         password_hash: 'hashed_password',
@@ -269,7 +231,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     });
 
     it('should complete the full flow: submit appeal → admin reverses → user is reinstated', async () => {
-      
       const appealMessage = 'I apologize for my behavior. I understand the rules now and promise to follow them.';
 
       const submittedCase = await casesService.createAppeal(reinstatedUser.id, {
@@ -280,9 +241,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(submittedCase.user_id).toBe(reinstatedUser.id);
       expect(submittedCase.status).toBe('pending');
 
-      console.log(`Step 1: Appeal submitted with ID: ${submittedCase.id}`);
-
-     
       const dbCase = await caseRepo.findOne({
         where: { id: submittedCase.id },
       });
@@ -290,9 +248,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(dbCase).toBeDefined();
       expect(dbCase?.status).toBe('pending');
 
-      console.log(`Step 2: Case found in database with status: ${dbCase?.status}`);
-
-      
       const adminNotes = 'User showed genuine remorse and provided valid evidence. Ban lifted.';
 
       const reviewedCase = await casesService.reviewCase(
@@ -307,9 +262,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(reviewedCase.reviewed_by).toBe(adminUser.id);
       expect(reviewedCase.reviewed_at).toBeDefined();
 
-      console.log(`Step 3: Case reviewed - Status: ${reviewedCase.status}`);
-
-    
       const userAfterReversal = await userRepo.findOne({
         where: { id: reinstatedUser.id },
         relations: ['banned_by'],
@@ -320,31 +272,22 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(userAfterReversal?.banned_at).toBeNull();
       expect(userAfterReversal?.banned_by).toBeNull();
 
-      console.log(`Step 4: User reinstated (is_banned = ${userAfterReversal?.is_banned})`);
-
-     
       const auditLogs = await auditLogRepo.find({
         where: { entity_id: submittedCase.id },
         relations: ['performedBy'],
         order: { performed_at: 'ASC' },
       });
 
-      
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-      
       const createLog = auditLogs.find(log => log.action === 'CREATE');
       expect(createLog).toBeDefined();
       expect(createLog?.entity_type).toBe('CASE');
 
-      
       const unbanLog = auditLogs.find(log => log.action === 'UNBAN_USER');
       expect(unbanLog).toBeDefined();
       expect(unbanLog?.entity_type).toBe('USER');
 
-      console.log(`Step 5: Audit logs created: CREATE + UNBAN_USER`);
-
-     
       const finalUser = await userRepo.findOne({
         where: { id: reinstatedUser.id },
       });
@@ -353,138 +296,11 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(finalUser?.banned_at).toBeNull();
       expect(finalUser?.banned_by).toBeNull();
       expect(finalUser?.ban_reason).toBeNull();
-
-      console.log(`Step 6: User can now access the platform (is_banned: ${finalUser?.is_banned})`);
-
-      
-      console.log('   Full appeal flow (reversed) completed successfully!');
-      console.log(`   - Case ID: ${submittedCase.id}`);
-      console.log(`   - User: ${reinstatedUser.email} (is_banned: ${finalUser?.is_banned})`);
-      console.log(`   - Case Status: ${reviewedCase.status}`);
-      console.log(`   - Audit Logs: ${auditLogs.length} entries`);
     });
   });
 
-    describe('Full Appeal Flow - Reversed (User Reinstated)', () => {
-    let reinstatedUser: User;
-
-    beforeAll(async () => {
-      // Create a fresh banned user for this test
-      reinstatedUser = await userRepo.save({
-        email: 'reinstated@test.com',
-        password_hash: 'hashed_password',
-        first_name: 'Reinstated',
-        last_name: 'User',
-        is_verified: true,
-        is_banned: true,
-        banned_at: new Date(),
-        banned_by: adminUser,
-        ban_reason: 'Violated platform rules - inappropriate behavior',
-        role: 'student',
-        university: testUniversity,
-        faculty: testFaculty,
-      } as User);
-    });
-
-    it('should complete the full flow: submit appeal → admin reverses → user is reinstated', async () => {
-      
-      const appealMessage = 'I apologize for my behavior. I understand the rules now and promise to follow them.';
-
-      const submittedCase = await casesService.createAppeal(reinstatedUser.id, {
-        appeal_message: appealMessage,
-      });
-
-      expect(submittedCase).toBeDefined();
-      expect(submittedCase.user_id).toBe(reinstatedUser.id);
-      expect(submittedCase.status).toBe('pending');
-
-      console.log(`Step 1: Appeal submitted with ID: ${submittedCase.id}`);
-
-      
-      const dbCase = await caseRepo.findOne({
-        where: { id: submittedCase.id },
-      });
-
-      expect(dbCase).toBeDefined();
-      expect(dbCase?.status).toBe('pending');
-
-      console.log(`Step 2: Case found in database with status: ${dbCase?.status}`);
-
-      
-      const adminNotes = 'User showed genuine remorse and provided valid evidence. Ban lifted.';
-
-      const reviewedCase = await casesService.reviewCase(
-        submittedCase.id,
-        adminUser.id,
-        'reversed',
-        adminNotes,
-      );
-
-      expect(reviewedCase).toBeDefined();
-      expect(reviewedCase.status).toBe('reversed');
-      expect(reviewedCase.reviewed_by).toBe(adminUser.id);
-      expect(reviewedCase.reviewed_at).toBeDefined();
-
-      console.log(`Step 3: Case reviewed - Status: ${reviewedCase.status}`);
-
-      
-      const userAfterReversal = await userRepo.findOne({
-        where: { id: reinstatedUser.id },
-        relations: ['banned_by'],
-      });
-
-      expect(userAfterReversal?.is_banned).toBe(false);
-      expect(userAfterReversal?.ban_reason).toBeNull();
-      expect(userAfterReversal?.banned_at).toBeNull();
-      expect(userAfterReversal?.banned_by).toBeNull();
-
-      console.log(`Step 4: User reinstated (is_banned = ${userAfterReversal?.is_banned})`);
-
-      
-      const auditLogs = await auditLogRepo.find({
-        where: { entity_id: submittedCase.id },
-        relations: ['performedBy'],
-        order: { performed_at: 'ASC' },
-      });
-
-     
-      expect(auditLogs.length).toBeGreaterThanOrEqual(2);
-
-      
-      const createLog = auditLogs.find(log => log.action === 'CREATE');
-      expect(createLog).toBeDefined();
-      expect(createLog?.entity_type).toBe('CASE');
-
-     
-      const unbanLog = auditLogs.find(log => log.action === 'UNBAN_USER');
-      expect(unbanLog).toBeDefined();
-      expect(unbanLog?.entity_type).toBe('USER');
-
-      console.log(`Step 5: Audit logs created: CREATE + UNBAN_USER`);
-
-      
-      const finalUser = await userRepo.findOne({
-        where: { id: reinstatedUser.id },
-      });
-
-      expect(finalUser?.is_banned).toBe(false);
-      expect(finalUser?.banned_at).toBeNull();
-      expect(finalUser?.banned_by).toBeNull();
-      expect(finalUser?.ban_reason).toBeNull();
-
-      console.log(`Step 6: User can now access the platform (is_banned: ${finalUser?.is_banned})`);
-
-      
-      console.log('  Full appeal flow (reversed) completed successfully!');
-      console.log(`   - Case ID: ${submittedCase.id}`);
-      console.log(`   - User: ${reinstatedUser.email} (is_banned: ${finalUser?.is_banned})`);
-      console.log(`   - Case Status: ${reviewedCase.status}`);
-      console.log(`   - Audit Logs: ${auditLogs.length} entries`);
-    });
-  });
-    describe('Edge Cases and Validation', () => {
+  describe('Edge Cases and Validation', () => {
     it('should not allow a non-banned user to submit an appeal', async () => {
-      
       const nonBannedUser = await userRepo.save({
         email: 'nonbanned@test.com',
         password_hash: 'hashed_password',
@@ -505,7 +321,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     });
 
     it('should not allow a user to have multiple pending appeals', async () => {
-      
       const firstAppeal = await casesService.createAppeal(bannedUser.id, {
         appeal_message: 'First appeal',
       });
@@ -513,7 +328,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       expect(firstAppeal).toBeDefined();
       expect(firstAppeal.status).toBe('pending');
 
-      
       await expect(
         casesService.createAppeal(bannedUser.id, {
           appeal_message: 'Second appeal',
@@ -522,12 +336,10 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     });
 
     it('should not allow reviewing a case that is already reviewed', async () => {
-      
       const submittedCase = await casesService.createAppeal(bannedUser.id, {
         appeal_message: 'Test appeal',
       });
 
-      
       await casesService.reviewCase(
         submittedCase.id,
         adminUser.id,
@@ -535,7 +347,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         'Ban upheld',
       );
 
-      
       await expect(
         casesService.reviewCase(
           submittedCase.id,
@@ -549,7 +360,6 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
 
   describe('Audit Log Integrity', () => {
     it('should create a complete audit trail for the entire appeal lifecycle', async () => {
-      
       const freshBannedUser = await userRepo.save({
         email: 'freshbanned@test.com',
         password_hash: 'hashed_password',
@@ -565,12 +375,10 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         faculty: testFaculty,
       } as User);
 
-     
       const submittedCase = await casesService.createAppeal(freshBannedUser.id, {
         appeal_message: 'Full audit trail test',
       });
 
-      
       await casesService.reviewCase(
         submittedCase.id,
         adminUser.id,
@@ -578,34 +386,23 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         'User was wrongly banned',
       );
 
-      
       const auditLogs = await auditLogRepo.find({
         where: { entity_id: submittedCase.id },
         relations: ['performedBy'],
         order: { performed_at: 'ASC' },
       });
 
-      
       expect(auditLogs.length).toBeGreaterThanOrEqual(2);
 
-      
       const actions = auditLogs.map(log => log.action);
-      
-      
+
       expect(actions[0]).toBe('CREATE');
-      
-      
       expect(actions[actions.length - 1]).toBe('UNBAN_USER');
 
-      
       for (const log of auditLogs) {
         expect(log.performedBy).toBeDefined();
         expect(log.performedBy.id).toBe(adminUser.id);
       }
-
-      console.log(' Audit trail verification complete:');
-      console.log(`   - Total entries: ${auditLogs.length}`);
-      console.log(`   - Actions: ${actions.join(' → ')}`);
     });
   });
 });

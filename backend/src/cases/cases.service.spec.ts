@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { CasesService } from './cases/cases.service';
+import { CasesService } from './cases.service';
 import { Case } from '../../src/database/entities/case.entity';
 import { User } from '../../src/database/entities/users.entity';
 import { AuditLog } from '../../src/database/entities/audit_log.entity';
@@ -16,7 +16,7 @@ import { Listing, ListingStatus } from '../../src/database/entities/listing.enti
 import { Book } from '../../src/database/entities/book.entity';
 import { Module as ModuleEntity } from '../../src/database/entities/module.entity';
 import { Report, ReportStatus } from '../../src/database/entities/report.entity';
-import { CreateCaseDto } from './cases/dto/create-case.dto';
+import { CreateCaseDto } from './dto/create-case.dto';
 
 describe('CasesService', () => {
   let service: CasesService;
