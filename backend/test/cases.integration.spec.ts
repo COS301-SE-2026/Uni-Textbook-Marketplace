@@ -114,9 +114,15 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
     expect(log).toBeDefined();
   };
 
-  const expectUserReinstated = (
-    user: User | null,
-  ): void => {
+  
+  const expectUserReinstated = async (
+    userId: string,
+  ): Promise<void> => {
+    const user = await userRepo.findOne({
+      where: { id: userId },
+      relations: ['banned_by'], 
+    });
+
     expect(user?.is_banned).toBe(false);
     expect(user?.ban_reason).toBeNull();
     expect(user?.banned_at).toBeNull();
@@ -415,13 +421,8 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       );
       expect(reviewedCase.reviewed_at).toBeDefined();
 
-      const userAfterReversal =
-        await userRepo.findOne({
-          where: { id: reinstatedUser.id },
-          relations: ['banned_by'],
-        });
-
-      expectUserReinstated(userAfterReversal);
+      
+      await expectUserReinstated(reinstatedUser.id);
 
       const auditLogs = await getCaseAuditLogs(
         submittedCase.id,
@@ -442,11 +443,16 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
         1,
       );
 
+      
       const finalUser = await userRepo.findOne({
         where: { id: reinstatedUser.id },
+        relations: ['banned_by'],
       });
 
-      expectUserReinstated(finalUser);
+      expect(finalUser?.is_banned).toBe(false);
+      expect(finalUser?.ban_reason).toBeNull();
+      expect(finalUser?.banned_at).toBeNull();
+      expect(finalUser?.banned_by).toBeNull(); 
     });
   });
 
@@ -557,7 +563,15 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       );
 
       expectAuditTrail(auditLogs);
+
+      
+      const unbannedUser = await userRepo.findOne({
+        where: { id: freshBannedUser.id },
+        relations: ['banned_by'],
+      });
+
+      expect(unbannedUser?.is_banned).toBe(false);
+      expect(unbannedUser?.banned_by).toBeNull();
     });
   });
 });
-
