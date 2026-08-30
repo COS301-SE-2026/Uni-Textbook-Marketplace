@@ -160,86 +160,94 @@ export class CasesService {
   }
 
   async reviewCase(
-    caseId: string,
-    adminId: string,
-    decision: 'upheld' | 'reversed',
-    adminNotes?: string,
-  ): Promise<CaseResponseDto> {
-    const caseEntity = await this.caseRepo.findOne({
-      where: { id: caseId },
-    });
+  caseId: string,
+  adminId: string,
+  decision: 'upheld' | 'reversed',
+  adminNotes?: string,
+): Promise<CaseResponseDto> {
+  const caseEntity = await this.caseRepo.findOne({
+    where: { id: caseId },
+  });
 
-    if (!caseEntity) {
-      throw new NotFoundException('Case not found');
-    }
-
-    if (caseEntity.status !== 'pending') {
-      throw new BadRequestException(
-        `This case has already been reviewed. Status: ${caseEntity.status}`,
-      );
-    }
-
-    const admin = await this.userRepo.findOne({
-      where: { id: adminId },
-    });
-
-    if (!admin) {
-      throw new NotFoundException('Admin not found');
-    }
-
-    const user = await this.userRepo.findOne({
-      where: { id: caseEntity.user_id },
-      relations: ['banned_by'],
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    caseEntity.status = decision;
-    caseEntity.reviewed_by = adminId;
-    caseEntity.reviewed_at = new Date();
-
-    await this.caseRepo.save(caseEntity);
-
-    if (decision === 'reversed') {
-      user.is_banned = false;
-      user.banned_at = null;
-      user.banned_by = null;
-      user.ban_reason = null;
-      await this.userRepo.save(user);
-
-      const auditLog = this.auditLogRepo.create({
-        entity_type: 'USER',
-        entity_id: user.id,
-        action: 'UPDATE',
-        performedBy: admin,
-        notes: `User ${user.email} was unbanned after appeal review. Case ID: ${caseId}`,
-        reason: `Decision: ${decision}. Admin notes: ${adminNotes || 'No notes provided'}`,
-      });
-      await this.auditLogRepo.save(auditLog);
-
-      const caseAuditLog = this.auditLogRepo.create({
-        entity_type: 'CASE',
-        entity_id: caseId,
-        action: 'UPDATE',
-        performedBy: admin,
-        notes: `Case ${caseId} reviewed by admin. Decision: REVERSED (user unbanned)`,
-        reason: adminNotes || 'No notes provided',
-      });
-      await this.auditLogRepo.save(caseAuditLog);
-    } else {
-      const auditLog = this.auditLogRepo.create({
-        entity_type: 'CASE',
-        entity_id: caseId,
-        action: 'UPDATE',
-        performedBy: admin,
-        notes: `Appeal for user ${user.email} was upheld (ban remains). Case ID: ${caseId}`,
-        reason: adminNotes || 'Ban upheld after appeal review',
-      });
-      await this.auditLogRepo.save(auditLog);
-    }
-
-    return CaseResponseDto.fromEntity(caseEntity);
+  if (!caseEntity) {
+    throw new NotFoundException('Case not found');
   }
+
+  if (caseEntity.status !== 'pending') {
+    throw new BadRequestException(
+      `This case has already been reviewed. Status: ${caseEntity.status}`,
+    );
+  }
+
+  
+  const admin = await this.userRepo.findOne({
+    where: { id: adminId },
+    relations: ['banned_by'], 
+  });
+
+  if (!admin) {
+    throw new NotFoundException('Admin not found');
+  }
+
+  
+  const user = await this.userRepo.findOne({
+    where: { id: caseEntity.user_id },
+    relations: ['banned_by'], 
+  });
+
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  caseEntity.status = decision;
+  caseEntity.reviewed_by = adminId;
+  caseEntity.reviewed_at = new Date();
+
+  await this.caseRepo.save(caseEntity);
+
+  if (decision === 'reversed') {
+    
+    user.is_banned = false;
+    user.banned_at = null;
+    user.banned_by = null;  
+    user.ban_reason = null;
+    await this.userRepo.save(user);
+
+    
+    const auditLog = this.auditLogRepo.create({
+      entity_type: 'USER',
+      entity_id: user.id,
+      action: 'UPDATE',
+      performedBy: admin,  
+      notes: `User ${user.email} was unbanned after appeal review. Case ID: ${caseId}`,
+      reason: `Decision: ${decision}. Admin notes: ${adminNotes || 'No notes provided'}`,
+    });
+    await this.auditLogRepo.save(auditLog);
+
+    
+    const caseAuditLog = this.auditLogRepo.create({
+      entity_type: 'CASE',
+      entity_id: caseId,
+      action: 'UPDATE',
+      performedBy: admin,  
+      notes: `Case ${caseId} reviewed by admin. Decision: REVERSED (user unbanned)`,
+      reason: adminNotes || 'No notes provided',
+    });
+    await this.auditLogRepo.save(caseAuditLog);
+
+  } else {
+    
+    const auditLog = this.auditLogRepo.create({
+      entity_type: 'CASE',
+      entity_id: caseId,
+      action: 'UPDATE',
+      performedBy: admin,  
+      notes: `Appeal for user ${user.email} was upheld (ban remains). Case ID: ${caseId}`,
+      reason: adminNotes || 'Ban upheld after appeal review',
+    });
+    await this.auditLogRepo.save(auditLog);
+  }
+
+  return CaseResponseDto.fromEntity(caseEntity);
+}
 }
