@@ -65,3 +65,50 @@ describe('notificationRoutes', () => {
       expect(getNotificationIcon(undefined as any)).toBe(BellIcon);
     });
   });
+
+  describe('getNotificationRoute', () => {
+    const routeCases = [
+      ['APPROVE_LISTING', '/listings/listing-123'],
+      ['REJECT_LISTING', '/listings/listing-123'],
+      ['Edited listing', '/listings/listing-123'],
+      ['message', '/messages'],
+      ['UNKNOWN', '/notifications'],
+    ];
+
+    routeCases.forEach(([type, expected]) => {
+      it(`returns "${expected}" for "${type}"`, () => {
+        const notification = { ...baseNotification, entity_type: type as any };
+        expect(getNotificationRoute(notification)).toBe(expected);
+      });
+    });
+
+    it('handles nested entity_id object', () => {
+      const notification = {
+        ...baseNotification,
+        entity_id: { id: 'listing-123' } as any,
+      };
+      expect(getNotificationRoute(notification)).toBe('/listings/listing-123');
+    });
+
+    it('handles null entity_id', () => {
+      const notification = { ...baseNotification, entity_id: null as any };
+      expect(getNotificationRoute(notification)).toBe('/listings/undefined');
+    });
+  });
+
+  describe('integration', () => {
+    it('maps multiple notifications correctly', () => {
+      const notifications: Notification[] = [
+        { ...baseNotification, entity_type: 'APPROVE_LISTING', entity_id: '123' },
+        { ...baseNotification, entity_type: 'message', entity_id: '456' },
+        { ...baseNotification, entity_type: 'REJECT_LISTING', entity_id: '789' },
+      ];
+
+      notifications.forEach((n) => {
+        expect(getNotificationIcon(n.entity_type)).toBeDefined();
+        expect(getNotificationRoute(n)).toBeDefined();
+        expect(getNotificationHeading(n.entity_type)).toBeDefined();
+      });
+    });
+  });
+});
