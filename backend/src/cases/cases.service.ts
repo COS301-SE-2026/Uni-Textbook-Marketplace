@@ -29,7 +29,6 @@ export class CasesService {
     userId: string,
     dto: CreateCaseDto,
   ): Promise<CaseResponseDto> {
-    
     const user = await this.userRepo.findOne({
       where: { id: userId },
     });
@@ -65,10 +64,12 @@ export class CasesService {
 
     const savedCase = await this.caseRepo.save(newCase);
 
+    // FIXED: Added performedBy to the audit log
     const auditLog = this.auditLogRepo.create({
       entity_type: 'CASE',
       entity_id: savedCase.id,
       action: 'CREATE',
+      performedBy: user,
       notes: `User ${user.email} submitted an appeal`,
       reason: dto.appeal_message.substring(0, 200),
     });
@@ -215,19 +216,29 @@ export class CasesService {
       const auditLog = this.auditLogRepo.create({
         entity_type: 'USER',
         entity_id: user.id,
-        action: 'UNBAN_USER',
+        action: 'UPDATE',
         performedBy: admin,
         notes: `User ${user.email} was unbanned after appeal review. Case ID: ${caseId}`,
         reason: `Decision: ${decision}. Admin notes: ${adminNotes || 'No notes provided'}`,
       });
       await this.auditLogRepo.save(auditLog);
+
+      const caseAuditLog = this.auditLogRepo.create({
+        entity_type: 'CASE',
+        entity_id: caseId,
+        action: 'UPDATE',
+        performedBy: admin,
+        notes: `Case ${caseId} reviewed by admin. Decision: REVERSED (user unbanned)`,
+        reason: adminNotes || 'No notes provided',
+      });
+      await this.auditLogRepo.save(caseAuditLog);
     } else {
       const auditLog = this.auditLogRepo.create({
         entity_type: 'CASE',
         entity_id: caseId,
-        action: 'UPHOLD_BAN',
+        action: 'UPDATE',
         performedBy: admin,
-        notes: `Appeal for user ${user.email} was upheld (ban remains)`,
+        notes: `Appeal for user ${user.email} was upheld (ban remains). Case ID: ${caseId}`,
         reason: adminNotes || 'Ban upheld after appeal review',
       });
       await this.auditLogRepo.save(auditLog);

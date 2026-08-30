@@ -186,15 +186,17 @@ describe('CasesService', () => {
     return resultCase;
   };
 
+  
   const expectAuditAction = (
     action: string,
     entityType: string,
+    entityId: string = 'case-123',
   ) => {
     expect(auditLogRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({
         action,
         entity_type: entityType,
-        entity_id: 'case-123',
+        entity_id: entityId,
         performedBy: mockAdmin,
       }),
     );
@@ -487,7 +489,7 @@ describe('CasesService', () => {
 
   describe('Case Decision Logic & Audit Log Tests', () => {
     describe('reviewCase - Upheld Decision', () => {
-      it('should uphold a ban and keep user banned with UPHOLD_BAN audit log', async () => {
+      it('should uphold a ban and keep user banned with UPDATE audit log', async () => {
         const upheldCase = setupReviewCase('upheld');
 
         const result = await service.reviewCase(
@@ -502,7 +504,9 @@ describe('CasesService', () => {
         expect(result.reviewed_at).toBeDefined();
         expect(userRepo.update).not.toHaveBeenCalled();
 
-        expectAuditAction('UPDATE', 'CASE'); 
+        
+        expectAuditAction('UPDATE', 'CASE');
+        
         expect(auditLogRepo.create).toHaveBeenCalledWith({
           entity_type: 'CASE',
           entity_id: 'case-123',
@@ -518,8 +522,12 @@ describe('CasesService', () => {
     });
 
     describe('reviewCase - Reversed Decision (Unban)', () => {
-      it('should reverse a ban and unban the user with UNBAN_USER audit log', async () => {
+      it('should reverse a ban and unban the user with UPDATE audit logs', async () => {
         setupReviewCase('reversed');
+
+        
+        auditLogRepo.create.mockReturnValue(mockAuditLog);
+        auditLogRepo.save.mockResolvedValue(mockAuditLog);
 
         const result = await service.reviewCase(
           'case-123',
@@ -532,21 +540,36 @@ describe('CasesService', () => {
         expect(result.reviewed_by).toBe('admin-123');
 
         expectUserUnbanned();
-        expectAuditAction('UNBAN_USER', 'USER');
 
-        expect(auditLogRepo.create).toHaveBeenCalledWith({
-          entity_type: 'USER',
-          entity_id: 'user-123',
-          action: 'UNBAN_USER',
-          performedBy: mockAdmin,
-          notes: expect.stringContaining(
-            'unbanned after appeal review',
-          ),
-          reason:
-            'Decision: reversed. Admin notes: User showed genuine remorse and provided valid evidence',
-        });
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            entity_type: 'USER',
+            entity_id: 'user-123',
+            action: 'UPDATE', // ✅ Changed from 'UNBAN_USER'
+            performedBy: mockAdmin,
+            notes: expect.stringContaining(
+              'unbanned after appeal review',
+            ),
+            reason:
+              'Decision: reversed. Admin notes: User showed genuine remorse and provided valid evidence',
+          }),
+        );
 
-        expect(auditLogRepo.save).toHaveBeenCalledWith(mockAuditLog);
+       
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            entity_type: 'CASE',
+            entity_id: 'case-123',
+            action: 'UPDATE', 
+            performedBy: mockAdmin,
+            notes: expect.stringContaining('REVERSED'),
+            reason: 'User showed genuine remorse and provided valid evidence',
+          }),
+        );
+
+        
+        expect(auditLogRepo.save).toHaveBeenCalledTimes(2);
       });
 
       it('should handle admin notes being undefined when reversing', async () => {
@@ -561,22 +584,25 @@ describe('CasesService', () => {
 
         expect(result.status).toBe('reversed');
 
-        expect(auditLogRepo.create).toHaveBeenCalledWith({
-          entity_type: 'USER',
-          entity_id: 'user-123',
-          action: 'UNBAN_USER',
-          performedBy: mockAdmin,
-          notes: expect.stringContaining(
-            'unbanned after appeal review',
-          ),
-          reason:
-            'Decision: reversed. Admin notes: No notes provided',
-        });
+        
+        expect(auditLogRepo.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            entity_type: 'USER',
+            entity_id: 'user-123',
+            action: 'UPDATE', 
+            performedBy: mockAdmin,
+            notes: expect.stringContaining(
+              'unbanned after appeal review',
+            ),
+            reason:
+              'Decision: reversed. Admin notes: No notes provided',
+          }),
+        );
       });
     });
 
     describe('reviewCase - Audit Log Action Verification', () => {
-      it('should use UPHOLD_BAN action when decision is upheld', async () => {
+      it('should use UPDATE action when decision is upheld', async () => {
         setupReviewCase('upheld');
 
         await service.reviewCase(
@@ -586,10 +612,11 @@ describe('CasesService', () => {
           'Ban upheld',
         );
 
+       
         expectAuditAction('UPDATE', 'CASE');
       });
 
-      it('should use UNBAN_USER action when decision is reversed', async () => {
+      it('should use UPDATE action when decision is reversed (for both logs)', async () => {
         setupReviewCase('reversed');
 
         await service.reviewCase(
@@ -599,7 +626,14 @@ describe('CasesService', () => {
           'User unbanned',
         );
 
-        expectAuditAction('UNBAN_USER', 'USER');
+        
+        expectAuditAction('UPDATE', 'USER', 'user-123');
+        
+        
+        expectAuditAction('UPDATE', 'CASE');
+        
+        
+        expect(auditLogRepo.create).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -726,8 +760,10 @@ describe('CasesService', () => {
           adminNotes,
         );
 
+        
         expect(auditLogRepo.create).toHaveBeenCalledWith(
           expect.objectContaining({
+            entity_type: 'USER',
             reason: expect.stringContaining(adminNotes),
             performedBy: mockAdmin,
           }),
@@ -762,8 +798,10 @@ describe('CasesService', () => {
           undefined,
         );
 
+        
         expect(auditLogRepo.create).toHaveBeenCalledWith(
           expect.objectContaining({
+            entity_type: 'USER',
             reason:
               'Decision: reversed. Admin notes: No notes provided',
             performedBy: mockAdmin,
