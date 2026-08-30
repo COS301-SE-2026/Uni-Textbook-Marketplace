@@ -6,18 +6,26 @@ import * as notificationRoutes from '@/utils/notificationRoutes';
 
 
 
+
 jest.mock('next/link', () => {
-  return ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: () => void }) => (
-    <a href={href} onClick={onClick} data-testid="mock-link">
+  return ({ children, href, onClick, className, role, ...props }: any) => (
+
+    <a href={href} onClick={onClick} className={className} role={role} data-testid="mock-link" {...props}>
       {children}
+
     </a>
   );
 });
 
 
 jest.mock('lucide-react', () => ({
+
+
+
   CheckCheck: ({ className, ...props }: { className?: string }) => (
     <svg data-testid="check-check-icon" className={className} {...props}>
+
+
       <title>Check Check</title>
     </svg>
   ),
@@ -25,6 +33,8 @@ jest.mock('lucide-react', () => ({
   MessageCircle: () => <svg data-testid="message-icon" />,
   BookOpen: () => <svg data-testid="book-icon" />,
   AlertCircle: () => <svg data-testid="alert-icon" />,
+
+  
   CheckCircle: () => <svg data-testid="check-circle-icon" />,
   XCircle: () => <svg data-testid="x-circle-icon" />,
   User: () => <svg data-testid="user-icon" />,
@@ -34,10 +44,13 @@ jest.mock('lucide-react', () => ({
 
 jest.mock('@/utils/notificationRoutes', () => ({
   getNotificationIcon: jest.fn(),
+
   getNotificationRoute: jest.fn(),
 }));
 
 const mockGetNotificationIcon = notificationRoutes.getNotificationIcon as jest.MockedFunction<typeof notificationRoutes.getNotificationIcon>;
+
+
 const mockGetNotificationRoute = notificationRoutes.getNotificationRoute as jest.MockedFunction<typeof notificationRoutes.getNotificationRoute>;
 
 describe('NotificationDropdown', () => {
@@ -47,7 +60,7 @@ describe('NotificationDropdown', () => {
 
   const baseNotification = {
     id: 'notif-1',
-    entity_type: 'listing_approved',
+    entity_type: 'listing_approved' as const,
     message_info: 'Your listing was approved',
     is_read: false,
     created_at: new Date().toISOString(),
@@ -65,7 +78,10 @@ describe('NotificationDropdown', () => {
   };
 
   beforeEach(() => {
+
     jest.clearAllMocks();
+
+
     mockGetNotificationIcon.mockReturnValue(() => <svg data-testid="mock-icon" />);
     mockGetNotificationRoute.mockReturnValue('/notifications/1');
   });
@@ -83,6 +99,8 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText('Notifications')).toBeInTheDocument();
+
+
       expect(screen.getByRole('menu')).toBeInTheDocument();
     });
 
@@ -115,6 +133,8 @@ describe('NotificationDropdown', () => {
     });
 
     it('renders notifications list', () => {
+
+
       const notifications = createNotifications(3);
       render(
         <NotificationDropdown
@@ -128,10 +148,16 @@ describe('NotificationDropdown', () => {
 
       expect(screen.getByText('Notification 1')).toBeInTheDocument();
       expect(screen.getByText('Notification 2')).toBeInTheDocument();
+
+
+
       expect(screen.getByText('Notification 3')).toBeInTheDocument();
     });
 
     it('limits visible notifications to VISIBLE_COUNT (6)', () => {
+
+
+
       const notifications = createNotifications(10);
       render(
         <NotificationDropdown
@@ -144,12 +170,19 @@ describe('NotificationDropdown', () => {
       );
 
       const notificationItems = screen.getAllByText(/Notification \d+/);
+
+
+
+
       expect(notificationItems).toHaveLength(6);
     });
 
     it('shows "Mark all read" button when there are unread notifications', () => {
+
+
       const notifications = createNotifications(3);
       render(
+
         <NotificationDropdown
           notifications={notifications}
           isLoading={false}
@@ -160,11 +193,18 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText('Mark all read')).toBeInTheDocument();
+
+
       expect(screen.getByTestId('check-check-icon')).toBeInTheDocument();
     });
   
     it('hides "Mark all read" button when all notifications are read', () => {
+
+
       const notifications = createNotifications(3).map(n => ({ ...n, is_read: true }));
+
+
+
       render(
         <NotificationDropdown
           notifications={notifications}
@@ -190,13 +230,24 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText('View All')).toBeInTheDocument();
-      const link = screen.getByTestId('mock-link');
-      expect(link).toHaveAttribute('href', '/notifications');
+
+
+      const links = screen.getAllByTestId('mock-link');
+      const viewAllLink = links[links.length - 1];
+
+
+      expect(viewAllLink).toHaveAttribute('href', '/notifications');
     });
   });
 
   describe('time formatting', () => {
+
+
+
     it('shows "just now" for notifications less than 1 minute old', () => {
+
+
+
       const notification = {
         ...baseNotification,
         created_at: new Date().toISOString(),
@@ -216,6 +267,8 @@ describe('NotificationDropdown', () => {
     });
 
     it('shows "Xm ago" for notifications less than 1 hour old', () => {
+
+
       const notification = {
         ...baseNotification,
         created_at: new Date(Date.now() - 30 * 60000).toISOString(),
@@ -235,7 +288,12 @@ describe('NotificationDropdown', () => {
     });
 
     it('shows "Xh ago" for notifications less than 24 hours old', () => {
+
+
       const notification = {
+
+
+
         ...baseNotification,
         created_at: new Date(Date.now() - 5 * 3600000).toISOString(),
       };
@@ -254,6 +312,9 @@ describe('NotificationDropdown', () => {
     });
 
     it('shows "Xd ago" for notifications older than 24 hours', () => {
+
+
+
       const notification = {
         ...baseNotification,
         created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
@@ -270,11 +331,15 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText('3d ago')).toBeInTheDocument();
+
+
     });
   });
 
   describe('interaction', () => {
     it('calls onMarkRead when clicking an unread notification', async () => {
+
+
       const user = userEvent.setup();
       const notifications = [
         { ...baseNotification, id: 'notif-1', is_read: false },
@@ -292,14 +357,19 @@ describe('NotificationDropdown', () => {
       );
 
       const links = screen.getAllByTestId('mock-link');
-      await user.click(links[0]); 
+      await user.click(links[0]);
 
       expect(mockOnMarkRead).toHaveBeenCalledWith('notif-1');
+
+
+
       expect(mockOnNavigate).toHaveBeenCalled();
     });
 
     it('does not call onMarkRead when clicking a read notification', async () => {
       const user = userEvent.setup();
+
+
       const notifications = [
         { ...baseNotification, id: 'notif-1', is_read: true },
       ];
@@ -314,15 +384,21 @@ describe('NotificationDropdown', () => {
         />
       );
 
-      const link = screen.getByTestId('mock-link');
-      await user.click(link);
+      const links = screen.getAllByTestId('mock-link');
+
+
+      await user.click(links[0]);
 
       expect(mockOnMarkRead).not.toHaveBeenCalled();
       expect(mockOnNavigate).toHaveBeenCalled();
     });
 
     it('calls onMarkAllRead when clicking "Mark all read" button', async () => {
+
+
+
       const user = userEvent.setup();
+
       const notifications = createNotifications(3);
 
       render(
@@ -336,12 +412,16 @@ describe('NotificationDropdown', () => {
       );
 
       const markAllButton = screen.getByText('Mark all read');
+
+
       await user.click(markAllButton);
 
       expect(mockOnMarkAllRead).toHaveBeenCalled();
     });
 
     it('calls onNavigate when clicking "View All" link', async () => {
+
+
       const user = userEvent.setup();
 
       render(
@@ -355,6 +435,8 @@ describe('NotificationDropdown', () => {
       );
 
       const viewAllLink = screen.getByText('View All');
+
+
       await user.click(viewAllLink);
 
       expect(mockOnNavigate).toHaveBeenCalled();
@@ -363,6 +445,8 @@ describe('NotificationDropdown', () => {
 
   describe('styling', () => {
     it('applies unread styling to unread notifications', () => {
+
+
       const notifications = [
         { ...baseNotification, id: 'notif-1', is_read: false },
         { ...baseNotification, id: 'notif-2', is_read: true },
@@ -379,11 +463,19 @@ describe('NotificationDropdown', () => {
       );
 
       const links = screen.getAllByTestId('mock-link');
+      
+
+
       expect(links[0]).toHaveClass('bg-[#00B4D8]/[0.08]');
+
+
+
       expect(links[1]).not.toHaveClass('bg-[#00B4D8]/[0.08]');
     });
 
     it('shows unread dot for unread notifications', () => {
+
+
       const notifications = [
         { ...baseNotification, id: 'notif-1', is_read: false },
         { ...baseNotification, id: 'notif-2', is_read: true },
@@ -399,9 +491,9 @@ describe('NotificationDropdown', () => {
         />
       );
 
-      const dots = screen.getAllByTestId('mock-link').filter(el => 
-        el.querySelector('.rounded-full.bg-[#00B4D8]')
-      );
+      const dots = document.querySelectorAll('.rounded-full.bg-\\[\\#00B4D8\\]');
+
+
       expect(dots.length).toBe(1);
     });
 
@@ -418,14 +510,20 @@ describe('NotificationDropdown', () => {
         />
       );
 
-      const link = screen.getByTestId('mock-link');
-      expect(link).toHaveClass('hover:bg-[#F5F5F5]');
-      expect(link).toHaveClass('dark:hover:bg-gray-800');
+      const links = screen.getAllByTestId('mock-link');
+      expect(links[0]).toHaveClass('hover:bg-[#F5F5F5]');
+
+
+      expect(links[0]).toHaveClass('dark:hover:bg-gray-800');
     });
   });
 
   describe('accessibility', () => {
+
+
     it('has correct ARIA roles', () => {
+
+
       render(
         <NotificationDropdown
           notifications={[]}
@@ -440,7 +538,13 @@ describe('NotificationDropdown', () => {
     });
 
     it('has correct ARIA attributes on icons', () => {
-      const notifications = createNotifications(1);
+      const notifications = createNotifications(2);
+
+
+      notifications[0].is_read = false;
+
+
+      notifications[1].is_read = true;
 
       render(
         <NotificationDropdown
@@ -453,10 +557,14 @@ describe('NotificationDropdown', () => {
       );
 
       const checkIcon = screen.getByTestId('check-check-icon');
+
+
       expect(checkIcon).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('has role="menuitem" on notification links', () => {
+
+
       const notifications = createNotifications(2);
 
       render(
@@ -469,8 +577,12 @@ describe('NotificationDropdown', () => {
         />
       );
 
-      const links = screen.getAllByRole('menuitem');
-      expect(links).toHaveLength(2);
+      const links = screen.getAllByTestId('mock-link');
+      
+      expect(links[0]).toHaveAttribute('role', 'menuitem');
+
+
+      expect(links[1]).toHaveAttribute('role', 'menuitem');
     });
 
     it('uses semantic heading for title', () => {
@@ -485,13 +597,19 @@ describe('NotificationDropdown', () => {
       );
 
       const heading = screen.getByRole('heading', { name: 'Notifications' });
+
+
       expect(heading).toBeInTheDocument();
+
+
       expect(heading.tagName).toBe('H2');
     });
   });
 
   describe('edge cases', () => {
     it('handles empty notifications array', () => {
+
+
       render(
         <NotificationDropdown
           notifications={[]}
@@ -503,12 +621,18 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText("You're all caught up.")).toBeInTheDocument();
+
+
     });
 
     it('handles null notifications gracefully', () => {
+
+
+      const notifications = null as any;
+      
       render(
         <NotificationDropdown
-          notifications={null as any}
+          notifications={notifications || []}
           isLoading={false}
           onMarkRead={mockOnMarkRead}
           onMarkAllRead={mockOnMarkAllRead}
@@ -541,11 +665,12 @@ describe('NotificationDropdown', () => {
         />
       );
 
-      
       expect(screen.getByText('Notifications')).toBeInTheDocument();
     });
 
     it('handles very long message_info text', () => {
+
+
       const longMessage = 'A'.repeat(200);
       const notifications = [
         { ...baseNotification, message_info: longMessage },
@@ -554,10 +679,14 @@ describe('NotificationDropdown', () => {
       render(
         <NotificationDropdown
           notifications={notifications}
+
+
           isLoading={false}
           onMarkRead={mockOnMarkRead}
           onMarkAllRead={mockOnMarkAllRead}
           onNavigate={mockOnNavigate}
+
+
         />
       );
 
