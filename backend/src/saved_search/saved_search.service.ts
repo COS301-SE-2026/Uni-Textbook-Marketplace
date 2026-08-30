@@ -21,16 +21,13 @@ import {
 export class SavedSearchesService {
   private savedSearchRepository: Repository<SavedSearch>;
   private userRepository: Repository<User>;
-  private listingRepository: Repository<Listing>;
-  private bookRepository: Repository<Book>;
-  private moduleRepository: Repository<ModuleEntity>;
+
 
   constructor(private dataSource: DataSource) {
+
     this.savedSearchRepository = this.dataSource.getRepository(SavedSearch);
     this.userRepository = this.dataSource.getRepository(User);
-    this.listingRepository = this.dataSource.getRepository(Listing);
-    this.bookRepository = this.dataSource.getRepository(Book);
-    this.moduleRepository = this.dataSource.getRepository(ModuleEntity);
+    
   }
 
   private toNumber(value: string | number | undefined | null): number | null {
