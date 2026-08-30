@@ -423,3 +423,145 @@ describe('NotificationDropdown', () => {
       expect(link).toHaveClass('dark:hover:bg-gray-800');
     });
   });
+
+  describe('accessibility', () => {
+    it('has correct ARIA roles', () => {
+      render(
+        <NotificationDropdown
+          notifications={[]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
+
+    it('has correct ARIA attributes on icons', () => {
+      const notifications = createNotifications(1);
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const checkIcon = screen.getByTestId('check-check-icon');
+      expect(checkIcon).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    it('has role="menuitem" on notification links', () => {
+      const notifications = createNotifications(2);
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const links = screen.getAllByRole('menuitem');
+      expect(links).toHaveLength(2);
+    });
+
+    it('uses semantic heading for title', () => {
+      render(
+        <NotificationDropdown
+          notifications={[]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const heading = screen.getByRole('heading', { name: 'Notifications' });
+      expect(heading).toBeInTheDocument();
+      expect(heading.tagName).toBe('H2');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles empty notifications array', () => {
+      render(
+        <NotificationDropdown
+          notifications={[]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText("You're all caught up.")).toBeInTheDocument();
+    });
+
+    it('handles null notifications gracefully', () => {
+      render(
+        <NotificationDropdown
+          notifications={null as any}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText("You're all caught up.")).toBeInTheDocument();
+    });
+
+    it('handles undefined notification fields gracefully', () => {
+      const notifications = [
+        { 
+          id: 'notif-1',
+          entity_type: undefined as any,
+          message_info: undefined as any,
+          is_read: false,
+          created_at: new Date().toISOString(),
+          entity_id: undefined as any,
+        },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      
+      expect(screen.getByText('Notifications')).toBeInTheDocument();
+    });
+
+    it('handles very long message_info text', () => {
+      const longMessage = 'A'.repeat(200);
+      const notifications = [
+        { ...baseNotification, message_info: longMessage },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      expect(screen.getByText(longMessage)).toBeInTheDocument();
+    });
+  });
+});
