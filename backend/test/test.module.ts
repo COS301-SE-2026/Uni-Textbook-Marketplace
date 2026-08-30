@@ -14,7 +14,7 @@ import { NotificationsModule } from '../src/notifications/notifications.module';
 
 import { User } from '../src/database/entities/users.entity';
 import { Listing } from '../src/database/entities/listing.entity';
-import { Case } from 'src/database/entities/case.entity';
+import { Case } from '../src/database/entities/case.entity';
 import { Book } from '../src/database/entities/book.entity';
 import { Module as ModuleEntity } from '../src/database/entities/module.entity';
 import { University } from '../src/database/entities/university.entity';
@@ -25,8 +25,8 @@ import { SavedSearch } from '../src/database/entities/saved_search.entity';
 import { MessagingModule } from '../src/messaging/messaging.module';
 import { Notifications } from '../src/database/entities/notifications.entity';
 import { Wishlist } from '../src/database/entities/wishlist.entity';
-import { Report } from 'src/database/entities/report.entity';
-import { CasesModule } from 'src/cases/cases.module';
+import { Report } from '../src/database/entities/report.entity';
+import { CasesModule } from '../src/cases/cases.module';
 import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-search-match.listener';
 
 @Module({
