@@ -6,7 +6,7 @@ import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
-import { EMAIL_SERVICE, IEmailService } from 'src/email/email.interface';
+import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
 
 @Injectable()
 export class NotificationsService {

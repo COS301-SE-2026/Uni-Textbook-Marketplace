@@ -13,6 +13,8 @@ jest.mock('../src/firebase/firebase-admin', () => ({
 }));
 
 import { db } from '../src/firebase/firebase-admin';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { emit } from 'process';
 
 describe('MessagingService', () => {
     let service: MessagingService;
@@ -102,6 +104,12 @@ describe('MessagingService', () => {
                     provide: getRepositoryToken(User),
                     useValue: { findOne: jest.fn() },
                 },
+                {
+                    provide: EventEmitter2,
+                    useValue: {
+                        emit: jest.fn()
+                    }
+                }
             ],
         }).compile();
 

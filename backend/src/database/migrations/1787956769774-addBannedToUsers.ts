@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AddBannedToUsers1787956769774 implements MigrationInterface {
-  name = 'AddBannedToUsers1787956769774';
+    name = 'AddBannedToUsers1787956769774'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "saved_searches" DROP CONSTRAINT "saved_searches_user_id_fkey"`);
@@ -63,69 +63,4 @@ export class AddBannedToUsers1787956769774 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "saved_searches" ADD CONSTRAINT "saved_searches_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
     }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "notifications" DROP CONSTRAINT "FK_39dccc777268995087ce0ccd626"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "notifications" DROP CONSTRAINT "FK_2b493a038e4fd0ea954648d6b44"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "notifications" DROP CONSTRAINT "FK_9a8a82462cab47c73d25f49261f"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "saved_searches" DROP CONSTRAINT "FK_8f01d13ac8e7b451d244674274f"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" DROP CONSTRAINT "FK_e10aa79b34032d2fce0a6c59176"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reports" DROP CONSTRAINT "FK_d1cdc1ed639c70f2ec0bc33e166"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reports" DROP CONSTRAINT "FK_9459b9bf907a3807ef7143d2ead"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "audit_log" DROP CONSTRAINT "CHK_61df26bb3e1e64395385850cb4"`,
-    );
-    await queryRunner.query(`DROP INDEX "public"."idx_saved_searches_user_id"`);
-    await queryRunner.query(
-      `DROP INDEX "public"."idx_saved_searches_created_at"`,
-    );
-    await queryRunner.query(`DROP INDEX "public"."idx_books_title"`);
-    await queryRunner.query(
-      `ALTER TABLE "saved_searches" ALTER COLUMN "created_at" DROP NOT NULL`,
-    );
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "banned_by"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "ban_reason"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "banned_at"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "is_banned"`);
-    await queryRunner.query(`DROP TABLE "notifications"`);
-    await queryRunner.query(`DROP TABLE "reports"`);
-    await queryRunner.query(`DROP TYPE "public"."reports_status_enum"`);
-    await queryRunner.query(
-      `ALTER TABLE "audit_log" ADD CONSTRAINT "audit_log_action_check" CHECK (((action)::text = ANY ((ARRAY['CREATE'::character varying, 'UPDATE'::character varying, 'DELETE'::character varying, 'LOGIN'::character varying, 'LOGOUT'::character varying, 'SOLD'::character varying, 'WITHDRAWN'::character varying, 'APPROVE_LISTING'::character varying, 'REJECT_LISTING'::character varying])::text[])))`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "listings" ADD CONSTRAINT "listings_status_check" CHECK ((status = ANY (ARRAY['PENDING'::listings_status_enum, 'APPROVED'::listings_status_enum, 'REJECTED'::listings_status_enum, 'SOFT_DELETED'::listings_status_enum])))`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "listings" ADD CONSTRAINT "listings_price_check" CHECK ((price >= (0)::numeric))`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "listings" ADD CONSTRAINT "listings_annotation_level_check" CHECK ((annotation_level = ANY (ARRAY['none'::listings_annotation_level_enum, 'light'::listings_annotation_level_enum, 'heavy'::listings_annotation_level_enum])))`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "listings" ADD CONSTRAINT "listings_condition_check" CHECK ((condition = ANY (ARRAY['new'::listings_condition_enum, 'good'::listings_condition_enum, 'fair'::listings_condition_enum, 'poor'::listings_condition_enum])))`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "idx_saved_search_created_at" ON "saved_searches" ("created_at") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "idx_saved_search_user" ON "saved_searches" ("user_id") `,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "saved_searches" ADD CONSTRAINT "saved_searches_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
-  }
 }
