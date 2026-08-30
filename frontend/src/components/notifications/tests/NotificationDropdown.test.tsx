@@ -298,3 +298,128 @@ describe('NotificationDropdown', () => {
       expect(mockOnNavigate).toHaveBeenCalled();
     });
 
+    it('does not call onMarkRead when clicking a read notification', async () => {
+      const user = userEvent.setup();
+      const notifications = [
+        { ...baseNotification, id: 'notif-1', is_read: true },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const link = screen.getByTestId('mock-link');
+      await user.click(link);
+
+      expect(mockOnMarkRead).not.toHaveBeenCalled();
+      expect(mockOnNavigate).toHaveBeenCalled();
+    });
+
+    it('calls onMarkAllRead when clicking "Mark all read" button', async () => {
+      const user = userEvent.setup();
+      const notifications = createNotifications(3);
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const markAllButton = screen.getByText('Mark all read');
+      await user.click(markAllButton);
+
+      expect(mockOnMarkAllRead).toHaveBeenCalled();
+    });
+
+    it('calls onNavigate when clicking "View All" link', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <NotificationDropdown
+          notifications={[]}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const viewAllLink = screen.getByText('View All');
+      await user.click(viewAllLink);
+
+      expect(mockOnNavigate).toHaveBeenCalled();
+    });
+  });
+
+  describe('styling', () => {
+    it('applies unread styling to unread notifications', () => {
+      const notifications = [
+        { ...baseNotification, id: 'notif-1', is_read: false },
+        { ...baseNotification, id: 'notif-2', is_read: true },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const links = screen.getAllByTestId('mock-link');
+      expect(links[0]).toHaveClass('bg-[#00B4D8]/[0.08]');
+      expect(links[1]).not.toHaveClass('bg-[#00B4D8]/[0.08]');
+    });
+
+    it('shows unread dot for unread notifications', () => {
+      const notifications = [
+        { ...baseNotification, id: 'notif-1', is_read: false },
+        { ...baseNotification, id: 'notif-2', is_read: true },
+      ];
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const dots = screen.getAllByTestId('mock-link').filter(el => 
+        el.querySelector('.rounded-full.bg-[#00B4D8]')
+      );
+      expect(dots.length).toBe(1);
+    });
+
+    it('applies hover styles to notification items', () => {
+      const notifications = createNotifications(1);
+
+      render(
+        <NotificationDropdown
+          notifications={notifications}
+          isLoading={false}
+          onMarkRead={mockOnMarkRead}
+          onMarkAllRead={mockOnMarkAllRead}
+          onNavigate={mockOnNavigate}
+        />
+      );
+
+      const link = screen.getByTestId('mock-link');
+      expect(link).toHaveClass('hover:bg-[#F5F5F5]');
+      expect(link).toHaveClass('dark:hover:bg-gray-800');
+    });
+  });
