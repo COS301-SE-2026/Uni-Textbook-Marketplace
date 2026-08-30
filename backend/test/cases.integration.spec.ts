@@ -246,4 +246,366 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
       console.log(`   - Audit Logs: ${auditLogs.length} entries`);
     });
   });
+
+    describe('Full Appeal Flow - Reversed (User Reinstated)', () => {
+    let reinstatedUser: User;
+
+    beforeAll(async () => {
+      
+      reinstatedUser = await userRepo.save({
+        email: 'reinstated@test.com',
+        password_hash: 'hashed_password',
+        first_name: 'Reinstated',
+        last_name: 'User',
+        is_verified: true,
+        is_banned: true,
+        banned_at: new Date(),
+        banned_by: adminUser,
+        ban_reason: 'Violated platform rules - inappropriate behavior',
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      } as User);
+    });
+
+    it('should complete the full flow: submit appeal → admin reverses → user is reinstated', async () => {
+      
+      const appealMessage = 'I apologize for my behavior. I understand the rules now and promise to follow them.';
+
+      const submittedCase = await casesService.createAppeal(reinstatedUser.id, {
+        appeal_message: appealMessage,
+      });
+
+      expect(submittedCase).toBeDefined();
+      expect(submittedCase.user_id).toBe(reinstatedUser.id);
+      expect(submittedCase.status).toBe('pending');
+
+      console.log(`Step 1: Appeal submitted with ID: ${submittedCase.id}`);
+
+     
+      const dbCase = await caseRepo.findOne({
+        where: { id: submittedCase.id },
+      });
+
+      expect(dbCase).toBeDefined();
+      expect(dbCase?.status).toBe('pending');
+
+      console.log(`Step 2: Case found in database with status: ${dbCase?.status}`);
+
+      
+      const adminNotes = 'User showed genuine remorse and provided valid evidence. Ban lifted.';
+
+      const reviewedCase = await casesService.reviewCase(
+        submittedCase.id,
+        adminUser.id,
+        'reversed',
+        adminNotes,
+      );
+
+      expect(reviewedCase).toBeDefined();
+      expect(reviewedCase.status).toBe('reversed');
+      expect(reviewedCase.reviewed_by).toBe(adminUser.id);
+      expect(reviewedCase.reviewed_at).toBeDefined();
+
+      console.log(`Step 3: Case reviewed - Status: ${reviewedCase.status}`);
+
+    
+      const userAfterReversal = await userRepo.findOne({
+        where: { id: reinstatedUser.id },
+        relations: ['banned_by'],
+      });
+
+      expect(userAfterReversal?.is_banned).toBe(false);
+      expect(userAfterReversal?.ban_reason).toBeNull();
+      expect(userAfterReversal?.banned_at).toBeNull();
+      expect(userAfterReversal?.banned_by).toBeNull();
+
+      console.log(`Step 4: User reinstated (is_banned = ${userAfterReversal?.is_banned})`);
+
+     
+      const auditLogs = await auditLogRepo.find({
+        where: { entity_id: submittedCase.id },
+        relations: ['performedBy'],
+        order: { performed_at: 'ASC' },
+      });
+
+      
+      expect(auditLogs.length).toBeGreaterThanOrEqual(2);
+
+      
+      const createLog = auditLogs.find(log => log.action === 'CREATE');
+      expect(createLog).toBeDefined();
+      expect(createLog?.entity_type).toBe('CASE');
+
+      
+      const unbanLog = auditLogs.find(log => log.action === 'UNBAN_USER');
+      expect(unbanLog).toBeDefined();
+      expect(unbanLog?.entity_type).toBe('USER');
+
+      console.log(`Step 5: Audit logs created: CREATE + UNBAN_USER`);
+
+     
+      const finalUser = await userRepo.findOne({
+        where: { id: reinstatedUser.id },
+      });
+
+      expect(finalUser?.is_banned).toBe(false);
+      expect(finalUser?.banned_at).toBeNull();
+      expect(finalUser?.banned_by).toBeNull();
+      expect(finalUser?.ban_reason).toBeNull();
+
+      console.log(`Step 6: User can now access the platform (is_banned: ${finalUser?.is_banned})`);
+
+      
+      console.log('   Full appeal flow (reversed) completed successfully!');
+      console.log(`   - Case ID: ${submittedCase.id}`);
+      console.log(`   - User: ${reinstatedUser.email} (is_banned: ${finalUser?.is_banned})`);
+      console.log(`   - Case Status: ${reviewedCase.status}`);
+      console.log(`   - Audit Logs: ${auditLogs.length} entries`);
+    });
+  });
+
+    describe('Full Appeal Flow - Reversed (User Reinstated)', () => {
+    let reinstatedUser: User;
+
+    beforeAll(async () => {
+      // Create a fresh banned user for this test
+      reinstatedUser = await userRepo.save({
+        email: 'reinstated@test.com',
+        password_hash: 'hashed_password',
+        first_name: 'Reinstated',
+        last_name: 'User',
+        is_verified: true,
+        is_banned: true,
+        banned_at: new Date(),
+        banned_by: adminUser,
+        ban_reason: 'Violated platform rules - inappropriate behavior',
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      } as User);
+    });
+
+    it('should complete the full flow: submit appeal → admin reverses → user is reinstated', async () => {
+      
+      const appealMessage = 'I apologize for my behavior. I understand the rules now and promise to follow them.';
+
+      const submittedCase = await casesService.createAppeal(reinstatedUser.id, {
+        appeal_message: appealMessage,
+      });
+
+      expect(submittedCase).toBeDefined();
+      expect(submittedCase.user_id).toBe(reinstatedUser.id);
+      expect(submittedCase.status).toBe('pending');
+
+      console.log(`Step 1: Appeal submitted with ID: ${submittedCase.id}`);
+
+      
+      const dbCase = await caseRepo.findOne({
+        where: { id: submittedCase.id },
+      });
+
+      expect(dbCase).toBeDefined();
+      expect(dbCase?.status).toBe('pending');
+
+      console.log(`Step 2: Case found in database with status: ${dbCase?.status}`);
+
+      
+      const adminNotes = 'User showed genuine remorse and provided valid evidence. Ban lifted.';
+
+      const reviewedCase = await casesService.reviewCase(
+        submittedCase.id,
+        adminUser.id,
+        'reversed',
+        adminNotes,
+      );
+
+      expect(reviewedCase).toBeDefined();
+      expect(reviewedCase.status).toBe('reversed');
+      expect(reviewedCase.reviewed_by).toBe(adminUser.id);
+      expect(reviewedCase.reviewed_at).toBeDefined();
+
+      console.log(`Step 3: Case reviewed - Status: ${reviewedCase.status}`);
+
+      
+      const userAfterReversal = await userRepo.findOne({
+        where: { id: reinstatedUser.id },
+        relations: ['banned_by'],
+      });
+
+      expect(userAfterReversal?.is_banned).toBe(false);
+      expect(userAfterReversal?.ban_reason).toBeNull();
+      expect(userAfterReversal?.banned_at).toBeNull();
+      expect(userAfterReversal?.banned_by).toBeNull();
+
+      console.log(`Step 4: User reinstated (is_banned = ${userAfterReversal?.is_banned})`);
+
+      
+      const auditLogs = await auditLogRepo.find({
+        where: { entity_id: submittedCase.id },
+        relations: ['performedBy'],
+        order: { performed_at: 'ASC' },
+      });
+
+     
+      expect(auditLogs.length).toBeGreaterThanOrEqual(2);
+
+      
+      const createLog = auditLogs.find(log => log.action === 'CREATE');
+      expect(createLog).toBeDefined();
+      expect(createLog?.entity_type).toBe('CASE');
+
+     
+      const unbanLog = auditLogs.find(log => log.action === 'UNBAN_USER');
+      expect(unbanLog).toBeDefined();
+      expect(unbanLog?.entity_type).toBe('USER');
+
+      console.log(`Step 5: Audit logs created: CREATE + UNBAN_USER`);
+
+      
+      const finalUser = await userRepo.findOne({
+        where: { id: reinstatedUser.id },
+      });
+
+      expect(finalUser?.is_banned).toBe(false);
+      expect(finalUser?.banned_at).toBeNull();
+      expect(finalUser?.banned_by).toBeNull();
+      expect(finalUser?.ban_reason).toBeNull();
+
+      console.log(`Step 6: User can now access the platform (is_banned: ${finalUser?.is_banned})`);
+
+      
+      console.log('  Full appeal flow (reversed) completed successfully!');
+      console.log(`   - Case ID: ${submittedCase.id}`);
+      console.log(`   - User: ${reinstatedUser.email} (is_banned: ${finalUser?.is_banned})`);
+      console.log(`   - Case Status: ${reviewedCase.status}`);
+      console.log(`   - Audit Logs: ${auditLogs.length} entries`);
+    });
+  });
+    describe('Edge Cases and Validation', () => {
+    it('should not allow a non-banned user to submit an appeal', async () => {
+      
+      const nonBannedUser = await userRepo.save({
+        email: 'nonbanned@test.com',
+        password_hash: 'hashed_password',
+        first_name: 'Non',
+        last_name: 'Banned',
+        is_verified: true,
+        is_banned: false,
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      } as User);
+
+      await expect(
+        casesService.createAppeal(nonBannedUser.id, {
+          appeal_message: 'I want to appeal',
+        })
+      ).rejects.toThrow('You are not banned. Appeals are only for banned users.');
+    });
+
+    it('should not allow a user to have multiple pending appeals', async () => {
+      
+      const firstAppeal = await casesService.createAppeal(bannedUser.id, {
+        appeal_message: 'First appeal',
+      });
+
+      expect(firstAppeal).toBeDefined();
+      expect(firstAppeal.status).toBe('pending');
+
+      
+      await expect(
+        casesService.createAppeal(bannedUser.id, {
+          appeal_message: 'Second appeal',
+        })
+      ).rejects.toThrow('You already have a pending appeal. Please wait for it to be reviewed.');
+    });
+
+    it('should not allow reviewing a case that is already reviewed', async () => {
+      
+      const submittedCase = await casesService.createAppeal(bannedUser.id, {
+        appeal_message: 'Test appeal',
+      });
+
+      
+      await casesService.reviewCase(
+        submittedCase.id,
+        adminUser.id,
+        'upheld',
+        'Ban upheld',
+      );
+
+      
+      await expect(
+        casesService.reviewCase(
+          submittedCase.id,
+          adminUser.id,
+          'reversed',
+          'Should not work',
+        )
+      ).rejects.toThrow('This case has already been reviewed. Status: upheld');
+    });
+  });
+
+  describe('Audit Log Integrity', () => {
+    it('should create a complete audit trail for the entire appeal lifecycle', async () => {
+      
+      const freshBannedUser = await userRepo.save({
+        email: 'freshbanned@test.com',
+        password_hash: 'hashed_password',
+        first_name: 'Fresh',
+        last_name: 'Banned',
+        is_verified: true,
+        is_banned: true,
+        banned_at: new Date(),
+        banned_by: adminUser,
+        ban_reason: 'Test ban reason',
+        role: 'student',
+        university: testUniversity,
+        faculty: testFaculty,
+      } as User);
+
+     
+      const submittedCase = await casesService.createAppeal(freshBannedUser.id, {
+        appeal_message: 'Full audit trail test',
+      });
+
+      
+      await casesService.reviewCase(
+        submittedCase.id,
+        adminUser.id,
+        'reversed',
+        'User was wrongly banned',
+      );
+
+      
+      const auditLogs = await auditLogRepo.find({
+        where: { entity_id: submittedCase.id },
+        relations: ['performedBy'],
+        order: { performed_at: 'ASC' },
+      });
+
+      
+      expect(auditLogs.length).toBeGreaterThanOrEqual(2);
+
+      
+      const actions = auditLogs.map(log => log.action);
+      
+      
+      expect(actions[0]).toBe('CREATE');
+      
+      
+      expect(actions[actions.length - 1]).toBe('UNBAN_USER');
+
+      
+      for (const log of auditLogs) {
+        expect(log.performedBy).toBeDefined();
+        expect(log.performedBy.id).toBe(adminUser.id);
+      }
+
+      console.log(' Audit trail verification complete:');
+      console.log(`   - Total entries: ${auditLogs.length}`);
+      console.log(`   - Actions: ${actions.join(' → ')}`);
+    });
+  });
 });
