@@ -165,8 +165,8 @@ describe('Cases Integration Tests - Full Appeal Flow', () => {
   }
 
   beforeEach(async () => {
-    await caseRepo.delete({});
-    await auditLogRepo.delete({});
+   await caseRepo.clear();
+  await auditLogRepo.clear();
   });
 
   describe('Full Appeal Flow - Upheld Ban', () => {
