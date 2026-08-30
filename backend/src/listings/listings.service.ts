@@ -117,13 +117,13 @@ export class ListingsService {
         console.log(
           `User ${match.userId} has a saved search match for listing ${listing.id}`,
         );
-        // i'll uncomment this when the notification service is ready:
-        // await this.notificationService.createNotification({
-        //   userId: match.userId,
-        //   type: 'NEW_MATCH',
-        //   listingId: listing.id,
-        //   message: `New listing matches your saved search`,
-        // });
+       this.eventEmitter.emit('saved-search.match', {
+          userId: match.userId,
+          savedSearchId: match.savedSearchId,
+          listingId: listing.id,
+          listingTitle: listing.title || 'New Listing Available',
+          matchDate: new Date(),
+        });
       }
     } catch (error) {
       const errorMessage =
