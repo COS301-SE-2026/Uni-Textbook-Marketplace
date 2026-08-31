@@ -45,6 +45,12 @@ interface AdminReport {
         title: string
         price: number
         photo_urls: string[]
+        seller: {
+            id: string
+            first_name: string
+            last_name: string
+            email: string
+        }
     }
 }
 
@@ -457,7 +463,17 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
     return { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject }
 }
 
-function ReportCard({ report }: { report: AdminReport }) {
+function ReportCard({
+    report,
+    onDismiss,
+    onBan,
+    actionLoading,
+}: {
+    readonly report: AdminReport
+    readonly onDismiss: (reportId: string) => Promise<void>
+    readonly onBan: (report: AdminReport) => Promise<void>
+    readonly actionLoading: boolean
+}) {
     return (
         <div className="card p-5 border border-gray-200">
             <div className="flex justify-between items-start gap-4">
@@ -502,7 +518,13 @@ function ReportCard({ report }: { report: AdminReport }) {
 
                 </div>
 
-                <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        report.status === 'PENDING'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-gray-100 text-gray-600'
+                    }`}
+                >
                     {report.status}
                 </span>
 
@@ -518,13 +540,40 @@ function ReportCard({ report }: { report: AdminReport }) {
                 </p>
             </div>
 
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end gap-2 mt-4">
+
                 <Button
                     variant="primary"
                     onClick={() => window.location.href = `/listings/${report.listing.id}`}
+                    disabled={actionLoading}
                 >
                     View Listing
                 </Button>
+
+                <Button
+                    variant="secondary"
+                    onClick={() => onDismiss(report.id)}
+                    disabled={actionLoading}
+                >
+                    {actionLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                        'Dismiss'
+                    )}
+                </Button>
+
+                <Button
+                    variant="danger"
+                    onClick={() => onBan(report)}
+                    disabled={actionLoading}
+                >
+                    {actionLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                        'Ban Seller'
+                    )}
+                </Button>
+
             </div>
         </div>
     )
@@ -537,6 +586,7 @@ export default function AdminReviewDashboard() {
     const { listings, loading, actionLoading, handleApprove, handleReject } = useListings(showToast,currentAdminId)
     const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } = useRejection(handleReject)
     const [reports, setReports] = useState<AdminReport[]>([])
+    const [reportActionLoading, setReportActionLoading] = useState<string | null>(null)
 
     useEffect(() => {
         getMe()
@@ -583,6 +633,45 @@ export default function AdminReviewDashboard() {
         router.push(`/listings/${id}`)
     }
 
+    const handleDismissReport = async (reportId: string) => {
+        setReportActionLoading(reportId)
+        try {
+            await api.patch(`/admin/reports/${reportId}/dismiss`)
+
+            setReports(prev =>
+                prev.filter(report => report.id !== reportId)
+            )
+
+            showToast('Report dismissed', 'success')
+        } catch (error) {
+            console.error(error)
+            showToast('Failed to dismiss report', 'error')
+        } finally {
+            setReportActionLoading(null)
+        }
+    }
+
+    const handleBanUser = async (report: AdminReport) => {
+        setReportActionLoading(report.id)
+        try {
+            await api.patch(`/admin/${report.listing.seller.id}/ban`, {
+                reason: report.reason,
+            })
+
+            await api.patch(`/admin/reports/${report.id}/dismiss`)
+
+            setReports(prev =>
+                prev.filter(r => r.id !== report.id)
+            )
+
+            showToast('Seller banned and report reviewed', 'success')
+        } catch (error) {
+            console.error(error)
+            showToast('Failed to ban seller', 'error')
+        } finally {
+            setReportActionLoading(null)
+        }
+    }
     return (
         <AdminRoute>
             {/* Hero Section */}
@@ -668,7 +757,13 @@ export default function AdminReviewDashboard() {
                             </p>
                         ) : (
                             reports.map(report => (
-                                <ReportCard key={report.id} report={report} />
+                                <ReportCard
+                                    key={report.id}
+                                    report={report}
+                                    onDismiss={handleDismissReport}
+                                    onBan={handleBanUser}
+                                    actionLoading={reportActionLoading === report.id}
+                                />
                             ))
                         )}
                     </div>
