@@ -3,7 +3,7 @@ import {
   getNotificationIcon,
   getNotificationRoute,
 } from '../notificationRoutes';
-import { CheckCircle2, XCircle, MessageSquare, SquarePen, Bell as BellIcon } from 'lucide-react';
+import { CheckCircle2, XCircle, MessageSquare, SquarePen, Bookmark as BellIcon } from 'lucide-react';
 import type { Notification } from '@/types/notification';
 
 jest.mock('lucide-react', () => ({
@@ -15,7 +15,7 @@ jest.mock('lucide-react', () => ({
   MessageSquare: jest.fn(() => 'MessageSquare'),
   SquarePen: jest.fn(() => 'SquarePen'),
   
-  Bell: jest.fn(() => 'BellIcon'),
+  Bookmark: jest.fn(() => 'BellIcon'),
 }));
 
 describe('notificationRoutes', () => {
