@@ -28,7 +28,7 @@ const mockNotifications: Notification[] = [
   },
 ];
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3001';
 
 const setup = (response: any, ok = true, status = 200) => {
 
