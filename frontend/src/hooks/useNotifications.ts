@@ -47,7 +47,6 @@ async function fetchNotifications(page: number, limit: number): Promise<fetchRes
     }
 
     const data = await res.json();
-    console.log(data);
 
     if (data && typeof data === "object" && data.pagination) {
         const list = Array.isArray(data.items)
