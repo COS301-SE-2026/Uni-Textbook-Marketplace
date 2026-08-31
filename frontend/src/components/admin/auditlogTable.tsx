@@ -16,7 +16,7 @@ interface AuditLogTableProps {
     logs: AuditLogEntry[];
     loading?: boolean;
 }
-
+ 
 export default function AuditLogTable({ logs, loading }: AuditLogTableProps) {
 
     if (loading) {
