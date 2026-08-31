@@ -6,6 +6,7 @@ import {
 import { CheckCircle2, XCircle, MessageSquare, SquarePen, Bookmark as BellIcon } from 'lucide-react';
 import type { Notification } from '@/types/notification';
 
+//correct
 jest.mock('lucide-react', () => ({
 
   CheckCircle2: jest.fn(() => 'CheckCircle2'),
