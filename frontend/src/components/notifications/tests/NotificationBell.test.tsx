@@ -401,12 +401,7 @@ describe('NotificationBell', () => {
 
   describe('edge cases', () => {
     it('handles undefined notifications gracefully', async () => {
-
-
       const user = userEvent.setup();
-
-
-
       mockUseNotifications.mockReturnValue({
         notifications: undefined as any,
         unreadCount: 0,
@@ -414,7 +409,6 @@ describe('NotificationBell', () => {
         markRead: mockMarkRead,
         markAllRead: mockMarkAllRead,
       });
-
       render(<NotificationBell />);
       
       const bellButton = screen.getByRole('button', { name: /notifications/i });
@@ -431,15 +425,10 @@ describe('NotificationBell', () => {
         markRead: mockMarkRead,
         markAllRead: mockMarkAllRead,
       });
-
       render(<NotificationBell />);
       
       const button = screen.getByRole('button');
-
       expect(button).toHaveClass('hover:text-[#00B4D8]');
-
-
-
       expect(button).toHaveClass('hover:bg-[#F5F5F5]');
     });
 
@@ -451,16 +440,12 @@ describe('NotificationBell', () => {
         markRead: mockMarkRead,
         markAllRead: mockMarkAllRead,
       });
-    });
-
-
-    render(<NotificationBell />);
+      render(<NotificationBell />);
       
       const button = screen.getByRole('button');
-
-
       expect(button).toHaveClass('dark:hover:bg-gray-800');
     });
+  });
 
   describe('accessibility', () => {
     it('sets aria-expanded correctly', async () => {

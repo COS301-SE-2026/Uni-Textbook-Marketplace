@@ -8,13 +8,13 @@ import * as notificationRoutes from '@/utils/notificationRoutes';
 
 
 jest.mock('next/link', () => {
-  return ({ children, href, onClick, className, role, ...props }: any) => (
-
+  const MockLink = ({ children, href, onClick, className, role, ...props }: any) => (
     <a href={href} onClick={onClick} className={className} role={role} data-testid="mock-link" {...props}>
       {children}
-
     </a>
   );
+  MockLink.displayName = 'MockLink';
+  return MockLink;
 });
 
 
@@ -494,7 +494,8 @@ describe('NotificationDropdown', () => {
       const dots = document.querySelectorAll('.rounded-full.bg-\\[\\#00B4D8\\]');
 
 
-      expect(dots.length).toBe(1);
+      
+      expect(dots).toHaveLength(1);
     });
 
     it('applies hover styles to notification items', () => {

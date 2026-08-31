@@ -5,11 +5,13 @@ import HelpMenu from '../HelpMenu';
 
 
 jest.mock('next/link', () => {
-  return ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: () => void }) => (
+  const MockLink = ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: () => void }) => (
     <a href={href} onClick={onClick} data-testid="help-link">
       {children}
     </a>
   );
+  MockLink.displayName = 'MockLink';
+  return MockLink;
 });
 
 jest.mock('lucide-react', () => ({
