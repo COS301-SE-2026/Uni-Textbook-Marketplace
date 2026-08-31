@@ -287,6 +287,276 @@ security:
 
 paths:
 
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Starts student registration. Checks the email domain and sends the OTP.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, surname, university, email]
+              properties:
+                fullName:
+                  type: string
+                surname:
+                  type: string
+                university:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "201":
+          description: Registration successful, OTP sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+        "400":
+          description: Missing required field, or email domain not in allowlist
+        "409":
+          description: Email address is already registered
+
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      summary: Checks the 6-digit OTP sent to the student's email.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp]
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: string
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  verified:
+                    type: boolean
+        "400":
+          description: OTP is incorrect or has expired
+        "404":
+          description: No pending OTP found for this email
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Logs in a verified student and hands back a signed JWT (cookie).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid email or password
+        "403":
+          description: Account exists but email is not verified
+
+  /auth/set-password:
+    post:
+      tags: [Auth]
+      summary: Sets the student's password once OTP verification is done.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, password, confirmPassword]
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        "200":
+          description: Password set successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Returns the logged-in user's profile.
+      responses:
+        "200":
+          description: The current user's profile
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Clears the session cookie.
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/universities:
+    get:
+      tags: [Auth]
+      summary: Lists supported universities, for the registration dropdown.
+      security: []
+      responses:
+        "200":
+          description: List of universities
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Gets a new access token using a refresh token.
+      security: []
+      responses:
+        "200":
+          description: New access token issued
+
+  /listings:
+    post:
+      tags: [Listings]
+      summary: Creates a new textbook listing. Created with status = PENDING.
+      responses:
+        "201":
+          description: Listing created
+        "400":
+          description: Validation error
+    get:
+      tags: [Listings]
+      summary: Returns all APPROVED listings, with pagination and filters.
+      parameters:
+        - in: query
+          name: moduleId
+          schema: { type: string }
+        - in: query
+          name: faculty
+          schema: { type: string }
+        - in: query
+          name: condition
+          schema: { type: string }
+        - in: query
+          name: minPrice
+          schema: { type: number }
+        - in: query
+          name: maxPrice
+          schema: { type: number }
+        - in: query
+          name: edition
+          schema: { type: integer }
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Paginated approved listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Listing"
+
+  /listings/mine:
+    get:
+      tags: [Listings]
+      summary: Returns all of the logged-in student's own listings (PENDING, APPROVED, REJECTED).
+      responses:
+        "200":
+          description: The student's own listings
+
+  /listings/{id}:
+    get:
+      tags: [Listings]
+      summary: Returns the full detail object for one listing.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/editlist:
+    patch:
+      tags: [Listings]
+      summary: Edits an existing listing owned by the student. Only PENDING/REJECTED.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string, format: uuid }
+                title: { type: string }
+                condition: { type: string, enum: [new, good, fair, poor] }
+                annotation_level: { type: string, enum: [none, light, heavy] }
+                price: { type: number }
+                has_notes: { type: boolean }
+                description: { type: string }
+      responses:
+        "200":
+          description: Listing updated
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
   # Demo 3: Whoever owns each section, fill it in as you go and code
   /notifications/mine:
     get:
