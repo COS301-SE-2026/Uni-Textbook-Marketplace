@@ -71,6 +71,8 @@ export default function ListingDetailPage() {
     const [loading, setLoading] = useState(true)
     const [activeImage, setActiveImage] = useState(0)
     const [showMessageModal, setShowMessageModal] = useState(false)
+    const [showReportModal, setShowReportModal] = useState(false)
+    const [reportReason, setReportReason] = useState('')
     const [message, setMessage] = useState('')
     const [messageSent, setMessageSent] = useState(false)
     const [openSections, setOpenSection] = useState<OpenSection>({
@@ -329,7 +331,7 @@ export default function ListingDetailPage() {
 
                         </div>
                         <p>
-                            {listing.seller?.university.name}
+                            {listing.seller?.university?.name}
                         </p>
 
                     </div>
@@ -345,17 +347,22 @@ export default function ListingDetailPage() {
                         </p>
                     </div>
 
-                    <div className="flex gap-3 mt-8 flex-wrap">
+                                        <div className="flex gap-3 mt-8 flex-wrap">
                         <Button
                             onClick={() => setShowMessageModal(true)}
-                            variant='primary'
+                            variant="primary"
                         >
                             MESSAGE SELLER
                         </Button>
 
-
-
+                        <Button
+                            onClick={() => setShowReportModal(true)}
+                            variant="secondary"
+                        >
+                            REPORT LISTING
+                        </Button>
                     </div>
+
                 </aside>
             </div>
 
@@ -443,6 +450,67 @@ export default function ListingDetailPage() {
                     
                 )}
             </Modal>
+
+            <Modal
+                isOpen={showReportModal}
+                onClose={() => {
+                    setShowReportModal(false)
+                    setReportReason('')
+                }}
+                title="Report Listing"
+            >
+                <div className="flex flex-col gap-4">
+                    <p className="text-sm text-gray-600">
+                        Please describe why you are reporting this listing.
+                    </p>
+
+                    <textarea
+                        className="w-full border border-gray-300 rounded p-3 text-sm resize-none"
+                        rows={5}
+                        placeholder="Describe the problem with this listing..."
+                        value={reportReason}
+                        onChange={(e) => setReportReason(e.target.value)}
+                    />
+
+                    <div className="flex justify-end gap-3">
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setShowReportModal(false)
+                                setReportReason('')
+                            }}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            onClick={async () => {
+                                if (!reportReason.trim()) {
+                                    return
+                                }
+
+                                try {
+                                    await api.post('/reports', {
+                                        listing_id: listing.id,
+                                        reason: reportReason,
+                                    })
+
+                                    setShowReportModal(false)
+                                    setReportReason('')
+
+                                    alert('Report submitted successfully.')
+                                } catch (error) {
+                                    console.error('Error submitting report:', error)
+                                    alert('Failed to submit report.')
+                                }
+                            }}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+            
 
         </div>
     )
