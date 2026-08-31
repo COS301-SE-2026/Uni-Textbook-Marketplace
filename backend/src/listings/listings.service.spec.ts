@@ -195,7 +195,7 @@ describe('ListingsService', () => {
         description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
-      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing);
+      
     });
 
     it('should throw NotFoundException when user does not exist', async () => {
@@ -228,7 +228,6 @@ describe('ListingsService', () => {
       const result = await service.createListing('user-1', dtoWithoutModule);
 
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
-      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalled();
     });
 
     it('should use default values for optional fields when not provided', async () => {

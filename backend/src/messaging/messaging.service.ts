@@ -106,6 +106,9 @@ export class MessagingService {
     event.entityType = 'message';
     event.messageInfo = `New conversation started by ${buyer?.first_name} regarding listing ${listing.title}`;
     event.new = true;
+    event.name = listing.seller.first_name;
+    event.studentEmail = listing.seller.email;
+    event.messageFrom = buyer?.first_name;
 
     this.eventEmitter.emit('messaging', event);
 

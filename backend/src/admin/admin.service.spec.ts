@@ -8,11 +8,12 @@ import { AuditLog } from '../database/entities/audit_log.entity';
 import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
 import { NotFoundException } from '@nestjs/common';
 import { validate } from 'class-validator';
+import { SavedSearchesService } from '../saved_search/saved_search.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('AdminService', () => {
   let service: AdminService;
-  let entityManager: EntityManager;
-  let usersRepository: Repository<User>;
+  let module: TestingModule;
 
   // Mock data
   const mockUser: Partial<User> = {
@@ -76,7 +77,7 @@ describe('AdminService', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         AdminService,
         {
@@ -87,16 +88,34 @@ describe('AdminService', () => {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
         },
+        {
+          provide: getRepositoryToken(AuditLog),
+          useValue: {
+            emit: jest.fn(),
+          }
+        },
+        {
+          provide: EventEmitter2,
+          useValue: {
+            emit:jest.fn()
+          }
+        },
+        {
+          provide : SavedSearchesService,
+          useValue: {
+            findMatchingSavedSearches: jest.fn(),
+            matchesFilter: jest.fn(),
+          }
+        },
       ],
     }).compile();
 
     service = module.get<AdminService>(AdminService);
-    entityManager = module.get<EntityManager>(EntityManager);
-    usersRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.clearAllMocks();
+    await module.close();
   });
 
   // Services tests

@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ListingsModule } from './listings/listings.module';
 import { ModuleModule } from './modules/module.module';
 import { WishlistModule } from './wishlist/wishlist.module';
-
+import { CasesModule } from './cases/cases.module';
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
 import { Book } from './database/entities/book.entity';
@@ -59,6 +59,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           Notifications,
           SavedSearch,
           Report,
+          CasesModule,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
