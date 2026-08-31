@@ -28,6 +28,8 @@ const mockNotifications: Notification[] = [
   },
 ];
 
+const API_URL = 'http://localhost:3000/api';
+
 const setup = (response: any, ok = true, status = 200) => {
 
 
@@ -46,8 +48,16 @@ describe('useNotifications', () => {
     jest.clearAllMocks();
 
 
-    process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3000/api';
+    process.env.NEXT_PUBLIC_API_URL = API_URL;
   });
+
+  const waitForLoadingComplete = async (result: any) => {
+
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+  };
 
   describe('loading', () => {
 
@@ -64,13 +74,20 @@ describe('useNotifications', () => {
 
       expect(result.current.isLoading).toBe(true);
 
+      await waitForLoadingComplete(result);
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      
 
       expect(result.current.notifications).toEqual(mockNotifications);
 
 
       expect(result.current.unreadCount).toBe(1);
+
+      expect(fetch).toHaveBeenCalledWith(
+        `${API_URL}/notifications/mine`,
+        expect.objectContaining({ credentials: 'include' })
+      );
     });
 
     it('handles empty response', async () => {
@@ -81,7 +98,7 @@ describe('useNotifications', () => {
 
       const { result } = renderHook(() => useNotifications());
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
       expect(result.current.notifications).toEqual([]);
 
 
@@ -94,7 +111,7 @@ describe('useNotifications', () => {
 
       const { result } = renderHook(() => useNotifications());
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
 
       expect(result.current.error).toBe('Failed to load notifications');
@@ -106,7 +123,7 @@ describe('useNotifications', () => {
       setup({ items: mockNotifications });
       const { result } = renderHook(() => useNotifications());
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
 
       expect(result.current.notifications).toEqual(mockNotifications);
@@ -119,7 +136,7 @@ describe('useNotifications', () => {
 
       const { result } = renderHook(() => useNotifications());
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
       expect(result.current.error).toBe('Network error');
     });
@@ -141,7 +158,7 @@ describe('useNotifications', () => {
 
 
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
       await act(async () => {
         await result.current.markRead('notif-1');
@@ -157,7 +174,7 @@ describe('useNotifications', () => {
 
 
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/notifications/notif-1/read',
+        `${API_URL}/notifications/notif-1/read`,
         expect.objectContaining({ method: 'PATCH' })
       );
 
@@ -175,14 +192,21 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
-      await act(async () => await result.current.markAllRead());
+      await act(async () => {
+        await result.current.markAllRead();
+      });
 
       expect(result.current.notifications.every((n) => n.is_read)).toBe(true);
 
 
       expect(result.current.unreadCount).toBe(0);
+
+      expect(fetch).toHaveBeenCalledWith(
+        `${API_URL}/notifications/read-all`,
+        expect.objectContaining({ method: 'PATCH' })
+      );
     });
 
     it('deletes a notification', async () => {
@@ -194,15 +218,15 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
       await act(async () => {
         await result.current.deleteNotif('notif-1');
       });
 
-
+      
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/notifications/notif-1/delete',
+        `${API_URL}/notifications/notif-1/delete`,
         expect.objectContaining({ method: 'DELETE' })
       );
     });
@@ -219,9 +243,11 @@ describe('useNotifications', () => {
 
 
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
-      await act(async () => await result.current.refresh());
+      await act(async () => {
+        await result.current.refresh();
+      });
 
       expect(result.current.notifications).toHaveLength(3);
     });
@@ -239,11 +265,9 @@ describe('useNotifications', () => {
       setup(mockNotifications);
 
       const { result } = renderHook(() => useNotifications());
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
       await act(async () => {
-
-
         await result.current.markRead('notif-1');
       });
 
@@ -254,26 +278,33 @@ describe('useNotifications', () => {
   });
 
   describe('polling', () => {
-    beforeEach(() => jest.useFakeTimers());
-
-
-    afterEach(() => jest.useRealTimers());
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    
+    afterEach(() => {
+      jest.useRealTimers();
+    });
 
     it('polls every 15 seconds', async () => {
       setup(mockNotifications);
-
-
       setup(mockNotifications);
 
-      renderHook(() => useNotifications());
+      const { result } = renderHook(() => useNotifications());
+      
+      
+      await waitForLoadingComplete(result);
+      expect(fetch).toHaveBeenCalledTimes(1);
 
+      
+      act(() => {
+        jest.advanceTimersByTime(15000);
+      });
 
-      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
-
-      jest.advanceTimersByTime(15000);
-
-
-      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+      
+      await waitFor(() => {
+        expect(fetch).toHaveBeenCalledTimes(2);
+      });
     });
   });
 
@@ -289,7 +320,7 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
       
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await waitForLoadingComplete(result);
 
       expect(result.current.unreadCount).toBe(2);
     });

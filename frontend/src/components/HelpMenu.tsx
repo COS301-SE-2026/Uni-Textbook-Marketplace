@@ -49,10 +49,19 @@ export default function HelpMenu() {
                     role="presentation"
                     className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
                     onClick={() => setIsOpen(false)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            setIsOpen(false)
+                        }
+                    }}
+                    tabIndex={-1}
                 >
                     <div
                         className="bg-[var(--card-bg)] rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-[var(--card-border)]"
                         onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="help-modal-title"
                     >
                         
                         <div className="flex items-center justify-between p-5 border-b border-[var(--card-border)]">
