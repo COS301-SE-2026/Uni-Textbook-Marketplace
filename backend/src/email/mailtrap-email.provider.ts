@@ -3,6 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { Transporter } from 'nodemailer';
 import { IEmailService } from './email.interface';
+import {
+  approveListingTemplate,
+  rejectedListingTemplate,
+  newMessageTemplate,
+  listingEditedTemplate,
+  savedSearchMatchTemplate,
+} from './email.templates';
+import { wrapEmailPage } from './wrapper';
 
 @Injectable()
 export class MailtrapEmailProvider implements IEmailService {
@@ -74,18 +82,18 @@ export class MailtrapEmailProvider implements IEmailService {
         subject: 'Your Textbook Marketplace verification code',
         text: `Uni Textbook Marketplace
 
-Welcome! Use the code below to verify your email and complete registration.
+          Welcome! Use the code below to verify your email and complete registration.
 
-Your verification code: ${otp}
+          Your verification code: ${otp}
 
-This code expires in 3 minutes.
+          This code expires in 3 minutes.
 
-If you didn't request this, please ignore this email.
+          If you didn't request this, please ignore this email.
 
----
-Thank you for being part of our community. This project is made possible with the support of our industry partner Agile Bridge and our lecturers at the University of Pretoria.
+          ---
+          Thank you for being part of our community. This project is made possible with the support of our industry partner Agile Bridge and our lecturers at the University of Pretoria.
 
-NexusDev`,
+          NexusDev`,
 
         html: `
         <!DOCTYPE html>
@@ -173,6 +181,49 @@ NexusDev`,
           </body>
         </html>
         `,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send OTP email to ${to}`, error);
+      throw new Error('Could not send verification email');
+    }
+  }
+
+  async sendNotificationEmail(
+    to: string,
+    entityType:
+      | 'APPROVE_LISTING'
+      | 'REJECT_LISTING'
+      | 'message'
+      | 'Edited listing'
+      | 'SAVED_SEARCH_MATCH',
+    data: any,
+  ): Promise<void> {
+    if (this.isTestEnvironment || !this.transporter) {
+      this.logger.log(`[TEST MODE] Would send ${entityType} email to ${to}`);
+      return;
+    }
+
+    const fromEmail = this.config.get<string>('MAIL_FROM');
+    if (!fromEmail) {
+      this.logger.error('MAIL_FROM is not configured');
+      throw new Error('Email sender address not configured');
+    }
+
+    const content = {
+      APPROVE_LISTING: approveListingTemplate,
+      REJECT_LISTING: rejectedListingTemplate,
+      message: newMessageTemplate,
+      'Edited listing': listingEditedTemplate,
+      SAVED_SEARCH_MATCH: savedSearchMatchTemplate,
+    }[entityType](data);
+
+    try {
+      await this.transporter.sendMail({
+        from: fromEmail,
+        to,
+        subject: content.subject,
+        text: content.text,
+        html: wrapEmailPage(content.bodyHtml),
       });
     } catch (error) {
       this.logger.error(`Failed to send OTP email to ${to}`, error);

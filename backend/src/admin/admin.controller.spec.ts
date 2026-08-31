@@ -8,6 +8,10 @@ import {
     Report,
     ReportStatus,
 } from '../database/entities/report.entity';
+import { AdminService } from './admin.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('Reports and admin controllers', () => {
     let controller: ReportsController;
@@ -35,6 +39,19 @@ describe('Reports and admin controllers', () => {
                 provide: ReportsService,
                 useValue: service,
             },
+            {
+                provide: AdminService,
+                useValue:{
+                    JwtAuthGuard,
+                    RolesGuard,
+                }
+            },
+            {
+                provide: EventEmitter2,
+                useValue: {
+                    emit: jest.fn()
+                }
+            }
             ],
         }).compile();
 

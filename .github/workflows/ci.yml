@@ -48,6 +48,7 @@ jobs:
             DATABASE_URL: postgresql://nexusdev:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/textbook_marketplace_test
             JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
             NODE_ENV: test
+            FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
         - name: E2E Tests (Supertest)
           working-directory: backend
