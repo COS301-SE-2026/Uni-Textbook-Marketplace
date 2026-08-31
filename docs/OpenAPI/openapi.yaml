@@ -167,21 +167,100 @@ components:
           format: uuid
         userId:
           type: string
-          format: uuid
-        banId:
-          type: string
-          format: uuid
-        appealMessage:
+          format: uui
+      #ban_id foreign key removed as there is no ban table to reference 
+        appeal_message:
           type: string
         status:
           type: string
           enum: [PENDING, UPHELD, REVERSED]
-        reviewedBy:
+        reviewed_by:
           type: string
           format: uuid
-        reviewedAt:
+        reviewed_at:
           type: string
           format: date-time
+        created_at: #added column for case date ordering + keeping track of stale cases
+          type: string
+          format: date-time
+        updated_at: #added column for keeping track of updates in cases 
+          type: string
+          format: date-time
+        deleted_at: #added column for keeping track of case removals
+          type: string
+          format: date-time
+
+    CaseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier of the case
+        user_id:
+          type: string
+          format: uuid
+          description: The ID of the user who submitted the appeal
+        appeal_message:
+          type: string
+          nullable: true
+          description: The appeal message from the user
+        status:
+          type: string
+          enum: [pending, upheld, reversed]
+          description: |
+            The current status of the case:
+            - "pending": Awaiting admin review
+            - "upheld": Ban maintained (user remains banned)
+            - "reversed": Ban lifted (user reinstated)
+        reviewed_by:
+          type: string
+          format: uuid
+          nullable: true
+          description: The ID of the admin who reviewed the case
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was reviewed
+        created_at:
+          type: string
+          format: date-time
+          description: When the case was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was last updated
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was soft-deleted
+
+    PaginatedCasesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CaseResponse"
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of cases
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Items per page
+            totalPages:
+              type: integer
+              description: Total number of pages
+
 
   responses:
     Unauthorized:
@@ -345,68 +424,207 @@ paths:
 
   # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
   # the admin review + decide endpoint.
-  /cases:
-    post:
-      tags: [Cases]
-      summary: A banned user submits an appeal. Only accessible if is_banned = true.
-      requestBody:
+
+  
+  # Neo: UC10 appeal/case flow
+# Updated to match CasesController implementation
+
+/cases:
+  post:
+    tags: [Cases]
+    summary: Submit an appeal as a banned user
+    description: Only users with is_banned = true can submit appeals. Users cannot have multiple pending appeals.
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [appeal_message]
+            properties:
+              appeal_message:
+                type: string
+                minLength: 10
+                maxLength: 5000
+                description: The appeal message from the banned user
+    responses:
+      "201":
+        description: Appeal submitted successfully
         content:
           application/json:
             schema:
-              type: object
-              required: [appeal_message]
-              properties:
-                appeal_message:
-                  type: string
-      responses:
-        "201":
-          description: Appeal submitted
-        "403":
-          description: Only banned users may submit an appeal
+              $ref: "#/components/schemas/CaseResponse"
+      "400":
+        description: User is not banned or already has a pending appeal
+      "401":
+        description: Unauthorized - user not logged in
+      "403":
+        description: Forbidden - only banned users may submit an appeal
 
-  /admin/cases:
-    get:
-      tags: [Cases]
-      summary: Returns appeal cases for admin review, paginated.
-      parameters:
-        - in: query
-          name: page
-          schema: { type: integer }
-        - in: query
-          name: limit
-          schema: { type: integer }
-      responses:
-        "200":
-          description: Paginated cases
-        "403":
-          $ref: "#/components/responses/Forbidden"
-
-  # (Neo): confirm the actual route/verb for the decide action once
-  # committed - sprint-5.md describes "a decide endpoint" without a
-  # confirmed path yet. Likely PATCH /admin/cases/{id}/decide.
-  /admin/cases/{id}/decide:
-    patch:
-      tags: [Cases]
-      summary: >
-        Admin upholds the ban or reinstates the account. Writes audit_log,
-        triggers a case-decision notification via emit().
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string, format: uuid }
-      requestBody:
+/cases/mine:
+  get:
+    tags: [Cases]
+    summary: Get all cases for the authenticated user
+    description: Returns all cases submitted by the current user
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: List of cases
         content:
           application/json:
             schema:
-              type: object
-              required: [decision]
-              properties:
-                decision:
-                  type: string
-                  enum: [UPHOLD, REINSTATE]
-      responses:
-        "200":
-          description: Case decided
-        "403":
-          $ref: "#/components/responses/Forbidden"
+              type: array
+              items:
+                $ref: "#/components/schemas/CaseResponse"
+      "401":
+        description: Unauthorized - user not logged in
+
+/cases/{id}:
+  get:
+    tags: [Cases]
+    summary: Get a specific case by ID
+    description: Users can only access their own cases
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The ID of the case to retrieve
+    responses:
+      "200":
+        description: Case found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseResponse"
+      "401":
+        description: Unauthorized - user not logged in
+      "404":
+        description: Case not found
+
+/cases/admin/pending:
+  get:
+    tags: [Cases]
+    summary: ADMIN ONLY - Get all pending cases
+    description: Returns all cases with status = pending for admin review
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: List of pending cases
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CaseResponse"
+      "401":
+        description: Unauthorized - user not logged in
+      "403":
+        description: Forbidden - admin access required
+
+/cases/admin:
+  get:
+    tags: [Cases]
+    summary: ADMIN ONLY - Get all cases with pagination
+    description: Returns all cases with pagination for admin dashboard
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Page number (default: 1)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        description: Items per page (default: 20, max: 100)
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum: [pending, upheld, reversed]
+        description: Filter by status (pending, upheld, reversed)
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search in appeal message
+    responses:
+      "200":
+        description: Paginated list of cases
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaginatedCasesResponse"
+      "401":
+        description: Unauthorized - user not logged in
+      "403":
+        description: Forbidden - admin access required
+
+/cases/{id}/review:
+  patch:
+    tags: [Cases]
+    summary: ADMIN ONLY - Review a case (decide endpoint)
+    description: >
+      Admin upholds the ban or reinstates the account (reverses the ban).
+      Writes to audit_log and triggers a case-decision notification via emit().
+      - "upheld": User remains banned (ban is maintained)
+      - "reversed": User is reinstated (ban is lifted)
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The ID of the case to review
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [decision]
+            properties:
+              decision:
+                type: string
+                enum: [upheld, reversed]
+                description: |
+                  - "upheld": Maintain the ban (user stays banned)
+                  - "reversed": Reinstate the user (lift the ban)
+              adminNotes:
+                type: string
+                maxLength: 1000
+                description: Optional notes from the admin about the decision
+    responses:
+      "200":
+        description: Case reviewed successfully (decision applied)
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseResponse"
+      "400":
+        description: Case already reviewed or invalid decision
+      "401":
+        description: Unauthorized - user not logged in
+      "403":
+        description: Forbidden - admin access required
+      "404":
+        description: Case not found
