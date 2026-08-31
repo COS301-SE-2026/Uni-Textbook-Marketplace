@@ -45,7 +45,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         synchronize: false,
-        logging: true,
+        logging: false,
         entities: [
           User,
           Listing,
