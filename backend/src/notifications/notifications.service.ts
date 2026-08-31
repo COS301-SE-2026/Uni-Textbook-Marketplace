@@ -35,7 +35,7 @@ export class NotificationsService {
     await this.notificationRepo.save(noti);
   }
 
-  async mynotifications(userId: string, page: number = 1, limit: number = 10) {
+  async mynotifications(userId: string, page: number = 1, limit: number = 5) {
     const skip = (page - 1) * limit;
 
     const [notifications, total] = await this.notificationRepo.findAndCount({
