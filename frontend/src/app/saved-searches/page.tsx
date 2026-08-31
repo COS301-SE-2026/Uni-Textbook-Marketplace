@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { Trash2, Bookmark, Search, ArrowLeft } from 'lucide-react'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
-import { getSavedSearches, deleteSavedSearch, SavedSearch,SavedSearchMeta, Filters } from '@/lib/saved-searches.api'
+import { getSavedSearches, deleteSavedSearch, SavedSearch, SavedSearchMeta, Filters } from '@/lib/saved-searches.api'
 import Image from 'next/image'
-import {NotificationPagination} from '../../components/pagination/pagination'
+import { NotificationPagination } from '../../components/pagination/pagination'
 
 const PAGE_SIZE = 5
 
@@ -18,33 +18,41 @@ export default function SavedSearchesPage() {
   const page = Number(searchParams.get('page') || 1)
 
   const [searches, setSearches] = useState<SavedSearch[]>([])
-  const [meta, setMeta] = useState<SavedSearchMeta>({total: 0,page:1, limit: PAGE_SIZE, pages: 1})
+  const [meta, setMeta] = useState<SavedSearchMeta>({ total: 0, page: 1, limit: PAGE_SIZE, pages: 1 })
 
   const [loading, setLoading] = useState(true)
 
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const loadSearches = async () => {
-
-    try {
-
-      const {data, meta} = await getSavedSearches(page, PAGE_SIZE);
-      setSearches(data);
-      setMeta(meta);
-
-    } catch (error) {
-
-      console.error('Failed to load saved searches', error)
-    } finally {
-      setLoading(false)
-
-    }
-  }
-
   useEffect(() => {
 
+    let cancelled = false
+
+    const loadSearches = async () => {
+
+      try {
+
+        const { data, meta } = await getSavedSearches(page, PAGE_SIZE);
+        setSearches(data);
+        setMeta(meta);
+
+      } catch (error) {
+
+        console.error('Failed to load saved searches', error)
+      } finally {
+        setLoading(false)
+
+      }
+    }
+
+
+
     loadSearches()
-    
+
+    return () => {
+      cancelled = true
+    }
+
   }, [page])
 
 
@@ -388,7 +396,7 @@ export default function SavedSearchesPage() {
         )}
 
         <div className="mt-6 flex justify-center">
-          <NotificationPagination meta={meta}/>
+          <NotificationPagination meta={meta} />
         </div>
       </div>
     </ProtectedRoute>

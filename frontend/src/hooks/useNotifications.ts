@@ -138,6 +138,8 @@ export function useNotifications(page: number = 1, limit: number = 5): UseNotifi
 
     const load = useCallback(async () => {
 
+        setIsLoading(true);
+
         try {
             const { items, meta: m } = await fetchNotifications(page, limit);
             setNotifications(items);
@@ -154,8 +156,8 @@ export function useNotifications(page: number = 1, limit: number = 5): UseNotifi
     }, [page, limit]);
 
     useEffect(() => {
-        setIsLoading(true);
-        load();
+        const id = setTimeout(load,0);
+        return () => clearTimeout(id);
     }, [load]);
 
 
