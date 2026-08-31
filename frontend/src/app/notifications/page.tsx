@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { CheckCheck, Trash2, Eye, Check, BellOff } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { NotificationPagination } from "@/components/pagination/pagination";
 import { getNotificationHeading, getNotificationIcon, getNotificationRoute } from "@/utils/notificationRoutes";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 5;
 
 function timeAgo(isoDate: string): string {
 
@@ -35,7 +37,7 @@ function NotificationSkeletonRow() {
                 <div className="h-3 w-3/4 animate-pulse rounded bg-[var(--muted)]" />
                 <div className="h-3 w-3/4 animate-pulse rounded bg-[var(--muted)]" />
             </div>
-            <div className="mt1 h-3 w-10 shrink-0 animate-pulse rounded bg-[var(--muted)]" />
+            <div className="mt-1 h-3 w-10 shrink-0 animate-pulse rounded bg-[var(--muted)]" />
         </li>
     );
 }
@@ -67,22 +69,28 @@ function EmptyState({filter}: { filter: 'all' | 'unread'}){
 
 export default function NotificationsPage() {
 
-    const { notifications, isLoading, error, markRead, markAllRead, deleteNotif } = useNotifications();
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [filter, setFilter] = useState<"all" | "unread">("all");
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const page = Number(searchParams.get("page") || 1);
+    const filter = (searchParams.get("filter") as "all" | "unread") || "all";
+
+    const { notifications, meta, unreadCount, isLoading, error, markRead, markAllRead, deleteNotif } =
+        useNotifications(page, PAGE_SIZE);
+
     const filtered = useMemo(
-        () => (filter === 'unread' ? notifications.filter((n) => !n.is_read) : notifications),
+        () => (filter === "unread" ? notifications.filter((n) => !n.is_read) : notifications),
         [notifications, filter]
     );
-    
-    const unreadCount = useMemo(
-        
-        () => notifications.filter((n) => !n.is_read).length,
-        [notifications]
-    )
 
-    const visible = notifications.slice(0, visibleCount);
-    const hasMore = visibleCount < notifications.length;
+    const setFilter = (tab: "all" | "unread") => {
+        const params = new URLSearchParams(searchParams);
+        params.set("filter", tab);
+        params.set("page", "1");
+        router.push(`${pathname}?${params.toString()}`);
+    };
+
 
     return (
         <div className="container-content py-10">
@@ -110,7 +118,6 @@ export default function NotificationsPage() {
                                 type="button"
                                 onClick={() => {
                                     setFilter(tab);
-                                    setVisibleCount(PAGE_SIZE);
                                 }}
                                 className={`rounded px-3 py-1.5 font-medium capitalize transition-colors ${
                                     filter === tab
@@ -153,12 +160,12 @@ export default function NotificationsPage() {
                     </p>
                 )}
 
-                {!isLoading && !error && visible.length === 0 && <EmptyState filter={filter} />}
+                {!isLoading && !error && filtered.length === 0 && <EmptyState filter={filter} />}
 
-                {!isLoading && !error && visible.length > 0 && (
+                {!isLoading && !error && filtered.length > 0 && (
                     <ul>
 
-                        {visible.map((notification) => {
+                        {filtered.map((notification) => {
                             const Icon = getNotificationIcon(notification.entity_type);
                             const href = getNotificationRoute(notification);
                             const heading = getNotificationHeading(notification.entity_type);
@@ -241,17 +248,9 @@ export default function NotificationsPage() {
 
             </div>
 
-                {hasMore && (
-                    <div className="mt-6 flex justify-center">
-                        <button
-                            type="button"
-                            onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-                            className="rounded-md border border-[#dddddd] px-5 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-[#00B4D8] hover:text-[#00B4D8] dark:border-gray-700"
-                        >
-                            Load more
-                        </button>
-                    </div>
-                )}
+                <div className="mt-6 flex justify-center">
+                    <NotificationPagination meta={meta}/>
+                </div>
         </div>
 
     );
