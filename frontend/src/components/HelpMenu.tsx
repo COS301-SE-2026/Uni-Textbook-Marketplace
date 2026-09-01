@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { HelpCircle, X, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Button } from './ui'
 
 const QUICK_FAQS = [
     { q: 'How do I create a listing?', a: 'Go to the Sell page, fill in your book details, and submit. Your listing will be reviewed by Admin.' },
@@ -15,6 +17,7 @@ const QUICK_FAQS = [
 export default function HelpMenu() {
 
     const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
 
     return (
         <>
@@ -75,6 +78,34 @@ export default function HelpMenu() {
                                     <p className="text-sm text-[var(--foreground)]/70 mt-1.5 pl-5">
                                         {faq.a}
                                     </p>
+
+                                    {faq.q === 'How do I create a listing?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                router.push('/listings/create?tutorial=1')
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
+
+                                    {faq.q === 'How do I contact a seller?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                router.push('/listings?tutorial=contact')
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
 
                                 </div>
                             ))}
