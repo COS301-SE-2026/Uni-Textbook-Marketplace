@@ -40,7 +40,7 @@ function formatDate(dateString: string): string {
     })
 }
 
-// ✅ FIX: Return the Badge with proper props (no className)
+
 function getStatusBadge(status: string) {
     const variants: Record<string, { variant: 'approved' | 'pending' | 'rejected' | 'sold'; icon: React.ReactNode }> = {
         pending: {
@@ -59,7 +59,7 @@ function getStatusBadge(status: string) {
 
     const config = variants[status] || variants.pending
 
-    // ✅ Wrap the Badge in a span with flex styling instead of using className on Badge
+    
     return (
         <span className="inline-flex items-center gap-1">
             <Badge variant={config.variant}>

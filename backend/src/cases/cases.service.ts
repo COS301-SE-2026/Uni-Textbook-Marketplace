@@ -82,6 +82,7 @@ export class CasesService {
       where: {
         user_id: userId,
       },
+      relations: ['user'],
       order: {
         created_at: 'DESC',
       },
@@ -96,6 +97,7 @@ export class CasesService {
         id: caseId,
         user_id: userId,
       },
+      relations: ['user'],
     });
 
     if (!caseEntity) {
@@ -110,6 +112,7 @@ export class CasesService {
       where: {
         status: 'pending',
       },
+      relations: ['user'],
       order: {
         created_at: 'ASC',
       },
@@ -140,6 +143,7 @@ export class CasesService {
 
     const [cases, total] = await this.caseRepo.findAndCount({
       where,
+      relations: ['user'],
       order: {
         created_at: 'DESC',
       },
