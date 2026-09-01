@@ -21,6 +21,7 @@ import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
       provide: EMAIL_SERVICE,
       useClass: MailtrapEmailProvider,
     },
+    ReportNotificationListener,
   ],
   exports: [NotificationsService],
 })
