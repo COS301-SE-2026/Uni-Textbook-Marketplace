@@ -8,6 +8,7 @@ import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { ReportStatus } from '../database/entities/report.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('ReportsService', () => {
     let service: ReportsService;
@@ -41,6 +42,13 @@ describe('ReportsService', () => {
                 provide: getRepositoryToken(User),
                 useValue: {
                     findOne: jest.fn(),
+                },
+            },
+
+            {
+                provide: EventEmitter2,
+                useValue: {
+                    emit: jest.fn(),
                 },
             },
         ],
@@ -392,6 +400,13 @@ describe('ReportsService', () => {
         it('should mark a report as REVIEWED', async () => {
             const report = {
                 id: 'report-123',
+                reporter: {
+                    id: 'user-123',
+                },
+                listing: {
+                    id: 'listing-123',
+                    title: 'Test Textbook',
+                },
                 status: ReportStatus.PENDING,
             } as Report;
 
@@ -411,6 +426,10 @@ describe('ReportsService', () => {
             ).toHaveBeenCalledWith({
                 where: {
                     id: 'report-123',
+                },
+                relations: {
+                    reporter: true,
+                    listing: true,
                 },
             });
 
