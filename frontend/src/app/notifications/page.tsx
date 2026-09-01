@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import Link from "next/link";
 import { CheckCheck, Trash2, Eye, Check, BellOff } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -42,9 +42,9 @@ function NotificationSkeletonRow() {
     );
 }
 
-function EmptyState({filter}: { filter: 'all' | 'unread'}){
+function EmptyState({ filter }: { filter: 'all' | 'unread' }) {
 
-    return(
+    return (
 
         <div className="flex flex-col items-center px-6 py-16 text-center">
 
@@ -67,7 +67,7 @@ function EmptyState({filter}: { filter: 'all' | 'unread'}){
     );
 }
 
-export default function NotificationsPage() {
+function NotificationsContent() {
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -93,6 +93,7 @@ export default function NotificationsPage() {
 
 
     return (
+
         <div className="container-content py-10">
             <div className="mb-6 flex items-center justify-between">
 
@@ -112,21 +113,20 @@ export default function NotificationsPage() {
                 <div className="flex items-center gap-3">
 
                     <div className="flex rounded-md border border-[var(--card-border)] bg-[var(--card-bg)] p-1 text-sm">
-                        {(["all","unread"] as const).map((tab) => (
-                           <button
+                        {(["all", "unread"] as const).map((tab) => (
+                            <button
                                 key={tab}
                                 type="button"
                                 onClick={() => {
                                     setFilter(tab);
                                 }}
-                                className={`rounded px-3 py-1.5 font-medium capitalize transition-colors ${
-                                    filter === tab
-                                        ? "bg-[var(--muted)] text-[var(--foreground)]"
-                                        : "text-[#4B4F58] hover:text-[var(--foreground)] dark:text-gray-400"
-                                }`}
-                           >
+                                className={`rounded px-3 py-1.5 font-medium capitalize transition-colors ${filter === tab
+                                    ? "bg-[var(--muted)] text-[var(--foreground)]"
+                                    : "text-[#4B4F58] hover:text-[var(--foreground)] dark:text-gray-400"
+                                    }`}
+                            >
                                 {tab}
-                           </button> 
+                            </button>
                         ))}
                     </div>
 
@@ -147,7 +147,7 @@ export default function NotificationsPage() {
                 {isLoading && (
 
                     <ul>
-                        {Array.from({length: 5}).map((_,i) => (
+                        {Array.from({ length: 5 }).map((_, i) => (
                             <NotificationSkeletonRow key={i} />
                         ))}
                     </ul>
@@ -175,7 +175,7 @@ export default function NotificationsPage() {
                                 <li key={notification.id}
                                     className={`flex items-start border-b border-[var(--card-border)] px-6 py-4 last:border-b-0 ${notification.is_read ? "" : "bg-[#00B4D8]/[0.06]"}`}
                                 >
-                                 
+
 
                                     <Icon
                                         className="mt-0.5 h-5 w-5 shrink-0 text-[#00B4D8] m-2"
@@ -191,7 +191,7 @@ export default function NotificationsPage() {
                                         <p className="line-clamp-2 break-words text-sm text-[var(--foreground)]">
                                             {notification.message_info}
                                         </p>
-                                        
+
                                         <span className="mt-1 block text-xs text-[#4B4F58] dark:text-gray-400">
                                             {timeAgo(notification.created_at)}
                                         </span>
@@ -203,7 +203,7 @@ export default function NotificationsPage() {
                                             aria-hidden="true"
                                         />
                                     )}
-                                
+
 
                                     <div className="flex shrink-0 items-center gap-1">
                                         <Link
@@ -248,10 +248,18 @@ export default function NotificationsPage() {
 
             </div>
 
-                <div className="mt-6 flex justify-center">
-                    <NotificationPagination meta={meta}/>
-                </div>
+            <div className="mt-6 flex justify-center">
+                <NotificationPagination meta={meta} />
+            </div>
         </div>
 
     );
+}
+
+export default function NotificationPage() {
+    return (
+        <Suspense fallback={null}>
+            <NotificationsContent />
+        </Suspense>
+    )
 }

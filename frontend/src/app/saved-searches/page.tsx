@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { Trash2, Bookmark, Search, ArrowLeft } from 'lucide-react'
@@ -11,7 +11,7 @@ import { NotificationPagination } from '../../components/pagination/pagination'
 
 const PAGE_SIZE = 5
 
-export default function SavedSearchesPage() {
+function SavedSearchesContent() {
 
   const routAttr = useRouter()
   const searchParams = useSearchParams()
@@ -400,5 +400,15 @@ export default function SavedSearchesPage() {
         </div>
       </div>
     </ProtectedRoute>
+
+  )
+}
+
+export default function SavedSearchesPage() {
+
+  return (
+    <Suspense fallback={null}>
+      <SavedSearchesContent />
+    </Suspense>
   )
 }
