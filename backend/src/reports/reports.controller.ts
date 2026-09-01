@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 
 import { Request } from 'express';
 
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 interface AuthenticatedUser {
   id: string;
@@ -20,6 +21,7 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(
     @Req() req: RequestWithUser,
     @Body() createReportDto: CreateReportDto,
@@ -29,4 +31,5 @@ export class ReportsController {
     return this.reportsService.create(userId, createReportDto);
   }
   //moved the GETter and GET ID to admin
+  
 }
