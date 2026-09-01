@@ -6,7 +6,7 @@ import Modal from '@/components/ui/Modal';
 import { useEffect, useState } from 'react';
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
 
     const showModal = !isLoading && !isAuthenticated  
@@ -20,7 +20,15 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         return () => cancelAnimationFrame(id);
     }, []);
 
+    
+    useEffect(() => {
+        if (!isLoading && user && user.is_banned) {
+            router.push('/appeal');
+        }
+    }, [user, isLoading, router]);
+
     if (!mounted) return null;
+
     const handleClose = () => {
         router.push('/');
     };
@@ -34,6 +42,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
                 <p>Please login or register to continue.</p>
             </Modal>
         )
+    }
+
+    
+    if (user?.is_banned) {
+        return null; 
     }
 
     return <>{children}</>;

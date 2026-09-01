@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { api } from '@/lib/api'
-import { AlertCircle, Loader2, BookOpen } from 'lucide-react'
+import { AlertCircle, CheckCircle, Loader2, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
@@ -26,9 +26,10 @@ export default function AppealPage() {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    
     const isBanned = user?.is_banned === true
 
+   
+    // Check if user has an existing appeal
     
     useEffect(() => {
         const checkExistingAppeal = async () => {
@@ -37,7 +38,6 @@ export default function AppealPage() {
             try {
                 const response = await api.get('/cases/mine')
                 let cases: AppealCase[] = []
-                
                 
                 if (Array.isArray(response)) {
                     cases = response
@@ -65,8 +65,8 @@ export default function AppealPage() {
         }
     }, [user, isLoading, router])
 
-    
-    // redirect the user if they're NOT banned
+   
+    // Redirect if user is NOT banned
     
     useEffect(() => {
         if (user && !isBanned && !isLoading) {
@@ -74,6 +74,8 @@ export default function AppealPage() {
         }
     }, [user, isLoading, router, isBanned])
 
+    
+    // Handle appeal submission
     
     const handleSubmitAppeal = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -87,7 +89,6 @@ export default function AppealPage() {
             setSuccess(true)
             setAppealMessage('')
             
-           
             try {
                 const response = await api.get('/cases/mine')
                 let cases: AppealCase[] = []
@@ -115,6 +116,8 @@ export default function AppealPage() {
     }
 
     
+    //Loading state
+    
     if (isLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -126,16 +129,113 @@ export default function AppealPage() {
         )
     }
 
-   
+    
     if (user && !isBanned) {
         return null
     }
 
     
+    //Pending Appeal View
+    
+    if (existingCase && existingCase.status === 'pending') {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full p-8 text-center">
+                    <div className="flex justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <AlertCircle className="w-8 h-8 text-yellow-600" />
+                        </div>
+                    </div>
+                    <h1 className="text-2xl font-bold text-[#000f2b] mb-2">Appeal Pending Review</h1>
+                    <p className="text-gray-600 mb-4">
+                        Your appeal has been submitted and is currently awaiting admin review.
+                        You will be notified once a decision has been made.
+                    </p>
+                    <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm text-gray-500">Your appeal:</p>
+                        <p className="text-sm text-gray-700 mt-1">{existingCase.appeal_message}</p>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Submitted: {new Date(existingCase.created_at).toLocaleDateString()}
+                        </p>
+                    </div>
+                    <Button 
+                        variant="secondary" 
+                        onClick={handleLogout}
+                        className="w-full"
+                    >
+                        Log Out
+                    </Button>
+                </Card>
+            </div>
+        )
+    }
+
+    
+    // Upheld (Rejected) Appeal View
+    
+    if (existingCase && existingCase.status === 'upheld') {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full p-8 text-center">
+                    <div className="flex justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                            <AlertCircle className="w-8 h-8 text-red-600" />
+                        </div>
+                    </div>
+                    <h1 className="text-2xl font-bold text-[#000f2b] mb-2">Ban Upheld</h1>
+                    <p className="text-gray-600 mb-4">
+                        Your appeal has been reviewed and the ban has been upheld.
+                        You are currently unable to access the platform.
+                    </p>
+                    <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm text-gray-500">Your appeal:</p>
+                        <p className="text-sm text-gray-700 mt-1">{existingCase.appeal_message}</p>
+                    </div>
+                    <Button 
+                        variant="secondary" 
+                        onClick={handleLogout}
+                        className="w-full"
+                    >
+                        Log Out
+                    </Button>
+                </Card>
+            </div>
+        )
+    }
+
+    
+    // Reversed Appeal View
+    
+    if (existingCase && existingCase.status === 'reversed') {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full p-8 text-center">
+                    <div className="flex justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                            <CheckCircle className="w-8 h-8 text-green-600" />
+                        </div>
+                    </div>
+                    <h1 className="text-2xl font-bold text-[#000f2b] mb-2">Ban Reversed! 🎉</h1>
+                    <p className="text-gray-600 mb-6">
+                        Your appeal has been reviewed and the ban has been lifted.
+                        You can now access the platform again.
+                    </p>
+                    <Link href="/listings">
+                        <Button variant="primary" className="w-full">
+                            Go to Marketplace
+                        </Button>
+                    </Link>
+                </Card>
+            </div>
+        )
+    }
+
+    
+    // Show appeal form (no existing case)
+ 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <Card className="max-w-md w-full p-8">
-                {/* Header */}
                 <div className="flex justify-center mb-6">
                     <div className="flex items-center gap-2">
                         <BookOpen className="w-6 h-6 text-[#00B4D8]" />
@@ -150,7 +250,6 @@ export default function AppealPage() {
                     </p>
                 </div>
 
-                {/* Success Message */}
                 {success ? (
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                         <p className="text-green-700 text-sm">
@@ -160,7 +259,6 @@ export default function AppealPage() {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmitAppeal}>
-                        {/* Appeal Message Textarea */}
                         <div className="mb-4">
                             <label htmlFor="appeal_message" className="block text-sm font-medium text-gray-700 mb-1">
                                 Appeal Message
@@ -181,14 +279,12 @@ export default function AppealPage() {
                             </p>
                         </div>
 
-                        {/* Error Message */}
                         {error && (
                             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
                                 <p className="text-red-600 text-sm">{error}</p>
                             </div>
                         )}
 
-                        {/* Submit Button */}
                         <Button
                             type="submit"
                             variant="primary"
@@ -205,7 +301,6 @@ export default function AppealPage() {
                             )}
                         </Button>
 
-                        {/* Log Out Button */}
                         <Button
                             type="button"
                             variant="secondary"
