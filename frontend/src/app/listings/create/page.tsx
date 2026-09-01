@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter,useSearchParams } from 'next/navigation'
 import ListingForm, { ListingFormData } from '@/components/listings/listingForm'
 import Button from '@/components/ui/Button'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
@@ -9,6 +9,9 @@ import { createBook, createModule, uploadImages, createListing, CreateListingDat
 import Modal from '@/components/ui/Modal'
 import Image from 'next/image'
 import { PlusCircle } from 'lucide-react'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 
 
 const ISBN_REGEX = /^(?:\d{9}[\dX]|\d{13})$/i;
@@ -79,13 +82,57 @@ function validateStep(step: number, form: ListingFormData): FormErrors {
 
 const STEP_LABELS = ['Book Details', 'Module Details', 'Listing Details', 'Upload Pictures']
 
+type TutorialStep = {
+    element: string
+    popover: {
+        title: string
+        description: string
+    }
+}
 
-export default function CreateListingPage() {
+const TUTORIAL_STEPS: Record<number,TutorialStep>  = {
+    
+    1: {
+        element: '.card',
+        popover: {
+            title: 'Step 1: Book Details',
+            description: 'Enter book details'
+        }
+    },
+    2: {
+        element: '.card',
+        popover: {
+            title: 'Step 2: Module Details',
+            description: 'Enter module details'
+        }
+    },
+    3: {
+        element: '.card',
+        popover: {
+            title: 'Step 3: Listing Details',
+            description: 'Enter Listing details'
+        }
+    },
+    4: {
+        element: '.card',
+        popover: {
+            title: 'Step 4: Upload pictures',
+            description: 'Upload atleast 4 clear photos of the book'
+        }
+    },
+
+    
+}
+
+
+function CreateListingPageInner() {
 
     const router = useRouter()
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
+    const searchParams = useSearchParams()
+    const [tutorialActive, setTutorialActive] = useState(false)
 
     const [form, setForm] = useState<ListingFormData>({
         // Book
@@ -202,6 +249,40 @@ export default function CreateListingPage() {
         } finally {
             setLoading(false)
         }
+    }
+
+    useEffect(() => {
+
+        if(searchParams.get('tutorial') === '1') setTutorialActive(true)
+
+    }, [searchParams])
+
+    useEffect(() => {
+
+        if(tutorialActive) runTutorialForStep(step)
+
+    }, [step,tutorialActive])
+
+    const runTutorialForStep = (stepNum: number) => {
+
+        const isLastStep = stepNum === 4
+
+        const tour = driver({
+            showProgress:true,
+            steps:[
+                TUTORIAL_STEPS[stepNum],
+                {
+                    element: isLastStep ? '#post-listing-btn' : '#next-step-btn',
+                    popover: {
+                        title: isLastStep ? 'Post it!' : 'Next Step',
+                        description: isLastStep
+                            ? 'Once your photos are uploaded click here to submit'
+                            : 'Click Next to continue'
+                    }
+                }
+            ]
+        })
+        tour.drive()
     }
 
     return (
@@ -352,9 +433,9 @@ export default function CreateListingPage() {
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} variant="primary" className="cursor-pointer">Next</Button>
+                        <Button onClick={nextStep} id='next-step-btn' variant="primary" className="cursor-pointer">Next</Button>
                     ) : (
-                        <Button onClick={handleSubmit} variant="primary" disabled={loading} className="cursor-pointer">
+                        <Button onClick={handleSubmit} id='post-listing-btn' variant="primary" disabled={loading} className="cursor-pointer">
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
 
@@ -386,5 +467,15 @@ export default function CreateListingPage() {
             </Modal>
             
         </ProtectedRoute>
+    )
+}
+
+export default function  CreateListingPage(){
+
+    return(
+
+        <Suspense fallback={null}>
+            <CreateListingPageInner/>
+        </Suspense>
     )
 }
