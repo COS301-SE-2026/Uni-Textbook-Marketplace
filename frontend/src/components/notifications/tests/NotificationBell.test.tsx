@@ -26,11 +26,14 @@ jest.mock('../NotificationDropdown', () => ({
 
 
       <span data-testid="dropdown-loading">{isLoading ? 'loading' : 'ready'}</span>
+
+
       <button data-testid="mark-read-btn" onClick={() => onMarkRead('test-id')}>
 
 
         Mark Read
       </button>
+
       <button data-testid="mark-all-read-btn" onClick={onMarkAllRead}>
         Mark All Read
       </button>
@@ -92,6 +95,7 @@ describe('NotificationBell', () => {
       render(<NotificationBell />);
       
       const badge = screen.getByText('5');
+
       expect(badge).toBeInTheDocument();
 
 
@@ -145,6 +149,8 @@ describe('NotificationBell', () => {
       render(<NotificationBell />);
       
       const button = screen.getByRole('button');
+
+
       expect(button).toHaveAttribute('aria-label', 'Notifications, 3 unread');
     });
 
@@ -178,8 +184,10 @@ describe('NotificationBell', () => {
             id: '1', 
             entity_type: 'listing_approved', 
             message_info: 'Listing approved',
+
             is_read: false,
             created_at: new Date().toISOString(),
+
             entity_id: 'listing-123',
           },
         ],
@@ -250,11 +258,16 @@ describe('NotificationBell', () => {
     });
 
     it('does not close dropdown when clicking inside it', async () => {
+
       const user = userEvent.setup();
+
+
       mockUseNotifications.mockReturnValue({
         notifications: [],
         unreadCount: 0,
         isLoading: false,
+
+
         markRead: mockMarkRead,
         markAllRead: mockMarkAllRead,
       });
@@ -269,12 +282,16 @@ describe('NotificationBell', () => {
       await user.click(bellButton);
       
       const dropdown = screen.getByTestId('notification-dropdown');
+
+
       await user.click(dropdown);
       
       expect(dropdown).toBeInTheDocument();
     });
 
     it('toggles dropdown on bell click', async () => {
+
+
       const user = userEvent.setup();
 
 
@@ -307,6 +324,8 @@ describe('NotificationBell', () => {
 
     it('passes props correctly to NotificationDropdown', async () => {
       const user = userEvent.setup();
+
+
       const mockNotifications = [
         { 
           id: '1', 
@@ -342,10 +361,14 @@ describe('NotificationBell', () => {
       await user.click(bellButton);
       
       expect(screen.getByTestId('dropdown-notifications-count')).toHaveTextContent('2');
+
+
       expect(screen.getByTestId('dropdown-loading')).toHaveTextContent('loading');
     });
 
     it('calls onNavigate when dropdown triggers navigation', async () => {
+
+
       const user = userEvent.setup();
 
 
@@ -370,6 +393,8 @@ describe('NotificationBell', () => {
       await user.click(navigateBtn);
       
       await waitFor(() => {
+
+
         expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
       });
     });
@@ -380,6 +405,8 @@ describe('NotificationBell', () => {
 
     it('handles loading state in dropdown', async () => {
       const user = userEvent.setup();
+
+
       mockUseNotifications.mockReturnValue({
         notifications: [],
         unreadCount: 0,
@@ -391,6 +418,8 @@ describe('NotificationBell', () => {
       render(<NotificationBell />);
       
       const bellButton = screen.getByRole('button', { name: /notifications/i });
+
+
       await user.click(bellButton);
 
 
@@ -400,6 +429,7 @@ describe('NotificationBell', () => {
   });
 
   describe('edge cases', () => {
+    
     it('handles undefined notifications gracefully', async () => {
       const user = userEvent.setup();
       mockUseNotifications.mockReturnValue({
@@ -412,12 +442,14 @@ describe('NotificationBell', () => {
       render(<NotificationBell />);
       
       const bellButton = screen.getByRole('button', { name: /notifications/i });
+
       await user.click(bellButton);
       
       expect(screen.getByTestId('dropdown-notifications-count')).toHaveTextContent('0');
     });
 
     it('applies correct hover styles', () => {
+
       mockUseNotifications.mockReturnValue({
         notifications: [],
         unreadCount: 0,
@@ -443,6 +475,7 @@ describe('NotificationBell', () => {
       render(<NotificationBell />);
       
       const button = screen.getByRole('button');
+
       expect(button).toHaveClass('dark:hover:bg-gray-800');
     });
   });
@@ -471,6 +504,7 @@ describe('NotificationBell', () => {
     });
 
     it('handles keyboard navigation', async () => {
+
       const user = userEvent.setup();
       mockUseNotifications.mockReturnValue({
         notifications: [],
@@ -501,6 +535,8 @@ describe('NotificationBell', () => {
       await waitFor(() => {
         
         expect(screen.queryByTestId('notification-dropdown')).not.toBeInTheDocument();
+
+        
       });
     });
   });
