@@ -64,9 +64,11 @@ export default function LoginMobile() {
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
+
+
             <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto shadow-2xl p-0">
                 
-                {/* Top Panel - Glossy Header */}
+                
                 <div className="w-full relative overflow-hidden px-6 py-8 flex flex-col items-center justify-center" style={{
                     background: 'linear-gradient(145deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)',
                     backdropFilter: 'blur(10px)',
@@ -80,6 +82,8 @@ export default function LoginMobile() {
                             background: 'radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 70%)',
                         }}
                     />
+
+
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
@@ -105,6 +109,8 @@ export default function LoginMobile() {
 
                     
                     <div className="relative z-10 flex flex-col items-center">
+
+
                         <div 
                             className="relative mb-4 p-3 rounded-2xl"
                             style={{
@@ -115,6 +121,8 @@ export default function LoginMobile() {
                             }}
                         >
                             <Logo className="w-14 h-auto" />
+
+
                             <div 
                                 className="absolute -top-px left-1/4 right-1/4 h-px"
                                 style={{
@@ -134,6 +142,8 @@ export default function LoginMobile() {
                         >
                             WELCOME
                         </h2>
+
+
                         <h2 
                             className="text-center font-bold mb-1"
                             style={{
@@ -144,7 +154,11 @@ export default function LoginMobile() {
                         >
                             BACK!
                         </h2>
+
+
                         <div className="relative w-16 h-px my-2">
+
+
                             <div 
                                 className="absolute inset-0"
                                 style={{
@@ -152,9 +166,13 @@ export default function LoginMobile() {
                                 }}
                             />
                         </div>
+
+
                         <p className="text-center text-[#4B4F58]/80 text-sm">
                             Access your university marketplace account.
                         </p>
+
+
                     </div>
                 </div>
 
@@ -164,13 +182,21 @@ export default function LoginMobile() {
                     backdropFilter: 'blur(5px)',
                 }}>
                     <div className="relative z-10">
+
+
                         <h2 style={{ fontSize: "1.25rem" }}>Login</h2>
 
                         <p className="text-text-subtle mt-2" style={{ fontSize: "0.9rem" }}>
                             Enter your details to access your account
                         </p>
+
+
                         <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
+
+
                             <div>
+
+
                                 <Input
                                     label="University Email"
                                     type="email"
@@ -186,8 +212,14 @@ export default function LoginMobile() {
 
 
                             <div>
+
+
                                 <label htmlFor="password-mobile" className="form-label">Password</label>
+
+
                                 <div style={{ position: "relative", width: "100%" }}>
+
+
                                     <input
                                         id="password-mobile"
                                         type={showPassword ? "text" : "password"}
@@ -215,6 +247,8 @@ export default function LoginMobile() {
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
+
+
                                 </div>
 
 
@@ -233,15 +267,20 @@ export default function LoginMobile() {
                                 >
                                     Forgot Password?
                                 </button>
+
+
                             </div>
 
                             {serverError && <ErrorText>{serverError}</ErrorText>}
 
                             
                             <div style={{ marginTop: "2rem" }}>
+
                                 <Button className="w-full cursor-pointer" disabled={loading} type="submit">
                                     {loading ? "Logging in…" : "Login"}
                                 </Button>
+
+                                
                             </div>
                         </form>
                     </div>
