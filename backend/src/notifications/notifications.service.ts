@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
 import { Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { MessageEvent } from '../messaging/events/message.event';
 import { ReportEvent } from '../reports/events/report.events';
 import { User } from '../database/entities/users.entity';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
+import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
 
 @Injectable()
 export class NotificationsService {
@@ -17,8 +18,12 @@ export class NotificationsService {
     
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+
+    @Inject(EMAIL_SERVICE)
+    private readonly emailService: IEmailService,
   ) {}
 
+  //for notifying student of their listing
   async create(event: AdminEvent) {
     const noti = this.notificationRepo.create({
       user_id: { id: event.studentId },
@@ -28,6 +33,27 @@ export class NotificationsService {
     });
 
     await this.notificationRepo.save(noti);
+
+    if (event.action == 'REJECT_LISTING') {
+      await this.emailService.sendNotificationEmail(
+        event.studentEmail,
+        event.action,
+        {
+          recipientName: event.name,
+          listingTitle: event.title,
+          reason: event.description,
+        },
+      );
+    }
+
+    await this.emailService.sendNotificationEmail(
+      event.studentEmail,
+      event.action,
+      {
+        recipientName: event.name,
+        listingTitle: event.title,
+      },
+    );
   }
 
   async createFromSavedSearch(event: SavedSearchMatchEvent) {
@@ -38,6 +64,15 @@ export class NotificationsService {
       message_info: `New listing "${event.listingTitle}" matches your saved search!`,
     });
     await this.notificationRepo.save(noti);
+
+    await this.emailService.sendNotificationEmail(
+      event.studentEmail,
+      'SAVED_SEARCH_MATCH',
+      {
+        recipientName: event.name,
+        listingTitle: event.listingTitle,
+      },
+    );
   }
 
   async mynotifications(userId: string, page: number = 1, limit: number = 10) {
@@ -113,6 +148,16 @@ export class NotificationsService {
     });
 
     await this.notificationRepo.save(noti);
+
+    await this.emailService.sendNotificationEmail(
+      event.studentEmail,
+      event.entityType,
+      {
+        recipientName: event.name,
+        listingTitle: event.listingTitle,
+        senderName: event.messageFrom,
+      },
+    );
   }
 
   async deleteNotification(userId: string, notificationId: string) {

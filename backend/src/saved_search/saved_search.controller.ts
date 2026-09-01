@@ -24,7 +24,10 @@ import {
   PaginatedSavedSearchResponseDto,
 } from './dto/saved_search.dto';
 import { User } from '../database/entities/users.entity';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Saved Searches')
+@ApiCookieAuth('access_token')
 @Controller('saved-searches')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SavedSearchesController {

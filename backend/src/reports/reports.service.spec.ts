@@ -368,7 +368,8 @@ describe('ReportsService', () => {
                     id: 'report-123',
                 },
                     relations: {
-                    user: true,
+                    // user: true,
+                    reporter:true,
                     listing: true,
                 },
             });

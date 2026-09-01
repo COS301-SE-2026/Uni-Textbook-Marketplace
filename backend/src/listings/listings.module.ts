@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {EventEmitterModule} from '@nestjs/event-emitter';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ListingsController } from './listings.controller';
 import { ListingsService } from './listings.service';
 import { AdminService } from '../admin/admin.service';

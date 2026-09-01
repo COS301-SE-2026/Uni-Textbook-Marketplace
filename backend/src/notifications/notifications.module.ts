@@ -7,6 +7,8 @@ import { Notifications } from '../database/entities/notifications.entity';
 import { User } from '../database/entities/users.entity';
 import { ReportNotificationListener } from './listeners/report.notification.listener';
 import { SavedSearchMatchListener } from './listeners/saved-search-match.listener';
+import { EMAIL_SERVICE } from '../email/email.interface';
+import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Notifications, User])],
@@ -15,6 +17,10 @@ import { SavedSearchMatchListener } from './listeners/saved-search-match.listene
     NotificationsService,
     ListingNotificationListener,
     SavedSearchMatchListener,
+    {
+      provide: EMAIL_SERVICE,
+      useClass: MailtrapEmailProvider,
+    },
   ],
   exports: [NotificationsService],
 })

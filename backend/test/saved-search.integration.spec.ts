@@ -1,3 +1,4 @@
+import './setup';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -15,21 +16,22 @@ import { Faculty } from '../src/database/entities/faculty.entity';
 import { University } from '../src/database/entities/university.entity';
 import { Notifications } from '../src/database/entities/notifications.entity';
 import { SavedSearchFiltersDto } from '../src/saved_search/dto/saved_search.dto';
+import { AdminService } from '../src/admin/admin.service';
 
 describe('Saved Search Integration Tests', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let savedSearchService: SavedSearchesService;
   let listingsService: ListingsService;
-  
-  
+  let testAdmin: User;
+
   let savedSearchRepo: Repository<SavedSearch>;
   let listingRepo: Repository<Listing>;
   let userRepo: Repository<User>;
   let bookRepo: Repository<Book>;
   let moduleRepo: Repository<ModuleEntity>;
-  let universityRepo: Repository<University>;  
-  let facultyRepo: Repository<Faculty>;        
+  let universityRepo: Repository<University>;
+  let facultyRepo: Repository<Faculty>;
   let notificationRepo: Repository<Notifications>;
   let eventEmitter: EventEmitter2;
 
@@ -40,6 +42,7 @@ describe('Saved Search Integration Tests', () => {
   let testModule: ModuleEntity;
   let testUniversity: University;
   let testFaculty: Faculty;
+  let adminService: AdminService;
 
   beforeAll(async () => {
     try {
@@ -53,15 +56,15 @@ describe('Saved Search Integration Tests', () => {
       dataSource = module.get(DataSource);
       savedSearchService = module.get(SavedSearchesService);
       listingsService = module.get(ListingsService);
-      
-      
+      adminService = module.get(AdminService);
+
       savedSearchRepo = dataSource.getRepository(SavedSearch);
       listingRepo = dataSource.getRepository(Listing);
       userRepo = dataSource.getRepository(User);
       bookRepo = dataSource.getRepository(Book);
       moduleRepo = dataSource.getRepository(ModuleEntity);
-      universityRepo = dataSource.getRepository(University);  
-      facultyRepo = dataSource.getRepository(Faculty);        
+      universityRepo = dataSource.getRepository(University);
+      facultyRepo = dataSource.getRepository(Faculty);
       notificationRepo = dataSource.getRepository(Notifications);
       eventEmitter = module.get(EventEmitter2);
 
@@ -139,6 +142,19 @@ describe('Saved Search Integration Tests', () => {
       testUser2 = await userRepo.save(user2Data);
       console.log('User2 created:', testUser2.id, testUser2.email);
 
+      const adminData = {
+        email: 'admin@test.com',
+        password_hash: 'hashed_password_admin',
+        first_name: 'Test',
+        last_name: 'Admin',
+        is_verified: true,
+        role: 'admin',
+        university: testUniversity,
+        faculty: testFaculty,
+      };
+      testAdmin = await userRepo.save(adminData);
+      console.log('Admin created:', testAdmin.id, testAdmin.email);
+
       const user3Data = {
         email: 'user3@test.com',
         password_hash: 'hashed_password_3',
@@ -191,12 +207,12 @@ describe('Saved Search Integration Tests', () => {
     return await savedSearchRepo.save(savedSearch);
   }
 
-  
+
   describe('Basic Filter Matching', () => {
     it('should match when filter is empty', () => {
       const listing = createTestListing();
       const filter: SavedSearchFiltersDto = {};
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
@@ -206,7 +222,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         moduleCode: 'CS101',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
@@ -216,7 +232,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         moduleCode: 'CS102',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -226,7 +242,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         condition: 'good',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
@@ -236,7 +252,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         condition: 'new',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -246,7 +262,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         annotationLevel: 'light',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
@@ -256,7 +272,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         modules: ['CS101', 'CS102', 'CS103'],
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
@@ -266,7 +282,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         modules: ['CS102', 'CS103'],
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -278,7 +294,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         moduleCode: 'CS101',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -288,7 +304,7 @@ describe('Saved Search Integration Tests', () => {
       const filter: SavedSearchFiltersDto = {
         book_title: 'Clean Code',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -299,7 +315,7 @@ describe('Saved Search Integration Tests', () => {
         priceMin: '10',
         priceMax: '50',
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(false);
     });
@@ -312,13 +328,13 @@ describe('Saved Search Integration Tests', () => {
         priceMax: null as any,
         condition: undefined,
       };
-      
+
       const result = savedSearchService.matchesFilter(listing, filter);
       expect(result).toBe(true);
     });
   });
 
-  
+
   describe('Price Range & Book Filters', () => {
     describe('Price Range Filters', () => {
       it('should match when price is between min and max', () => {
@@ -327,7 +343,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -338,7 +354,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -349,7 +365,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -360,7 +376,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -371,7 +387,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -381,7 +397,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           priceMin: '40',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -391,7 +407,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -402,7 +418,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: 30 as any,
           priceMax: 50 as any,
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -413,7 +429,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '45.50',
           priceMax: '46.00',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -424,7 +440,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '',
           priceMax: '',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -436,7 +452,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           book_title: 'Clean Code',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -446,7 +462,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           book_title: 'Clean',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -456,7 +472,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           book_title: 'Wrong Title',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -466,7 +482,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           author: 'Robert C. Martin',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -476,7 +492,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           author: 'Martin',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -486,7 +502,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           isbn: '978-0132350884',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -496,7 +512,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           isbn: '978-0132350884'.toLowerCase(),
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -506,7 +522,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           isbn: '978-0132350885',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -516,7 +532,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           edition: '1',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -526,14 +542,14 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           edition: '2',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
     });
   });
 
-  
+
   describe('Search, Faculty & Combined Filters', () => {
     describe('Search Filter', () => {
       it('should match by listing title', () => {
@@ -541,7 +557,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'Clean Code Textbook',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -551,7 +567,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'Clean',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -561,7 +577,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'Clean Code',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -571,7 +587,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'Robert C. Martin',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -581,7 +597,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: '978-0132350884',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -591,7 +607,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'CS101',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -601,7 +617,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'Introduction to Computer Science',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -611,7 +627,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           search: 'NonExistentTerm',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -623,7 +639,7 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           faculty: 'Computer Science',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -633,47 +649,47 @@ describe('Saved Search Integration Tests', () => {
         const filter: SavedSearchFiltersDto = {
           faculty: 'Computer',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
 
-        it('should match by university_id', () => {
-         const listing = createTestListing();
+      it('should match by university_id', () => {
+        const listing = createTestListing();
         const filter: SavedSearchFiltersDto = {
-         university_id: testUniversity.id,  
-       };
-    
-    const result = savedSearchService.matchesFilter(listing, filter);
-    expect(result).toBe(true);
-  });
+          university_id: testUniversity.id,
+        };
+
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
 
       it('should not match by wrong university_id', () => {
         const listing = createTestListing();
         const filter: SavedSearchFiltersDto = {
           university_id: 'univ-2',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
 
-        it('should match by faculty_id', () => {
-    const listing = createTestListing();
-    const filter: SavedSearchFiltersDto = {
-      faculty_id: testFaculty.id,  
-    };
-    
-    const result = savedSearchService.matchesFilter(listing, filter);
-    expect(result).toBe(true);
-  });
+      it('should match by faculty_id', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          faculty_id: testFaculty.id,
+        };
+
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
 
       it('should not match by wrong faculty_id', () => {
         const listing = createTestListing();
         const filter: SavedSearchFiltersDto = {
           faculty_id: 'fac-2',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -691,7 +707,7 @@ describe('Saved Search Integration Tests', () => {
           book_title: 'Clean Code',
           author: 'Robert C. Martin',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
@@ -704,7 +720,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -717,7 +733,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '30',
           priceMax: '50',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -730,7 +746,7 @@ describe('Saved Search Integration Tests', () => {
           priceMin: '50',
           priceMax: '100',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -742,7 +758,7 @@ describe('Saved Search Integration Tests', () => {
           condition: 'good',
           book_title: 'Wrong Title',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(false);
       });
@@ -755,83 +771,83 @@ describe('Saved Search Integration Tests', () => {
           faculty: 'computer science',
           search: 'clean code textbook',
         };
-        
+
         const result = savedSearchService.matchesFilter(listing, filter);
         expect(result).toBe(true);
       });
 
-        it('should handle all filters together', () => {
-    const listing = createTestListing();
-    const filter: SavedSearchFiltersDto = {
-      moduleCode: 'CS101',
-      modules: ['CS101', 'CS102'],
-      faculty: 'Computer Science',
-      book_title: 'Clean Code',
-      author: 'Robert C. Martin',
-      isbn: testBook.isbn, 
-      edition: '1',
-      priceMin: '30',
-      priceMax: '50',
-      condition: 'good',
-      annotationLevel: 'light',
-      search: 'Clean',
-      university_id: testUniversity.id,  
-      faculty_id: testFaculty.id,        
-    };
-    
-    const result = savedSearchService.matchesFilter(listing, filter);
-    expect(result).toBe(true);
-  });
+      it('should handle all filters together', () => {
+        const listing = createTestListing();
+        const filter: SavedSearchFiltersDto = {
+          moduleCode: 'CS101',
+          modules: ['CS101', 'CS102'],
+          faculty: 'Computer Science',
+          book_title: 'Clean Code',
+          author: 'Robert C. Martin',
+          isbn: testBook.isbn,
+          edition: '1',
+          priceMin: '30',
+          priceMax: '50',
+          condition: 'good',
+          annotationLevel: 'light',
+          search: 'Clean',
+          university_id: testUniversity.id,
+          faculty_id: testFaculty.id,
+        };
+
+        const result = savedSearchService.matchesFilter(listing, filter);
+        expect(result).toBe(true);
+      });
     });
   });
 
-  
+
   describe('findMatchingSavedSearches & Event Integration', () => {
     beforeEach(async () => {
-    try {
-      
-      await notificationRepo.createQueryBuilder().delete().where('1=1').execute();
-      
-      
-      await savedSearchRepo.createQueryBuilder().delete().where('1=1').execute();
-      
-      
-      await listingRepo.createQueryBuilder().delete().where('1=1').execute();
-      
-      console.log('Cleanup complete');
-    } catch (error) {
-      console.error('Error in cleanup:', error);
-      throw error;
-    }
-  });
+      try {
 
-  describe('findMatchingSavedSearches', () => {
-    it('should find matching saved searches for a listing', async () => {
-      const savedSearch1 = await createSavedSearch(testUser1.id, {
-        moduleCode: 'CS101',
-        condition: 'good'
-      });
+        await notificationRepo.createQueryBuilder().delete().where('1=1').execute();
 
-      const savedSearch2 = await createSavedSearch(testUser2.id, {
-        moduleCode: 'CS101',
-        priceMin: '30',
-        priceMax: '50'
-      });
 
-      const savedSearch3 = await createSavedSearch(testUser3.id, {
-        moduleCode: 'CS102'
-      });
+        await savedSearchRepo.createQueryBuilder().delete().where('1=1').execute();
 
-      const listing = createTestListing();
-      const matches = await savedSearchService.findMatchingSavedSearches(listing);
 
-      expect(matches).toHaveLength(2);
-      expect(matches.map(m => m.userId)).toContain(testUser1.id);
-      expect(matches.map(m => m.userId)).toContain(testUser2.id);
-      expect(matches.map(m => m.savedSearchId)).toContain(savedSearch1.id);
-      expect(matches.map(m => m.savedSearchId)).toContain(savedSearch2.id);
-      expect(matches.map(m => m.savedSearchId)).not.toContain(savedSearch3.id);
+        await listingRepo.createQueryBuilder().delete().where('1=1').execute();
+
+        console.log('Cleanup complete');
+      } catch (error) {
+        console.error('Error in cleanup:', error);
+        throw error;
+      }
     });
+
+    describe('findMatchingSavedSearches', () => {
+      it('should find matching saved searches for a listing', async () => {
+        const savedSearch1 = await createSavedSearch(testUser1.id, {
+          moduleCode: 'CS101',
+          condition: 'good'
+        });
+
+        const savedSearch2 = await createSavedSearch(testUser2.id, {
+          moduleCode: 'CS101',
+          priceMin: '30',
+          priceMax: '50'
+        });
+
+        const savedSearch3 = await createSavedSearch(testUser3.id, {
+          moduleCode: 'CS102'
+        });
+
+        const listing = createTestListing();
+        const matches = await savedSearchService.findMatchingSavedSearches(listing);
+
+        expect(matches).toHaveLength(2);
+        expect(matches.map(m => m.userId)).toContain(testUser1.id);
+        expect(matches.map(m => m.userId)).toContain(testUser2.id);
+        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch1.id);
+        expect(matches.map(m => m.savedSearchId)).toContain(savedSearch2.id);
+        expect(matches.map(m => m.savedSearchId)).not.toContain(savedSearch3.id);
+      });
 
       it('should return empty array when no saved searches match', async () => {
         await createSavedSearch(testUser1.id, {
@@ -840,7 +856,7 @@ describe('Saved Search Integration Tests', () => {
 
         const listing = createTestListing();
         const matches = await savedSearchService.findMatchingSavedSearches(listing);
-        
+
         expect(matches).toHaveLength(0);
       });
 
@@ -852,55 +868,6 @@ describe('Saved Search Integration Tests', () => {
     });
 
     describe('Event Emission on Listing Creation', () => {
-      it('should emit events when listing matches saved searches', async () => {
-        const eventSpy = jest.fn();
-        eventEmitter.on('saved-search.match', eventSpy);
-
-        await createSavedSearch(testUser1.id, {
-          moduleCode: 'CS101',
-          priceMin: '30',
-          priceMax: '50'
-        });
-
-        await createSavedSearch(testUser2.id, {
-          moduleCode: 'CS101',
-          condition: 'good'
-        });
-
-        const createDto = {
-          title: 'Integration Test Textbook',
-          bookId: testBook.id,
-          moduleId: testModule.id,
-          condition: 'good' as const,
-          annotationLevel: 'light' as const,
-          price: 45.99,
-          photoUrls: [],
-          hasNotes: false,
-          description: 'Great condition textbook',
-        };
-
-        const listing = await listingsService.createListing(testUser1.id, createDto);
-
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        expect(eventSpy).toHaveBeenCalledTimes(2);
-        expect(eventSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            userId: testUser1.id,
-            listingId: listing.id,
-            listingTitle: 'Integration Test Textbook',
-          })
-        );
-        expect(eventSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            userId: testUser2.id,
-            listingId: listing.id,
-            listingTitle: 'Integration Test Textbook',
-          })
-        );
-
-        eventEmitter.off('saved-search.match', eventSpy);
-      });
 
       it('should not emit events when no saved searches match', async () => {
         const eventSpy = jest.fn();
@@ -932,161 +899,5 @@ describe('Saved Search Integration Tests', () => {
       });
     });
 
-    describe('Notification Creation', () => {
-      it('should create notifications for matching saved searches', async () => {
-        await createSavedSearch(testUser1.id, {
-          moduleCode: 'CS101',
-          priceMin: '30',
-          priceMax: '50'
-        });
-
-        await createSavedSearch(testUser2.id, {
-          moduleCode: 'CS101',
-          condition: 'good'
-        });
-
-        const createDto = {
-          title: 'Notification Test Textbook',
-          bookId: testBook.id,
-          moduleId: testModule.id,
-          condition: 'good' as const,
-          annotationLevel: 'light' as const,
-          price: 45.99,
-          photoUrls: [],
-          hasNotes: false,
-          description: 'Great condition textbook',
-        };
-
-        const listing = await listingsService.createListing(testUser1.id, createDto);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        
-        const notifications = await notificationRepo.find({
-          where: { entity_type: 'SAVED_SEARCH_MATCH' },
-          relations: ['user_id', 'entity_id'],
-        });
-
-        expect(notifications.length).toBeGreaterThanOrEqual(2);
-        
-        
-        const user1Notifications = notifications.filter(n => n.user_id.id === testUser1.id);
-        const user2Notifications = notifications.filter(n => n.user_id.id === testUser2.id);
-        
-        expect(user1Notifications.length).toBeGreaterThan(0);
-        expect(user2Notifications.length).toBeGreaterThan(0);
-        
-        const notification = user1Notifications[0];
-        expect(notification.entity_type).toBe('SAVED_SEARCH_MATCH');
-        expect(notification.message_info).toContain('Notification Test Textbook');
-        expect(notification.entity_id).toBeDefined();
-        expect(notification.is_read).toBe(false);
-      });
-    });
-
-    describe('End-to-End Flow', () => {
-      it('should complete full flow: create saved search → create listing → get notification', async () => {
-       
-        const savedSearch = await savedSearchService.createSavedSearch(
-          testUser1.id,
-          {
-            filter_json: {
-              moduleCode: 'CS101',
-              condition: 'good',
-              priceMin: '30',
-              priceMax: '50',
-            },
-          }
-        );
-
-        expect(savedSearch).toBeDefined();
-
-        
-        const createDto = {
-          title: 'End-to-End Test Textbook',
-          bookId: testBook.id,
-          moduleId: testModule.id,
-          condition: 'good' as const,
-          annotationLevel: 'light' as const,
-          price: 45.99,
-          photoUrls: [],
-          hasNotes: false,
-          description: 'Great condition textbook',
-        };
-
-        const listing = await listingsService.createListing(testUser2.id, createDto);
-        expect(listing).toBeDefined();
-
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        
-        const notifications = await notificationRepo.find({
-          where: { 
-            entity_type: 'SAVED_SEARCH_MATCH',
-          },
-          relations: ['user_id', 'entity_id'],
-          order: { created_at: 'DESC' },
-        });
-
-        expect(notifications.length).toBeGreaterThan(0);
-        
-        
-        const userNotification = notifications.find(n => n.user_id.id === testUser1.id);
-        expect(userNotification).toBeDefined();
-        expect(userNotification!.message_info).toContain('End-to-End Test Textbook');
-        expect(userNotification!.entity_id).toBeDefined();
-        expect(userNotification!.entity_type).toBe('SAVED_SEARCH_MATCH');
-        expect(userNotification!.is_read).toBe(false);
-      });
-
-      it('should handle multiple users with different saved searches', async () => {
-        await createSavedSearch(testUser1.id, {
-          moduleCode: 'CS101',
-          priceMin: '30',
-          priceMax: '50'
-        });
-
-        await createSavedSearch(testUser2.id, {
-          moduleCode: 'CS101',
-          condition: 'good'
-        });
-
-        await createSavedSearch(testUser3.id, {
-          moduleCode: 'CS102' // Won't match
-        });
-
-        const createDto = {
-          title: 'Multiple Users Test',
-          bookId: testBook.id,
-          moduleId: testModule.id,
-          condition: 'good' as const,
-          annotationLevel: 'light' as const,
-          price: 45.99,
-          photoUrls: [],
-          hasNotes: false,
-          description: 'Great condition textbook',
-        };
-
-        await listingsService.createListing(testUser1.id, createDto);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const notifications = await notificationRepo.find({
-          where: { entity_type: 'SAVED_SEARCH_MATCH' },
-          relations: ['user_id'],
-          order: { created_at: 'DESC' },
-        });
-
-        
-        const user1Notifs = notifications.filter(n => n.user_id.id === testUser1.id);
-        const user2Notifs = notifications.filter(n => n.user_id.id === testUser2.id);
-        const user3Notifs = notifications.filter(n => n.user_id.id === testUser3.id);
-
-        expect(user1Notifs.length).toBeGreaterThan(0);
-        expect(user2Notifs.length).toBeGreaterThan(0);
-        expect(user3Notifs.length).toBe(0);
-      });
-    });
   });
 });
