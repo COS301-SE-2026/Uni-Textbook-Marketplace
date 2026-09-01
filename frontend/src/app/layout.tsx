@@ -7,6 +7,7 @@ import ThemeProvider from '@/providers/ThemeProvider'
 import HelpMenuWrapper from '@/components/HelpMenuWrapper'
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from '@/components/ui/tooltip'
+import ProtectedRoute from '@/components/auth/ProtectedRoute' 
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -34,7 +35,9 @@ export default function RootLayout({
             <AuthProvider>
               <NavBar />
               <main>
-                {children}
+                <ProtectedRoute>
+                  {children}
+                </ProtectedRoute>
               </main>
               <HelpMenuWrapper />
             </AuthProvider>
