@@ -126,46 +126,41 @@ function ActionsCell({
     const isLoading = actionLoading === listing.id
 
     return (
-        <td className="px-4 py-3">
-            <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-1.5 flex-wrap">
+
+            <Button 
+                variant="primary" 
+                onClick={() => onViewDetails(listing.id)} 
+                disabled={isLoading}
+                className="text-xs px-3 py-1.5 cursor-pointer"
+            >
+                {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'View'}
+            </Button>
 
 
-                <Button 
-                    variant="primary" 
-                    onClick={() => onViewDetails(listing.id)} 
-                    disabled={isLoading}
-                    className="text-xs px-3 py-1.5 cursor-pointer"
+            {listing.status === 'PENDING' && (
+                 <>
+                     <Button 
+                         variant="primary" 
+                        onClick={() => onApprove(listing.id)} 
+                        disabled={isLoading}
+                        className="text-xs px-3 py-1.5 cursor-pointer"
+                    >
+                        {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
+                    </Button>
+
+
+                    <Button 
+                        variant="danger" 
+                        onClick={() => onStartReject(listing.id)} 
+                        disabled={isLoading}
+                        className="text-xs px-3 py-1.5 cursor-pointer"
                 >
-                    {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'View'}
+                        Reject
                 </Button>
-
-
-                {listing.status === 'PENDING' && (
-                    <>
-                        <Button 
-                            variant="primary" 
-                            onClick={() => onApprove(listing.id)} 
-                            disabled={isLoading}
-                            className="text-xs px-3 py-1.5 cursor-pointer"
-                        >
-                            {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
-                        </Button>
-
-
-                        <Button 
-                            variant="danger" 
-                            onClick={() => onStartReject(listing.id)} 
-                            disabled={isLoading}
-                            className="text-xs px-3 py-1.5 cursor-pointer"
-                        >
-                            Reject
-                        </Button>
-                    </>
-                )}
-            </div>
-
-
-        </td>
+                </>
+            )}
+        </div>
     )
 }
 
@@ -496,7 +491,7 @@ function ReportCard({
                     </div>
 
                     <div>
-                        <h3 className="font-semibold text-[#000f2b]">
+                        <h3 className="font-semibold">
                             {report.listing.title}
                         </h3>
 
@@ -530,10 +525,11 @@ function ReportCard({
 
             </div>
 
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs font-semibold text-gray-500 mb-1">
-                    Report reason
-                </p>
+            <p className="text-xs font-semibold mb-1">
+                Report reason
+            </p>        
+            <div className="p-3 bg-gray-50 rounded-lg">
+                
 
                 <p className="text-sm text-gray-700">
                     {report.reason}
@@ -652,6 +648,9 @@ export default function AdminReviewDashboard() {
     }
 
     const handleBanUser = async (report: AdminReport) => {
+        console.log('REPORT:', report)
+        console.log('LISTING:', report.listing)
+        console.log('SELLER:', report.listing?.seller)
         setReportActionLoading(report.id)
         try {
             await api.patch(`/admin/${report.listing.seller.id}/ban`, {
@@ -746,13 +745,13 @@ export default function AdminReviewDashboard() {
                 )}
 
                 <div className="mt-8">
-                    <h2 className="text-xl font-bold text-[#000f2b] mb-4">
+                    <h2 className="text-xl font-bold mb-4">
                         Reports
                     </h2>
 
                     <div className="space-y-4">
                         {reports.length === 0 ? (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm">
                                 No reports found.
                             </p>
                         ) : (

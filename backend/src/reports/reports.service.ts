@@ -77,7 +77,9 @@ export class ReportsService {
     return this.reportsRepository.find({
       relations: {
         reporter: true,
-        listing: true,
+        listing: {
+          seller: true,
+        },
       },
       order: {
         created_at: 'DESC',
@@ -92,7 +94,9 @@ export class ReportsService {
       },
       relations: {
         reporter: true,
-        listing: true,
+        listing: {
+          seller:true,
+        },
       },
     });
 
