@@ -8,6 +8,7 @@ import { Repository, In, DataSource } from 'typeorm';
 import { SavedSearch } from '../database/entities/saved_search.entity';
 import { User } from '../database/entities/users.entity';
 import { Listing } from '../database/entities/listing.entity';
+
 import {
   CreateSavedSearchDto,
   GetSavedSearchesQueryDto,
@@ -75,7 +76,7 @@ export class SavedSearchesService {
     limit: number;
     totalPages: number;
   }> {
-    const { page = 1, limit = 20 } = query;
+    const { page = 1, limit = 5 } = query;
 
     const [data, total] = await this.savedSearchRepository.findAndCount({
       where: { user_id: userId },

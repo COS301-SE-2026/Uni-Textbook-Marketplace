@@ -1,61 +1,59 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, Suspense, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { Trash2, Bookmark, Search, ArrowLeft } from 'lucide-react'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
-import { getSavedSearches, deleteSavedSearch, SavedSearch, Filters } from '@/lib/saved-searches.api'
+import { getSavedSearches, deleteSavedSearch, SavedSearch, SavedSearchMeta, Filters } from '@/lib/saved-searches.api'
 import Image from 'next/image'
+import { NotificationPagination } from '../../components/pagination/pagination'
 
-export default function SavedSearchesPage() {
+const PAGE_SIZE = 5
+
+function SavedSearchesContent() {
 
   const routAttr = useRouter()
+  const searchParams = useSearchParams()
+  const page = Number(searchParams.get('page') || 1)
 
   const [searches, setSearches] = useState<SavedSearch[]>([])
+  const [meta, setMeta] = useState<SavedSearchMeta>({ total: 0, page: 1, limit: PAGE_SIZE, pages: 1 })
 
   const [loading, setLoading] = useState(true)
 
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const loadSearches = async () => {
-
-    try {
-
-      const data = await getSavedSearches();
-
-console.log("Returned from API:", data);
-console.log("Is array?", Array.isArray(data));
-
-setSearches(data);
-    } catch (error) {
-
-      console.error('Failed to load saved searches', error)
-    } finally {
-      setLoading(false)
-
-    }
-  }
-
   useEffect(() => {
-    let loadOnbourd = true
 
-    
-    const id = setTimeout(() => {
+    let cancelled = false
+
+    const loadSearches = async () => {
+
+      try {
+
+        const { data, meta } = await getSavedSearches(page, PAGE_SIZE);
+        setSearches(data);
+        setMeta(meta);
+
+      } catch (error) {
+
+        console.error('Failed to load saved searches', error)
+      } finally {
+        setLoading(false)
+
+      }
+    }
 
 
-      if (!loadOnbourd) return
 
-      loadSearches()
-    }, 0)
+    loadSearches()
 
     return () => {
-
-      loadOnbourd = false
-
-      clearTimeout(id)
+      cancelled = true
     }
-  }, [])
+
+  }, [page])
 
 
   const deleteApplic = async (id: string) => {
@@ -87,7 +85,7 @@ setSearches(data);
   const searchPerform = (filters: Filters) => {
 
     const params = new URLSearchParams()
-    
+
     if (filters.search) params.set('search', filters.search)
 
     if (filters.faculty) params.set('faculty', filters.faculty)
@@ -155,22 +153,22 @@ setSearches(data);
     if (filters.annotationLevel) parts.push(`Annotations: ${filters.annotationLevel}`)
 
 
-    
+
     return parts.length > 0 ? parts.join(' • ') : 'All textbooks'
   }
 
   return (
 
     <ProtectedRoute>
-      
 
+      {/* hearder things */}
       <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
         background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.3)',
       }}>
 
 
-        
+
         <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
 
           <div className="relative w-full h-full">
@@ -185,7 +183,7 @@ setSearches(data);
               priority
               style={{ objectPosition: '100% 50%' }}
             />
-            
+
             <div className="absolute inset-0" style={{
               background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
             }} />
@@ -193,28 +191,28 @@ setSearches(data);
 
 
         </div>
-        
-        
+
+
         <div className="absolute inset-0 opacity-20" style={{
           background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
         }} />
-        
-        
+
+
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
         }} />
-        
-        
+
+
         <div className="absolute inset-0 opacity-5" style={{
           backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
         }} />
-        
-        
+
+
         <div className="absolute top-0 left-0 right-0 h-px" style={{
           background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
         }} />
-        
+
         <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
           <div className="flex items-start gap-4">
             <div className="p-2 rounded-xl" style={{
@@ -239,8 +237,8 @@ setSearches(data);
 
           </div>
         </div>
-        
-        
+
+
         <div className="absolute bottom-0 left-0 right-0 h-px" style={{
           background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
         }} />
@@ -248,8 +246,7 @@ setSearches(data);
 
       <div className="container-content py-8">
 
-        <div className="mb-6">
-
+        <div className="mb-6 flex flex-row justify-between">
 
           <Button
             variant="primary"
@@ -260,24 +257,15 @@ setSearches(data);
             Back
           </Button>
 
+          <button
+            type="button"
+            onClick={() => routAttr.push('/listings')}
+            className="text-sm text-[#00B4D8] hover:text-[#0096B4] hover:underline flex items-center gap-1 cursor-pointer transition-colors font-semibold"
+          >
+            <Search size={16} />
+            New Search
+          </button>
 
-
-          <div className="flex items-center justify-between">
-            <div>
-              
-            </div>
-
-            <button
-              type="button"
-              onClick={() => routAttr.push('/listings')}
-              className="text-sm text-[#00B4D8] hover:text-[#0096B4] hover:underline flex items-center gap-1 cursor-pointer transition-colors font-semibold"
-            >
-              <Search size={16} />
-              New Search
-            </button>
-
-
-          </div>
         </div>
 
         {loading && (
@@ -293,7 +281,7 @@ setSearches(data);
                   <div className="space-y-2 flex-1">
 
                     <div className="h-5 bg-gray-200 rounded w-3/4" />
-                    
+
                     <div className="h-4 bg-gray-100 rounded w-1/2" />
 
                   </div>
@@ -331,19 +319,17 @@ setSearches(data);
         )}
 
         {!loading && searches.length > 0 && (
-          <div className="space-y-3">
+          <div className="flex flex-col space-y-3">
 
 
 
             {searches.map((search) => (
 
-              <button
+              <div
                 key={search.id}
-                type="button"
                 className="card hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => searchPerform(search.filter_json)}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
 
                   <div className="flex-1 min-w-0">
@@ -370,9 +356,12 @@ setSearches(data);
 
                   <div className="flex items-center gap-2 flex-shrink-0 ml-4">
 
-                    <span className="text-xs text-[#00B4D8] hover:text-[#0096B4] hover:underline cursor-pointer transition-colors font-semibold">
+                    <button className="text-xs text-[#00B4D8] hover:text-[#0096B4] hover:underline cursor-pointer transition-colors font-semibold"
+                      type='button'
+                      onClick={() => searchPerform(search.filter_json)}
+                    >
                       Apply
-                    </span>
+                    </button>
 
                     <button
                       type="button"
@@ -399,13 +388,27 @@ setSearches(data);
 
                 </div>
 
-                
-              </button>
+
+              </div>
 
             ))}
           </div>
         )}
+
+        <div className="mt-6 flex justify-center">
+          <NotificationPagination meta={meta} />
+        </div>
       </div>
     </ProtectedRoute>
+
+  )
+}
+
+export default function SavedSearchesPage() {
+
+  return (
+    <Suspense fallback={null}>
+      <SavedSearchesContent />
+    </Suspense>
   )
 }

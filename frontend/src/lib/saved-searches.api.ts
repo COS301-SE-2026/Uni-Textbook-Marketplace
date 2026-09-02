@@ -6,6 +6,15 @@ export interface SavedSearch {
   created_at: string
 }
 
+export interface SavedSearchMeta {
+
+  total: number
+  page: number
+  limit: number
+  pages: number
+
+}
+
 export interface Filters {
   faculty?: string
   moduleCode?: string
@@ -25,18 +34,36 @@ export interface PaginatedSavedSearchResponse {
     limit: number
     totalPages: number
   }
+
 }
 
-export async function getSavedSearches(): Promise<SavedSearch[]> {
+export async function getSavedSearches(page: number = 1, limit: number = 5): Promise<{ data: SavedSearch[]; meta: SavedSearchMeta }> {
   try {
     const response = await api.get<PaginatedSavedSearchResponse>(
-      '/saved-searches/mine'
+      `/saved-searches/mine?page=${page}&limit=${limit}`
     )
 
-    return response.data
+    return {
+
+      data: response.data,
+      meta: {
+        total: Number(response.meta.total),
+        page: Number(response.meta.page),
+        limit: Number(response.meta.limit),
+        pages: Number(response.meta.totalPages),
+      }
+    }
   } catch (error) {
     console.error('Fail fetch of saved searches:', error)
-    return []
+    return {
+      data: [],
+      meta: {
+        total: 0,
+        page: 1,
+        limit,
+        pages: 1
+      }
+    }
   }
 }
 

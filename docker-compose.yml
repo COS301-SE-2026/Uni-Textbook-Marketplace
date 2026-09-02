@@ -19,7 +19,7 @@ services:
       retries: 5
 
   backend:
-    image: node:20
+    image: node:22
     container_name: nexusdev_backend
     working_dir: /app
     volumes:
@@ -49,7 +49,7 @@ services:
       FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY}
 
   frontend:
-    image: node:20
+    image: node:22
     container_name: nexusdev_frontend
     working_dir: /app
     volumes:
