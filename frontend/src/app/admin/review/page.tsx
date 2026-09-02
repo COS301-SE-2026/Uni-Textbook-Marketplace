@@ -54,7 +54,7 @@ interface AdminReport {
     }
 }
 
-const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Actions']
+const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Status', 'Actions']
 
 type FilterValue = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
@@ -70,27 +70,22 @@ function formatDate(dateString: string): string {
 function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
     return (
         <td className="px-4 py-3">
-
             <div className="flex items-center gap-3">
-
-
-                <div className="relative w-10 h-12 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+                <div className="relative w-10 h-12 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden flex items-center justify-center">
                     {listing.photo_urls?.[0] ? (
                         <Image src={normalizeImage(listing.photo_urls[0])} alt="" fill className="object-cover" />
                     ) : (
-                        <span className="text-gray-300 text-xs">📷</span>
+                        <span className="text-gray-300 dark:text-gray-500 text-xs">📷</span>
                     )}
                 </div>
                 <div>
-
-
-                    <p className="font-medium line-clamp-1 max-w-[180px]">{listing.book.title}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="font-medium line-clamp-1 max-w-[180px] text-[#000f2b] dark:text-white">
+                        {listing.book.title}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                         {listing.book.edition} Ed · ISBN {listing.book.isbn}
                     </p>
                 </div>
-
-
             </div>
         </td>
     )
@@ -98,14 +93,13 @@ function BookCell({ listing }: Readonly<{ listing: AdminListing }>) {
 
 function ModuleCell({ module }: Readonly<{ module: AdminListing['module'] }>) {
     if (!module) {
-        return <td className="px-4 py-3"><span className="text-xs text-gray-400">—</span></td>
+        return <td className="px-4 py-3"><span className="text-xs text-gray-400 dark:text-gray-500">—</span></td>
     }
     return (
         <td className="px-4 py-3">
-            <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+            <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300">
                 {module.code}
             </span>
-
         </td>
     )
 }
@@ -128,17 +122,14 @@ function ActionsCell({
     return (
         <td className="px-4 py-3">
             <div className="flex gap-1.5 flex-wrap">
-
-
                 <Button 
-                    variant="primary" 
+                    variant="secondary" 
                     onClick={() => onViewDetails(listing.id)} 
                     disabled={isLoading}
-                    className="text-xs px-3 py-1.5 cursor-pointer"
+                    className="text-xs px-3 py-1.5 cursor-pointer bg-white dark:bg-gray-800 border border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8] hover:text-white transition-colors"
                 >
                     {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'View'}
                 </Button>
-
 
                 {listing.status === 'PENDING' && (
                     <>
@@ -151,7 +142,6 @@ function ActionsCell({
                             {isLoading ? <Loader2 size={12} className="animate-spin" /> : 'Approve'}
                         </Button>
 
-
                         <Button 
                             variant="danger" 
                             onClick={() => onStartReject(listing.id)} 
@@ -163,8 +153,6 @@ function ActionsCell({
                     </>
                 )}
             </div>
-
-
         </td>
     )
 }
@@ -185,33 +173,33 @@ function ListingRow({
 }) {
     // Status badge colors
     const statusColors = {
-        PENDING: 'bg-amber-100 text-amber-700 border-amber-300',
-        APPROVED: 'bg-green-100 text-green-700 border-green-300',
-        REJECTED: 'bg-red-100 text-red-700 border-red-300',
+        PENDING: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
+        APPROVED: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700',
+        REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700',
     }
 
     return (
-        <tr className="border-b border-gray-100 hover:bg-gray-50/80 transition-colors duration-150">
+        <tr className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors duration-150">
             <BookCell listing={listing} />
             <ModuleCell module={listing.module} />
 
-            <td className="px-4 py-3 font-semibold text-[#000f2b]">
+            <td className="px-4 py-3 font-semibold text-[#000f2b] dark:text-white">
                 R{Number(listing.price).toFixed(2)}
             </td>
             <td className="px-4 py-3">
-                <p className="font-medium text-sm">{listing.seller.first_name} {listing.seller.last_name}</p>
-                <p className="text-xs text-gray-400 truncate max-w-[150px]">{listing.seller.email}</p>
+                <p className="font-medium text-sm text-[#000f2b] dark:text-white">{listing.seller.first_name} {listing.seller.last_name}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 truncate max-w-[150px]">{listing.seller.email}</p>
             </td>
 
-
-
-            <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(listing.created_at)}</td>
+            <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{formatDate(listing.created_at)}</td>
+            
             <td className="px-4 py-3">
-                {/* Status Badge */}
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium border mr-2 ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-600'}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[listing.status as keyof typeof statusColors] || 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600'}`}>
                     {listing.status}
                 </span>
-                {/* Actions */}
+            </td>
+            
+            <td className="px-4 py-3">
                 <ActionsCell
                     listing={listing}
                     actionLoading={actionLoading}
@@ -220,8 +208,6 @@ function ListingRow({
                     onViewDetails={onViewDetails}
                 />
             </td>
-
-
         </tr>
     )
 }
@@ -229,7 +215,6 @@ function ListingRow({
 function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
-
             {toasts.map(t => (
                 <div
                     key={t.id}
@@ -239,10 +224,8 @@ function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
                             : 'bg-red-600/90 border border-red-400/30'
                     }`}
                 >
-
                     {t.message}
                 </div>
-
             ))}
         </div>
     )
@@ -263,29 +246,25 @@ function ListingsTable({
 }) {
     if (listings.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
                 <Shield size={48} className="mb-4 opacity-30" />
-
                 <p className="text-sm font-medium">No listings found</p>
-                
                 <p className="text-xs mt-1">Try adjusting your filter</p>
-
             </div>
         )
     }
 
     return (
-        <div className="card overflow-x-auto p-0 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="card overflow-x-auto p-0 shadow-sm hover:shadow-md transition-shadow duration-300 dark:bg-[#0f172a] dark:border-gray-800">
             <table className="w-full text-sm">
                 <thead>
-                    <tr className="bg-gray-50/80 border-b border-gray-200">
+                    <tr className="bg-gray-50/80 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
                         {TABLE_HEADERS.map(h => (
-                            <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                            <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                 {h}
                             </th>
                         ))}
                     </tr>
-
                 </thead>
                 <tbody>
                     {listings.map(listing => (
@@ -300,17 +279,15 @@ function ListingsTable({
                     ))}
                 </tbody>
             </table>
-
-
         </div>
     )
 }
 
 function LoadingSkeleton() {
     return (
-        <div className="card p-4 space-y-3 animate-pulse">
+        <div className="card p-4 space-y-3 animate-pulse dark:bg-[#0f172a]">
             {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-12 bg-gray-100 rounded-lg" />
+                <div key={i} className="h-12 bg-gray-100 dark:bg-gray-700 rounded-lg" />
             ))}
         </div>
     )
@@ -338,12 +315,12 @@ function RejectionModal({
             title={`Reject "${listing?.title ?? 'listing'}"`}
         >
             <div className='flex flex-col gap-4'>
-                <p className='text-sm text-gray-600'>
+                <p className='text-sm text-gray-600 dark:text-gray-300'>
                     Let the seller know why this listing doesn&apos;t meet the requirements
                 </p>
 
                 <textarea
-                    className="w-full border border-gray-200 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#00B4D8]/30 focus:border-[#00B4D8] transition-all"
+                    className="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#00B4D8]/30 focus:border-[#00B4D8] transition-all dark:bg-gray-800 dark:text-white"
                     rows={4}
                     placeholder="Enter reject reason..."
                     value={reason}
@@ -352,19 +329,15 @@ function RejectionModal({
                 />
 
                 <div className='flex justify-end gap-2'>
-                    <Button variant='primary' onClick={onCancel} className="cursor-pointer">
+                    <Button variant='secondary' onClick={onCancel} className="cursor-pointer bg-white dark:bg-gray-800 border border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8] hover:text-white transition-colors">
                         Cancel
                     </Button>
-
-
 
                     <Button variant='danger' onClick={onConfirm} disabled={!reason.trim() || loading} className="cursor-pointer">
                         {loading ? <Loader2 size={16} className="animate-spin mr-1" /> : null}
                         {loading ? 'Rejecting...' : 'Confirm Reject'}
                     </Button>
                 </div>
-
-
             </div>
         </Modal>
     )
@@ -475,12 +448,10 @@ function ReportCard({
     readonly actionLoading: boolean
 }) {
     return (
-        <div className="card p-5 border border-gray-200">
+        <div className="card p-5 border border-gray-200 dark:border-gray-700 dark:bg-[#0f172a]">
             <div className="flex justify-between items-start gap-4">
-
                 <div className="flex gap-4">
-
-                    <div className="relative w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                    <div className="relative w-16 h-20 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden flex-shrink-0">
                         {report.listing.photo_urls?.[0] ? (
                             <Image
                                 src={normalizeImage(report.listing.photo_urls[0])}
@@ -489,63 +460,57 @@ function ReportCard({
                                 className="object-cover"
                             />
                         ) : (
-                            <div className="flex items-center justify-center h-full text-gray-300">
-                                📚
+                            <div className="flex items-center justify-center h-full text-gray-300 dark:text-gray-500">
+                                
                             </div>
                         )}
                     </div>
 
                     <div>
-                        <h3 className="font-semibold text-[#000f2b]">
+                        <h3 className="font-semibold text-[#000f2b] dark:text-white">
                             {report.listing.title}
                         </h3>
-
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             R{Number(report.listing.price).toFixed(2)}
                         </p>
-
-                        <p className="text-sm text-gray-600 mt-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
                             Reported by{' '}
-                            <strong>
+                            <strong className="text-[#000f2b] dark:text-white">
                                 {report.reporter.first_name} {report.reporter.last_name}
                             </strong>
                         </p>
-
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                             {report.reporter.email}
                         </p>
                     </div>
-
                 </div>
 
                 <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                         report.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-600'
+                            ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                     }`}
                 >
                     {report.status}
                 </span>
-
             </div>
 
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs font-semibold text-gray-500 mb-1">
+            <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
                     Report reason
                 </p>
-
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                     {report.reason}
                 </p>
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
-
                 <Button
-                    variant="primary"
+                    variant="secondary"
                     onClick={() => window.location.href = `/listings/${report.listing.id}`}
                     disabled={actionLoading}
+                    className="bg-white dark:bg-gray-800 border border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8] hover:text-white transition-colors"
                 >
                     View Listing
                 </Button>
@@ -554,6 +519,7 @@ function ReportCard({
                     variant="primary"
                     onClick={() => onDismiss(report.id)}
                     disabled={actionLoading}
+                    className="text-xs px-3 py-1.5 cursor-pointer"
                 >
                     {actionLoading ? (
                         <Loader2 size={14} className="animate-spin" />
@@ -573,7 +539,6 @@ function ReportCard({
                         'Ban Seller'
                     )}
                 </Button>
-
             </div>
         </div>
     )
@@ -637,11 +602,9 @@ export default function AdminReviewDashboard() {
         setReportActionLoading(reportId)
         try {
             await api.patch(`/admin/reports/${reportId}/dismiss`)
-
             setReports(prev =>
                 prev.filter(report => report.id !== reportId)
             )
-
             showToast('Report dismissed', 'success')
         } catch (error) {
             console.error(error)
@@ -657,13 +620,10 @@ export default function AdminReviewDashboard() {
             await api.patch(`/admin/${report.listing.seller.id}/ban`, {
                 reason: report.reason,
             })
-
             await api.patch(`/admin/reports/${report.id}/dismiss`)
-
             setReports(prev =>
                 prev.filter(r => r.id !== report.id)
             )
-
             showToast('Seller banned and report reviewed', 'success')
         } catch (error) {
             console.error(error)
@@ -674,27 +634,18 @@ export default function AdminReviewDashboard() {
     }
     return (
         <AdminRoute>
-            {/* Hero Section */}
+            
             <div className="relative overflow-hidden w-full" style={{
                 background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
             }}>
-                {/* Glossy Overlay */}
                 <div className="absolute inset-0 opacity-30" style={{
                     background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
                 }} />
-
-
-                
-                {/* Decorative Grid */}
                 <div className="absolute inset-0 opacity-5" style={{
                     backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
                     backgroundSize: '40px 40px',
                 }} />
-
-
-                
-                {/* Glossy Highlight Line */}
                 <div className="absolute top-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
                 }} />
@@ -716,16 +667,12 @@ export default function AdminReviewDashboard() {
                                 Manage and moderate all textbook listings
                             </p>
                         </div>
-
-
                     </div>
                 </div>
                 
-                {/* Bottom Glossy Edge */}
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
                 }} />
-
             </div>
 
             <div className="container-content py-6">
@@ -746,13 +693,13 @@ export default function AdminReviewDashboard() {
                 )}
 
                 <div className="mt-8">
-                    <h2 className="text-xl font-bold text-[#000f2b] mb-4">
+                    <h2 className="text-xl font-bold text-[#000f2b] dark:text-white mb-4">
                         Reports
                     </h2>
 
                     <div className="space-y-4">
                         {reports.length === 0 ? (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                                 No reports found.
                             </p>
                         ) : (
@@ -778,8 +725,6 @@ export default function AdminReviewDashboard() {
                     loading={actionLoading === rejectionTarget}
                 />
             </div>
-
         </AdminRoute>
-
     )
 }
