@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import Modal from '@/components/ui/Modal';
 import { useEffect, useState } from 'react';
 
-
 const PUBLIC_ROUTES = [
     '/', 
     '/auth/login', 
@@ -23,11 +22,13 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
     const [mounted, setMounted] = useState(false);
 
-    
     const isPublicRoute = PUBLIC_ROUTES.some(route => {
         if (route === '/') return pathname === '/';
         return pathname?.startsWith(route);
     });
+
+    
+    const isAppealPage = pathname?.startsWith('/appeal');
 
     useEffect(() => {
         const id = requestAnimationFrame(() => {
@@ -37,11 +38,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }, []);
 
     
-    useEffect(() => {
-        if (!isLoading && user?.is_banned && !isPublicRoute) {
+   useEffect(() => {
+        if (!isLoading && user?.is_banned && !isAppealPage) {
             router.push('/appeal');
         }
-    }, [user, isLoading, router, isPublicRoute]);
+    }, [user, isLoading, router, isAppealPage]);
 
     if (!mounted) return null;
 
@@ -56,7 +57,6 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         return <>{children}</>;
     }
 
-    
     if (!isAuthenticated) {
         return (
             <Modal isOpen={true} title="Access Restricted" onClose={handleClose}>
@@ -66,7 +66,6 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         );
     }
 
-    
     if (user?.is_banned) {
         return null;
     }

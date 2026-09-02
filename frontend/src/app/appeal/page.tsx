@@ -26,11 +26,14 @@ export default function AppealPage() {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
+    
+    const banMessage = typeof window !== 'undefined' 
+        ? sessionStorage.getItem('ban_message') 
+        : null;
+
     const isBanned = user?.is_banned === true
 
-   
     // Check if user has an existing appeal
-    
     useEffect(() => {
         const checkExistingAppeal = async () => {
             if (!user) return
@@ -65,18 +68,13 @@ export default function AppealPage() {
         }
     }, [user, isLoading, router])
 
-   
-    // Redirect if user is NOT banned
-    
+    // Redirect if user is not banned
     useEffect(() => {
         if (user && !isBanned && !isLoading) {
             router.push('/listings')
         }
     }, [user, isLoading, router, isBanned])
 
-    
-    // Handle appeal submission
-    
     const handleSubmitAppeal = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
@@ -89,6 +87,7 @@ export default function AppealPage() {
             setSuccess(true)
             setAppealMessage('')
             
+            // Refresh the existing case
             try {
                 const response = await api.get('/cases/mine')
                 let cases: AppealCase[] = []
@@ -115,9 +114,7 @@ export default function AppealPage() {
         router.push('/auth/login')
     }
 
-    
-    //Loading state
-    
+    // Loading state
     if (isLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -129,14 +126,12 @@ export default function AppealPage() {
         )
     }
 
-    
+    // If user is not banned, return null (redirect)
     if (user && !isBanned) {
         return null
     }
 
-    
-    //Pending Appeal View
-    
+    // If user has a pending appeal
     if (existingCase && existingCase.status === 'pending') {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -170,9 +165,7 @@ export default function AppealPage() {
         )
     }
 
-    
-    // Upheld (Rejected) Appeal View
-    
+    // If user has an upheld (rejected) appeal
     if (existingCase && existingCase.status === 'upheld') {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -203,9 +196,7 @@ export default function AppealPage() {
         )
     }
 
-    
-    // Reversed Appeal View
-    
+    // If user has a reversed (successful) appeal
     if (existingCase && existingCase.status === 'reversed') {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -230,9 +221,7 @@ export default function AppealPage() {
         )
     }
 
-    
     // Show appeal form (no existing case)
- 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <Card className="max-w-md w-full p-8">
@@ -249,6 +238,14 @@ export default function AppealPage() {
                         Your account has been banned. You may submit an appeal to have it reviewed.
                     </p>
                 </div>
+
+                
+                {banMessage && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <p className="text-red-700 text-sm font-medium">Ban Reason:</p>
+                        <p className="text-red-600 text-sm mt-1">{banMessage}</p>
+                    </div>
+                )}
 
                 {success ? (
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">

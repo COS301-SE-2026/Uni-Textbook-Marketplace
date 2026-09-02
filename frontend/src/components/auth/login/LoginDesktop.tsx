@@ -17,6 +17,7 @@ export default function LoginDesktop() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState("");
+    const [banMessage, setBanMessage] = useState<string | null>(null);
     const router = useRouter();
     const { login } = useAuth();
 
@@ -38,9 +39,10 @@ export default function LoginDesktop() {
         return Object.keys(e).length === 0;
     };
 
-    const handleSubmit = async (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setServerError("");
+        setBanMessage(null);
 
         if (!validate()) return;
         setLoading(true);
@@ -48,12 +50,29 @@ export default function LoginDesktop() {
             const normalizedEmail = email.toLowerCase().trim();
             await loginUser({ email: normalizedEmail, password });
 
-
             const me = await getMe();
             login(me);
             router.push('/listings');
-        } catch (err) {
-            setServerError((err as ApiError).message);
+        } catch (err: any) {
+            console.log('Login error:', err);
+            console.log('Error response:', err.response);
+            
+           
+            if (err.response?.status === 403) {
+                const message = err.response?.data?.message || '';
+                if (message.toLowerCase().includes('banned')) {
+                    setBanMessage(message);
+                    return;
+                }
+            }
+            
+            const message = err.response?.data?.message || err.message || '';
+            if (message.toLowerCase().includes('banned')) {
+                setBanMessage(message);
+                return;
+            }
+            
+            setServerError(message || 'Login failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -63,14 +82,18 @@ export default function LoginDesktop() {
         router.push('/auth/resetpassword');
     }
 
+    const handleGoToAppeal = () => {
+        if (banMessage) {
+            sessionStorage.setItem('ban_message', banMessage);
+        }
+        router.push('/appeal');
+    };
+
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
-                
-                
+                {/* Left Panel - Glossy Header */}
                 <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
-                    
-                    
                     <div 
                         className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
                         style={{
@@ -86,9 +109,7 @@ export default function LoginDesktop() {
                         }}
                     />
 
-                    
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        
                         <div 
                             className="relative mb-6 p-4 rounded-2xl"
                             style={{
@@ -99,8 +120,6 @@ export default function LoginDesktop() {
                             }}
                         >
                             <Logo className="w-20 h-auto" />
-                            
-                           
                             <div 
                                 className="absolute -top-px left-1/4 right-1/4 h-px"
                                 style={{
@@ -109,7 +128,6 @@ export default function LoginDesktop() {
                             />
                         </div>
 
-                        
                         <h1 
                             className="text-3xl font-bold tracking-wide mb-2"
                             style={{
@@ -129,7 +147,6 @@ export default function LoginDesktop() {
                             BACK!
                         </h1>
 
-                        
                         <div className="relative w-24 h-px mb-6">
                             <div 
                                 className="absolute inset-0"
@@ -148,7 +165,6 @@ export default function LoginDesktop() {
                             Access your university marketplace account.
                         </p>
 
-                       
                         <div className="mt-8 space-y-2.3 w-full max-w-xs">
                             {[
                                 { id: 'secure-access', text: 'Secure & Verified Access' },
@@ -178,7 +194,6 @@ export default function LoginDesktop() {
                             ))}
                         </div>
 
-                        
                         <div 
                             className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
                             style={{
@@ -186,17 +201,14 @@ export default function LoginDesktop() {
                             }}
                         />
                     </div>
-
-
                 </div>
 
-                
+                {/* Right Panel - Login Form */}
                 <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
                     borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
                 }}>
-                    
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
@@ -211,87 +223,100 @@ export default function LoginDesktop() {
                             <p className="text-text-subtle mt-2">
                                 Enter your details to access your account
                             </p>
-                            <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
-                                <div>
-                                    <Input
-                                        label="University Email"
-                                        type="email"
-                                        placeholder="you@university.ac.za"
-                                        value={email}
-                                        onChange={(e) => {
-                                            setEmail(e.target.value);
-                                            if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
-                                        }}
-                                    />
-                                    {errors.email && <ErrorText>{errors.email}</ErrorText>}
+
+                            
+                            {banMessage && (
+                                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <p className="text-red-700 text-sm font-medium">⚠️ Account Banned</p>
+                                    <p className="text-red-600 text-sm mt-1">{banMessage}</p>
+                                    <Button
+                                        variant="primary"
+                                        className="w-full mt-3 cursor-pointer"
+                                        onClick={handleGoToAppeal}
+                                    >
+                                        Submit Appeal
+                                    </Button>
                                 </div>
+                            )}
 
-                                
-                                <div>
-                                    <label htmlFor="password-desktop" className="form-label">Password</label>
-
-                                    <div style={{ position: "relative", width: "100%" }}>
-                                        <input
-                                            id="password-desktop"
-                                            type={showPassword ? "text" : "password"}
-                                            placeholder="Enter your password"
-                                            value={password}
-                                            style={{ width: "100%", paddingRight: "2.75rem" }}
+                           
+                            {!banMessage && (
+                                <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
+                                    <div>
+                                        <Input
+                                            label="University Email"
+                                            type="email"
+                                            placeholder="you@university.ac.za"
+                                            value={email}
                                             onChange={(e) => {
-                                                setPassword(e.target.value);
-                                                if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
+                                                setEmail(e.target.value);
+                                                if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
                                             }}
-                                            className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all w-full box-border"
                                         />
+                                        {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="password-desktop" className="form-label">Password</label>
+
+                                        <div style={{ position: "relative", width: "100%" }}>
+                                            <input
+                                                id="password-desktop"
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder="Enter your password"
+                                                value={password}
+                                                style={{ width: "100%", paddingRight: "2.75rem" }}
+                                                onChange={(e) => {
+                                                    setPassword(e.target.value);
+                                                    if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
+                                                }}
+                                                className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] transition-all w-full box-border"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword((p) => !p)}
+                                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                                style={{
+                                                    position: "absolute", top: 0, right: 0, bottom: 0,
+                                                    width: "2.75rem", display: "flex", alignItems: "center",
+                                                    justifyContent: "center", background: "transparent",
+                                                    border: "none", cursor: "pointer", color: "#9ca3af",
+                                                }}
+                                            >
+                                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                            </button>
+                                        </div>
+                                        {errors.password && <ErrorText>{errors.password}</ErrorText>}
+                                    </div>
+
+                                    <div className="flex justify-end -mt-2">
                                         <button
                                             type="button"
-                                            onClick={() => setShowPassword((p) => !p)}
-                                            aria-label={showPassword ? "Hide password" : "Show password"}
-                                            style={{
-                                                position: "absolute", top: 0, right: 0, bottom: 0,
-                                                width: "2.75rem", display: "flex", alignItems: "center",
-                                                justifyContent: "center", background: "transparent",
-                                                border: "none", cursor: "pointer", color: "#9ca3af",
-                                            }}
+                                            className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
+                                            style={{ background: "none", border: "none", padding: "0.25rem 0" }}
+                                            onClick={forgotPass}
                                         >
-                                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                            Forgot Password?
                                         </button>
                                     </div>
-                                    {errors.password && <ErrorText>{errors.password}</ErrorText>}
-                                </div>
 
-                                
-                                <div className="flex justify-end -mt-2">
-                                    <button
-                                        type="button"
-                                        className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
-                                        style={{ background: "none", border: "none", padding: "0.25rem 0" }}
-                                        onClick={forgotPass}
-                                    >
-                                        Forgot Password?
-                                    </button>
-                                </div>
+                                    {serverError && <ErrorText>{serverError}</ErrorText>}
 
-                                {serverError && <ErrorText>{serverError}</ErrorText>}
-
-                                
-                                <div style={{ marginTop: "3.5rem" }}>
-                                    <Button 
-                                        className="w-full cursor-pointer" 
-                                        disabled={loading} 
-                                        variant="default" 
-                                        type="submit"
-                                    >
-                                        {loading ? "Logging in…" : "Login"}
-                                    </Button>
-
-                                </div>
-                            </form>
+                                    <div style={{ marginTop: "3.5rem" }}>
+                                        <Button 
+                                            className="w-full cursor-pointer" 
+                                            disabled={loading} 
+                                            variant="default" 
+                                            type="submit"
+                                        >
+                                            {loading ? "Logging in…" : "Login"}
+                                        </Button>
+                                    </div>
+                                </form>
+                            )}
                         </div>
-                        
                     </div>
                 </div>
-
             </Card>
         </main>
     );
