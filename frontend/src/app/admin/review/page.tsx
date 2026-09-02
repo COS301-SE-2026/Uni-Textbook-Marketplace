@@ -18,11 +18,40 @@ import { useRouter } from 'next/navigation'
 import { getMe } from '@/lib/auth.api'
 import { Shield, Loader2 } from 'lucide-react'
 
+import api from '@/lib/api'
+
 
 interface Toast {
     id: string
     message: string
     type: 'success' | 'error'
+}
+
+interface AdminReport {
+    id: string
+    reason: string
+    status: 'PENDING' | 'REVIEWED'
+    created_at: string
+
+    reporter: {
+        id: string
+        first_name: string
+        last_name: string
+        email: string
+    }
+
+    listing: {
+        id: string
+        title: string
+        price: number
+        photo_urls: string[]
+        seller: {
+            id: string
+            first_name: string
+            last_name: string
+            email: string
+        }
+    }
 }
 
 const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Actions']
@@ -323,7 +352,7 @@ function RejectionModal({
                 />
 
                 <div className='flex justify-end gap-2'>
-                    <Button variant='secondary' onClick={onCancel} className="cursor-pointer">
+                    <Button variant='primary' onClick={onCancel} className="cursor-pointer">
                         Cancel
                     </Button>
 
@@ -434,6 +463,121 @@ function useRejection(onReject: (id: string, reason: string) => Promise<void>) {
     return { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject }
 }
 
+function ReportCard({
+    report,
+    onDismiss,
+    onBan,
+    actionLoading,
+}: {
+    readonly report: AdminReport
+    readonly onDismiss: (reportId: string) => Promise<void>
+    readonly onBan: (report: AdminReport) => Promise<void>
+    readonly actionLoading: boolean
+}) {
+    return (
+        <div className="card p-5 border border-gray-200">
+            <div className="flex justify-between items-start gap-4">
+
+                <div className="flex gap-4">
+
+                    <div className="relative w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                        {report.listing.photo_urls?.[0] ? (
+                            <Image
+                                src={normalizeImage(report.listing.photo_urls[0])}
+                                alt={report.listing.title}
+                                fill
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-300">
+                                📚
+                            </div>
+                        )}
+                    </div>
+
+                    <div>
+                        <h3 className="font-semibold text-[#000f2b]">
+                            {report.listing.title}
+                        </h3>
+
+                        <p className="text-sm text-gray-500 mt-1">
+                            R{Number(report.listing.price).toFixed(2)}
+                        </p>
+
+                        <p className="text-sm text-gray-600 mt-2">
+                            Reported by{' '}
+                            <strong>
+                                {report.reporter.first_name} {report.reporter.last_name}
+                            </strong>
+                        </p>
+
+                        <p className="text-xs text-gray-400 mt-1">
+                            {report.reporter.email}
+                        </p>
+                    </div>
+
+                </div>
+
+                <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        report.status === 'PENDING'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-gray-100 text-gray-600'
+                    }`}
+                >
+                    {report.status}
+                </span>
+
+            </div>
+
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs font-semibold text-gray-500 mb-1">
+                    Report reason
+                </p>
+
+                <p className="text-sm text-gray-700">
+                    {report.reason}
+                </p>
+            </div>
+
+            <div className="flex justify-end gap-2 mt-4">
+
+                <Button
+                    variant="primary"
+                    onClick={() => window.location.href = `/listings/${report.listing.id}`}
+                    disabled={actionLoading}
+                >
+                    View Listing
+                </Button>
+
+                <Button
+                    variant="primary"
+                    onClick={() => onDismiss(report.id)}
+                    disabled={actionLoading}
+                >
+                    {actionLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                        'Dismiss'
+                    )}
+                </Button>
+
+                <Button
+                    variant="danger"
+                    onClick={() => onBan(report)}
+                    disabled={actionLoading}
+                >
+                    {actionLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                        'Ban Seller'
+                    )}
+                </Button>
+
+            </div>
+        </div>
+    )
+}
 
 export default function AdminReviewDashboard() {
     const router = useRouter()
@@ -441,13 +585,27 @@ export default function AdminReviewDashboard() {
     const [currentAdminId, setCurrentAdminId] = useState<string | null>(null)
     const { listings, loading, actionLoading, handleApprove, handleReject } = useListings(showToast,currentAdminId)
     const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } = useRejection(handleReject)
-    
+    const [reports, setReports] = useState<AdminReport[]>([])
+    const [reportActionLoading, setReportActionLoading] = useState<string | null>(null)
 
     useEffect(() => {
         getMe()
             .then(user => setCurrentAdminId(user.id))
             .catch(() => showToast('failed to load user','error'))
     },[showToast])
+
+    useEffect(() => {
+        const fetchReports = async () => {
+            try {
+                const data = await api.get<AdminReport[]>('/admin/reports')
+                setReports(data)
+            } catch (error) {
+                console.error('Failed to fetch reports:', error)
+            }
+        }
+
+        fetchReports()
+    }, [])
 
     const pendingCount = listings.filter(l => l.status === 'PENDING').length
     const approveByMeCount = listings.filter(l => l.status === 'APPROVED' && l.reviewer?.id === currentAdminId).length
@@ -475,6 +633,45 @@ export default function AdminReviewDashboard() {
         router.push(`/listings/${id}`)
     }
 
+    const handleDismissReport = async (reportId: string) => {
+        setReportActionLoading(reportId)
+        try {
+            await api.patch(`/admin/reports/${reportId}/dismiss`)
+
+            setReports(prev =>
+                prev.filter(report => report.id !== reportId)
+            )
+
+            showToast('Report dismissed', 'success')
+        } catch (error) {
+            console.error(error)
+            showToast('Failed to dismiss report', 'error')
+        } finally {
+            setReportActionLoading(null)
+        }
+    }
+
+    const handleBanUser = async (report: AdminReport) => {
+        setReportActionLoading(report.id)
+        try {
+            await api.patch(`/admin/${report.listing.seller.id}/ban`, {
+                reason: report.reason,
+            })
+
+            await api.patch(`/admin/reports/${report.id}/dismiss`)
+
+            setReports(prev =>
+                prev.filter(r => r.id !== report.id)
+            )
+
+            showToast('Seller banned and report reviewed', 'success')
+        } catch (error) {
+            console.error(error)
+            showToast('Failed to ban seller', 'error')
+        } finally {
+            setReportActionLoading(null)
+        }
+    }
     return (
         <AdminRoute>
             {/* Hero Section */}
@@ -547,6 +744,30 @@ export default function AdminReviewDashboard() {
                         onViewDetails={handleViewDetails}
                     />
                 )}
+
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold text-[#000f2b] mb-4">
+                        Reports
+                    </h2>
+
+                    <div className="space-y-4">
+                        {reports.length === 0 ? (
+                            <p className="text-sm text-gray-500">
+                                No reports found.
+                            </p>
+                        ) : (
+                            reports.map(report => (
+                                <ReportCard
+                                    key={report.id}
+                                    report={report}
+                                    onDismiss={handleDismissReport}
+                                    onBan={handleBanUser}
+                                    actionLoading={reportActionLoading === report.id}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
 
                 <RejectionModal
                     listing={rejectionListing}
