@@ -9,9 +9,12 @@ import { Button } from './ui'
 const QUICK_FAQS = [
     { q: 'How do I create a listing?', a: 'Go to the Sell page, fill in your book details, and submit. Your listing will be reviewed by Admin.' },
 
-    { q: 'How long does approval take?', a: 'Listings are reviewed within 24-48 hours. You will be notified when approved or rejected.' },
+    { q: 'How do I view my listings?', a: 'Click your profile picture in the top navbar and select "My Listings" from the dropdown'},
 
     { q: 'How do I contact a seller?', a: 'Click on a listing and use the "Message Seller" button. Your contact details remain private.' },
+
+    { q: 'How long does approval take?', a: 'Listings are reviewed within 24-48 hours. You will be notified when approved or rejected.' },
+
 ]
 
 export default function HelpMenu() {
@@ -99,6 +102,20 @@ export default function HelpMenu() {
                                             onClick={() => {
                                                 setIsOpen(false)
                                                 router.push('/listings?tutorial=contact')
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
+
+                                    {faq.q === 'How do I view my listings?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                window.dispatchEvent(new Event('start-my-listings-tutorial'))
                                             }}
                                             variant="primary"
                                             className='m-2 flex justify-center'
