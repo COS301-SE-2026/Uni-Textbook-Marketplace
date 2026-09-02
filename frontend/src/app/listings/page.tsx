@@ -24,6 +24,9 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar'
 import Image from 'next/image'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 
 // Filter state
 interface Filters {
@@ -200,6 +203,27 @@ function BrowseListingsContent() {
         loadWishlist()
     }, [])
 
+    useEffect(() => {
+
+        if(boundSearches.get('tutorial') !== 'contact' || loading || listings.length === 0) return;
+
+        sessionStorage.setItem('tutorial_contact_seller', '1')
+
+        const tour = driver({
+            showProgress: true,
+            steps: [
+                {
+                    element: '#listing-grid > *:first-child',
+                    popover: {
+                        title: 'Pick a Listing',
+                        description: 'Click on any listing to view its details'
+                    }
+                }
+            ]
+        })
+        tour.drive()
+    }, [boundSearches,loading,listings])
+
     // Handlers
     const handleFilterChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -294,7 +318,7 @@ function BrowseListingsContent() {
         )
     } else {
         listingsContent = (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div id='listings-grid' className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {listings.map(listing => (
                     <ListingCard
                         key={listing.id}

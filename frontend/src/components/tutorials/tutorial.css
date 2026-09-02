@@ -1,0 +1,75 @@
+.driver-popover {
+    background-color: var(--card-bg);
+    color: var(--foreground);
+    border: 1px solid var(--card-border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    font-family: var(--font-sans), sans-serif;
+}
+
+.driver-popover-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--foreground);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.driver-popover-description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-top: 6px;
+    line-height: 1.5em;
+}
+
+.driver-popover-progress-text {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+}
+
+.driver-popover-next-btn,
+.driver-popover-prev-btn {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: none;
+    transition: background-color 0.2s ease;
+}
+
+.driver-popover-next-btn:hover,
+.driver-popover-prev-btn:hover {
+    background-color: color-mix(in srgb, var(--primary) 90%, black 10%);
+    color: var(--primary-foreground);
+}
+
+.driver-popover-prev-btn.driver-popover-btn-disabled {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    cursor: not-allowed;
+}
+
+.driver-popover-close-btn {
+    color: var(--muted-foreground);
+}
+
+.driver-popover-close-btn:hover {
+    color: var(--foreground);
+}
+
+.driver-popover-arrow-side-left.driver-popover-arrow {
+    border-left-color: var(--card-bg);
+}
+.driver-popover-arrow-side-right.driver-popover-arrow {
+    border-right-color: var(--card-bg);
+}
+.driver-popover-arrow-side-top.driver-popover-arrow {
+    border-top-color: var(--card-bg);
+}
+.driver-popover-arrow-side-bottom.driver-popover-arrow {
+    border-bottom-color: var(--card-bg);
+}

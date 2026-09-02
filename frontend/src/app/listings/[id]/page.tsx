@@ -11,6 +11,9 @@ import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
 import { useMessaging } from '@/hooks/useMessaging'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 import { ArrowLeft, Send, AlertTriangle, CheckCircle } from 'lucide-react'
 
 
@@ -98,6 +101,29 @@ export default function ListingDetailPage() {
         }
         fetchListing()
     }, [id])
+
+    useEffect(() => {
+
+        if(loading || !listing) return;
+
+        if(sessionStorage.getItem('tutorial_contact_seller') !== '1') return;
+
+        sessionStorage.removeItem('tutorial_contact_seller')
+
+        const tour = driver({
+            showProgress: true,
+            steps: [
+                {
+                    element: '#message-seller-btn',
+                    popover: {
+                        title: 'Message the seller',
+                        description: 'Click here to send them a message, and your contact details stay private'
+                    }
+                }
+            ]
+        })
+        tour.drive()
+    }, [loading,listing])
 
     function onselect(section: SectionKey) {
         setOpenSection((prev) => ({ ...prev, [section]: !prev[section] }))
@@ -392,7 +418,9 @@ export default function ListingDetailPage() {
 
                         <Button
                             onClick={() => setShowMessageModal(true)}
-                            variant="primary"
+                            variant='primary'
+                            id='message-seller-btn'
+                        
                             className="flex items-center gap-2 cursor-pointer"
                         >
                             <Send size={16} />
