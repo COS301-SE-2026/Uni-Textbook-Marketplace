@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useCallback } from 'react'
 import { useRouter,useSearchParams } from 'next/navigation'
 import ListingForm, { ListingFormData } from '@/components/listings/listingForm'
 import Button from '@/components/ui/Button'
@@ -251,19 +251,7 @@ function CreateListingPageInner() {
         }
     }
 
-    useEffect(() => {
-
-        if(searchParams.get('tutorial') === '1') setTutorialActive(true)
-
-    }, [searchParams])
-
-    useEffect(() => {
-
-        if(tutorialActive) runTutorialForStep(step)
-
-    }, [step,tutorialActive])
-
-    const runTutorialForStep = (stepNum: number) => {
+    const runTutorialForStep = useCallback((stepNum: number) => {
 
         const isLastStep = stepNum === 4
 
@@ -283,7 +271,13 @@ function CreateListingPageInner() {
             ]
         })
         tour.drive()
-    }
+    },[])
+
+    useEffect(() => {
+        
+        if( tutorialActive) runTutorialForStep(step)
+
+    },[step, tutorialActive,runTutorialForStep])
 
     return (
         <ProtectedRoute>
