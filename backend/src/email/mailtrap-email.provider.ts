@@ -209,13 +209,23 @@ export class MailtrapEmailProvider implements IEmailService {
       throw new Error('Email sender address not configured');
     }
 
-    const content = {
+    const templateMap: Record<
+      string,
+      (data: any) => { subject: string; text: string; bodyHtml: string }
+    > = {
       APPROVE_LISTING: approveListingTemplate,
       REJECT_LISTING: rejectedListingTemplate,
       message: newMessageTemplate,
       'Edited listing': listingEditedTemplate,
       SAVED_SEARCH_MATCH: savedSearchMatchTemplate,
-    }[entityType](data);
+    };
+
+    const template = templateMap[entityType];
+    if (!template) {
+      throw new Error(`Unsupported entity type: ${entityType}`);
+    }
+
+    const content = template(data);
 
     try {
       await this.transporter.sendMail({
@@ -226,8 +236,8 @@ export class MailtrapEmailProvider implements IEmailService {
         html: wrapEmailPage(content.bodyHtml),
       });
     } catch (error) {
-      this.logger.error(`Failed to send OTP email to ${to}`, error);
-      throw new Error('Could not send verification email');
+      this.logger.error(`Failed to send notification email to ${to}`, error);
+      throw new Error('Could not send notification email');
     }
   }
 }

@@ -31,7 +31,6 @@ export class CasesService {
   ): Promise<CaseResponseDto> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
-      relations: ['user'],
     });
 
     if (!user) {
@@ -83,7 +82,7 @@ export class CasesService {
       where: {
         user_id: userId,
       },
-      relations: ['user'],
+
       order: {
         created_at: 'DESC',
       },
@@ -98,7 +97,6 @@ export class CasesService {
         id: caseId,
         user_id: userId,
       },
-      relations: ['user'],
     });
 
     if (!caseEntity) {
@@ -113,7 +111,7 @@ export class CasesService {
       where: {
         status: 'pending',
       },
-      relations: ['user'],
+
       order: {
         created_at: 'ASC',
       },
@@ -144,7 +142,7 @@ export class CasesService {
 
     const [cases, total] = await this.caseRepo.findAndCount({
       where,
-      relations: ['user'],
+
       order: {
         created_at: 'DESC',
       },
@@ -186,7 +184,6 @@ export class CasesService {
 
     const admin = await this.userRepo.findOne({
       where: { id: adminId },
-      relations: ['banned_by'],
     });
 
     if (!admin) {
@@ -195,7 +192,6 @@ export class CasesService {
 
     const user = await this.userRepo.findOne({
       where: { id: caseEntity.user_id },
-      relations: ['banned_by'],
     });
 
     if (!user) {
