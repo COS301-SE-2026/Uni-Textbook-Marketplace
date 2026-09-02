@@ -31,6 +31,7 @@ export class CasesService {
   ): Promise<CaseResponseDto> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
+      relations: ['user'],
     });
 
     if (!user) {
