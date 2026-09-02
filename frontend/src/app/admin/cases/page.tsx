@@ -17,6 +17,7 @@ interface Toast {
     type: 'success' | 'error'
 }
 
+
 function ToastList({ toasts }: { readonly toasts: readonly Toast[] }) {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
@@ -48,32 +49,100 @@ function useToasts() {
     return { toasts, showToast }
 }
 
-export default function AdminCasesDashboard() {
-    const { toasts, showToast } = useToasts()
-    const [cases, setCases] = useState<AdminCase[]>([])
+
+const LoadingSkeleton: React.FC = () => (
+    <div className="container-content py-6">
+        <div className="card p-4 space-y-3 animate-pulse">
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-12 bg-gray-100 rounded-lg" />
+            ))}
+        </div>
+    </div>
+)
+
+
+interface HeroSectionProps {
+    title: string
+    description: string
+    icon?: React.ReactNode
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ 
+    title, 
+    description, 
+    icon = <Shield size={28} className="text-[#00B4D8]" />
+}) => {
+    return (
+        <div className="relative overflow-hidden w-full" style={{
+            background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
+        }}>
+            {/* Glossy Overlay */}
+            <div className="absolute inset-0 opacity-30" style={{
+                background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+            }} />
+            
+            {/* Decorative Grid */}
+            <div className="absolute inset-0 opacity-5" style={{
+                backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
+                backgroundSize: '40px 40px',
+            }} />
+            
+            {/* Glossy Highlight Line */}
+            <div className="absolute top-0 left-0 right-0 h-px" style={{
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
+            }} />
+            
+            <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl" style={{
+                        background: 'rgba(0, 180, 216, 0.08)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(0, 180, 216, 0.1)',
+                    }}>
+                        {icon}
+                    </div>
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
+                            {title}
+                        </h1>
+                        <p className="text-gray-500 text-sm md:text-base mt-0.5">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            {/* Bottom Glossy Edge */}
+            <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
+            }} />
+        </div>
+    )
+}
+
+
+interface CaseOperations {
+    cases: AdminCase[]
+    setCases: React.Dispatch<React.SetStateAction<AdminCase[]>>
+    activeFilter: FilterValue
+    setActiveFilter: (filter: FilterValue) => void
+    handleReview: (caseId: string) => void
+    loading: boolean
+    actionLoading: string | null
+    selectedCase?: AdminCase
+    isModalOpen: boolean
+    counts: Record<FilterValue, number>
+}
+
+const useCaseOperations = (initialCases: AdminCase[] = []) => {
+    const [cases, setCases] = useState<AdminCase[]>(initialCases)
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
     const [activeFilter, setActiveFilter] = useState<FilterValue>('PENDING')
     const [selectedCase, setSelectedCase] = useState<AdminCase | undefined>()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    // Fetch cases
-    useEffect(() => {
-        const fetchCases = async () => {
-            setLoading(true)
-            try {
-                const response = await getAdminCases({ page: 1, limit: 100 })
-                setCases(response.data)
-            } catch {
-                showToast('Failed to load cases', 'error')
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchCases()
-    }, [showToast])
-
- 
     const handleReview = (caseId: string) => {
         const caseItem = cases.find(c => c.id === caseId)
         if (caseItem) {
@@ -82,14 +151,16 @@ export default function AdminCasesDashboard() {
         }
     }
 
-
-    const handleDecision = async (decision: 'upheld' | 'reversed', adminNotes: string) => {
+    const handleDecision = async (
+        decision: 'upheld' | 'reversed', 
+        adminNotes: string,
+        showToast: (message: string, type: 'success' | 'error') => void
+    ) => {
         if (!selectedCase) return
 
         setActionLoading(selectedCase.id)
         try {
             const updated = await reviewCase(selectedCase.id, decision, adminNotes)
-            
             
             setCases(prev => prev.map(c => 
                 c.id === updated.id ? updated : c
@@ -110,135 +181,114 @@ export default function AdminCasesDashboard() {
         }
     }
 
-   
-    const counts: Record<FilterValue, number> = {
+    const closeModal = () => {
+        setIsModalOpen(false)
+        setSelectedCase(undefined)
+    }
+
+    const getCounts = (): Record<FilterValue, number> => ({
         ALL: cases.length,
         PENDING: cases.filter(c => c.status === 'pending').length,
         UPHELD: cases.filter(c => c.status === 'upheld').length,
         REVERSED: cases.filter(c => c.status === 'reversed').length,
-    }
-
-    const filteredCases = cases.filter(c => {
-        if (activeFilter === 'ALL') return true
-        return c.status === activeFilter.toLowerCase()
     })
 
-   
+    const getFilteredCases = (): AdminCase[] => {
+        if (activeFilter === 'ALL') return cases
+        return cases.filter(c => c.status === activeFilter.toLowerCase())
+    }
+
+    return {
+        cases,
+        setCases,
+        loading,
+        setLoading,
+        actionLoading,
+        setActionLoading,
+        activeFilter,
+        setActiveFilter,
+        selectedCase,
+        isModalOpen,
+        handleReview,
+        handleDecision,
+        closeModal,
+        getCounts,
+        getFilteredCases,
+        setSelectedCase,
+        setIsModalOpen,
+    }
+}
+
+
+export default function AdminCasesDashboard() {
+    const { toasts, showToast } = useToasts()
+    
+    const {
+        cases,
+        setCases,
+        loading,
+        setLoading,
+        actionLoading,
+        activeFilter,
+        setActiveFilter,
+        selectedCase,
+        isModalOpen,
+        handleReview,
+        handleDecision,
+        closeModal,
+        getCounts,
+        getFilteredCases,
+    } = useCaseOperations()
+
+    // Fetch cases
+    useEffect(() => {
+        const fetchCases = async () => {
+            setLoading(true)
+            try {
+                const response = await getAdminCases({ page: 1, limit: 100 })
+                setCases(response.data)
+            } catch {
+                showToast('Failed to load cases', 'error')
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchCases()
+    }, [showToast, setLoading, setCases])
+
+    const counts = getCounts()
+    const filteredCases = getFilteredCases()
+
+    // Loading state with Hero Section
     if (loading) {
         return (
             <AdminRoute>
-                {/* Hero Section */}
-                <div className="relative overflow-hidden w-full" style={{
-                    background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
-                }}>
-                    <div className="absolute inset-0 opacity-30" style={{
-                        background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
-                    }} />
-                    <div className="absolute inset-0 opacity-5" style={{
-                        backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
-                        backgroundSize: '40px 40px',
-                    }} />
-                    <div className="absolute top-0 left-0 right-0 h-px" style={{
-                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
-                    }} />
-                    
-                    <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-2xl" style={{
-                                background: 'rgba(0, 180, 216, 0.08)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(0, 180, 216, 0.1)',
-                            }}>
-                                <Shield size={28} className="text-[#00B4D8]" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
-                                    Appeal Cases
-                                </h1>
-                                <p className="text-gray-500 text-sm md:text-base mt-0.5">
-                                    Review and manage user appeal cases
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="absolute bottom-0 left-0 right-0 h-px" style={{
-                        background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
-                    }} />
-                </div>
-
-                <div className="container-content py-6">
-                    <div className="card p-4 space-y-3 animate-pulse">
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="h-12 bg-gray-100 rounded-lg" />
-                        ))}
-                    </div>
-                </div>
+                <HeroSection 
+                    title="Appeal Cases"
+                    description="Review and manage user appeal cases"
+                />
+                <LoadingSkeleton />
             </AdminRoute>
         )
     }
 
+    // Main render
     return (
         <AdminRoute>
-            {/* Hero Section - Matching Admin Review Dashboard */}
-            <div className="relative overflow-hidden w-full" style={{
-                background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
-            }}>
-                {/* Glossy Overlay */}
-                <div className="absolute inset-0 opacity-30" style={{
-                    background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
-                }} />
-                
-                {/* Decorative Grid */}
-                <div className="absolute inset-0 opacity-5" style={{
-                    backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
-                    backgroundSize: '40px 40px',
-                }} />
-                
-                {/* Glossy Highlight Line */}
-                <div className="absolute top-0 left-0 right-0 h-px" style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
-                }} />
-                
-                <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-2xl" style={{
-                            background: 'rgba(0, 180, 216, 0.08)',
-                            backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(0, 180, 216, 0.1)',
-                        }}>
-                            <Shield size={28} className="text-[#00B4D8]" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
-                                Appeal Cases
-                            </h1>
-                            <p className="text-gray-500 text-sm md:text-base mt-0.5">
-                                Review and manage user appeal cases
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                {/* Bottom Glossy Edge */}
-                <div className="absolute bottom-0 left-0 right-0 h-px" style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
-                }} />
-            </div>
+            <HeroSection 
+                title="Appeal Cases"
+                description="Review and manage user appeal cases"
+            />
 
             <div className="container-content py-6">
                 <ToastList toasts={toasts} />
 
-                {/* Filters - Directly below hero, no stats cards */}
                 <CasesFilters
                     activeFilter={activeFilter}
                     counts={counts}
                     onChange={setActiveFilter}
                 />
 
-                {/* Table - Matching Admin Review Dashboard */}
                 <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-0">
                     <CasesTable
                         cases={filteredCases}
@@ -248,15 +298,11 @@ export default function AdminCasesDashboard() {
                     />
                 </Card>
 
-                {/* Decision Modal */}
                 <CaseDecisionModal
                     caseItem={selectedCase}
                     isOpen={isModalOpen}
-                    onClose={() => {
-                        setIsModalOpen(false)
-                        setSelectedCase(undefined)
-                    }}
-                    onConfirm={handleDecision}
+                    onClose={closeModal}
+                    onConfirm={(decision, notes) => handleDecision(decision, notes, showToast)}
                     loading={!!actionLoading}
                 />
             </div>
