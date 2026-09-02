@@ -557,6 +557,316 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
+  /listings/{id}/status:
+    patch:
+      tags: [Listings]
+      summary: >
+        Updates a listing's status. Extended in Sprint 5 to accept RESERVED
+        in addition to the existing SOLD/WITHDRAWN values. Callable by the
+        listing's seller from the messaging thread (ChatHeader) once a sale
+        is agreed, or from My Listings.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [RESERVED, SOLD]
+      responses:
+        "200":
+          description: Status updated, audit_log entry written
+        "403":
+          description: Not the listing's seller, or an invalid status transition
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/admin/all:
+    get:
+      tags: [Admin]
+      summary: Returns all listings, admin only.
+      responses:
+        "200":
+          description: All listings
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/listings/{id}/approve:
+    patch:
+      tags: [Admin]
+      summary: Approves a pending listing. Sets status APPROVED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing approved
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/listings/{id}/reject:
+    patch:
+      tags: [Admin]
+      summary: Rejects a pending listing. Sets status REJECTED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Listing rejected
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /modules:
+    post:
+      tags: [Modules]
+      summary: Creates a module linked to the textbook being sold.
+      responses:
+        "201":
+          description: Module created
+    get:
+      tags: [Modules]
+      summary: Search-as-you-type module code lookup, extended with smart filters.
+      parameters:
+        - in: query
+          name: search
+          required: true
+          schema: { type: string }
+        - in: query
+          name: university
+          schema: { type: string }
+      responses:
+        "200":
+          description: Matching modules
+
+  /modules/faculties:
+    get:
+      tags: [Modules]
+      summary: Returns faculty names and ids.
+      responses:
+        "200":
+          description: Faculties
+
+  /saved-searches:
+    post:
+      tags: [SavedSearches]
+      summary: Saves a search as JSON filter_json.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter_json:
+                  type: object
+      responses:
+        "201":
+          description: Saved search created
+
+  /saved-searches/me:
+    get:
+      tags: [SavedSearches]
+      summary: Returns the saved searches belonging to the logged-in student.
+      responses:
+        "200":
+          description: The student's saved searches
+
+  /saved-searches/id:
+    get:
+      tags: [SavedSearches]
+      summary: Returns one saved search by id.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The saved search
+    delete:
+      tags: [SavedSearches]
+      summary: Deletes a saved search by id.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+
+  /wishlist/{listingId}:
+    post:
+      tags: [Wishlist]
+      summary: Adds a listing to the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Added to wishlist
+    delete:
+      tags: [Wishlist]
+      summary: Removes a listing from the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed from wishlist
+
+  /wishlist/mine:
+    get:
+      tags: [Wishlist]
+      summary: Returns the logged-in student's wishlisted listings.
+      responses:
+        "200":
+          description: Wishlisted listings
+
+  /admin/audit-log:
+    get:
+      tags: [Admin]
+      summary: Returns audit log entries for admin review.
+      parameters:
+        - in: query
+          name: performedBy
+          schema: { type: string }
+        - in: query
+          name: action
+          schema: { type: string }
+        - in: query
+          name: entityType
+          schema: { type: string }
+        - in: query
+          name: entityId
+          schema: { type: string }
+        - in: query
+          name: startDate
+          schema: { type: string }
+        - in: query
+          name: endDate
+          schema: { type: string }
+      responses:
+        "200":
+          description: Audit log entries
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/emails:
+    get:
+      tags: [Admin]
+      summary: Returns a list of admin emails, used for filters.
+      responses:
+        "200":
+          description: Admin emails
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /images/upload:
+    post:
+      tags: [Images]
+      summary: Uploads a listing image to Azure Blob Storage through the backend.
+      responses:
+        "201":
+          description: Image uploaded
+
+  /images/list:
+    get:
+      tags: [Images]
+      summary: Lists uploaded images for a listing.
+      responses:
+        "200":
+          description: Image list
+
+  /images/delete:
+    delete:
+      tags: [Images]
+      summary: Deletes an uploaded listing image from Blob Storage.
+      responses:
+        "200":
+          description: Deleted
+
+  /conversations:
+    post:
+      tags: [Conversations]
+      summary: Creates or fetches a conversation for a listing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId:
+                  type: string
+                  format: uuid
+      responses:
+        "201":
+          description: Conversation created or fetched
+
+  /conversations/mine:
+    post:
+      tags: [Conversations]
+      summary: Gets all conversations for the logged-in user.
+      responses:
+        "200":
+          description: The user's conversations
+
+  /conversations/{id}/messages:
+    get:
+      tags: [Conversations]
+      summary: Gets all messages in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Messages in the conversation
+    post:
+      tags: [Conversations]
+      summary: Sends a message in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        "201":
+          description: Message sent
+
   # Demo 3: Whoever owns each section, fill it in as you go and code
   /notifications/mine:
     get:
