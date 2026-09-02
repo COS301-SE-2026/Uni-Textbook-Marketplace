@@ -313,6 +313,9 @@ export class AuthService {
         first_name: true,
         last_name: true,
         role: true,
+        is_banned: true,
+        ban_reason: true,
+        banned_at: true,
       },
       where: {
         id: userId,

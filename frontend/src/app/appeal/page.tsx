@@ -68,12 +68,13 @@ export default function AppealPage() {
         }
     }, [user, isLoading, router])
 
-    // Redirect if user is not banned
+    
     useEffect(() => {
-        if (user && !isBanned && !isLoading) {
-            router.push('/listings')
-        }
-    }, [user, isLoading, router, isBanned])
+  if (user && !isBanned && !isLoading) {
+    
+    router.push('/listings');
+  }
+}, [user, isLoading, router, isBanned]);
 
     const handleSubmitAppeal = async (e: React.FormEvent) => {
         e.preventDefault()

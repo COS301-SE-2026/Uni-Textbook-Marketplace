@@ -40,43 +40,52 @@ export default function LoginDesktop() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setServerError("");
-        setBanMessage(null);
+    e.preventDefault();
+    setServerError("");
+    setBanMessage(null);
 
-        if (!validate()) return;
-        setLoading(true);
-        try {
-            const normalizedEmail = email.toLowerCase().trim();
-            await loginUser({ email: normalizedEmail, password });
+    if (!validate()) return;
+    setLoading(true);
+    
+    try {
+        const normalizedEmail = email.toLowerCase().trim();
+        const response = await loginUser({ email: normalizedEmail, password });
+        
+       
+        if (response.user?.is_banned) {
+            sessionStorage.setItem('ban_message', response.user.ban_reason || 'Account banned');
+            login(response.user);
+            router.push('/appeal');
+            return;
+        }
 
-            const me = await getMe();
-            login(me);
-            router.push('/listings');
-        } catch (err: any) {
-            console.log('Login error:', err);
-            console.log('Error response:', err.response);
-            
-           
-            if (err.response?.status === 403) {
-                const message = err.response?.data?.message || '';
-                if (message.toLowerCase().includes('banned')) {
-                    setBanMessage(message);
-                    return;
-                }
-            }
-            
-            const message = err.response?.data?.message || err.message || '';
+        
+        const me = await getMe();
+        login(me);
+        router.push('/listings');
+    } catch (err: any) {
+        console.log('Login error:', err);
+        console.log('Error response:', err.response);
+        
+        if (err.response?.status === 403) {
+            const message = err.response?.data?.message || '';
             if (message.toLowerCase().includes('banned')) {
                 setBanMessage(message);
                 return;
             }
-            
-            setServerError(message || 'Login failed. Please try again.');
-        } finally {
-            setLoading(false);
         }
-    };
+        
+        const message = err.response?.data?.message || err.message || '';
+        if (message.toLowerCase().includes('banned')) {
+            setBanMessage(message);
+            return;
+        }
+        
+        setServerError(message || 'Login failed. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+};
 
     const forgotPass = () => {
         router.push('/auth/resetpassword');

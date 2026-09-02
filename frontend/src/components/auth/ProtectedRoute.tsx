@@ -66,9 +66,16 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         );
     }
 
-    if (user?.is_banned) {
-        return null;
-    }
+  
+if (user?.is_banned) {
+  
+  if (isAppealPage) {
+    return <>{children}</>;
+  }
+  
+  router.push('/appeal');
+  return null;
+}
 
     return <>{children}</>;
 }
