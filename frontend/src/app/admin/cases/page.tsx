@@ -57,7 +57,7 @@ export default function AdminCasesDashboard() {
     const [selectedCase, setSelectedCase] = useState<AdminCase | undefined>()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    
+    // Fetch cases
     useEffect(() => {
         const fetchCases = async () => {
             setLoading(true)
@@ -73,7 +73,7 @@ export default function AdminCasesDashboard() {
         fetchCases()
     }, [showToast])
 
-    
+ 
     const handleReview = (caseId: string) => {
         const caseItem = cases.find(c => c.id === caseId)
         if (caseItem) {
@@ -82,7 +82,7 @@ export default function AdminCasesDashboard() {
         }
     }
 
-    
+
     const handleDecision = async (decision: 'upheld' | 'reversed', adminNotes: string) => {
         if (!selectedCase) return
 
@@ -123,20 +123,81 @@ export default function AdminCasesDashboard() {
         return c.status === activeFilter.toLowerCase()
     })
 
+   
+    if (loading) {
+        return (
+            <AdminRoute>
+                {/* Hero Section */}
+                <div className="relative overflow-hidden w-full" style={{
+                    background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
+                }}>
+                    <div className="absolute inset-0 opacity-30" style={{
+                        background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                    }} />
+                    <div className="absolute inset-0 opacity-5" style={{
+                        backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
+                        backgroundSize: '40px 40px',
+                    }} />
+                    <div className="absolute top-0 left-0 right-0 h-px" style={{
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
+                    }} />
+                    
+                    <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-2xl" style={{
+                                background: 'rgba(0, 180, 216, 0.08)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(0, 180, 216, 0.1)',
+                            }}>
+                                <Shield size={28} className="text-[#00B4D8]" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
+                                    Appeal Cases
+                                </h1>
+                                <p className="text-gray-500 text-sm md:text-base mt-0.5">
+                                    Review and manage user appeal cases
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                        background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
+                    }} />
+                </div>
+
+                <div className="container-content py-6">
+                    <div className="card p-4 space-y-3 animate-pulse">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="h-12 bg-gray-100 rounded-lg" />
+                        ))}
+                    </div>
+                </div>
+            </AdminRoute>
+        )
+    }
+
     return (
         <AdminRoute>
-            {/* Hero Section */}
+            {/* Hero Section - Matching Admin Review Dashboard */}
             <div className="relative overflow-hidden w-full" style={{
                 background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #d5e0ea 100%)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.05)',
             }}>
+                {/* Glossy Overlay */}
                 <div className="absolute inset-0 opacity-30" style={{
                     background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.5) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
                 }} />
+                
+                {/* Decorative Grid */}
                 <div className="absolute inset-0 opacity-5" style={{
                     backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
                     backgroundSize: '40px 40px',
                 }} />
+                
+                {/* Glossy Highlight Line */}
                 <div className="absolute top-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
                 }} />
@@ -161,6 +222,7 @@ export default function AdminCasesDashboard() {
                     </div>
                 </div>
                 
+                {/* Bottom Glossy Edge */}
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.15), transparent)',
                 }} />
@@ -169,34 +231,14 @@ export default function AdminCasesDashboard() {
             <div className="container-content py-6">
                 <ToastList toasts={toasts} />
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <Card className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <p className="text-sm text-gray-500">Total Cases</p>
-                        <p className="text-2xl font-bold text-[#000f2b]">{counts.ALL}</p>
-                    </Card>
-                    <Card className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 border-l-4 border-amber-400">
-                        <p className="text-sm text-gray-500">Pending</p>
-                        <p className="text-2xl font-bold text-amber-600">{counts.PENDING}</p>
-                    </Card>
-                    <Card className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 border-l-4 border-red-400">
-                        <p className="text-sm text-gray-500">Upheld</p>
-                        <p className="text-2xl font-bold text-red-600">{counts.UPHELD}</p>
-                    </Card>
-                    <Card className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 border-l-4 border-green-400">
-                        <p className="text-sm text-gray-500">Reversed</p>
-                        <p className="text-2xl font-bold text-green-600">{counts.REVERSED}</p>
-                    </Card>
-                </div>
-
-                {/* Filters */}
+                {/* Filters - Directly below hero, no stats cards */}
                 <CasesFilters
                     activeFilter={activeFilter}
                     counts={counts}
                     onChange={setActiveFilter}
                 />
 
-                {/* Table */}
+                {/* Table - Matching Admin Review Dashboard */}
                 <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-0">
                     <CasesTable
                         cases={filteredCases}
