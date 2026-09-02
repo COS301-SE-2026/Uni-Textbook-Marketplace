@@ -352,7 +352,7 @@ function RejectionModal({
                 />
 
                 <div className='flex justify-end gap-2'>
-                    <Button variant='secondary' onClick={onCancel} className="cursor-pointer">
+                    <Button variant='primary' onClick={onCancel} className="cursor-pointer">
                         Cancel
                     </Button>
 
@@ -551,7 +551,7 @@ function ReportCard({
                 </Button>
 
                 <Button
-                    variant="secondary"
+                    variant="primary"
                     onClick={() => onDismiss(report.id)}
                     disabled={actionLoading}
                 >

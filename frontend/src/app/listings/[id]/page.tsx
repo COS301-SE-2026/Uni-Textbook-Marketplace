@@ -11,7 +11,7 @@ import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
 import { useMessaging } from '@/hooks/useMessaging'
-import { ArrowLeft, Send, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Send, AlertTriangle, CheckCircle } from 'lucide-react'
 
 
 const CONDITION_LABEL: Record<string, string> = {
@@ -76,6 +76,7 @@ export default function ListingDetailPage() {
     const [reportReason, setReportReason] = useState('')
     const [message, setMessage] = useState('')
     const [messageSent, setMessageSent] = useState(false)
+    const [reportSubmitted, setReportSubmitted] = useState(false)
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: false,
         moduleDetails: false,
@@ -112,6 +113,8 @@ export default function ListingDetailPage() {
 
                     <div className="flex-1 flex flex-col gap-4">
                         <div className="h-6 bg-gray-200 rounded w-2/3" />
+
+                        
                         <div className="h-4 bg-gray-100 rounded w-1/3" />
 
                         <div className="h-8 bg-gray-200 rounded w-1/4 mt-4" />
@@ -377,6 +380,7 @@ export default function ListingDetailPage() {
                         <h4 className="font-semibold mb-1 text-sm">
                             Stay Safe
                         </h4>
+
                         <p className="text-xs ">
                             Keep all conversations inside the app. Do not share
                             personal details with sellers.
@@ -410,6 +414,7 @@ export default function ListingDetailPage() {
 
             </div>
 
+            {/* Message Modal */}
             <Modal
                 isOpen={showMessageModal}
                 onClose={() => {
@@ -490,6 +495,7 @@ export default function ListingDetailPage() {
 
 
                         </div>
+
                     </div>
 
                     
@@ -497,65 +503,100 @@ export default function ListingDetailPage() {
                 )}
             </Modal>
 
+            
             <Modal
                 isOpen={showReportModal}
                 onClose={() => {
-                    setShowReportModal(false)
-                    setReportReason('')
+                    if (!reportSubmitted) {
+                        setShowReportModal(false)
+                        setReportReason('')
+                    }
                 }}
                 title="Report Listing"
             >
-                <div className="flex flex-col gap-4">
-                    <p className="text-sm text-gray-600">
-                        Please describe why you are reporting this listing.
-                    </p>
 
-                    <textarea
-                        className="w-full border border-gray-300 rounded p-3 text-sm resize-none"
-                        rows={5}
-                        placeholder="Describe the problem with this listing..."
-                        value={reportReason}
-                        onChange={(e) => setReportReason(e.target.value)}
-                    />
+                {reportSubmitted ? (
+                    <div className="text-center py-6">
 
-                    <div className="flex justify-end gap-3">
+
+                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+
+                            <CheckCircle size={32} className="text-green-600" />
+                        </div>
+
+
+                        <p className="font-semibold text-lg">Report submitted!</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Thank you for helping keep our community safe. Our admin team will review this listing shortly.
+                        </p>
+
+
                         <Button
-                            variant="primary"
                             onClick={() => {
                                 setShowReportModal(false)
+                                setReportSubmitted(false)
                                 setReportReason('')
                             }}
+                            className="btn-primary mt-4"
                         >
-                            Cancel
+                            Close
                         </Button>
 
-                        <Button
-                            onClick={async () => {
-                                if (!reportReason.trim()) {
-                                    return
-                                }
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-4">
 
-                                try {
-                                    await api.post('/reports', {
-                                        listing_id: listing.id,
-                                        reason: reportReason,
-                                    })
+                        <p className="text-sm text-gray-600">
+                            Please describe why you are reporting this listing.
+                        </p>
 
+                        <textarea
+                            className="w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            rows={5}
+                            placeholder="Describe the problem with this listing..."
+                            value={reportReason}
+                            onChange={(e) => setReportReason(e.target.value)}
+                        />
+
+                        <div className="flex justify-end gap-3">
+
+                            <Button
+                                variant="primary"
+                                onClick={() => {
                                     setShowReportModal(false)
                                     setReportReason('')
+                                }}
+                            >
+                                Cancel
+                            </Button>
 
-                                    alert('Report submitted successfully.')
-                                } catch (error) {
-                                    console.error('Error submitting report:', error)
-                                    alert('Failed to submit report.')
-                                }
-                            }}
-                        >
-                            Submit
-                        </Button>
+                            <Button
+                                onClick={async () => {
+                                    if (!reportReason.trim()) {
+                                        return
+                                    }
+
+                                    try {
+                                        await api.post('/reports', {
+                                            listing_id: listing.id,
+                                            reason: reportReason,
+                                        })
+
+                                        setReportSubmitted(true)
+                                    } catch (error) {
+                                        console.error('Error submitting report:', error)
+                                        alert('Failed to submit report. Please try again.')
+                                    }
+                                }}
+                            >
+
+                                Submit
+                            </Button>
+
+                        </div>
+
                     </div>
-
-                </div>
+                )}
             </Modal>
             
 
