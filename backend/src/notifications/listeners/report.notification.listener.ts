@@ -5,17 +5,15 @@ import { ReportEvent } from '../../reports/events/report.events';
 
 @Injectable()
 export class ReportNotificationListener {
-    constructor(
-        private readonly notificationsService: NotificationsService,
-    ) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
-    @OnEvent('report.created')
-    async notifyAdminOfReport(event: ReportEvent) {
-        await this.notificationsService.emit(event);
-    }
+  @OnEvent('report.created')
+  async notifyAdminOfReport(event: ReportEvent) {
+    await this.notificationsService.emit(event);
+  }
 
-    @OnEvent('report.reviewed')
-    async notifyReporterOfReview(event: ReportEvent) {
-        await this.notificationsService.emit(event);
-    }
+  @OnEvent('report.reviewed')
+  async notifyReporterOfReview(event: ReportEvent) {
+    await this.notificationsService.emit(event);
+  }
 }
