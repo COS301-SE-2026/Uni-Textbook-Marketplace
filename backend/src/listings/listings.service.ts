@@ -17,7 +17,6 @@ import {
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
-
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
@@ -240,6 +239,10 @@ export class ListingsService {
     });
 
     if (!listing) throw new NotFoundException('listing not found');
+
+    if (!this.isValidUUID(listing.id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
 
     if (listing.status === ListingStatus.REJECTED) {
       const event = new EditEvent();

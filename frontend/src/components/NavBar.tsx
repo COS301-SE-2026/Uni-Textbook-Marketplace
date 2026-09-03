@@ -29,7 +29,9 @@ const adminNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
+  { label: 'Cases', href: '/admin/cases' },
   { label: 'Audit Logs', href: '/admin/log' }
+ 
 ]
 
 
@@ -239,7 +241,15 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                             className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
                             onClick={() => setUserMenuOpen(false)}
                           >
-                            Admin Panel
+                            Moderator Panel
+                          </Link>
+                          
+                          <Link
+                            href="/admin/cases"
+                            className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Cases
                           </Link>
                           <div className="border-t border-[var(--card-border)]" />
                         </>

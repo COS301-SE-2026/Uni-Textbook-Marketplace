@@ -82,27 +82,6 @@ export class CasesController {
     return this.casesService.getUserCases(req.user.id);
   }
 
-  @Get(':id')
-  @ApiOperation({
-    summary: 'Get a specific case by ID',
-    description: 'Users can only access their own cases',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Case found',
-    type: CaseResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Case not found',
-  })
-  async getCaseById(
-    @Req() req: RequestWithUser,
-    @Param('id') id: string,
-  ): Promise<CaseResponseDto> {
-    return this.casesService.getCaseById(id, req.user.id);
-  }
-
   @Get('admin/pending')
   @Roles('admin')
   @ApiOperation({
@@ -168,6 +147,27 @@ export class CasesController {
     @Query('search') search?: string,
   ): Promise<PaginatedCasesDto> {
     return this.casesService.getAllCases(page, limit, status, search);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get a specific case by ID',
+    description: 'Users can only access their own cases',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Case found',
+    type: CaseResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Case not found',
+  })
+  async getCaseById(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+  ): Promise<CaseResponseDto> {
+    return this.casesService.getCaseById(id, req.user.id);
   }
 
   @Patch(':id/review')
