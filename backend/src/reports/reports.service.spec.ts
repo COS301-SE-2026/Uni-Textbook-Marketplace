@@ -28,6 +28,7 @@ describe('ReportsService', () => {
                     save: jest.fn(),
                     find: jest.fn(),
                     findOne: jest.fn(),
+                    findAndCount: jest.fn(),
                 },
             },
 
@@ -304,53 +305,39 @@ describe('ReportsService', () => {
     describe('findAll', () => {
         it('should return all reports', async () => {
             const reports = [
-                    {
-                        id: 'report-1',
-                        reporter: {
-                            id: 'user-1',
-                        },
-                        listing: {
-                            id: 'listing-1',
-                        },
-                        reason: 'Fraudulent listing',
-                        status: ReportStatus.PENDING,
+                {
+                    id: 'report-123',
+                    reporter: {
+                        id: 'user-123',
                     },
-                    {
-                        id: 'report-2',
-                        reporter: {
-                            id: 'user-2',
-                        },
-                        listing: {
-                            id: 'listing-2',
-                        },
-                        reason: 'Duplicate listing',
-                        status: ReportStatus.REVIEWED,
+                    listing: {
+                        id: 'listing-123',
                     },
-                ] as Report[];
-
-            reportsRepository.find.mockResolvedValue(reports);
-
-            const result = await service.findAll();
-
-            expect(
-                reportsRepository.find,
-            ).toHaveBeenCalledWith({
-                relations: {
-                    reporter: true,
-                    listing: true,
+                    reason: 'Fraudulent listing',
+                    status: ReportStatus.PENDING,
                 },
-                order: {
-                    created_at: 'DESC',
-                },
+            ] as Report[];
+
+            reportsRepository.findAndCount.mockResolvedValue([
+                reports,
+                reports.length,
+            ]);
+
+            const result = await service.findAll({
+                page: 1,
+                limit: 10,
             });
 
-             expect(result).toBe(reports);
+            expect(result.data).toEqual(reports);
         });
 
         it('should return an empty array when there are no reports', async () => {
-            reportsRepository.find.mockResolvedValue([]);
-            const result = await service.findAll();
-            expect(result).toEqual([]);
+            reportsRepository.findAndCount.mockResolvedValue([[],0]);
+            const result = await service.findAll({
+                page: 1,
+                limit: 10,
+            });
+            expect(result.data).toEqual([]);
         });
     });
 
@@ -375,14 +362,15 @@ describe('ReportsService', () => {
                 where: {
                     id: 'report-123',
                 },
-                    relations: {
-                    // user: true,
-                    reporter:true,
-                    listing: true,
+                relations: {
+                    reporter: true,
+                    listing: {
+                        seller: true,
+                    },
                 },
             });
 
-        expect(result).toBe(report);
+            expect(result).toBe(report);
         });
 
         it('should throw NotFoundException when report does not exist', async () => {
@@ -429,7 +417,9 @@ describe('ReportsService', () => {
                 },
                 relations: {
                     reporter: true,
-                    listing: true,
+                    listing: {
+                        seller: true,
+                    },
                 },
             });
 
