@@ -275,6 +275,12 @@ function CreateListingPageInner() {
 
     useEffect(() => {
         
+        if (searchParams.get('tutorial') === '1') setTutorialActive(true)
+
+    }, [searchParams])
+
+    useEffect(() => {
+        
         if( tutorialActive) runTutorialForStep(step)
 
     },[step, tutorialActive,runTutorialForStep])
