@@ -15,7 +15,7 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notifications)
     private readonly notificationRepo: Repository<Notifications>,
-    
+
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
 
@@ -179,14 +179,13 @@ export class NotificationsService {
 
   async emit(event: ReportEvent) {
     if (event.action === 'REPORT_CREATED') {
-      //admins 
+      //admins
       const admins = await this.userRepo.find({
         where: {
           role: 'admin',
         },
       });
 
-      
       const notification = admins.map((admin) =>
         this.notificationRepo.create({
           user_id: admin,
@@ -198,7 +197,6 @@ export class NotificationsService {
       );
 
       await this.notificationRepo.save(notification);
-    
 
       return;
     }
