@@ -54,16 +54,6 @@ interface AdminReport {
     }
 }
 
-interface ReportsResponse {
-    data: AdminReport[]
-    meta: {
-        total: number
-        page: number
-        limit: number
-        totalPages: number
-    }
-}
-
 const TABLE_HEADERS = ['Book', 'Module', 'Price', 'Seller', 'Date', 'Status', 'Actions']
 
 type FilterValue = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
@@ -562,39 +552,25 @@ export default function AdminReviewDashboard() {
     const { rejectionTarget, rejectionReason, setRejectionReason, startReject, cancelReject, confirmReject } = useRejection(handleReject)
     const [reports, setReports] = useState<AdminReport[]>([])
     const [reportActionLoading, setReportActionLoading] = useState<string | null>(null)
-    const [page, setPage] = useState(1)
-    const [limit] = useState(10)
-    const [statusFilter, setStatusFilter] = useState<'PENDING' | 'REVIEWED' | ''>('')
-    const [totalPages, setTotalPages] = useState(1)
-    const [totalReports, setTotalReports] = useState(0)
+
+    useEffect(() => {
+        getMe()
+            .then(user => setCurrentAdminId(user.id))
+            .catch(() => showToast('failed to load user','error'))
+    },[showToast])
 
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const params = new URLSearchParams()
-
-                params.set('page', page.toString())
-                params.set('limit', limit.toString())
-
-                if (statusFilter) {
-                    params.set('status', statusFilter)
-                }
-
-                const response = await api.get<ReportsResponse>(
-                    `/admin/reports?${params.toString()}`
-                )
-
-                setReports(response.data)
-                setTotalPages(response.meta.totalPages)
-                setTotalReports(response.meta.total)
+                const data = await api.get<AdminReport[]>('/admin/reports')
+                setReports(data)
             } catch (error) {
                 console.error('Failed to fetch reports:', error)
-                showToast('Failed to load reports', 'error')
             }
         }
 
-        void fetchReports()
-    }, [page, limit, statusFilter, showToast])
+        fetchReports()
+    }, [])
 
     const pendingCount = listings.filter(l => l.status === 'PENDING').length
     const approveByMeCount = listings.filter(l => l.status === 'APPROVED' && l.reviewer?.id === currentAdminId).length
@@ -717,32 +693,9 @@ export default function AdminReviewDashboard() {
                 )}
 
                 <div className="mt-8">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                        <div>
-                            <h2 className="text-xl font-bold text-[#000f2b] dark:text-white">
-                                Reports
-                            </h2>
-
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                {totalReports} reports found
-                            </p>
-                        </div>
-
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => {
-                                setStatusFilter(
-                                    e.target.value as 'PENDING' | 'REVIEWED' | ''
-                                )
-                                setPage(1)
-                            }}
-                            className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-white"
-                        >
-                            <option value="">All reports</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="REVIEWED">Reviewed</option>
-                        </select>
-                    </div>
+                    <h2 className="text-xl font-bold text-[#000f2b] dark:text-white mb-4">
+                        Reports
+                    </h2>
 
                     <div className="space-y-4">
                         {reports.length === 0 ? (
@@ -761,32 +714,6 @@ export default function AdminReviewDashboard() {
                             ))
                         )}
                     </div>
-
-                    {totalPages > 0 && (
-                        <div className="flex items-center justify-between mt-6">
-                            <Button
-                                variant="secondary"
-                                onClick={() => setPage(prev => prev - 1)}
-                                disabled={page === 1}
-                                className="disabled:opacity-50"
-                            >
-                                Previous
-                            </Button>
-
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                                Page {page} of {totalPages}
-                            </span>
-
-                            <Button
-                                variant="secondary"
-                                onClick={() => setPage(prev => prev + 1)}
-                                disabled={page >= totalPages}
-                                className="disabled:opacity-50"
-                            >
-                                Next
-                            </Button>
-                        </div>
-                    )}
                 </div>
 
                 <RejectionModal

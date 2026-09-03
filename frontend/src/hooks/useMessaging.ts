@@ -12,16 +12,8 @@ import {
 import type {
     Conversation,
     Message,
-} from '@/types/messaging'; 
-
-import {
-    collection,
-    onSnapshot,
-    orderBy,
-    query,
-} from 'firebase/firestore';
-
-import { db } from '@/lib/firebase';
+} from '@/types/messaging';
+import { start } from 'repl';
 
 export function useMessaging() {
 
@@ -108,11 +100,14 @@ export function useMessaging() {
         if (!selectedConversation) {
             return;
         }
-
         await sendMessage(
             selectedConversation.conversationId,
             text,
         );
+        const updatedMessages = await getMessages(
+            selectedConversation.conversationId,
+        );
+        setMessages(updatedMessages);
         await loadConversations();
     };
 
@@ -130,46 +125,6 @@ export function useMessaging() {
         };
         void fetchConversations();
     }, []);
-
-    useEffect(() => {
-        if (!selectedConversation) {
-            return;
-        }
-
-        const messagesRef = collection(
-            db,
-            'conversations',
-            selectedConversation.conversationId,
-            'messages',
-        );
-
-        const messagesQuery = query(
-            messagesRef,
-            orderBy('sentAt', 'asc'),
-        );
-
-        const unsubscribe = onSnapshot(
-            messagesQuery,
-            (snapshot) => {
-                const updatedMessages: Message[] = snapshot.docs.map(
-                    (doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    } as Message),
-                );
-
-                setMessages(updatedMessages);
-            },
-            (error) => {
-                console.error(
-                    'Error listening for messages:',
-                    error,
-                );
-            },
-        );
-
-        return () => unsubscribe();
-    }, [selectedConversation]);
 
     return {
         conversations,
