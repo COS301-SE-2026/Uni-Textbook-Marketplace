@@ -95,8 +95,6 @@ export class AdminService {
         return { savedlisting, listing, event };
       });
 
-    this.eventEmitter.emit('listing.reviewed', event);
-
     if (action == 'APPROVE_LISTING') {
       this.checkSavedSearchMatches(listing).catch((error: unknown) => {
         const errorMessage =
