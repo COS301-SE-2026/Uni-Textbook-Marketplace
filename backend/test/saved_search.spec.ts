@@ -1,14 +1,11 @@
 import './setup';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
 
 import { TestModule } from './test.module';
-import { SavedSearchesService } from '../src/saved_search/saved_search.service';
-import { ListingsService } from '../src/listings/listings.service';
 import { SavedSearch } from '../src/database/entities/saved_search.entity';
 import { User } from '../src/database/entities/users.entity';
 import { Listing, ListingStatus } from '../src/database/entities/listing.entity';
@@ -22,8 +19,6 @@ import { EMAIL_SERVICE } from '../src/email/email.interface';
 describe('Saved Search E2E Tests', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-  let savedSearchService: SavedSearchesService;
-  let listingsService: ListingsService;
   let jwtService: JwtService;
 
   let savedSearchRepo: Repository<SavedSearch>;
@@ -34,7 +29,6 @@ describe('Saved Search E2E Tests', () => {
   let universityRepo: Repository<University>;
   let facultyRepo: Repository<Faculty>;
   let notificationRepo: Repository<Notifications>;
-  let eventEmitter: EventEmitter2;
 
   let testUser1: User;
   let testUser2: User;
@@ -43,11 +37,26 @@ describe('Saved Search E2E Tests', () => {
   let testModule: ModuleEntity;
   let testUniversity: University;
   let testFaculty: Faculty;
-  let adminUser: User;
 
   const TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPassword123!';
 
+  type ListingPayload = {
+    title: string;
+    bookId: string;
+    moduleId: string;
+    condition: string;
+    annotationLevel: string;
+    price: number;
+    photoUrls: string[];
+    hasNotes: boolean;
+    description: string;
+  };
 
+  type NotificationFallback = {
+    userId: string;
+    listingId: string;
+    message: string;
+  };
 
   const getAuthToken = (user: User): string =>
     jwtService.sign({
@@ -56,37 +65,79 @@ describe('Saved Search E2E Tests', () => {
       role: user.role || 'student',
     });
 
+  const authenticatedRequest = (method: 'get' | 'post' | 'delete', url: string, user: User) =>
+    request(app.getHttpServer())
+      [method](url)
+      .set('Authorization', `Bearer ${getAuthToken(user)}`);
+
   const createSavedSearchViaApi = async (
-    user: User,
-    filterJson: Record<string, unknown>,
-  ) => {
-    return request(app.getHttpServer())
-      .post('/saved-searches')
-      .set('Authorization', `Bearer ${getAuthToken(user)}`)
-      .send({ filter_json: filterJson })
-      .expect(201);
-  };
+  user: User,
+  filterJson: Record<string, unknown>,
+  expectedStatus = 201,
+) =>
+  authenticatedRequest('post', '/saved-searches', user)
+    .send({ filter_json: filterJson })
+    .expect(expectedStatus);
 
   const createListingViaApi = async (
     seller: User,
-    listing: {
-      title: string;
-      bookId: string;
-      moduleId: string;
-      condition: string;
-      annotationLevel: string;
-      price: number;
-      photoUrls: string[];
-      hasNotes: boolean;
-      description: string;
-    },
-  ) => {
-    return request(app.getHttpServer())
-      .post('/listings')
-      .set('Authorization', `Bearer ${getAuthToken(seller)}`)
+    listing: ListingPayload,
+  ) =>
+    authenticatedRequest('post', '/listings', seller)
       .send(listing)
       .expect(201);
-  };
+
+  const buildListingPayload = (
+    overrides: Partial<ListingPayload> = {},
+  ): ListingPayload => ({
+    title: 'Test Textbook',
+    bookId: testBook.id,
+    moduleId: testModule.id,
+    condition: 'good',
+    annotationLevel: 'light',
+    price: 45.99,
+    photoUrls: [],
+    hasNotes: false,
+    description: 'Test description',
+    ...overrides,
+  });
+
+  const createTestListing = (
+    overrides: Partial<Listing> = {},
+  ): Listing =>
+    ({
+      id: 'listing-test-1',
+      title: 'Clean Code Textbook',
+      seller: testUser1,
+      book: testBook,
+      module: testModule,
+      condition: 'good',
+      annotation_level: 'light',
+      price: 45.99,
+      reviewer: null as any,
+      reviewed_at: null as any,
+      photo_urls: [],
+      status: ListingStatus.APPROVED,
+      listing_status: 'AVAILABLE' as any,
+      has_notes: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+      deleted_at: null as any,
+      description: 'Great condition textbook',
+      reports: [],
+      ...overrides,
+    }) as Listing;
+
+  const createSavedSearch = async (
+    userId: string,
+    filterJson: Record<string, unknown>,
+  ): Promise<SavedSearch> =>
+    savedSearchRepo.save(
+      savedSearchRepo.create({
+        user_id: userId,
+        filter_json: filterJson,
+      }),
+    );
 
   const findSavedSearchNotifications = async (
     userId?: string,
@@ -97,25 +148,23 @@ describe('Saved Search E2E Tests', () => {
           user_id: { id: userId },
           entity_type: 'SAVED_SEARCH_MATCH',
         }
-      : { entity_type: 'SAVED_SEARCH_MATCH' };
+      : {
+          entity_type: 'SAVED_SEARCH_MATCH',
+        };
 
     return notificationRepo.find({
       where,
-      ...(includeEntityRelation
-        ? { relations: ['user_id', 'entity_id'] }
-        : { relations: ['user_id'] }),
+      relations: includeEntityRelation
+        ? ['user_id', 'entity_id']
+        : ['user_id'],
     });
   };
 
-  const waitForNotifications = async () => {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-  };
-
-  const createManualNotification = async (
-    userId: string,
-    listingId: string,
-    message: string,
-  ) => {
+  const createManualNotification = async ({
+    userId,
+    listingId,
+    message,
+  }: NotificationFallback) => {
     const notification = notificationRepo.create({
       user_id: { id: userId },
       entity_type: 'SAVED_SEARCH_MATCH',
@@ -129,111 +178,66 @@ describe('Saved Search E2E Tests', () => {
 
   const ensureNotifications = async (
     notifications: Notifications[],
-    fallbackNotifications: Array<{
-      userId: string;
-      listingId: string;
-      message: string;
-    }>,
+    fallbacks: NotificationFallback[],
     userId?: string,
     includeEntityRelation = false,
   ) => {
-    if (notifications.length === 0) {
-      await Promise.all(
-        fallbackNotifications.map(notification =>
-          createManualNotification(
-            notification.userId,
-            notification.listingId,
-            notification.message,
-          ),
-        ),
-      );
-
-      return findSavedSearchNotifications(userId, includeEntityRelation);
+    if (notifications.length > 0) {
+      return notifications;
     }
 
-    return notifications;
+    await Promise.all(fallbacks.map(createManualNotification));
+
+    return findSavedSearchNotifications(userId, includeEntityRelation);
   };
 
-  const createTestListing = (
-    overrides: Partial<Listing> = {},
-  ): Listing => ({
-    id: 'listing-test-1',
-    title: 'Clean Code Textbook',
-    seller: testUser1,
-    book: testBook,
-    module: testModule,
-    condition: 'good',
-    annotation_level: 'light',
-    price: 45.99,
-    reviewer: null as any,
-    reviewed_at: null as any,
-    photo_urls: [],
-    status: ListingStatus.APPROVED,
-    listing_status: 'AVAILABLE' as any,
-    has_notes: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null as any,
-    description: 'Great condition textbook',
-    reports: [],
-    ...overrides,
-  } as Listing);
+  const waitForNotifications = async () => {
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  };
 
-  async function createSavedSearch(
+  const assertNotFound = async (
+    method: 'get' | 'delete',
+    url: string,
+    user: User,
+  ) => {
+    const response = await authenticatedRequest(method, url, user).expect(404);
+
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.message).toContain('not found');
+  };
+
+  const getNotificationsForUser = (
+    notifications: Notifications[],
     userId: string,
-    filterJson: Record<string, unknown>,
-  ): Promise<SavedSearch> {
-    return savedSearchRepo.save(
-      savedSearchRepo.create({
-        user_id: userId,
-        filter_json: filterJson,
-      }),
-    );
-  }
-
- 
+  ) =>
+    notifications.filter(notification => notification.user_id.id === userId);
 
   async function setupTestData() {
     try {
-      const universityData = {
+      testUniversity = await universityRepo.save({
         name: 'Test University',
         email_domain: 'test.edu',
-      };
-      testUniversity = await universityRepo.save(universityData);
+      });
 
-      const facultyData = {
+      testFaculty = await facultyRepo.save({
         name: 'Computer Science',
         university: testUniversity,
-      };
-      testFaculty = await facultyRepo.save(facultyData);
+      });
 
-      const moduleData = {
+      testModule = await moduleRepo.save({
         code: 'CS101',
         name: 'Introduction to Computer Science',
         faculty: testFaculty,
         university: testUniversity,
         semester: 1,
-      };
-      testModule = await moduleRepo.save(moduleData);
+      });
 
-      const bookData = {
+      testBook = await bookRepo.save({
         isbn: '978-0132350884',
         title: 'Clean Code',
         author: 'Robert C. Martin',
         edition: 1,
         publisher: 'Prentice Hall',
-      };
-      testBook = await bookRepo.save(bookData);
-
-      adminUser = await userRepo.save({
-        email: 'admin@test.com',
-        password_hash: 'hashed_password_admin',
-        first_name: 'Test',
-        last_name: 'Admin',
-        is_verified: true,
-        role: 'admin',
-        university: testUniversity,
-        faculty: testFaculty,
       });
 
       testUser1 = await userRepo.save({
@@ -296,8 +300,6 @@ describe('Saved Search E2E Tests', () => {
       await app.init();
 
       dataSource = module.get(DataSource);
-      savedSearchService = module.get(SavedSearchesService);
-      listingsService = module.get(ListingsService);
       jwtService = module.get(JwtService);
 
       savedSearchRepo = dataSource.getRepository(SavedSearch);
@@ -308,9 +310,9 @@ describe('Saved Search E2E Tests', () => {
       universityRepo = dataSource.getRepository(University);
       facultyRepo = dataSource.getRepository(Faculty);
       notificationRepo = dataSource.getRepository(Notifications);
-      eventEmitter = module.get(EventEmitter2);
 
       await setupTestData();
+
       console.log('Saved Search E2E tests setup complete');
     } catch (error) {
       console.error('Error in beforeAll:', error);
@@ -319,14 +321,16 @@ describe('Saved Search E2E Tests', () => {
   }, 60000);
 
   afterEach(async () => {
-    if (dataSource?.isInitialized) {
-      try {
-        await dataSource.query('TRUNCATE TABLE notifications CASCADE');
-        await dataSource.query('TRUNCATE TABLE saved_searches CASCADE');
-        await dataSource.query('TRUNCATE TABLE listings CASCADE');
-      } catch (error) {
-        console.error('Error in afterEach cleanup:', error);
-      }
+    if (!dataSource?.isInitialized) {
+      return;
+    }
+
+    try {
+      await dataSource.query('TRUNCATE TABLE notifications CASCADE');
+      await dataSource.query('TRUNCATE TABLE saved_searches CASCADE');
+      await dataSource.query('TRUNCATE TABLE listings CASCADE');
+    } catch (error) {
+      console.error('Error in afterEach cleanup:', error);
     }
   }, 30000);
 
@@ -339,8 +343,6 @@ describe('Saved Search E2E Tests', () => {
       await dataSource.destroy();
     }
   });
-
- 
 
   describe('Saved Search API Endpoints', () => {
     describe('POST /saved-searches - Create Saved Search', () => {
@@ -370,12 +372,13 @@ describe('Saved Search E2E Tests', () => {
       });
 
       it('should reject invalid filter JSON', async () => {
-        const response = await request(app.getHttpServer())
-          .post('/saved-searches')
-          .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
-          .send({ filter_json: { invalidField: 'test' } })
-          .expect(400);
+        const response = await createSavedSearchViaApi(
+        testUser1,
+        { invalidField: 'test' },
+        400,
+        );
 
+        expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('message');
         expect(Array.isArray(response.body.message)).toBe(true);
         expect(response.body.message[0]).toContain('Invalid fields');
@@ -384,22 +387,22 @@ describe('Saved Search E2E Tests', () => {
 
     describe('GET /saved-searches/mine - Get User Saved Searches', () => {
       it('should return all saved searches for authenticated user', async () => {
-        const token = getAuthToken(testUser1);
-
         await createSavedSearch(testUser1.id, {
           moduleCode: 'CS101',
           priceMin: 30,
           priceMax: 50,
         });
+
         await createSavedSearch(testUser1.id, {
           condition: 'good',
           annotationLevel: 'light',
         });
 
-        const response = await request(app.getHttpServer())
-          .get('/saved-searches/mine')
-          .set('Authorization', `Bearer ${token}`)
-          .expect(200);
+        const response = await authenticatedRequest(
+          'get',
+          '/saved-searches/mine',
+          testUser1,
+        ).expect(200);
 
         expect(response.body.data).toHaveLength(2);
         expect(response.body.meta.total).toBe(2);
@@ -408,26 +411,28 @@ describe('Saved Search E2E Tests', () => {
       });
 
       it('should return empty list when user has no saved searches', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/saved-searches/mine')
-          .set('Authorization', `Bearer ${getAuthToken(testUser2)}`)
-          .expect(200);
+        const response = await authenticatedRequest(
+          'get',
+          '/saved-searches/mine',
+          testUser2,
+        ).expect(200);
 
         expect(response.body.data).toHaveLength(0);
         expect(response.body.meta.total).toBe(0);
       });
 
       it('should support pagination', async () => {
-        const token = getAuthToken(testUser1);
-
         for (let i = 0; i < 5; i++) {
-          await createSavedSearch(testUser1.id, { moduleCode: `CS10${i}` });
+          await createSavedSearch(testUser1.id, {
+            moduleCode: `CS10${i}`,
+          });
         }
 
-        const response = await request(app.getHttpServer())
-          .get('/saved-searches/mine?page=1&limit=3')
-          .set('Authorization', `Bearer ${token}`)
-          .expect(200);
+        const response = await authenticatedRequest(
+          'get',
+          '/saved-searches/mine?page=1&limit=3',
+          testUser1,
+        ).expect(200);
 
         expect(response.body.data).toHaveLength(3);
         expect(response.body.meta.total).toBe(5);
@@ -441,30 +446,24 @@ describe('Saved Search E2E Tests', () => {
           moduleCode: 'CS101',
         });
 
-        const response = await request(app.getHttpServer())
-          .get(`/saved-searches/${savedSearch.id}`)
-          .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
-          .expect(200);
+        const response = await authenticatedRequest(
+          'get',
+          `/saved-searches/${savedSearch.id}`,
+          testUser1,
+        ).expect(200);
 
         expect(response.body.id).toBe(savedSearch.id);
         expect(response.body.user_id).toBe(testUser1.id);
-        expect(response.body.filter_json).toEqual({ moduleCode: 'CS101' });
+        expect(response.body.filter_json).toEqual({
+          moduleCode: 'CS101',
+        });
       });
-
-      const assertNotFound = async (url: string, token: string) => {
-        const response = await request(app.getHttpServer())
-          .get(url)
-          .set('Authorization', `Bearer ${token}`)
-          .expect(404);
-
-        expect(response.body).toHaveProperty('message');
-        expect(response.body.message).toContain('not found');
-      };
 
       it('should return 404 when saved search not found', async () => {
         await assertNotFound(
+          'get',
           '/saved-searches/non-existent-id',
-          getAuthToken(testUser1),
+          testUser1,
         );
       });
 
@@ -474,8 +473,9 @@ describe('Saved Search E2E Tests', () => {
         });
 
         await assertNotFound(
+          'get',
           `/saved-searches/${savedSearch.id}`,
-          getAuthToken(testUser2),
+          testUser2,
         );
       });
     });
@@ -486,10 +486,11 @@ describe('Saved Search E2E Tests', () => {
           moduleCode: 'CS101',
         });
 
-        await request(app.getHttpServer())
-          .delete(`/saved-searches/${savedSearch.id}`)
-          .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
-          .expect(204);
+        await authenticatedRequest(
+          'delete',
+          `/saved-searches/${savedSearch.id}`,
+          testUser1,
+        ).expect(204);
 
         const deleted = await savedSearchRepo.findOne({
           where: { id: savedSearch.id },
@@ -498,20 +499,11 @@ describe('Saved Search E2E Tests', () => {
         expect(deleted).toBeNull();
       });
 
-      const assertNotFound = async (url: string, token: string) => {
-        const response = await request(app.getHttpServer())
-          .delete(url)
-          .set('Authorization', `Bearer ${token}`)
-          .expect(404);
-
-        expect(response.body).toHaveProperty('message');
-        expect(response.body.message).toContain('not found');
-      };
-
       it('should return 404 when trying to delete non-existent search', async () => {
         await assertNotFound(
+          'delete',
           '/saved-searches/non-existent-id',
-          getAuthToken(testUser1),
+          testUser1,
         );
       });
 
@@ -521,14 +513,13 @@ describe('Saved Search E2E Tests', () => {
         });
 
         await assertNotFound(
+          'delete',
           `/saved-searches/${savedSearch.id}`,
-          getAuthToken(testUser2),
+          testUser2,
         );
       });
     });
   });
-
- 
 
   describe('Saved Search Matching Flow', () => {
     const createMatchingSavedSearches = async () => {
@@ -537,10 +528,12 @@ describe('Saved Search E2E Tests', () => {
         priceMin: 30,
         priceMax: 50,
       });
+
       await createSavedSearchViaApi(testUser2, {
         moduleCode: testModule.code,
         condition: 'good',
       });
+
       await createSavedSearchViaApi(testUser3, {
         moduleCode: 'WRONG_MODULE',
       });
@@ -551,21 +544,17 @@ describe('Saved Search E2E Tests', () => {
       async () => {
         await createMatchingSavedSearches();
 
-        const listingResponse = await createListingViaApi(testUser1, {
-          title: 'Matching Textbook',
-          bookId: testBook.id,
-          moduleId: testModule.id,
-          condition: 'good',
-          annotationLevel: 'light',
-          price: 45.99,
-          photoUrls: [],
-          hasNotes: false,
-          description: 'Great condition textbook',
-        });
+        const listingResponse = await createListingViaApi(
+          testUser1,
+          buildListingPayload({
+            title: 'Matching Textbook',
+          }),
+        );
 
         await waitForNotifications();
 
         let notifications = await findSavedSearchNotifications();
+
         notifications = await ensureNotifications(
           notifications,
           [
@@ -583,20 +572,15 @@ describe('Saved Search E2E Tests', () => {
         );
 
         expect(notifications.length).toBeGreaterThanOrEqual(2);
-
-        const user1Notifs = notifications.filter(
-          n => n.user_id.id === testUser1.id,
-        );
-        const user2Notifs = notifications.filter(
-          n => n.user_id.id === testUser2.id,
-        );
-        const user3Notifs = notifications.filter(
-          n => n.user_id.id === testUser3.id,
-        );
-
-        expect(user1Notifs.length).toBeGreaterThan(0);
-        expect(user2Notifs.length).toBeGreaterThan(0);
-        expect(user3Notifs.length).toBe(0);
+        expect(
+          getNotificationsForUser(notifications, testUser1.id).length,
+        ).toBeGreaterThan(0);
+        expect(
+          getNotificationsForUser(notifications, testUser2.id).length,
+        ).toBeGreaterThan(0);
+        expect(
+          getNotificationsForUser(notifications, testUser3.id).length,
+        ).toBe(0);
       },
       30000,
     );
@@ -617,26 +601,21 @@ describe('Saved Search E2E Tests', () => {
         semester: 1,
       });
 
-      await createListingViaApi(testUser2, {
-        title: 'Non-Matching Textbook',
-        bookId: testBook.id,
-        moduleId: differentModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      await createListingViaApi(
+        testUser2,
+        buildListingPayload({
+          title: 'Non-Matching Textbook',
+          moduleId: differentModule.id,
+        }),
+      );
 
       await waitForNotifications();
 
       const notifications = await findSavedSearchNotifications(testUser1.id);
+
       expect(notifications.length).toBe(0);
     });
   });
-
- 
 
   describe('Full User Journey', () => {
     const createSavedSearchAndListing = async () => {
@@ -647,17 +626,12 @@ describe('Saved Search E2E Tests', () => {
         condition: 'good',
       });
 
-      return createListingViaApi(testUser2, {
-        title: 'Journey Test Textbook',
-        bookId: testBook.id,
-        moduleId: testModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      return createListingViaApi(
+        testUser2,
+        buildListingPayload({
+          title: 'Journey Test Textbook',
+        }),
+      );
     };
 
     it('should complete full saved search journey: create search → listing created → notification received', async () => {
@@ -669,6 +643,7 @@ describe('Saved Search E2E Tests', () => {
         testUser1.id,
         true,
       );
+
       notifications = await ensureNotifications(
         notifications,
         [
@@ -685,13 +660,17 @@ describe('Saved Search E2E Tests', () => {
       expect(notifications.length).toBe(1);
 
       const notification = notifications[0];
-      expect(notification.message_info).toContain('Journey Test Textbook');
+
+      expect(notification.message_info).toContain(
+        'Journey Test Textbook',
+      );
       expect(notification.entity_id.id).toBe(listingResponse.body.id);
 
-      const notifResponse = await request(app.getHttpServer())
-        .get('/notifications/mine')
-        .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
-        .expect(200);
+      const notifResponse = await authenticatedRequest(
+        'get',
+        '/notifications/mine',
+        testUser1,
+      ).expect(200);
 
       expect(notifResponse.body.data.length).toBeGreaterThan(0);
       expect(notifResponse.body).toHaveProperty('pagination');
@@ -707,30 +686,28 @@ describe('Saved Search E2E Tests', () => {
         priceMax: 50,
         condition: 'good',
       });
+
       await createSavedSearchViaApi(testUser2, {
         moduleCode: testModule.code,
         condition: 'good',
       });
+
       await createSavedSearchViaApi(testUser3, {
         moduleCode: testModule.code,
         condition: 'new',
       });
 
-      const listingResponse = await createListingViaApi(testUser1, {
-        title: 'Multiple Users Test',
-        bookId: testBook.id,
-        moduleId: testModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      const listingResponse = await createListingViaApi(
+        testUser1,
+        buildListingPayload({
+          title: 'Multiple Users Test',
+        }),
+      );
 
       await waitForNotifications();
 
       let notifications = await findSavedSearchNotifications();
+
       notifications = await ensureNotifications(
         notifications,
         [
@@ -747,49 +724,35 @@ describe('Saved Search E2E Tests', () => {
         ],
       );
 
-      const user1Notifs = notifications.filter(
-        n => n.user_id.id === testUser1.id,
-      );
-      const user2Notifs = notifications.filter(
-        n => n.user_id.id === testUser2.id,
-      );
-      const user3Notifs = notifications.filter(
-        n => n.user_id.id === testUser3.id,
-      );
+      expect(
+        getNotificationsForUser(notifications, testUser1.id).length,
+      ).toBeGreaterThan(0);
 
-      expect(user1Notifs.length).toBeGreaterThan(0);
-      expect(user2Notifs.length).toBeGreaterThan(0);
-      expect(user3Notifs.length).toBe(0);
+      expect(
+        getNotificationsForUser(notifications, testUser2.id).length,
+      ).toBeGreaterThan(0);
+
+      expect(
+        getNotificationsForUser(notifications, testUser3.id).length,
+      ).toBe(0);
     });
   });
 
-  
-
   describe('Edge Cases', () => {
     const createTwoListings = async () => {
-      const listing1 = await createListingViaApi(testUser2, {
-        title: 'Test Book 1',
-        bookId: testBook.id,
-        moduleId: testModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      const listing1 = await createListingViaApi(
+        testUser2,
+        buildListingPayload({
+          title: 'Test Book 1',
+        }),
+      );
 
-      const listing2 = await createListingViaApi(testUser2, {
-        title: 'Test Book 2',
-        bookId: testBook.id,
-        moduleId: testModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      const listing2 = await createListingViaApi(
+        testUser2,
+        buildListingPayload({
+          title: 'Test Book 2',
+        }),
+      );
 
       return { listing1, listing2 };
     };
@@ -805,7 +768,11 @@ describe('Saved Search E2E Tests', () => {
 
       await waitForNotifications();
 
-      let notifications = await findSavedSearchNotifications(testUser1.id, true);
+      let notifications = await findSavedSearchNotifications(
+        testUser1.id,
+        true,
+      );
+
       notifications = await ensureNotifications(
         notifications,
         [
@@ -827,8 +794,13 @@ describe('Saved Search E2E Tests', () => {
       expect(notifications.length).toBe(2);
 
       const listingIds = notifications
-        .filter(n => n.entity_id)
-        .map(n => (typeof n.entity_id === 'object' ? n.entity_id.id : n.entity_id));
+        .filter(notification => notification.entity_id)
+        .map(notification =>
+          typeof notification.entity_id === 'object'
+            ? notification.entity_id.id
+            : notification.entity_id,
+        );
+
       expect(listingIds).toContain(listing1.body.id);
       expect(listingIds).toContain(listing2.body.id);
     });
@@ -838,21 +810,20 @@ describe('Saved Search E2E Tests', () => {
         search: 'clean code',
       });
 
-      const listingResponse = await createListingViaApi(testUser2, {
-        title: 'CLEAN CODE Textbook',
-        bookId: testBook.id,
-        moduleId: testModule.id,
-        condition: 'good',
-        annotationLevel: 'light',
-        price: 45.99,
-        photoUrls: [],
-        hasNotes: false,
-        description: 'Test description',
-      });
+      const listingResponse = await createListingViaApi(
+        testUser2,
+        buildListingPayload({
+          title: 'CLEAN CODE Textbook',
+        }),
+      );
 
       await waitForNotifications();
 
-      let notifications = await findSavedSearchNotifications(testUser1.id, true);
+      let notifications = await findSavedSearchNotifications(
+        testUser1.id,
+        true,
+      );
+
       notifications = await ensureNotifications(
         notifications,
         [
@@ -869,13 +840,16 @@ describe('Saved Search E2E Tests', () => {
       expect(notifications.length).toBe(1);
 
       const notification = notifications[0];
+
       const entityId = notification.entity_id
         ? typeof notification.entity_id === 'object'
           ? notification.entity_id.id
           : notification.entity_id
         : null;
+
       expect(entityId).toBe(listingResponse.body.id);
       expect(notification.message_info).toContain('CLEAN CODE');
     });
   });
 });
+
