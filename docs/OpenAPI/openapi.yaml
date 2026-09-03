@@ -145,22 +145,17 @@ components:
         reporterId:
           type: string
           format: uuid
-          description: The ID of the user who submitted the report
         listingId:
           type: string
           format: uuid
-          description: The ID of the listing being reported
         reason:
           type: string
-          description: The reason for the report
         status:
           type: string
           enum: [PENDING, REVIEWED]
-          description: The current status of the report
         createdAt:
           type: string
           format: date-time
-          description: Timestamp of report creation
 
     # (Neo): confirm field names against the actual cases table
     # migration once committed.
@@ -924,10 +919,7 @@ paths:
       tags: [Reports]
       summary: A student submits a report against a listing.
       # TODO (Josh): confirm request body against reports.dto.ts.
-      security:
-        - bearerAuth: []
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -937,28 +929,18 @@ paths:
                 listingId:
                   type: string
                   format: uuid
-                  description: The ID of the listing being reported
                 reason:
                   type: string
-                  description: The reason for the report
       responses:
         "201":
-          description: Report submitted successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Report"
+          description: Report submitted
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
   /admin/reports:
     get:
       tags: [Reports]
-      summary: Returns reports for admin review, paginated, filterable by status. 
-      security:
-        - bearerAuth: []
+      summary: Returns reports for admin review, paginated, filterable by status.
       parameters:
         - in: query
           name: status
@@ -966,50 +948,29 @@ paths:
         - in: query
           name: page
           schema: { type: integer }
-          description: Page number
         - in: query
           name: limit
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 20
-          description: Number of reports returned per page.
+          schema: { type: integer }
       responses:
         "200":
-          description: List of reports for admin review
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Report"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+          description: Paginated reports
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/{id}/dismiss:
+  /admin/reports/{id}/dismiss:
     patch:
       tags: [Reports]
       summary: Dismisses a report without banning the reported user.
-      security:
-        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
-          description: The ID of the report to dismiss
       responses:
         "200":
           description: Report dismissed
-        "401":
-          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
   # (Josh): confirm the actual route/verb for the ban action once
   # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
@@ -1022,32 +983,24 @@ paths:
         Bans the user who owns the reported listing. Writes an audit_log
         entry (action = BANNED) and triggers a ban-notice notification with
         appeal instructions via NotificationService.emit().
-      security:
-        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
       requestBody:
-        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                reason:
+                ban_reason:
                   type: string
-                  description: Reason for banning the user
       responses:
         "200":
           description: User banned
-        "401":
-          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
   # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
   # the admin review + decide endpoint.

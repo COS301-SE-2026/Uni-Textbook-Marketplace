@@ -16,7 +16,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ReportsService } from '../reports/reports.service';
-import { ReportFiltersDto } from '../reports/dto/report-filters.dto';
 
 interface AuthenticatedUser {
   id: string;
@@ -72,8 +71,8 @@ export class AdminController {
   @Get('reports')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async findAll(@Query() filters: ReportFiltersDto) {
-    return this.reportsService.findAll(filters);
+  async findAll() {
+    return this.reportsService.findAll();
   }
 
   @Get('reports/:id')
