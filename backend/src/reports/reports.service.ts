@@ -12,6 +12,7 @@ import { CreateReportDto } from './dto/create-report.dto';
 
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReportEvent } from './events/report.events';
+import { ReportFiltersDto } from './dto/report-filters.dto';
 
 @Injectable()
 export class ReportsService {
@@ -73,16 +74,35 @@ export class ReportsService {
     return savedReport;
   }
 
-  async findAll(): Promise<Report[]> {
-    return this.reportsRepository.find({
+  async findAll(filters: ReportFiltersDto) {
+    const { status, page, limit } = filters;
+    const skip = (page - 1) * limit;
+    const where = status ? { status } : {};
+
+    const [reports, total] = await this.reportsRepository.findAndCount({
+      where,
       relations: {
         reporter: true,
-        listing: true,
+        listing: {
+          seller: true,
+        },
       },
       order: {
         created_at: 'DESC',
       },
+      skip,
+      take: limit,
     });
+
+    return {
+      data: reports,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: string): Promise<Report> {
@@ -92,7 +112,9 @@ export class ReportsService {
       },
       relations: {
         reporter: true,
-        listing: true,
+        listing: {
+          seller: true,
+        },
       },
     });
 
@@ -110,7 +132,9 @@ export class ReportsService {
       },
       relations: {
         reporter: true,
-        listing: true,
+        listing: {
+          seller: true,
+        },
       },
     });
 
