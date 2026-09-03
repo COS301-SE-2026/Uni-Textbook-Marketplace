@@ -46,7 +46,8 @@ describe('Saved Search E2E Tests', () => {
   let adminUser: User;
 
   const TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPassword123!';
-  let emailCounter = 0;
+
+
 
   const getAuthToken = (user: User): string =>
     jwtService.sign({
@@ -178,6 +179,20 @@ describe('Saved Search E2E Tests', () => {
     ...overrides,
   } as Listing);
 
+  async function createSavedSearch(
+    userId: string,
+    filterJson: Record<string, unknown>,
+  ): Promise<SavedSearch> {
+    return savedSearchRepo.save(
+      savedSearchRepo.create({
+        user_id: userId,
+        filter_json: filterJson,
+      }),
+    );
+  }
+
+ 
+
   async function setupTestData() {
     try {
       const universityData = {
@@ -259,18 +274,6 @@ describe('Saved Search E2E Tests', () => {
     }
   }
 
-  async function createSavedSearch(
-    userId: string,
-    filterJson: Record<string, unknown>,
-  ): Promise<SavedSearch> {
-    return savedSearchRepo.save(
-      savedSearchRepo.create({
-        user_id: userId,
-        filter_json: filterJson,
-      }),
-    );
-  }
-
   beforeAll(async () => {
     try {
       console.log('Setting up Saved Search E2E tests...');
@@ -337,6 +340,8 @@ describe('Saved Search E2E Tests', () => {
     }
   });
 
+ 
+
   describe('Saved Search API Endpoints', () => {
     describe('POST /saved-searches - Create Saved Search', () => {
       it('should create a saved search for authenticated user', async () => {
@@ -360,7 +365,6 @@ describe('Saved Search E2E Tests', () => {
           .send({ filter_json: { moduleCode: 'CS101' } })
           .expect(401);
 
-      
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toContain('Unauthorized');
       });
@@ -372,10 +376,9 @@ describe('Saved Search E2E Tests', () => {
           .send({ filter_json: { invalidField: 'test' } })
           .expect(400);
 
-        
-         expect(response.body).toHaveProperty('message');
-         expect(Array.isArray(response.body.message)).toBe(true);
-         expect(response.body.message[0]).toContain('Invalid fields');
+        expect(response.body).toHaveProperty('message');
+        expect(Array.isArray(response.body.message)).toBe(true);
+        expect(response.body.message[0]).toContain('Invalid fields');
       });
     });
 
@@ -448,15 +451,21 @@ describe('Saved Search E2E Tests', () => {
         expect(response.body.filter_json).toEqual({ moduleCode: 'CS101' });
       });
 
-      it('should return 404 when saved search not found', async () => {
+      const assertNotFound = async (url: string, token: string) => {
         const response = await request(app.getHttpServer())
-          .get('/saved-searches/non-existent-id')
-          .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
+          .get(url)
+          .set('Authorization', `Bearer ${token}`)
           .expect(404);
 
-        
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toContain('not found');
+      };
+
+      it('should return 404 when saved search not found', async () => {
+        await assertNotFound(
+          '/saved-searches/non-existent-id',
+          getAuthToken(testUser1),
+        );
       });
 
       it('should return 404 when trying to access another users saved search', async () => {
@@ -464,14 +473,10 @@ describe('Saved Search E2E Tests', () => {
           moduleCode: 'CS101',
         });
 
-        const response = await request(app.getHttpServer())
-          .get(`/saved-searches/${savedSearch.id}`)
-          .set('Authorization', `Bearer ${getAuthToken(testUser2)}`)
-          .expect(404);
-
-        
-        expect(response.body).toHaveProperty('message');
-        expect(response.body.message).toContain('not found');
+        await assertNotFound(
+          `/saved-searches/${savedSearch.id}`,
+          getAuthToken(testUser2),
+        );
       });
     });
 
@@ -493,15 +498,21 @@ describe('Saved Search E2E Tests', () => {
         expect(deleted).toBeNull();
       });
 
-      it('should return 404 when trying to delete non-existent search', async () => {
+      const assertNotFound = async (url: string, token: string) => {
         const response = await request(app.getHttpServer())
-          .delete('/saved-searches/non-existent-id')
-          .set('Authorization', `Bearer ${getAuthToken(testUser1)}`)
+          .delete(url)
+          .set('Authorization', `Bearer ${token}`)
           .expect(404);
 
-        
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toContain('not found');
+      };
+
+      it('should return 404 when trying to delete non-existent search', async () => {
+        await assertNotFound(
+          '/saved-searches/non-existent-id',
+          getAuthToken(testUser1),
+        );
       });
 
       it('should return 404 when trying to delete another users search', async () => {
@@ -509,82 +520,86 @@ describe('Saved Search E2E Tests', () => {
           moduleCode: 'CS101',
         });
 
-        const response = await request(app.getHttpServer())
-          .delete(`/saved-searches/${savedSearch.id}`)
-          .set('Authorization', `Bearer ${getAuthToken(testUser2)}`)
-          .expect(404);
-
-        
-        expect(response.body).toHaveProperty('message');
-        expect(response.body.message).toContain('not found');
+        await assertNotFound(
+          `/saved-searches/${savedSearch.id}`,
+          getAuthToken(testUser2),
+        );
       });
     });
   });
 
+ 
+
   describe('Saved Search Matching Flow', () => {
-    
+    const createMatchingSavedSearches = async () => {
+      await createSavedSearchViaApi(testUser1, {
+        moduleCode: testModule.code,
+        priceMin: 30,
+        priceMax: 50,
+      });
+      await createSavedSearchViaApi(testUser2, {
+        moduleCode: testModule.code,
+        condition: 'good',
+      });
+      await createSavedSearchViaApi(testUser3, {
+        moduleCode: 'WRONG_MODULE',
+      });
+    };
 
-it('should match saved searches when a listing is created', async () => {
-  await createSavedSearchViaApi(testUser1, {
-    moduleCode: testModule.code,
-    priceMin: 30,
-    priceMax: 50,
-  });
-  await createSavedSearchViaApi(testUser2, {
-    moduleCode: testModule.code,
-    condition: 'good',
-  });
-  await createSavedSearchViaApi(testUser3, {
-    moduleCode: 'WRONG_MODULE',
-  });
+    it(
+      'should match saved searches when a listing is created',
+      async () => {
+        await createMatchingSavedSearches();
 
-  const listingResponse = await createListingViaApi(testUser1, {
-    title: 'Matching Textbook',
-    bookId: testBook.id,
-    moduleId: testModule.id,
-    condition: 'good',
-    annotationLevel: 'light',
-    price: 45.99,
-    photoUrls: [],
-    hasNotes: false,
-    description: 'Great condition textbook',
-  });
+        const listingResponse = await createListingViaApi(testUser1, {
+          title: 'Matching Textbook',
+          bookId: testBook.id,
+          moduleId: testModule.id,
+          condition: 'good',
+          annotationLevel: 'light',
+          price: 45.99,
+          photoUrls: [],
+          hasNotes: false,
+          description: 'Great condition textbook',
+        });
 
-  await waitForNotifications();
+        await waitForNotifications();
 
-  let notifications = await findSavedSearchNotifications();
-  notifications = await ensureNotifications(
-    notifications,
-    [
-      {
-        userId: testUser1.id,
-        listingId: listingResponse.body.id,
-        message: 'Matching Textbook matches your saved search',
+        let notifications = await findSavedSearchNotifications();
+        notifications = await ensureNotifications(
+          notifications,
+          [
+            {
+              userId: testUser1.id,
+              listingId: listingResponse.body.id,
+              message: 'Matching Textbook matches your saved search',
+            },
+            {
+              userId: testUser2.id,
+              listingId: listingResponse.body.id,
+              message: 'Matching Textbook matches your saved search',
+            },
+          ],
+        );
+
+        expect(notifications.length).toBeGreaterThanOrEqual(2);
+
+        const user1Notifs = notifications.filter(
+          n => n.user_id.id === testUser1.id,
+        );
+        const user2Notifs = notifications.filter(
+          n => n.user_id.id === testUser2.id,
+        );
+        const user3Notifs = notifications.filter(
+          n => n.user_id.id === testUser3.id,
+        );
+
+        expect(user1Notifs.length).toBeGreaterThan(0);
+        expect(user2Notifs.length).toBeGreaterThan(0);
+        expect(user3Notifs.length).toBe(0);
       },
-      {
-        userId: testUser2.id,
-        listingId: listingResponse.body.id,
-        message: 'Matching Textbook matches your saved search',
-      },
-    ],
-  );
-
-  expect(notifications.length).toBeGreaterThanOrEqual(2);
-
-  const user1Notifs = notifications.filter(
-    n => n.user_id.id === testUser1.id,
-  );
-  const user2Notifs = notifications.filter(
-    n => n.user_id.id === testUser2.id,
-  );
-  const user3Notifs = notifications.filter(
-    n => n.user_id.id === testUser3.id,
-  );
-
-  expect(user1Notifs.length).toBeGreaterThan(0);
-  expect(user2Notifs.length).toBeGreaterThan(0);
-  expect(user3Notifs.length).toBe(0);
-}, 30000); 
+      30000,
+    );
 
     it('should not match when listing does not match saved search', async () => {
       await createSavedSearchViaApi(testUser1, {
@@ -621,8 +636,10 @@ it('should match saved searches when a listing is created', async () => {
     });
   });
 
+ 
+
   describe('Full User Journey', () => {
-    it('should complete full saved search journey: create search → listing created → notification received', async () => {
+    const createSavedSearchAndListing = async () => {
       await createSavedSearchViaApi(testUser1, {
         moduleCode: testModule.code,
         priceMin: 30,
@@ -630,7 +647,7 @@ it('should match saved searches when a listing is created', async () => {
         condition: 'good',
       });
 
-      const listingResponse = await createListingViaApi(testUser2, {
+      return createListingViaApi(testUser2, {
         title: 'Journey Test Textbook',
         bookId: testBook.id,
         moduleId: testModule.id,
@@ -641,6 +658,10 @@ it('should match saved searches when a listing is created', async () => {
         hasNotes: false,
         description: 'Test description',
       });
+    };
+
+    it('should complete full saved search journey: create search → listing created → notification received', async () => {
+      const listingResponse = await createSavedSearchAndListing();
 
       await waitForNotifications();
 
@@ -673,8 +694,6 @@ it('should match saved searches when a listing is created', async () => {
         .expect(200);
 
       expect(notifResponse.body.data.length).toBeGreaterThan(0);
-
-      
       expect(notifResponse.body).toHaveProperty('pagination');
       expect(notifResponse.body.pagination).toHaveProperty('total');
       expect(notifResponse.body.pagination).toHaveProperty('page');
@@ -744,115 +763,119 @@ it('should match saved searches when a listing is created', async () => {
     });
   });
 
+  
+
   describe('Edge Cases', () => {
-    
+    const createTwoListings = async () => {
+      const listing1 = await createListingViaApi(testUser2, {
+        title: 'Test Book 1',
+        bookId: testBook.id,
+        moduleId: testModule.id,
+        condition: 'good',
+        annotationLevel: 'light',
+        price: 45.99,
+        photoUrls: [],
+        hasNotes: false,
+        description: 'Test description',
+      });
 
-it('should not create duplicate notifications for the same listing and user', async () => {
-  await createSavedSearchViaApi(testUser1, {
-    moduleCode: testModule.code,
-    priceMin: 30,
-    priceMax: 50,
-  });
+      const listing2 = await createListingViaApi(testUser2, {
+        title: 'Test Book 2',
+        bookId: testBook.id,
+        moduleId: testModule.id,
+        condition: 'good',
+        annotationLevel: 'light',
+        price: 45.99,
+        photoUrls: [],
+        hasNotes: false,
+        description: 'Test description',
+      });
 
-  const listing1Response = await createListingViaApi(testUser2, {
-    title: 'Test Book 1',
-    bookId: testBook.id,
-    moduleId: testModule.id,
-    condition: 'good',
-    annotationLevel: 'light',
-    price: 45.99,
-    photoUrls: [],
-    hasNotes: false,
-    description: 'Test description',
-  });
+      return { listing1, listing2 };
+    };
 
-  const listing2Response = await createListingViaApi(testUser2, {
-    title: 'Test Book 2',
-    bookId: testBook.id,
-    moduleId: testModule.id,
-    condition: 'good',
-    annotationLevel: 'light',
-    price: 45.99,
-    photoUrls: [],
-    hasNotes: false,
-    description: 'Test description',
-  });
+    it('should not create duplicate notifications for the same listing and user', async () => {
+      await createSavedSearchViaApi(testUser1, {
+        moduleCode: testModule.code,
+        priceMin: 30,
+        priceMax: 50,
+      });
 
-  await waitForNotifications();
+      const { listing1, listing2 } = await createTwoListings();
 
-  let notifications = await findSavedSearchNotifications(testUser1.id, true); 
-  notifications = await ensureNotifications(
-    notifications,
-    [
-      {
-        userId: testUser1.id,
-        listingId: listing1Response.body.id,
-        message: 'Test Book 1 matches your saved search',
-      },
-      {
-        userId: testUser1.id,
-        listingId: listing2Response.body.id,
-        message: 'Test Book 2 matches your saved search',
-      },
-    ],
-    testUser1.id,
-    true, 
-  );
+      await waitForNotifications();
 
-  expect(notifications.length).toBe(2);
+      let notifications = await findSavedSearchNotifications(testUser1.id, true);
+      notifications = await ensureNotifications(
+        notifications,
+        [
+          {
+            userId: testUser1.id,
+            listingId: listing1.body.id,
+            message: 'Test Book 1 matches your saved search',
+          },
+          {
+            userId: testUser1.id,
+            listingId: listing2.body.id,
+            message: 'Test Book 2 matches your saved search',
+          },
+        ],
+        testUser1.id,
+        true,
+      );
 
-  
-  const listingIds = notifications
-    .filter(n => n.entity_id)
-    .map(n => typeof n.entity_id === 'object' ? n.entity_id.id : n.entity_id);
-  expect(listingIds).toContain(listing1Response.body.id);
-  expect(listingIds).toContain(listing2Response.body.id);
-});
+      expect(notifications.length).toBe(2);
 
-   
+      const listingIds = notifications
+        .filter(n => n.entity_id)
+        .map(n => (typeof n.entity_id === 'object' ? n.entity_id.id : n.entity_id));
+      expect(listingIds).toContain(listing1.body.id);
+      expect(listingIds).toContain(listing2.body.id);
+    });
 
-it('should handle case-insensitive search matching', async () => {
-  await createSavedSearchViaApi(testUser1, {
-    search: 'clean code',
-  });
+    it('should handle case-insensitive search matching', async () => {
+      await createSavedSearchViaApi(testUser1, {
+        search: 'clean code',
+      });
 
-  const listingResponse = await createListingViaApi(testUser2, {
-    title: 'CLEAN CODE Textbook',
-    bookId: testBook.id,
-    moduleId: testModule.id,
-    condition: 'good',
-    annotationLevel: 'light',
-    price: 45.99,
-    photoUrls: [],
-    hasNotes: false,
-    description: 'Test description',
-  });
+      const listingResponse = await createListingViaApi(testUser2, {
+        title: 'CLEAN CODE Textbook',
+        bookId: testBook.id,
+        moduleId: testModule.id,
+        condition: 'good',
+        annotationLevel: 'light',
+        price: 45.99,
+        photoUrls: [],
+        hasNotes: false,
+        description: 'Test description',
+      });
 
-  await waitForNotifications();
+      await waitForNotifications();
 
-  let notifications = await findSavedSearchNotifications(testUser1.id, true); 
-  notifications = await ensureNotifications(
-    notifications,
-    [
-      {
-        userId: testUser1.id,
-        listingId: listingResponse.body.id,
-        message: 'CLEAN CODE Textbook matches your saved search',
-      },
-    ],
-    testUser1.id,
-    true, 
-  );
+      let notifications = await findSavedSearchNotifications(testUser1.id, true);
+      notifications = await ensureNotifications(
+        notifications,
+        [
+          {
+            userId: testUser1.id,
+            listingId: listingResponse.body.id,
+            message: 'CLEAN CODE Textbook matches your saved search',
+          },
+        ],
+        testUser1.id,
+        true,
+      );
 
-  expect(notifications.length).toBe(1);
+      expect(notifications.length).toBe(1);
 
-  
-  const notification = notifications[0];
-  const entityId = notification.entity_id 
-    ? (typeof notification.entity_id === 'object' ? notification.entity_id.id : notification.entity_id)
-    : null;
-  expect(entityId).toBe(listingResponse.body.id);
-  expect(notification.message_info).toContain('CLEAN CODE');
-});
+      const notification = notifications[0];
+      const entityId = notification.entity_id
+        ? typeof notification.entity_id === 'object'
+          ? notification.entity_id.id
+          : notification.entity_id
+        : null;
+      expect(entityId).toBe(listingResponse.body.id);
+      expect(notification.message_info).toContain('CLEAN CODE');
+    });
   });
 });
