@@ -456,6 +456,100 @@ describe('Admin Integration Tests', () => {
         }, 15000);
     });
 
+    describe('Ban User', () => {
+        it('should ban a user and create an audit log', async () => {
+            const admin = await createUser('admin');
+            const student = await createUser('student');
+
+            const token = getAuthToken(admin);
+            const reason = 'Fraudulent activity';
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason })
+                .expect(200);
+
+            expect(response.body.id).toBe(student.id);
+            expect(response.body.is_banned).toBe(true);
+
+            const bannedUser = await userRepository.findOne({
+                where: { id: student.id },
+                relations: ['banned_by'],
+            });
+
+            expect(bannedUser).toBeDefined();
+            expect(bannedUser?.is_banned).toBe(true);
+            expect(bannedUser?.ban_reason).toBe(reason);
+            expect(bannedUser?.banned_by?.id).toBe(admin.id);
+
+            const auditLogs = await auditLogRepository.find({
+                where: {
+                    entity_id: student.id,
+                    action: 'BAN_USER',
+                },
+                relations: ['performedBy'],
+            });
+
+            expect(auditLogs).toHaveLength(1);
+            expect(auditLogs[0].entity_type).toBe('USER');
+            expect(auditLogs[0].performedBy.id).toBe(admin.id);
+            expect(auditLogs[0].reason).toBe(reason);
+        }, 15000);
+
+        it('should return 400 when trying to ban an already banned user', async () => {
+            const admin = await createUser('admin');
+            const student = await createUser('student');
+
+            const token = getAuthToken(admin);
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(200);
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Another reason' })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('already banned');
+        }, 15000);
+
+        it('should return 404 when trying to ban a nonexistent user', async () => {
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
+
+            const response = await request(app.getHttpServer())
+                .patch('/admin/00000000-0000-0000-0000-000000000000/ban')
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(404);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('User not found');
+        }, 15000);
+
+        it('should return 403 when a non-admin tries to ban a user', async () => {
+            const student = await createUser('student');
+            const target = await createUser('student');
+
+            const token = getAuthToken(student);
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${target.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(403);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('Insufficient permissions');
+        }, 15000);
+    });
+
     describe('Complete Admin Workflow', () => {
         it('should handle complete workflow: create listing → approve → audit log → view admin users', async () => {
             // Setup
