@@ -76,7 +76,7 @@
 
 ## Project Description
 
-**A web-based marketplace where verified university students can buy, sell, or swap second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and semester, smart filters, and privacy-first in-app messaging.**
+**A web-based marketplace where verified university students can buy and/or sell second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and edition, smart filters, privacy-first in-app messaging, a notification system and admin moderation.**
 
 Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301 Software Engineering Capstone Project at the University of Pretoria.
 
