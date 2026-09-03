@@ -19,11 +19,11 @@ import {
     Report,
     ReportStatus,
 } from '../src/database/entities/report.entity';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 jest.setTimeout(30000);
 
-const Test_Password = process.env.TEST_PASSWORD || 'student@123';
+const Test_Password = process.env.TEST_PASSWORD;
 
 describe('Reports E2E Tests', () => {
     let app: INestApplication;
@@ -70,7 +70,7 @@ describe('Reports E2E Tests', () => {
     const createBook = async (): Promise<Book> => {
         return bookRepository.save({
             title: `Test Book ${getUniqueId()}`,
-            isbn: randomUUID().replace(/-/g, '').substring(0, 13),
+            isbn: randomUUID().replaceAll(/-/g, '').substring(0, 13),
             author: 'Test Author',
             edition: 3,
             publisher: 'Test Publisher',
@@ -79,7 +79,7 @@ describe('Reports E2E Tests', () => {
 
     const createModule = async (): Promise<ModuleEntity> => {
         return moduleRepository.save({
-            code: `COS${randomUUID().replace(/-/g, '').substring(0, 7)}`,
+            code: `COS${randomUUID().replaceAll(/-/g, '').substring(0, 7)}`,
             name: `Imperative Programming ${getUniqueId()}`,
         });
     };
@@ -253,5 +253,152 @@ describe('Reports E2E Tests', () => {
         }
     });
 
-    
+    describe('Create Report', () => {
+        it('should create a report successfully', async () => {
+            const reporter = await createUser();
+
+            const book = await createBook();
+            const module = await createModule();
+
+            const listing = await createTestListing(
+                reporter.id,
+                book.id,
+                module.id,
+            );
+
+            const token = getAuthToken(reporter);
+
+            const response = await request(app.getHttpServer())
+                .post('/reports')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    listing_id: listing.id,
+                    reason: 'Fraudulent listing',
+                })
+                .expect(201);
+
+            expect(response.body).toHaveProperty('id');
+            expect(response.body.reason).toBe(
+                'Fraudulent listing',
+            );
+            expect(response.body.status).toBe(
+                ReportStatus.PENDING,
+            );
+        }, 15000);
+
+        it('should save the report to the database', async () => {
+            const reporter = await createUser();
+
+            const book = await createBook();
+            const module = await createModule();
+
+            const listing = await createTestListing(
+                reporter.id,
+                book.id,
+                module.id,
+            );
+
+            const token = getAuthToken(reporter);
+
+            const response = await request(app.getHttpServer())
+                .post('/reports')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    listing_id: listing.id,
+                    reason: 'Misleading listing',
+                })
+                .expect(201);
+
+            const savedReport = await reportRepository.findOne({
+                where: { id: response.body.id },
+                relations: ['reporter', 'listing'],
+            });
+
+            expect(savedReport).toBeDefined();
+            expect(savedReport?.reason).toBe(
+                'Misleading listing',
+            );
+            expect(savedReport?.status).toBe(
+                ReportStatus.PENDING,
+            );
+            expect(savedReport?.reporter.id).toBe(
+                reporter.id,
+            );
+            expect(savedReport?.listing.id).toBe(
+                listing.id,
+            );
+        }, 15000);
+
+        it('should return 401 when an unauthenticated user creates a report', async () => {
+            const book = await createBook();
+            const module = await createModule();
+            const user = await createUser();
+
+            const listing = await createTestListing(
+                user.id,
+                book.id,
+                module.id,
+            );
+
+            await request(app.getHttpServer())
+                .post('/reports')
+                .send({
+                    listing_id: listing.id,
+                    reason: 'Fraudulent listing',
+                })
+                .expect(401);
+        }, 15000);
+
+        it('should return 404 when the listing does not exist', async () => {
+            const reporter = await createUser();
+            const token = getAuthToken(reporter);
+
+            await request(app.getHttpServer())
+                .post('/reports')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    listing_id:
+                        '00000000-0000-0000-0000-000000000000',
+                    reason: 'Fraudulent listing',
+                })
+                .expect(404);
+        }, 15000);
+
+        it('should reject a report with an invalid listing ID', async () => {
+            const reporter = await createUser();
+            const token = getAuthToken(reporter);
+
+            await request(app.getHttpServer())
+                .post('/reports')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    listing_id: 'not-a-uuid',
+                    reason: 'Fraudulent listing',
+                })
+                .expect(400);
+        }, 15000);
+
+        it('should reject a report without a reason', async () => {
+            const reporter = await createUser();
+
+            const book = await createBook();
+            const module = await createModule();
+
+            const listing = await createTestListing(
+                reporter.id,
+                book.id,
+                module.id,
+            );
+
+            const token = getAuthToken(reporter);
+
+            await request(app.getHttpServer())
+                .post('/reports')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    listing_id: listing.id,
+                })
+                .expect(400);
+        }, 15000);
+    });
 });
