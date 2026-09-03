@@ -304,8 +304,8 @@ export default function BrandPage() {
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Sale Status Badges</h3>
 
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#FFF3E0] text-[#E65100]">Reserved</span>
-                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#FFEBEE] text-[#C62828]">Sold</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#ddc4fe] text-[#8327e5]">Reserved</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#c6c6c6] text-[#606060]">Sold</span>
                             </div>
                         </div>
                     </div>
