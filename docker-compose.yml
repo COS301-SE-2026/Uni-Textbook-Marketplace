@@ -11,7 +11,7 @@ services:
       - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema:/docker-entrypoint-initdb.d
+      - ./backend/database/schema:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s
@@ -19,7 +19,7 @@ services:
       retries: 5
 
   backend:
-    image: node:20
+    image: node:22
     container_name: nexusdev_backend
     working_dir: /app
     volumes:
@@ -36,6 +36,7 @@ services:
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
       MAIL_HOST: ${MAIL_HOST}
       MAIL_PORT: ${MAIL_PORT}
       MAILTRAP_USER: ${MAILTRAP_USER}
@@ -44,10 +45,11 @@ services:
       AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
       AZURE_STORAGE_SAS_TOKEN: ${AZURE_STORAGE_SAS_TOKEN}
       AZURE_STORAGE_CONTAINER_NAME: ${AZURE_STORAGE_CONTAINER_NAME}
+      TEST_PASSWORD: ${TEST_PASSWORD}
       FIREBASE_SERVICE_ACCOUNT_KEY: ${FIREBASE_SERVICE_ACCOUNT_KEY}
 
   frontend:
-    image: node:20
+    image: node:22
     container_name: nexusdev_frontend
     working_dir: /app
     volumes:

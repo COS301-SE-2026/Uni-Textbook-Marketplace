@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import Button from "./Button";
+import { Button } from "./Button";
 
 type AccordionSectionProps = {
     title: string
@@ -20,7 +20,7 @@ export default function AccordionSection({
             <Button
                 type="button"
                 onClick={() => OnToggle?.()}
-                variant="primary"
+                variant="default"
                 className="w-full flex items-center justify-between px-4 py-3"
             >
                 <span className="font-medium">{title}</span>

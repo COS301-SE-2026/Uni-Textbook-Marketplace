@@ -8,9 +8,6 @@ import { registerUser, verifyOtp, resendOtp, getUniversities, University } from 
 import type { ApiError } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
-import { getMe } from '@/lib/auth.api';
-
-
 
 interface FormData {
     fullName: string;
@@ -23,8 +20,6 @@ interface FormData {
     confirmPassword: string;
     agreedToTerms: boolean;
 }
-
- 
 
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     const steps = ["Personal\nDetails", "University\nEmail", "Password", "Verification"];
@@ -39,6 +34,8 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                 return (
                     <React.Fragment key={stepNum}>
                         <div className="flex flex-col items-center">
+
+
                             <div
                                 style={{
                                     width: "2.25rem",
@@ -71,6 +68,8 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                             >
                                 {label}
                             </span>
+
+
                         </div>
 
                         {index < steps.length - 1 && (
@@ -92,8 +91,6 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
     );
 }
 
- 
-
 function OtpInput({
     value,
     onChange,
@@ -103,11 +100,17 @@ function OtpInput({
 }>) {
     const ref0 = React.useRef<HTMLInputElement>(null);
     const ref1 = React.useRef<HTMLInputElement>(null);
+
+
     const ref2 = React.useRef<HTMLInputElement>(null);
     const ref3 = React.useRef<HTMLInputElement>(null);
+
     const ref4 = React.useRef<HTMLInputElement>(null);
     const ref5 = React.useRef<HTMLInputElement>(null);
+
+
     const inputRefs = [ref0, ref1, ref2, ref3, ref4, ref5];
+    const inputKeys = ["first", "second", "third", "fourth", "fifth", "sixth"];
 
     const handleChange = (index: number, char: string) => {
         const digit = char.replace(/\D/g, "").slice(-1);
@@ -141,7 +144,7 @@ function OtpInput({
         <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap" }}>
             {value.map((digit, index) => (
                 <input
-                    key={`otp-desktop-${index}`}
+                    key={`otp-desktop-${inputKeys[index]}`}
                     ref={inputRefs[index]}
                     type="text"
                     inputMode="numeric"
@@ -171,17 +174,16 @@ function OtpInput({
                 />
             ))}
         </div>
+
+
     );
 }
 
-//  Dot color helper
 function getDotColor(n: number, step: number): string {
     if (n === step) return "#ffffff";
     if (n < step) return "#00B4D8";
     return "#9ca3af";
 }
-
- 
 
 export default function RegisterDesktop() {
     const [step, setStep] = useState(1);
@@ -236,20 +238,22 @@ export default function RegisterDesktop() {
             .catch(() => setServerError('Could not load universities. Please refresh the page'));
     }, []);
 
-     
-
     const validateStep1 = () => {
         const e: Record<string, string> = {};
         if (!form.fullName.trim()) e.fullName = "Full name is required";
+
+
         if (!form.surname.trim()) e.surname = "Surname is required";
         setErrors(e);
+
+
         return Object.keys(e).length === 0;
     };
 
     const validateStep2 = () => {
-
         const e: Record<string, string> = {};
         if (!form.university_id) e.university = 'Please select your university';
+
         if (!form.email.trim()) {
             e.email = 'University email is required';
         } else if (selectedDomain && !form.email.endsWith(`@${selectedDomain}`)) {
@@ -283,47 +287,65 @@ export default function RegisterDesktop() {
         return Object.keys(e).length === 0;
     };
 
-     
+    const handleStep2 = async () => {
+        setLoading(true);
+        try {
+            setStep((s) => s + 1);
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStep3 = async () => {
+        setLoading(true);
+        try {
+            await registerUser({
+                email: form.email,
+                password: form.password,
+                first_name: form.fullName,
+                last_name: form.surname,
+                university_id: form.university_id,
+            });
+            setStep((s) => s + 1);
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStep4 = async () => {
+        if (!validateStep4()) return;
+        setLoading(true);
+        try {
+            const result = await verifyOtp({ email: form.email, code: form.otp.join('') });
+            if (result.user) login(result.user);
+            router.push('/listings');
+        } catch (err) {
+            setServerError((err as ApiError).message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleNext = async () => {
         if (loading) return;
         setServerError("");
         if (step === 1 && !validateStep1()) return;
         if (step === 2 && !validateStep2()) return;
+
+
         if (step === 3 && !validateStep3()) return;
 
         if (step === 2) {
-            setLoading(true);
-            try {
-
-                setStep((s) => s + 1);
-            } catch (err) {
-                setServerError((err as ApiError).message);
-            } finally {
-                setLoading(false);
-            }
+            await handleStep2();
             return;
         }
 
-
-
         if (step === 3) {
-            if (!validateStep3()) return;
-            setLoading(true);
-            try {
-                await registerUser({
-                    email: form.email,
-                    password: form.password,
-                    first_name: form.fullName,
-                    last_name: form.surname,
-                    university_id: form.university_id,
-                });
-                setStep((s) => s + 1);
-            } catch (err) {
-                setServerError((err as ApiError).message);
-            } finally {
-                setLoading(false);
-            }
+            await handleStep3();
             return;
         }
 
@@ -332,19 +354,7 @@ export default function RegisterDesktop() {
             return;
         }
 
-        // Step 4 (OTP) — final submit
-        if (!validateStep4()) return;
-        setLoading(true);
-        try {
-            const result = await verifyOtp({ email: form.email, code: form.otp.join('') });
-            if (result.user) login(result.user);
-
-            router.push('/listings');
-        } catch (err) {
-            setServerError((err as ApiError).message);
-        } finally {
-            setLoading(false);
-        }
+        await handleStep4();
     };
 
     const handleResendOtp = async () => {
@@ -358,19 +368,22 @@ export default function RegisterDesktop() {
         }
     };
 
-     
-
     const renderStepContent = () => {
         switch (step) {
             case 1:
                 return (
                     <>
                         <h2>Create an account</h2>
+
+
                         <p className="text-text-subtle mt-1 mb-6">Fill in your details to get started</p>
+
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
                             <div>
+
+
                                 <Input
                                     label="Full Name(s)"
                                     type="text"
@@ -380,6 +393,7 @@ export default function RegisterDesktop() {
                                 />
                                 {errors.fullName && <ErrorText>{errors.fullName}</ErrorText>}
                             </div>
+
                             <div>
                                 <Input
                                     label="Surname"
@@ -390,6 +404,7 @@ export default function RegisterDesktop() {
                                 />
                                 {errors.surname && <ErrorText>{errors.surname}</ErrorText>}
                             </div>
+                            
                         </div>
                     </>
                 );
@@ -398,6 +413,8 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>Enter university details</h2>
+
+
                         <p className="text-text-subtle mt-1 mb-6">
                             Select & Fill in your details to get started
                         </p>
@@ -406,7 +423,6 @@ export default function RegisterDesktop() {
 
                         <div className="space-y-5">
 
-                            {/* University Select */}
                             <div>
                                 <Select
                                     label="Name of University/Institution"
@@ -422,8 +438,9 @@ export default function RegisterDesktop() {
                                         setSelectedDomain(selected?.email_domain ?? "");
                                     }}
                                 >
-                                    <option value="">Select your university</option>
 
+
+                                    <option value="">Select your university</option>
                                     {universities.map((u) => (
                                         <option key={u.id} value={u.id}>
                                             {u.name}
@@ -436,8 +453,9 @@ export default function RegisterDesktop() {
                                 )}
                             </div>
 
-                            {/* University Email */}
                             <div>
+
+
                                 <Input
                                     label="University Email"
                                     type="email"
@@ -449,8 +467,6 @@ export default function RegisterDesktop() {
                                 {errors.email && (
                                     <ErrorText>{errors.email}</ErrorText>
                                 )}
-
-
                                 {selectedDomain && (
                                     <p
                                         className="mt-1 text-xs text-[#00B4D8]"
@@ -460,11 +476,11 @@ export default function RegisterDesktop() {
                                 )}
                             </div>
 
+
                         </div>
                     </>
                 );
 
-            
             case 3:
                 return (
                     <>
@@ -473,8 +489,12 @@ export default function RegisterDesktop() {
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
+
                             <div>
+
+
                                 <label htmlFor="reg-password" className="form-label">Password</label>
+
                                 <div style={{ position: "relative" }}>
                                     <input
                                         id="reg-password"
@@ -504,12 +524,17 @@ export default function RegisterDesktop() {
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
+
+
                                 </div>
                                 {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
 
                             <div>
+
                                 <label htmlFor="reg-confirm-password" className="form-label">Confirm Password</label>
+
+
                                 <div style={{ position: "relative" }}>
                                     <input
                                         id="reg-confirm-password"
@@ -539,11 +564,14 @@ export default function RegisterDesktop() {
                                     >
                                         {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
+
+
                                 </div>
                                 {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
                             </div>
 
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
+
                                 <input
                                     type="checkbox"
                                     id="terms"
@@ -568,20 +596,23 @@ export default function RegisterDesktop() {
                                         Privacy Policy
                                     </a>
                                 </label>
+
+
                             </div>
                             {errors.terms && <ErrorText>{errors.terms}</ErrorText>}
                         </div>
                     </>
                 );
 
-            
             case 4:
                 return (
                     <>
                         <h2>OTP Verification</h2>
+
                         <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
                             Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
                         </p>
+
                         <StepIndicator currentStep={step} />
 
                         <div>
@@ -601,7 +632,10 @@ export default function RegisterDesktop() {
                                     <span style={{ color: "#00B4D8", fontWeight: 600 }}>
                                         00:{String(otpTimer).padStart(2, "0")}s
                                     </span>
+
+
                                 </span>
+
                                 <button
                                     type="button"
                                     onClick={handleResendOtp}
@@ -617,13 +651,23 @@ export default function RegisterDesktop() {
                                 >
                                     Resend OTP code
                                 </button>
+
+
                             </div>
 
                             <div style={{ marginTop: "1.5rem" }}>
-                                <Button className="w-full" onClick={handleNext} disabled={loading}>
+
+                                <Button 
+                                    className="w-full cursor-pointer" 
+                                    onClick={handleNext} 
+                                    disabled={loading}
+                                >
                                     {loading ? "Verifying..." : "REGISTER"}
                                 </Button>
+
                             </div>
+
+
                         </div>
                     </>
                 );
@@ -633,24 +677,152 @@ export default function RegisterDesktop() {
         }
     };
 
-     
-
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
-            <Card className="card w-4/5 max-w-4xl flex overflow-hidden min-w-0">
+        
+            <Card className="card w-3/5 max-w-4xl flex overflow-hidden min-w-0 shadow-2xl p-0">
+                
+                
+                <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[550px]">
+                    
+                    
+                    <div 
+                        className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(0, 180, 216, 0.3), transparent 70%)',
+                            filter: 'blur(60px)',
+                        }}
+                    />
+                    <div 
+                        className="absolute bottom-8 left-8 w-40 h-40 rounded-full opacity-10"
+                        style={{
+                            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%)',
+                            filter: 'blur(60px)',
+                        }}
+                    />
 
-                {/* Left panel */}
-                <div className="w-1/2 shrink-0 border-r border-border bg-cyan-50 p-20 flex flex-col items-center justify-center">
-                    <Logo className="w-20 h-auto mb-6" />
-                    <h2 className="text-center">Join our student community</h2>
-                    <p className="text-center text-text-subtle mt-4">
-                        Buy, sell and swap textbooks with verified students.
-                    </p>
+                    
+                    <div className="relative z-10 flex flex-col items-center text-center">
+                        
+                        <div 
+                            className="relative mb-6 p-4 rounded-2xl"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.06)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                            }}
+                        >
+                            <Logo className="w-20 h-auto" />
+                            
+                            
+                            <div 
+                                className="absolute -top-px left-1/4 right-1/4 h-px"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                }}
+                            />
+                        </div>
+
+                        
+                        <h1 
+                            className="text-3xl font-bold tracking-wide mb-2"
+                            style={{
+                                color: '#1a1a2e',
+                                textShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
+                            }}
+                        >
+                            JOIN OUR
+                        </h1>
+                        <h1 
+                            className="text-3xl font-bold tracking-wide mb-6"
+                            style={{
+                                color: '#00B4D8',
+                                textShadow: '0 2px 20px rgba(0, 180, 216, 0.2)',
+                            }}
+                        >
+                            STUDENT COMMUNITY
+                        </h1>
+
+                        
+                        <div className="relative w-24 h-px mb-6">
+
+                            <div 
+                                className="absolute inset-0"
+                                style={{
+                                    background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent)',
+                                }}
+                            />
+                        </div>
+                        <p 
+                            className="text-[#4B4F58]/80 text-sm leading-relaxed max-w-xs mt-1"
+                            style={{
+                                textShadow: '0 1px 10px rgba(0, 0, 0, 0.05)',
+                            }}
+                        >
+                            Buy, sell and swap textbooks with verified students.
+                        </p>
+
+                       
+                        <div className="mt-8 space-y-2.3 w-full max-w-xs">
+
+                            {[
+                                { text: 'Verified Student Community' },
+                                { text: 'Affordable Used Textbooks' },
+                                { text: 'Direct Seller Messaging' },
+                            ].map((feature) => (
+                                <div 
+                                    key={feature.text}
+                                    className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                                    style={{
+                                        background: 'rgba(0, 180, 216, 0.05)',
+                                        backdropFilter: 'blur(5px)',
+                                        border: '1px solid rgba(0, 180, 216, 0.08)',
+                                    }}
+                                >
+                                    <div 
+                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                        style={{
+                                            background: '#00B4D8',
+                                            boxShadow: '0 0 12px rgba(0, 180, 216, 0.3)',
+                                        }}
+                                    />
+                                    <span className="text-[#1a1a2e]/80 text-sm font-medium">
+                                        {feature.text}
+                                    </span>
+
+                                </div>
+                            ))}
+                        </div>
+
+                        
+                        
+                        <div 
+                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
+                            style={{
+                                background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.3), transparent)',
+                            }}
+                        />
+                    </div>
+
                 </div>
 
-                {/* Right panel - wider to fit OTP inputs */}
-                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10">
-                    <div style={{ width: "100%", maxWidth: 480, padding: "0 2rem", boxSizing: "border-box" }}>
+                
+                
+                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(5px)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+                }}>
+                    
+                    <div 
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'radial-gradient(ellipse at 30% 20%, rgba(0, 180, 216, 0.02), transparent 50%)',
+                        }}
+                    />
+                    
+                    <div style={{ width: "100%", maxWidth: 420, padding: "0 1.5rem", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
                         {renderStepContent()}
 
                         {serverError && (
@@ -659,7 +831,6 @@ export default function RegisterDesktop() {
                             </div>
                         )}
 
-                        {/* Bottom navigation — step dots + Next button (hidden on last OTP step since it has its own button) */}
                         {step !== 4 && (
                             <div
                                 style={{
@@ -670,7 +841,6 @@ export default function RegisterDesktop() {
                                     marginTop: "2rem",
                                 }}
                             >
-                                {/* Step dots */}
                                 <div style={{ display: "flex", gap: "0.4rem", marginRight: "0.5rem" }}>
                                     {[1, 2, 3, 4].map((n) => {
                                         const dotColor = getDotColor(n, step);
@@ -700,7 +870,7 @@ export default function RegisterDesktop() {
                                 <Button
                                     onClick={handleNext}
                                     disabled={loading}
-                                    className="px-8"
+                                    className="px-8 cursor-pointer"
                                 >
                                     Next
                                 </Button>

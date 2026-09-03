@@ -20,6 +20,7 @@ export default function FilterTab({ activeFilter, counts, onChange }: FilterTabs
         <div className="flex gap-2 border-b border-gray-200 my-6 overflow-x-auto">
             {FILTER_TABS.map(tab => (
                 <button
+                    type="button"
                     key={tab.value}
                     onClick={() => onChange(tab.value)}
                     className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeFilter === tab.value

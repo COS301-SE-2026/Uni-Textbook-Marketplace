@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateModuleDto } from '../modules/dto/create.module.dto';
 import { Faculty } from '../database/entities/faculty.entity';
@@ -47,10 +47,8 @@ export class ModuleService {
     const existing = await this.moduleRepo.findOne({
       where: {
         code: dto.code,
-        name: dto.name,
-        semester: dto.semester,
-        faculty: { id: dto.faculty_id },
       },
+      relations: ['faculty', 'university'],
     });
 
     if (existing) {
@@ -87,7 +85,23 @@ export class ModuleService {
       semester: dto.semester,
     });
 
-    return this.moduleRepo.save(module);
+    try {
+      return await this.moduleRepo.save(module);
+    } catch (error) {
+      const isDuplicateKeyError =
+        error instanceof QueryFailedError &&
+        (error as QueryFailedError & { code?: string }).code === '23505';
+
+      if (isDuplicateKeyError) {
+        const raceExisting = await this.moduleRepo.findOne({
+          where: { code: dto.code },
+          relations: ['faculty', 'university'],
+        });
+        if (raceExisting) return raceExisting;
+      }
+
+      throw error;
+    }
   }
 
   async findAll(): Promise<ModuleEntity[]> {

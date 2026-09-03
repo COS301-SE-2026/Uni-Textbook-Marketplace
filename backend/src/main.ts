@@ -26,11 +26,16 @@ async function bootstrap() {
     .setTitle('Uni Textbook Marketplace API')
     .setDescription('Textbook Marketplace API')
     .setVersion('1.0')
+    .addCookieAuth('access_token')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      withCredentials: true,
+    },
+  });
 
   await app.listen(process.env.PORT ?? 3001);
 }

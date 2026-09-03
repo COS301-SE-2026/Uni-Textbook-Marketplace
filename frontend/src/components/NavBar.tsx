@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Bell, ChevronDown, BookOpen } from 'lucide-react'
+import { Menu, X, ChevronDown, BookOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import ThemeToggle from './ThemeToggle'
+import { NotificationBell } from './notifications/NotificationBell'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 
 
 
@@ -18,18 +22,20 @@ const authNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Sell', href: '/listings/create' },
   { label: 'Messages', href: '/messages' },
-  { label: 'Favourites', href: '/wishlist' },
+  { label: 'Wishlist', href: '/wishlist' },
 ]
 
 const adminNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
+  { label: 'Cases', href: '/admin/cases' },
   { label: 'Audit Logs', href: '/admin/log' }
+ 
 ]
 
 
-export default function NavBar() {
+export default function NavBar() { // NOSONAR - navigation markup intentionally combines responsive and role-based variants
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const pathname = usePathname()
 
@@ -62,35 +68,70 @@ export default function NavBar() {
 
   }, [isLandingPage]);
 
+  useEffect(() => {
+
+    const startTour = () => {
+
+      setUserMenuOpen(true)
+
+      setTimeout(() => {
+
+        const tour = driver({
+
+          showProgress: true,
+          steps: [
+            {
+              element: '#user-menu-btn',
+              popover: {
+                title: 'Your profile Menu',
+                description: 'Click your profile to open this menu'
+              }
+            },
+            {
+              element: '#my-listings-link',
+              popover: {
+                title: 'My Listings',
+                description: 'Click here to view and manage your listings'
+              }
+            }
+          ]
+        })
+
+        tour.drive()
+        
+      },100)
+    }
+
+    window.addEventListener('start-my-listings-tutorial', startTour)
+    return () => window.removeEventListener('start-my-listings-tutorial', startTour)
+  },[])
+
   const isTransparent = isLandingPage && !scrolled;
 
-if (!mounted) return null;
+  if (!mounted) return null;
 
   if (isLoading) {
     return (
-
-
       <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
         isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
       }`}>
         <div className="container-content">
+
           <div className="flex items-center justify-between h-[70px]">
+            <Link href="/" className="flex items-center gap-2 no-underline">  
 
 
-            <Link href="/" className="flex items-center gap-2 no-underline">
               <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
               <div className="leading-tight">
                 <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                   Uni Textbook
                 </span>
-
                 <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white': 'text-[#000f2b]'}`}>
                   Marketplace
                 </span>
               </div>
+            </Link> 
 
-
-            </Link>
           </div>
         </div>
       </nav>
@@ -108,10 +149,13 @@ if (!mounted) return null;
       <div className="container-content">
         <div className="flex items-center justify-between h-[70px]">
 
-          {/* LEFT: Logo */}
+          
           <Link href="/" className="flex items-center gap-2 no-underline">
+
             <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
             <div className="leading-tight">
+
+
               <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                 Uni Textbook
               </span>
@@ -126,21 +170,24 @@ if (!mounted) return null;
           {/* MIDDLE: Nav links (desktop only) */}
           {isAuthenticated && (
             <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8]
-                  ${pathname === link.href
-                      ? 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1'
-                      : isTransparent ? 'text-white' : 'text-[var(--foreground)]'
-                    }`}
-                >
+              {navLinks.map((link) => {
+                let linkClassName = 'text-[var(--foreground)]';
+                if (pathname === link.href) {
+                  linkClassName = 'text-[#00B4D8] border-b-2 border-[#00B4D8] pb-1';
+                } else if (isTransparent) {
+                  linkClassName = 'text-white';
+                }
 
-
-                  {link.label.toUpperCase()}
-                </Link>
-              ))}
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`text-sm font-medium transition-colors duration-200 no-underline tracking-wide hover:text-[#00B4D8] ${linkClassName}`}
+                  >
+                    {link.label.toUpperCase()}
+                  </Link>
+                );
+              })}
             </div>
           )}
 
@@ -153,29 +200,29 @@ if (!mounted) return null;
               <>
 
                 {/* Notification bell */}
-                <button
-                  aria-label="Notifications"
-                  className="relative p-2 text-[var(--foreground)] hover:text-[#00B4D8] transition-colors duration-200 rounded-full hover:bg-[#F5F5F5] dark:hover:bg-gray-800"
-                >
-                  <Bell size={20} />
-                </button>
+                <NotificationBell />
 
                 {/* User menu */}
                 <div className="relative">
                   <button
+                    type="button"
+                    id='user-menu-btn'
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center gap-2 p-1 rounded-full
                                hover:bg-[#F5F5F5] dark:hover:bg-gray-800 transition-colors duration-200"
                     aria-label="User menu"
                     aria-expanded={userMenuOpen}
                   >
+
                     <div className="w-9 h-9 rounded-full bg-[#00B4D8] flex items-center
                                     justify-center text-[#000f2b] dark:text-white text-sm font-bold">
                       {initials}
                     </div>
+
                     <span className="text-sm font-medium text-[var(--foreground)]">
                       {user.first_name}
                     </span>
+
 
                     <ChevronDown
                       size={16}
@@ -194,7 +241,15 @@ if (!mounted) return null;
                             className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
                             onClick={() => setUserMenuOpen(false)}
                           >
-                            Admin Panel
+                            Moderator Panel
+                          </Link>
+                          
+                          <Link
+                            href="/admin/cases"
+                            className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Cases
                           </Link>
                           <div className="border-t border-[var(--card-border)]" />
                         </>
@@ -202,6 +257,7 @@ if (!mounted) return null;
                       {!isAdmin && (
                         <Link
                           href="/listings/mine"
+                          id='my-listings-link'
                           className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
                                     no-underline transition-colors duration-150"
                           onClick={() => setUserMenuOpen(false)}
@@ -209,7 +265,7 @@ if (!mounted) return null;
                           My Listings
                         </Link>
                       )}
-                      {/** 
+                      
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -218,9 +274,10 @@ if (!mounted) return null;
                       >
                         Settings
                       </Link>
-                      */}
+                      
                       <div className="border-t border-[var(--card-border)]" />
                       <button
+                        type="button"
                         onClick={async () => {
                           setUserMenuOpen(false);
                           await logout();
@@ -231,6 +288,8 @@ if (!mounted) return null;
                       >
                         Log Out
                       </button>
+
+
                     </div>
                   )}
                 </div>
@@ -253,12 +312,19 @@ if (!mounted) return null;
                 >
                   Login
                 </Link>
+                
               </>
             )}
           </div>
 
+          {/* MOBILE: Notification Bell */}
+          <div className="flex items-center gap-1 md:hidden">
+            {isAuthenticated && user && <NotificationBell />}
+          </div>
+
           {/* HAMBURGER: Mobile only */}
           <button
+            type="button"
             className={`md:hidden p-2 transition-colors duration-200 ${
               isTransparent ? 'text-white' : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
             }`}
@@ -326,6 +392,7 @@ if (!mounted) return null;
 
 
                 <button
+                  type="button"
                   className="py-3 text-left text-sm text-[#b91c1c] dark:text-[#ef4444]
                              hover:text-[#7F1D1D] transition-colors"
                   onClick={async () => {

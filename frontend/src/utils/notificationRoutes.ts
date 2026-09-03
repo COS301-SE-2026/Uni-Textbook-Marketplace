@@ -1,0 +1,57 @@
+import type { LucideIcon } from "lucide-react";
+import { CheckCircle2, XCircle, MessageSquare,SquarePen,Bookmark as BellIcon, Bookmark } from "lucide-react";
+import type { Notification } from "@/types/notification";
+
+
+const ENTITY_TYPE_ICON: Record<string, LucideIcon> = {
+    APPROVE_LISTING: CheckCircle2,
+    REJECT_LISTING: XCircle,
+    message: MessageSquare,
+    "Edited listing": SquarePen,
+    SAVED_SEARCH_MATCH: Bookmark,
+};
+
+const ENTITY_TYPE_LABEL: Record<string, string> = {
+    APPROVE_LISTING: "Listing Approved",
+    REJECT_LISTING: "Listing Rejected",
+    message: "New Message",
+    "Edited listing": "Listing Edited",
+    SAVED_SEARCH_MATCH: "Saved Search Match",
+};
+
+export function getNotificationHeading(entityType: string): string {
+    return ENTITY_TYPE_LABEL[entityType] ?? "Notification";
+}
+
+
+export function getNotificationIcon(entityType: string): LucideIcon {
+    return ENTITY_TYPE_ICON[entityType] ?? BellIcon;
+}
+
+
+export function getNotificationRoute(notification: Notification): string {
+
+    const notificationType = notification.entity_type;
+
+    switch(notificationType) {
+
+        case "APPROVED_LISTING":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "REJECTED_LISTING":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "Edited listing":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "message":
+            return "/messages";
+
+        case "SAVED_SEARCH_MATCH":
+            return `/listings/${notification.entity_id?.id}`;
+
+        default:
+            return "/notifications";
+    }
+    
+}

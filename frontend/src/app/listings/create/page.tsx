@@ -1,12 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense, useCallback } from 'react'
+import { useRouter,useSearchParams } from 'next/navigation'
 import ListingForm, { ListingFormData } from '@/components/listings/listingForm'
 import Button from '@/components/ui/Button'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { createBook, createModule, uploadImages, createListing, CreateListingData } from '@/lib/listings.api'
 import Modal from '@/components/ui/Modal'
+import Image from 'next/image'
+import { PlusCircle } from 'lucide-react'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 
 
 const ISBN_REGEX = /^(?:\d{9}[\dX]|\d{13})$/i;
@@ -77,13 +82,57 @@ function validateStep(step: number, form: ListingFormData): FormErrors {
 
 const STEP_LABELS = ['Book Details', 'Module Details', 'Listing Details', 'Upload Pictures']
 
+type TutorialStep = {
+    element: string
+    popover: {
+        title: string
+        description: string
+    }
+}
 
-export default function CreateListingPage() {
+const TUTORIAL_STEPS: Record<number,TutorialStep>  = {
+    
+    1: {
+        element: '.card',
+        popover: {
+            title: 'Step 1: Book Details',
+            description: 'Enter book details'
+        }
+    },
+    2: {
+        element: '.card',
+        popover: {
+            title: 'Step 2: Module Details',
+            description: 'Enter module details'
+        }
+    },
+    3: {
+        element: '.card',
+        popover: {
+            title: 'Step 3: Listing Details',
+            description: 'Enter Listing details'
+        }
+    },
+    4: {
+        element: '.card',
+        popover: {
+            title: 'Step 4: Upload pictures',
+            description: 'Upload atleast 4 clear photos of the book'
+        }
+    },
+
+    
+}
+
+
+function CreateListingPageInner() {
 
     const router = useRouter()
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
+    const searchParams = useSearchParams()
+    const [tutorialActive, setTutorialActive] = useState(false)
 
     const [form, setForm] = useState<ListingFormData>({
         // Book
@@ -202,33 +251,164 @@ export default function CreateListingPage() {
         }
     }
 
+    const runTutorialForStep = useCallback((stepNum: number) => {
+
+        const isLastStep = stepNum === 4
+
+        const tour = driver({
+            showProgress:true,
+            steps:[
+                TUTORIAL_STEPS[stepNum],
+                {
+                    element: isLastStep ? '#post-listing-btn' : '#next-step-btn',
+                    popover: {
+                        title: isLastStep ? 'Post it!' : 'Next Step',
+                        description: isLastStep
+                            ? 'Once your photos are uploaded click here to submit'
+                            : 'Click Next to continue'
+                    }
+                }
+            ]
+        })
+        tour.drive()
+    },[])
+
+    useEffect(() => {
+        
+        if( tutorialActive) runTutorialForStep(step)
+
+    },[step, tutorialActive,runTutorialForStep])
+
     return (
         <ProtectedRoute>
-            <div className="container-content py-8">
+            
+            <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
+                background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
+                
+            }}>
+                
+                <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+                    <div className="relative w-full h-full">
 
-                <h1>Sell Your Textbook</h1>
-                <h4>Fill in the details below</h4>
 
-                {/* Step tabs */}
-                <div className="flex gap-3 my-8 justify-between">
-                    {STEP_LABELS.map((label, i) => (
-                        <button
-                            key={label}
-                            disabled
-                            className={`px-4 py-2 rounded text-sm font-medium ${
-                                step === i + 1
-                                    ? 'bg-blue-600 text-white'
-                                    : step > i + 1
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-gray-200 text-gray-500'
-                            }`}
-                        >
-                            {step > i + 1 ? `✓ ${label}` : label}
-                        </button>
-                    ))}
+                        <Image
+                            src="/../../sell.png"
+                            alt="Student reading textbook"
+                            fill
+                            className="object-contain object-right"
+                            priority
+                            style={{ objectPosition: '100% 50%' }}
+                        />
+                        {/* Gradient overlay*/}
+                        <div className="absolute inset-0" style={{
+                            background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
+                        }} />
+
+                    </div>
                 </div>
 
-                {/* Form */}
+
+                
+                
+                <div className="absolute inset-0 opacity-20" style={{
+                    background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                }} />
+                
+                
+                <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
+                }} />
+
+                
+                
+                <div className="absolute inset-0 opacity-5" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                }} />
+                
+                
+                <div className="absolute top-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                }} />
+                
+                <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
+                    <div className="flex items-start gap-4">
+
+
+                        <div className="p-2 rounded-xl" style={{
+                            background: 'rgba(255,255,255,0.08)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                            <PlusCircle size={24} className="text-[#00B4D8]" />
+                        </div>
+
+                        <div>
+
+
+                            <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
+                                Sell Your Textbook
+                            </h1>
+                            <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
+                                Fill in the details below to create your listing
+                            </p>
+                        </div>
+
+
+                    </div>
+                </div>
+                
+                
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
+                }} />
+            </div>
+
+            <div className="container-content py-8">
+                
+                <div className="flex my-8 w-full gap-1">
+                    {STEP_LABELS.map((label, i) => {
+                        const stepNum = i + 1
+                        const isActive = step === stepNum
+                        const isCompleted = step > stepNum
+                        const textColor = isActive || isCompleted ? 'text-white' : 'text-gray-500'
+                        let background = '#e5e7eb'
+                        if (isCompleted) {
+                            background = '#04505f'
+                        }
+                        if (isActive) {
+                            background = 'linear-gradient(135deg, #00B4D8, #0096B4)'
+                        }
+
+                        return (
+                            <div key={label} className="flex-1 relative">
+                                
+                                <div 
+                                    className={`
+                                        relative flex items-center justify-center px-4 py-3
+                                        text-sm font-medium transition-all duration-300
+                                        ${textColor}
+                                    `}
+                                    style={{
+                                        clipPath: 'polygon(0% 0%, 92% 0%, 100% 50%, 92% 100%, 0% 100%, 8% 50%)',
+                                        background,
+                                        minHeight: '48px',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        {isCompleted && <span className="text-white text-sm">✓</span>}
+                                        <span className="truncate">{label}</span>
+                                    </span>
+                                </div>
+
+
+                            </div>
+                        )
+                    })}
+                </div>
+
+                
                 <ListingForm
                     step={step}
                     form={form}
@@ -238,20 +418,22 @@ export default function CreateListingPage() {
                     onRemoveImage={handleRemoveImage}
                 />
 
-                {/* Navigation */}
+                
                 <div className="flex justify-between mt-8">
                     {step > 1 ? (
-                        <Button onClick={prevStep} variant="secondary">Previous</Button>
+                        <Button onClick={prevStep} variant="primary" className="cursor-pointer">Previous</Button>
                     ) : (
                         <div />
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} variant="primary">Next</Button>
+                        <Button onClick={nextStep} id='next-step-btn' variant="primary" className="cursor-pointer">Next</Button>
                     ) : (
-                        <Button onClick={handleSubmit} variant="secondary" disabled={loading}>
+                        <Button onClick={handleSubmit} id='post-listing-btn' variant="primary" disabled={loading} className="cursor-pointer">
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
+
+
                     )}
                 </div>
 
@@ -267,13 +449,27 @@ export default function CreateListingPage() {
                 </p>
                 <div className="mt-6 flex justify-end">
                     <button
+                        type="button"
                         onClick={() => router.push('/listings/mine')}
-                        className="btn-primary"
+                        className="btn-primary cursor-pointer"
                     >
                         View My Listings
                     </button>
+
+
                 </div>
             </Modal>
+            
         </ProtectedRoute>
+    )
+}
+
+export default function  CreateListingPage(){
+
+    return(
+
+        <Suspense fallback={null}>
+            <CreateListingPageInner/>
+        </Suspense>
     )
 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { AuthModule } from '../src/auth/auth.module';
 import { ListingsModule } from '../src/listings/listings.module';
@@ -9,9 +10,11 @@ import { ModuleModule } from '../src/modules/module.module';
 import { BooksModule } from '../src/books/books.module';
 import { AdminModule } from '../src/admin/admin.module';
 import { SavedSearchesModule } from '../src/saved_search/saved_search.module';
+import { NotificationsModule } from '../src/notifications/notifications.module';
 
 import { User } from '../src/database/entities/users.entity';
 import { Listing } from '../src/database/entities/listing.entity';
+import { Case } from '../src/database/entities/case.entity';
 import { Book } from '../src/database/entities/book.entity';
 import { Module as ModuleEntity } from '../src/database/entities/module.entity';
 import { University } from '../src/database/entities/university.entity';
@@ -19,9 +22,16 @@ import { OTP } from '../src/database/entities/otps.entity';
 import { AuditLog } from '../src/database/entities/audit_log.entity';
 import { Faculty } from '../src/database/entities/faculty.entity';
 import { SavedSearch } from '../src/database/entities/saved_search.entity';
+import { MessagingModule } from '../src/messaging/messaging.module';
+import { Notifications } from '../src/database/entities/notifications.entity';
+import { Wishlist } from '../src/database/entities/wishlist.entity';
+import { Report } from '../src/database/entities/report.entity';
+import { CasesModule } from '../src/cases/cases.module';
+import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-search-match.listener';
 
 @Module({
     imports: [
+        EventEmitterModule.forRoot(),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: '.env.test',
@@ -38,8 +48,9 @@ import { SavedSearch } from '../src/database/entities/saved_search.entity';
                     url: dbUrl,
                     synchronize: true,
                     dropSchema: true,
+                    migrationsRun: false,
                     entities: [
-                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch
+                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,Case
                     ],
                     logging: false,
                 };
@@ -51,6 +62,10 @@ import { SavedSearch } from '../src/database/entities/saved_search.entity';
         BooksModule,
         AdminModule,
         SavedSearchesModule,
+        MessagingModule,
+        CasesModule,
+         NotificationsModule,
     ],
+    providers: [SavedSearchMatchListener],
 })
 export class TestModule {}

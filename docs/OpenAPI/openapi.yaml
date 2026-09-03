@@ -1,0 +1,1210 @@
+openapi: 3.0.4
+info:
+  title: Uni Textbook Marketplace API
+  description: >
+    NexusDev - Uni Textbook Marketplace, COS 301 Software Engineering, 2026.
+    Single source of truth for the API contract. Everyone edits this file
+    directly, the same day and endpoint is committed. sas.tex's API Contracts
+    section is a readbale rendering of this file, not an independently
+    maintained copy. If the two disagree, this file is right.
+  version: "5.0.0"
+  contact:
+    name: NexusDev
+    url: https://github.com/COS301-SE-2026
+
+servers:
+  - url: https://nexusdev-backend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api
+    description: Production (main)
+  - url: https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api
+    description: Staging (develop)
+  - url: http://localhost:3001/api
+    description: Local development
+
+tags:
+- name: Auth
+- name: Listings
+- name: Admin
+- name: Modules
+- name: SavedSearches
+- name: Wishlist
+- name: Images
+- name: Conversations
+- name: Notifications
+  description: "Sprint 5 / UC9, UC9.1, UC9.2. Owner: Gift."
+- name: Reports
+  description: "Sprint 5 / UC10. Owner: Josh."
+- name: Cases
+  description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
+- name: Profile
+  description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        edition:
+          type: integer
+        condition:
+          type: string
+          enum: [new, good, fair, poor]
+        annotationLevel:
+          type: string
+          enum: [none, light, heavy]
+        hasNotes:
+          type: boolean
+        price:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED, RESERVED, SOLD, WITHDRAWN, SOFT_DELETED]
+        moduleId:
+          type: string
+          format: uuid
+        photoUrls:
+          type: array
+          items:
+            type: string
+        sellerId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    # (Gift): confirm this matches the final notifications table shape
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          description: >
+            Drives frontend icon, copy, and routing (see Tiego's
+            type-to-route map alongside utils/messageHelpers.ts).
+            Keep this enum in sync with every new type introduced -
+            flag additions the same day.
+          enum:
+            - LISTING_APPROVED
+            - LISTING_REJECTED
+            - LISTING_EDIT_NEEDS_REVIEW
+            - WISHLIST_STATUS_CHANGE
+            - NEW_MESSAGE
+            - SAVED_SEARCH_MATCH
+            - REPORT_RECEIVED
+            - BAN_ISSUED
+            - CASE_DECISION
+        payload:
+          type: object
+          description: Free-form JSON, shape depends on `type`.
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    # (Josh): confirm field names against the actual reports table
+    # migration once committed.
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reporterId:
+          type: string
+          format: uuid
+        listingId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, REVIEWED]
+        createdAt:
+          type: string
+          format: date-time
+
+    # (Neo): confirm field names against the actual cases table
+    # migration once committed.
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uui
+      #ban_id foreign key removed as there is no ban table to reference 
+        appeal_message:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, UPHELD, REVERSED]
+        reviewed_by:
+          type: string
+          format: uuid
+        reviewed_at:
+          type: string
+          format: date-time
+        created_at: #added column for case date ordering + keeping track of stale cases
+          type: string
+          format: date-time
+        updated_at: #added column for keeping track of updates in cases 
+          type: string
+          format: date-time
+        deleted_at: #added column for keeping track of case removals
+          type: string
+          format: date-time
+
+    CaseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier of the case
+        user_id:
+          type: string
+          format: uuid
+          description: The ID of the user who submitted the appeal
+        appeal_message:
+          type: string
+          nullable: true
+          description: The appeal message from the user
+        status:
+          type: string
+          enum: [pending, upheld, reversed]
+          description: |
+            The current status of the case:
+            - "pending": Awaiting admin review
+            - "upheld": Ban maintained (user remains banned)
+            - "reversed": Ban lifted (user reinstated)
+        reviewed_by:
+          type: string
+          format: uuid
+          nullable: true
+          description: The ID of the admin who reviewed the case
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was reviewed
+        created_at:
+          type: string
+          format: date-time
+          description: When the case was created
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was last updated
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the case was soft-deleted
+
+    PaginatedCasesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CaseResponse"
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of cases
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Items per page
+            totalPages:
+              type: integer
+              description: Total number of pages
+
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Authenticated but not permitted (wrong role, not the owner)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Starts student registration. Checks the email domain and sends the OTP.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, surname, university, email]
+              properties:
+                fullName:
+                  type: string
+                surname:
+                  type: string
+                university:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "201":
+          description: Registration successful, OTP sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+        "400":
+          description: Missing required field, or email domain not in allowlist
+        "409":
+          description: Email address is already registered
+
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      summary: Checks the 6-digit OTP sent to the student's email.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp]
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: string
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  verified:
+                    type: boolean
+        "400":
+          description: OTP is incorrect or has expired
+        "404":
+          description: No pending OTP found for this email
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Logs in a verified student and hands back a signed JWT (cookie).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid email or password
+        "403":
+          description: Account exists but email is not verified
+
+  /auth/set-password:
+    post:
+      tags: [Auth]
+      summary: Sets the student's password once OTP verification is done.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, password, confirmPassword]
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        "200":
+          description: Password set successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Returns the logged-in user's profile.
+      responses:
+        "200":
+          description: The current user's profile
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Clears the session cookie.
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/universities:
+    get:
+      tags: [Auth]
+      summary: Lists supported universities, for the registration dropdown.
+      security: []
+      responses:
+        "200":
+          description: List of universities
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Gets a new access token using a refresh token.
+      security: []
+      responses:
+        "200":
+          description: New access token issued
+
+  /listings:
+    post:
+      tags: [Listings]
+      summary: Creates a new textbook listing. Created with status = PENDING.
+      responses:
+        "201":
+          description: Listing created
+        "400":
+          description: Validation error
+    get:
+      tags: [Listings]
+      summary: Returns all APPROVED listings, with pagination and filters.
+      parameters:
+        - in: query
+          name: moduleId
+          schema: { type: string }
+        - in: query
+          name: faculty
+          schema: { type: string }
+        - in: query
+          name: condition
+          schema: { type: string }
+        - in: query
+          name: minPrice
+          schema: { type: number }
+        - in: query
+          name: maxPrice
+          schema: { type: number }
+        - in: query
+          name: edition
+          schema: { type: integer }
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Paginated approved listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Listing"
+
+  /listings/mine:
+    get:
+      tags: [Listings]
+      summary: Returns all of the logged-in student's own listings (PENDING, APPROVED, REJECTED).
+      responses:
+        "200":
+          description: The student's own listings
+
+  /listings/{id}:
+    get:
+      tags: [Listings]
+      summary: Returns the full detail object for one listing.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/editlist:
+    patch:
+      tags: [Listings]
+      summary: Edits an existing listing owned by the student. Only PENDING/REJECTED.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string, format: uuid }
+                title: { type: string }
+                condition: { type: string, enum: [new, good, fair, poor] }
+                annotation_level: { type: string, enum: [none, light, heavy] }
+                price: { type: number }
+                has_notes: { type: boolean }
+                description: { type: string }
+      responses:
+        "200":
+          description: Listing updated
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /listings/{id}/status:
+    patch:
+      tags: [Listings]
+      summary: >
+        Updates a listing's status. Extended in Sprint 5 to accept RESERVED
+        in addition to the existing SOLD/WITHDRAWN values. Callable by the
+        listing's seller from the messaging thread (ChatHeader) once a sale
+        is agreed, or from My Listings.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [RESERVED, SOLD]
+      responses:
+        "200":
+          description: Status updated, audit_log entry written
+        "403":
+          description: Not the listing's seller, or an invalid status transition
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/admin/all:
+    get:
+      tags: [Admin]
+      summary: Returns all listings, admin only.
+      responses:
+        "200":
+          description: All listings
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/listings/{id}/approve:
+    patch:
+      tags: [Admin]
+      summary: Approves a pending listing. Sets status APPROVED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing approved
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/listings/{id}/reject:
+    patch:
+      tags: [Admin]
+      summary: Rejects a pending listing. Sets status REJECTED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Listing rejected
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /modules:
+    post:
+      tags: [Modules]
+      summary: Creates a module linked to the textbook being sold.
+      responses:
+        "201":
+          description: Module created
+    get:
+      tags: [Modules]
+      summary: Search-as-you-type module code lookup, extended with smart filters.
+      parameters:
+        - in: query
+          name: search
+          required: true
+          schema: { type: string }
+        - in: query
+          name: university
+          schema: { type: string }
+      responses:
+        "200":
+          description: Matching modules
+
+  /modules/faculties:
+    get:
+      tags: [Modules]
+      summary: Returns faculty names and ids.
+      responses:
+        "200":
+          description: Faculties
+
+  /saved-searches:
+    post:
+      tags: [SavedSearches]
+      summary: Saves a search as JSON filter_json.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter_json:
+                  type: object
+      responses:
+        "201":
+          description: Saved search created
+
+  /saved-searches/me:
+    get:
+      tags: [SavedSearches]
+      summary: Returns the saved searches belonging to the logged-in student.
+      responses:
+        "200":
+          description: The student's saved searches
+
+  /saved-searches/id:
+    get:
+      tags: [SavedSearches]
+      summary: Returns one saved search by id.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The saved search
+    delete:
+      tags: [SavedSearches]
+      summary: Deletes a saved search by id.
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+
+  /wishlist/{listingId}:
+    post:
+      tags: [Wishlist]
+      summary: Adds a listing to the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Added to wishlist
+    delete:
+      tags: [Wishlist]
+      summary: Removes a listing from the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed from wishlist
+
+  /wishlist/mine:
+    get:
+      tags: [Wishlist]
+      summary: Returns the logged-in student's wishlisted listings.
+      responses:
+        "200":
+          description: Wishlisted listings
+
+  /admin/audit-log:
+    get:
+      tags: [Admin]
+      summary: Returns audit log entries for admin review.
+      parameters:
+        - in: query
+          name: performedBy
+          schema: { type: string }
+        - in: query
+          name: action
+          schema: { type: string }
+        - in: query
+          name: entityType
+          schema: { type: string }
+        - in: query
+          name: entityId
+          schema: { type: string }
+        - in: query
+          name: startDate
+          schema: { type: string }
+        - in: query
+          name: endDate
+          schema: { type: string }
+      responses:
+        "200":
+          description: Audit log entries
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/emails:
+    get:
+      tags: [Admin]
+      summary: Returns a list of admin emails, used for filters.
+      responses:
+        "200":
+          description: Admin emails
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /images/upload:
+    post:
+      tags: [Images]
+      summary: Uploads a listing image to Azure Blob Storage through the backend.
+      responses:
+        "201":
+          description: Image uploaded
+
+  /images/list:
+    get:
+      tags: [Images]
+      summary: Lists uploaded images for a listing.
+      responses:
+        "200":
+          description: Image list
+
+  /images/delete:
+    delete:
+      tags: [Images]
+      summary: Deletes an uploaded listing image from Blob Storage.
+      responses:
+        "200":
+          description: Deleted
+
+  /conversations:
+    post:
+      tags: [Conversations]
+      summary: Creates or fetches a conversation for a listing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId:
+                  type: string
+                  format: uuid
+      responses:
+        "201":
+          description: Conversation created or fetched
+
+  /conversations/mine:
+    post:
+      tags: [Conversations]
+      summary: Gets all conversations for the logged-in user.
+      responses:
+        "200":
+          description: The user's conversations
+
+  /conversations/{id}/messages:
+    get:
+      tags: [Conversations]
+      summary: Gets all messages in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Messages in the conversation
+    post:
+      tags: [Conversations]
+      summary: Sends a message in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        "201":
+          description: Message sent
+
+  # Demo 3: Whoever owns each section, fill it in as you go and code
+  /notifications/mine:
+    get:
+      tags: [Notifications]
+      summary: Returns the logged-in user's notifications, paginated.
+      # (Gift): confirm query params (page, limit, unreadOnly?) once built.
+      responses:
+        "200":
+          description: Paginated list of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      summary: Marks a single notification as read. Ownership-checked.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Notification marked read
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /notifications/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Marks all of the logged-in user's notifications as read.
+      responses:
+        "200":
+          description: All notifications marked read
+
+  # (Josh): UC10 report submission + admin review.
+  /reports:
+    post:
+      tags: [Reports]
+      summary: A student submits a report against a listing.
+      # TODO (Josh): confirm request body against reports.dto.ts.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, reason]
+              properties:
+                listingId:
+                  type: string
+                  format: uuid
+                reason:
+                  type: string
+      responses:
+        "201":
+          description: Report submitted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /admin/reports:
+    get:
+      tags: [Reports]
+      summary: Returns reports for admin review, paginated, filterable by status.
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [PENDING, REVIEWED] }
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Paginated reports
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reports/{id}/dismiss:
+    patch:
+      tags: [Reports]
+      summary: Dismisses a report without banning the reported user.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Report dismissed
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  # (Josh): confirm the actual route/verb for the ban action once
+  # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
+  # banned_by, ban_reason set on the reported listing's seller) but not yet
+  # a confirmed endpoint path. Likely PATCH /admin/users/{id}/ban or similar.
+  /admin/users/{id}/ban:
+    patch:
+      tags: [Reports]
+      summary: >
+        Bans the user who owns the reported listing. Writes an audit_log
+        entry (action = BANNED) and triggers a ban-notice notification with
+        appeal instructions via NotificationService.emit().
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ban_reason:
+                  type: string
+      responses:
+        "200":
+          description: User banned
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
+  # the admin review + decide endpoint.
+
+  
+  # Neo: UC10 appeal/case flow
+# Updated to match CasesController implementation
+
+  /cases:
+    post:
+      tags: [Cases]
+      summary: Submit an appeal as a banned user
+      description: Only users with is_banned = true can submit appeals. Users cannot have multiple pending appeals.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appeal_message]
+              properties:
+                appeal_message:
+                  type: string
+                  minLength: 10
+                  maxLength: 5000
+                  description: The appeal message from the banned user
+      responses:
+        "201":
+          description: Appeal submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseResponse"
+        "400":
+          description: User is not banned or already has a pending appeal
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - only banned users may submit an appeal
+
+  /cases/mine:
+    get:
+      tags: [Cases]
+      summary: Get all cases for the authenticated user
+      description: Returns all cases submitted by the current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
+
+  /cases/{id}:
+    get:
+      tags: [Cases]
+      summary: Get a specific case by ID
+      description: Users can only access their own cases
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The ID of the case to retrieve
+      responses:
+        "200":
+          description: Case found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Case not found
+
+  /cases/admin/pending:
+    get:
+      tags: [Cases]
+      summary: ADMIN ONLY - Get all pending cases
+      description: Returns all cases with status = pending for admin review
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of pending cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+
+  /cases/admin:
+    get:
+      tags: [Cases]
+      summary: ADMIN ONLY - Get all cases with pagination
+      description: Returns all cases with pagination for admin dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (default: 1)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page (default: 20, max: 100)
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, upheld, reversed]
+          description: Filter by status (pending, upheld, reversed)
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search in appeal message
+      responses:
+        "200":
+          description: Paginated list of cases
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCasesResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+
+  /cases/{id}/review:
+    patch:
+      tags: [Cases]
+      summary: ADMIN ONLY - Review a case (decide endpoint)
+      description: >
+        Admin upholds the ban or reinstates the account (reverses the ban).
+        Writes to audit_log and triggers a case-decision notification via emit().
+        - "upheld": User remains banned (ban is maintained)
+        - "reversed": User is reinstated (ban is lifted)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The ID of the case to review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [upheld, reversed]
+                  description: |
+                    - "upheld": Maintain the ban (user stays banned)
+                    - "reversed": Reinstate the user (lift the ban)
+                adminNotes:
+                  type: string
+                  maxLength: 1000
+                  description: Optional notes from the admin about the decision
+      responses:
+        "200":
+          description: Case reviewed successfully (decision applied)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseResponse"
+        "400":
+          description: Case already reviewed or invalid decision
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+        "404":
+          description: Case not found

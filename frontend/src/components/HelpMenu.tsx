@@ -1,86 +1,148 @@
 'use client'
 
 import { useState } from 'react'
-import { HelpCircle, X } from 'lucide-react'
+import { HelpCircle, X, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Button } from './ui'
 
-const FAQS = [
+const QUICK_FAQS = [
+    { q: 'How do I create a listing?', a: 'Go to the Sell page, fill in your book details, and submit. Your listing will be reviewed by Admin.' },
 
-    { q: 'How do I create a listing?', a: 'Go to the Sell page, fill in your book details, and submit. Your listing will be reviewed by Admin.'},
+    { q: 'How do I view my listings?', a: 'Click your profile picture in the top navbar and select "My Listings" from the dropdown'},
 
+    { q: 'How do I contact a seller?', a: 'Click on a listing and use the "Message Seller" button. Your contact details remain private.' },
 
-    { q: 'How long does approval take?', a: 'Listings are reviewed within 24-48  hours. You will be notified when your listing is approved or rejected.'},
-    { q: 'How do I contact a seller?', a: 'Click on a listing and use the "Message Seller" button. Your contact details remain private until both parties agree to share.'},
+    { q: 'How long does approval take?', a: 'Listings are reviewed within 24-48 hours. You will be notified when approved or rejected.' },
 
-
-    { q: 'What is a pending listing?', a: 'A pending listing is waiting for admin review. It is not visible to other students/buyers until approved.'},
 ]
 
 export default function HelpMenu() {
 
     const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
 
     return (
         <>
-            {/* Help Button */}
+            
             <button
                 type="button"
                 onClick={() => setIsOpen(true)}
+                className="fixed bottom-6 right-6 z-50 p-4 bg-[#00B4D8] text-white rounded-full shadow-lg hover:bg-[#0096B4] hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                aria-label="Help"
+            >
+                <HelpCircle size={27} className="group-hover:scale-110 transition-transform duration-300" />
 
-                className="fixed bottom-6 right-6 z-50 p-4 bg-[#00B4D8] text-white rounded-full shadow-lg hover:bg-[#0090B0] transition-colors" aria-label="Help">
-                    <HelpCircle size={27} />
             </button>
 
-            {/* Modal */}
+            
             {isOpen && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
 
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+                    <div className="bg-[var(--card-bg)] rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-[var(--card-border)]">
+
+                        
+                        <div className="flex items-center justify-between p-5 border-b border-[var(--card-border)]">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-[#00B4D8]/10">
 
 
-                    <div className="bg-[var(--card-bg)] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-                        <div className="flex items-center justify-between p-4 border-b border-[var(--card-border)]">
-
-
-                            <h2 className="text-xl font-bold text-[var(--foreground)]">Help & FAQs</h2>
-
+                                    <HelpCircle size={20} className="text-[#00B4D8]" />
+                                </div>
+                                <h2 className="text-lg font-bold text-[var(--foreground)]">Quick Help</h2>
+                            </div>
                             <button
                                 type="button"
                                 onClick={() => setIsOpen(false)}
-
-                                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-
-                                    <X size={24} className="text-[var(--foreground)]" />
+                                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+                            >
+                                <X size={22} className="text-[var(--foreground)]" />
                             </button>
+
                         </div>
 
-                        <div className="p-4 space-y-4">
+                        
+                        <div className="p-5 space-y-4">
 
-                            <p className="text-sm text-[var(--foreground)]">
-                                Welcome to the Uni Textbook Marketplace! Here are some frequently asked questions.
+
+                            <p className="text-sm text-[var(--foreground)]/70 leading-relaxed">
+                                Here are answers to the most common questions. For more detailed help, visit our full Help Center.
                             </p>
 
-                            {FAQS.map((faq, i) => (
+                            
+                            {QUICK_FAQS.map((faq) => (
+                                <div key={faq.q} className="border-b border-[var(--card-border)] pb-4 last:border-0 last:pb-0">
+                                    <h3 className="font-semibold text-sm text-[var(--foreground)] flex items-start gap-2">
+                                        <span className="text-[#00B4D8] font-bold">Q:</span>
+                                        {faq.q}
+                                    </h3>
 
-                                <div key={i} className="border-b border-[var(--card-border)] pb-3 last:border-0">
-                                    <h3 className="font-semibold text-sm text-[var(--foreground)]">{faq.q}</h3>
 
-                                    <p className="text-sm text-[var(--foreground)] mt-1 opacity-80">{faq.a}</p>
-                                </div> 
+                                    <p className="text-sm text-[var(--foreground)]/70 mt-1.5 pl-5">
+                                        {faq.a}
+                                    </p>
+
+                                    {faq.q === 'How do I create a listing?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                router.push('/listings/create?tutorial=1')
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
+
+                                    {faq.q === 'How do I contact a seller?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                router.push('/listings?tutorial=contact')
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
+
+                                    {faq.q === 'How do I view my listings?' && (
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                window.dispatchEvent(new Event('start-my-listings-tutorial'))
+                                            }}
+                                            variant="primary"
+                                            className='m-2 flex justify-center'
+                                        >
+                                            Start Tutorial
+                                        </Button>
+                                    )}
+
+                                </div>
                             ))}
 
-                            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded">
+                            
+                            <div className="mt-6 pt-4 border-t border-[var(--card-border)]">
 
-                                <p className="text-sm text-[var(--foreground)]">
-                                    Need more help? Reach out to the Agile Bridge team.
-                                </p>
-
+                                <Link
+                                    href="/help"
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center justify-between w-full px-5 py-3 bg-[#00B4D8]/10 hover:bg-[#00B4D8]/20 rounded-xl transition-all duration-200 group"
+                                >
+                                    <span className="text-sm font-medium text-[#00B4D8]">View full help center</span>
+                                    <ChevronRight size={18} className="text-[#00B4D8] group-hover:translate-x-1 transition-transform duration-200" />
+                                </Link>
+                                
                             </div>
-
-
                         </div>
                     </div>
-                    
                 </div>
-
             )}
         </>
     )

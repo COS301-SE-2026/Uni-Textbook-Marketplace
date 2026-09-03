@@ -8,8 +8,6 @@ import { Repository, In, DataSource } from 'typeorm';
 import { SavedSearch } from '../database/entities/saved_search.entity';
 import { User } from '../database/entities/users.entity';
 import { Listing } from '../database/entities/listing.entity';
-import { Book } from '../database/entities/book.entity';
-import { Module as ModuleEntity } from '../database/entities/module.entity';
 
 import {
   CreateSavedSearchDto,
@@ -21,16 +19,10 @@ import {
 export class SavedSearchesService {
   private savedSearchRepository: Repository<SavedSearch>;
   private userRepository: Repository<User>;
-  private listingRepository: Repository<Listing>;
-  private bookRepository: Repository<Book>;
-  private moduleRepository: Repository<ModuleEntity>;
 
   constructor(private dataSource: DataSource) {
     this.savedSearchRepository = this.dataSource.getRepository(SavedSearch);
     this.userRepository = this.dataSource.getRepository(User);
-    this.listingRepository = this.dataSource.getRepository(Listing);
-    this.bookRepository = this.dataSource.getRepository(Book);
-    this.moduleRepository = this.dataSource.getRepository(ModuleEntity);
   }
 
   private toNumber(value: string | number | undefined | null): number | null {
@@ -134,28 +126,86 @@ export class SavedSearchesService {
 
   // Check if a listing matches a saved search filter
   matchesFilter(listing: Listing, filter: SavedSearchFiltersDto): boolean {
-    // Module filter (by module code)
-    if (filter.moduleCode && listing.module?.code !== filter.moduleCode) {
-      return false;
+    const isProvided = (value: any): boolean => {
+      return value !== undefined && value !== null && value !== '';
+    };
+
+    if (isProvided(filter.moduleCode)) {
+      if (!listing.module?.code) {
+        return false;
+      }
+      if (listing.module.code !== filter.moduleCode!) {
+        return false;
+      }
     }
 
-    // Faculty filter
-    if (filter.faculty && listing.module?.faculty?.name) {
+    if (
+      isProvided(filter.modules) &&
+      Array.isArray(filter.modules) &&
+      filter.modules.length > 0
+    ) {
+      if (!listing.module?.code) {
+        return false;
+      }
+      if (!filter.modules.includes(listing.module.code)) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.faculty)) {
+      if (!listing.module?.faculty?.name) {
+        return false;
+      }
       const facultyMatch = listing.module.faculty.name
         .toLowerCase()
-        .includes(filter.faculty.toLowerCase());
+        .includes(filter.faculty!.toLowerCase());
       if (!facultyMatch) return false;
     }
 
-    // Edition filter
-    if (filter.edition && listing.book?.edition) {
-      const editionMatch = String(listing.book.edition) === filter.edition;
-      if (!editionMatch) return false;
+    if (isProvided(filter.book_title)) {
+      if (!listing.book?.title) {
+        return false;
+      }
+      const titleMatch = listing.book.title
+        .toLowerCase()
+        .includes(filter.book_title!.toLowerCase());
+      if (!titleMatch) return false;
     }
 
-    // Price range filter
+    if (isProvided(filter.author)) {
+      if (!listing.book?.author) {
+        return false;
+      }
+      const authorMatch = listing.book.author
+        .toLowerCase()
+        .includes(filter.author!.toLowerCase());
+      if (!authorMatch) return false;
+    }
+
+    if (isProvided(filter.isbn)) {
+      if (!listing.book?.isbn) {
+        return false;
+      }
+      if (listing.book.isbn.toLowerCase() !== filter.isbn!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.edition)) {
+      if (!listing.book?.edition) {
+        return false;
+      }
+      if (String(listing.book.edition) !== filter.edition!) {
+        return false;
+      }
+    }
+
     const priceMin = this.toNumber(filter.priceMin);
     const priceMax = this.toNumber(filter.priceMax);
+
+    if (listing.price === undefined || listing.price === null) {
+      return false;
+    }
 
     if (priceMin !== null && listing.price < priceMin) {
       return false;
@@ -164,22 +214,27 @@ export class SavedSearchesService {
       return false;
     }
 
-    // Condition filter
-    if (filter.condition && listing.condition !== filter.condition) {
-      return false;
+    if (isProvided(filter.condition)) {
+      if (!listing.condition) {
+        return false;
+      }
+      if (listing.condition !== filter.condition!) {
+        return false;
+      }
     }
 
-    // Annotation level filter
-    if (
-      filter.annotationLevel &&
-      listing.annotation_level !== filter.annotationLevel
-    ) {
-      return false;
+    if (isProvided(filter.annotationLevel)) {
+      if (!listing.annotation_level) {
+        return false;
+      }
+      if (listing.annotation_level !== filter.annotationLevel!) {
+        return false;
+      }
     }
 
-    // Search filter
-    if (filter.search) {
-      const searchLower = filter.search.toLowerCase();
+    if (isProvided(filter.search)) {
+      const searchLower = filter.search!.toLowerCase();
+
       const matchesSearch =
         (listing.title && listing.title.toLowerCase().includes(searchLower)) ||
         (listing.book?.title &&
@@ -189,27 +244,43 @@ export class SavedSearchesService {
         (listing.book?.isbn &&
           listing.book.isbn.toLowerCase().includes(searchLower)) ||
         (listing.module?.code &&
-          listing.module.code.toLowerCase().includes(searchLower));
+          listing.module.code.toLowerCase().includes(searchLower)) ||
+        (listing.module?.name &&
+          listing.module.name.toLowerCase().includes(searchLower)) ||
+        (listing.book?.publisher &&
+          listing.book.publisher.toLowerCase().includes(searchLower));
 
       if (!matchesSearch) return false;
     }
 
+    if (isProvided(filter.university_id)) {
+      if (!listing.module?.university?.id) {
+        return false;
+      }
+      if (listing.module.university.id !== filter.university_id!) {
+        return false;
+      }
+    }
+
+    if (isProvided(filter.faculty_id)) {
+      if (!listing.module?.faculty?.id) {
+        return false;
+      }
+      if (listing.module.faculty.id !== filter.faculty_id!) {
+        return false;
+      }
+    }
+
     return true;
   }
-
   // Find all users with saved searches that match a new listing
-  async findMatchingSavedSearches(listingId: string): Promise<
+  async findMatchingSavedSearches(listing: Listing): Promise<
     Array<{
       userId: string;
       savedSearchId: string;
       filter: SavedSearchFiltersDto;
     }>
   > {
-    const listing = await this.listingRepository.findOne({
-      where: { id: listingId },
-      relations: ['book', 'module', 'module.university', 'module.faculty'],
-    });
-
     if (!listing) {
       throw new NotFoundException('Listing not found');
     }
@@ -243,6 +314,32 @@ export class SavedSearchesService {
     errors?: string[];
   } {
     const errors: string[] = [];
+
+    const allowedFields = [
+      'faculty',
+      'moduleCode',
+      'edition',
+      'priceMin',
+      'priceMax',
+      'condition',
+      'annotationLevel',
+      'search',
+      'book_title',
+      'author',
+      'isbn',
+      'university_id',
+      'faculty_id',
+      'modules',
+    ];
+
+    const providedFields = Object.keys(filter);
+    const invalidFields = providedFields.filter(
+      (f) => !allowedFields.includes(f),
+    );
+
+    if (invalidFields.length > 0) {
+      errors.push(`Invalid fields: ${invalidFields.join(', ')}`);
+    }
 
     // Check priceMin
     if (

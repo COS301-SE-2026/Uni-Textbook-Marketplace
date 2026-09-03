@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ListingsModule } from './listings/listings.module';
 import { ModuleModule } from './modules/module.module';
 import { WishlistModule } from './wishlist/wishlist.module';
-
+import { CasesModule } from './cases/cases.module';
 import { User } from './database/entities/users.entity';
 import { Listing } from './database/entities/listing.entity';
 import { Book } from './database/entities/book.entity';
@@ -22,14 +22,18 @@ import { Faculty } from './database/entities/faculty.entity';
 import { Wishlist } from './database/entities/wishlist.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
-
+import { Report } from './database/entities/report.entity';
+import {Case} from  './database/entities/case.entity'
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { ReportsModule } from './reports/reports.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -41,7 +45,7 @@ import { MessagingModule } from './messaging/messaging.module';
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         synchronize: false,
-        logging: true,
+        logging: false,
         entities: [
           User,
           Listing,
@@ -54,6 +58,8 @@ import { MessagingModule } from './messaging/messaging.module';
           Wishlist,
           Notifications,
           SavedSearch,
+          Report,
+          Case,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -68,7 +74,9 @@ import { MessagingModule } from './messaging/messaging.module';
     AzureModule,
     NotificationsModule,
     AdminModule,
-    MessagingModule
+    MessagingModule,
+    ReportsModule,
+    CasesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

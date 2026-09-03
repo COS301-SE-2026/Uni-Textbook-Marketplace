@@ -34,6 +34,49 @@ export interface AdminListing {
     reviewer?: { id: string} | null
 }
 
+export interface AdminCase {
+    id: string
+    user_id: string
+    appeal_message: string | null
+    status: 'pending' | 'upheld' | 'reversed'
+    reviewed_by: string | null
+    reviewed_at: string | null
+    created_at: string
+    updated_at: string | null
+    deleted_at: string | null
+    user: {
+        id: string
+        email: string
+        first_name: string
+        last_name: string
+        is_banned: boolean
+        banned_at: string | null
+        ban_reason: string | null
+    }
+}
+
+export interface PaginatedCasesResponse {
+    data: AdminCase[]
+    meta: {
+        total: number
+        page: number
+        limit: number
+        totalPages: number
+    }
+}
+
+export interface CaseFilter {
+    page?: number
+    limit?: number
+    status?: string
+    search?: string
+}
+
+export interface CaseDecisionDto {
+    decision: 'upheld' | 'reversed'
+    adminNotes?: string
+}
+
 export interface LogFilter {
 
     performedBy?: string
@@ -59,6 +102,22 @@ interface AuditLogResponse {
 export interface AdminsEmail {
     id: string
     email: string
+}
+
+export async function getAdminCases(filters: CaseFilter): Promise<PaginatedCasesResponse> {
+    return api.get<PaginatedCasesResponse>(`/cases/admin?${buildQuery(filters)}`);
+}
+
+export async function getPendingCases(): Promise<AdminCase[]> {
+    return api.get<AdminCase[]>('/cases/admin/pending');
+}
+
+export async function reviewCase(caseId: string, decision: 'upheld' | 'reversed', adminNotes?: string): Promise<AdminCase> {
+    return api.patch<AdminCase>(`/cases/${caseId}/review`, { decision, adminNotes });
+}
+
+export async function getCaseById(caseId: string): Promise<AdminCase> {
+    return api.get<AdminCase>(`/cases/${caseId}`);
 }
 
 export async function approveListing(id: string): Promise<void> {

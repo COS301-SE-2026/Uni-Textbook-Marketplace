@@ -5,7 +5,7 @@ import ListingForm, { ListingFormData } from "./listingForm";
 import AccordionSection from "@/components/ui/AccordionSection"
 import { getMyListings, uploadImages, editListing, type EditListingData } from "@/lib/listings.api";
 import { Button, Modal } from "../ui";
-import  Fields  from "@/components/ui/Fields"
+import Fields from "@/components/ui/Fields"
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
 
@@ -18,6 +18,7 @@ const SECTIONS = [
 ] as const;
 
 type SectionKey = (typeof SECTIONS)[number]["key"];
+
 type OpenSection = Record<SectionKey, boolean>;
 
 type ListingFormEditProps = {
@@ -29,12 +30,16 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
+
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
+
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
     const [success, setSuccess] = useState(false);
+
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -60,7 +65,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                     photo_urls: string[];
                     description?: string;
                     book: { id: string; isbn?: string; title: string; author?: string; edition?: number; publisher?: string };
-                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name : string} };
+                    module?: { id: string; code: string; name: string; semester: number; faculty?: { name: string } };
                 };
 
                 if (!cancelled) {
@@ -78,7 +83,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                         faculty: data.module?.faculty?.name ?? "",
                         semester: data.module?.semester.toString() ?? "",
 
-                        listingTitle:data.title ?? "",
+                        listingTitle: data.title ?? "",
                         condition: data.condition,
                         annotationLevel: data.annotation_level,
                         has_notes: data.has_notes,
@@ -89,12 +94,14 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
                     setForm(mapped);
                     setOriginal(mapped);
+
                     setExistingImageUrls(data.photo_urls ?? []);
                     setOriginalPhotoUrls(data.photo_urls ?? []);
+
                 }
             } catch (err) {
                 if (!cancelled) {
-                    console.error('something went wrong',err)
+                    console.error('something went wrong', err)
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -114,6 +121,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
         const { name, value } = e.target;
         const fieldName = name as keyof ListingFormData;
+
+
         setForm((prev) => (prev ? { ...prev, [fieldName]: value } : prev));
         setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     }
@@ -130,6 +139,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     }
 
     function handleRemoveImage(index: number) {
+
         setForm((prev) => {
             if (!prev) return prev;
             const imgs = (prev as any).images ? Array.from((prev as any).images) : [];
@@ -160,6 +170,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
         if (!form || !original) return;
 
         setSaving(true);
+        
         setErrors({});
 
         try {
@@ -184,7 +195,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
             setSuccess(true);
 
         } catch (err) {
-            console.error('failed to edit',err);
+            console.error('failed to edit', err);
         } finally {
             setSaving(false);
         }
@@ -232,7 +243,14 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {existingImageUrls.map((url, index) => (
                                     <div key={url} className="relative group">
-                                        <Image src={url} alt="listing" className="w-full h-32 object-cover rounded" />
+                                        <div className="relative w-full h-32">
+                                            <Image
+                                                src={url}
+                                                alt="listing"
+                                                fill
+                                                className="object-cover rounded"
+                                            />
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveExistingImage(index)}
@@ -273,7 +291,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 <Button
                     type="submit"
                     disabled={saving}
-                    variant="secondary"
+                    variant="primary"
                 >
                     {saving ? "Saving..." : "Save changes"}
                 </Button>

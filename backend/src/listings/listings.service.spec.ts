@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { ListingsService } from './listings.service';
-import { Listing, ListingStatus } from '../database/entities/listing.entity';
+import { Listing, ListingStatus, ListingsStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { SavedSearchesService } from '../saved_search/saved_search.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('ListingsService', () => {
   let service: ListingsService;
@@ -134,6 +135,12 @@ describe('ListingsService', () => {
           provide: SavedSearchesService,
           useValue: mockSavedSearchesService,
         },
+        {
+          provide: EventEmitter2,
+          useValue: {
+            emit: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -188,7 +195,7 @@ describe('ListingsService', () => {
         description: createListingDto.description,
       });
       expect(mockListingRepository.save).toHaveBeenCalledWith(mockListing);
-      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalledWith(mockListing.id);
+      
     });
 
     it('should throw NotFoundException when user does not exist', async () => {
@@ -212,7 +219,7 @@ describe('ListingsService', () => {
 
     it('should create listing without module when moduleId not provided', async () => {
       const dtoWithoutModule = { ...createListingDto, moduleId: undefined };
-      
+
       mockUserRepository.findOneBy.mockResolvedValue(mockUser);
       mockBookRepository.findOneBy.mockResolvedValue(mockBook);
       mockListingRepository.create.mockReturnValue({ ...mockListing, module: null });
@@ -221,9 +228,8 @@ describe('ListingsService', () => {
       const result = await service.createListing('user-1', dtoWithoutModule);
 
       expect(mockModuleRepository.findOneBy).not.toHaveBeenCalled();
-      expect(mockSavedSearchesService.findMatchingSavedSearches).toHaveBeenCalled();
     });
-     
+
     it('should use default values for optional fields when not provided', async () => {
       const minimalDto: CreateListingDto = {
         title: 'Minimal Listing',
@@ -347,7 +353,7 @@ describe('ListingsService', () => {
       expect(qb.where).toHaveBeenCalledWith('listing.status = :status', {
         status: ListingStatus.APPROVED,
       });
-      
+
       expect(qb.andWhere).not.toHaveBeenCalled();
     });
   });
@@ -365,10 +371,10 @@ describe('ListingsService', () => {
       const result = await service.getMyListings(userId);
 
       expect(result).toEqual(userListings);
-      
+
       expect(mockListingRepository.find).toHaveBeenCalledWith({
         where: { seller: { id: userId } },
-        relations: ['book', 'module','module.faculty', 'seller', 'seller.university'],
+        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
       });
     });
 
@@ -398,10 +404,10 @@ describe('ListingsService', () => {
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
-     
+
       expect(mockListingRepository.findOne).toHaveBeenCalledWith({
         where: { id: validUuid },
-        relations: ['book', 'module','module.faculty', 'seller', 'seller.university'],
+        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
       });
     });
 
@@ -420,6 +426,138 @@ describe('ListingsService', () => {
 
       await expect(service.getListingById(validUuid)).rejects.toThrow(NotFoundException);
       await expect(service.getListingById(validUuid)).rejects.toThrow('Listing not found');
+    });
+  });
+
+  describe('updateListingStatus', () => {
+    const sellerId = 'user-1'; // matches mockUser.id, so mockApprovedListing's seller lines up
+    const otherUserId = 'other-user-1';
+
+    const mockApprovedAvailableListing = {
+      ...mockListing,
+      id: validUuid2,
+      status: ListingStatus.APPROVED,
+      listing_status: ListingsStatus.AVAILABLE,
+      seller: mockUser,
+    };
+
+    it('allows the seller to move AVAILABLE -> RESERVED', async () => {
+      mockListingRepository.findOne.mockResolvedValue(mockApprovedAvailableListing);
+      mockListingRepository.save.mockImplementation((l) => Promise.resolve(l));
+
+      const result = await service.updateListingStatus(
+        sellerId,
+        validUuid2,
+        ListingsStatus.RESERVED,
+      );
+
+      expect(result.listing_status).toBe(ListingsStatus.RESERVED);
+      expect(mockListingRepository.findOne).toHaveBeenCalledWith({
+        where: { id: validUuid2 },
+        relations: ['seller'],
+      });
+      expect(mockListingRepository.save).toHaveBeenCalled();
+    });
+
+    it('allows the seller to move RESERVED -> SOLD', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        listing_status: ListingsStatus.RESERVED,
+      });
+      mockListingRepository.save.mockImplementation((l) => Promise.resolve(l));
+
+      const result = await service.updateListingStatus(
+        sellerId,
+        validUuid2,
+        ListingsStatus.SOLD,
+      );
+
+      expect(result.listing_status).toBe(ListingsStatus.SOLD);
+    });
+
+    it('allows the seller to un-reserve, RESERVED -> AVAILABLE', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        listing_status: ListingsStatus.RESERVED,
+      });
+      mockListingRepository.save.mockImplementation((l) => Promise.resolve(l));
+
+      const result = await service.updateListingStatus(
+        sellerId,
+        validUuid2,
+        ListingsStatus.AVAILABLE,
+      );
+
+      expect(result.listing_status).toBe(ListingsStatus.AVAILABLE);
+    });
+
+    it('rejects a transition out of SOLD (terminal state)', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        listing_status: ListingsStatus.SOLD,
+      });
+
+      await expect(
+        service.updateListingStatus(sellerId, validUuid2, ListingsStatus.AVAILABLE),
+      ).rejects.toThrow(BadRequestException);
+      expect(mockListingRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('rejects a transition out of WITHDRAWN (terminal state)', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        listing_status: ListingsStatus.WITHDRAWN,
+      });
+
+      await expect(
+        service.updateListingStatus(sellerId, validUuid2, ListingsStatus.RESERVED),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('rejects setting the same status the listing already has', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        listing_status: ListingsStatus.RESERVED,
+      });
+
+      await expect(
+        service.updateListingStatus(sellerId, validUuid2, ListingsStatus.RESERVED),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('rejects a non-owner attempting to change status', async () => {
+      mockListingRepository.findOne.mockResolvedValue(mockApprovedAvailableListing);
+
+      await expect(
+        service.updateListingStatus(otherUserId, validUuid2, ListingsStatus.RESERVED),
+      ).rejects.toThrow(ForbiddenException);
+      expect(mockListingRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('rejects changing status on a listing that is not yet APPROVED', async () => {
+      mockListingRepository.findOne.mockResolvedValue({
+        ...mockApprovedAvailableListing,
+        status: ListingStatus.PENDING,
+      });
+
+      await expect(
+        service.updateListingStatus(sellerId, validUuid2, ListingsStatus.RESERVED),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('throws NotFoundException for a listing that does not exist', async () => {
+      mockListingRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.updateListingStatus(sellerId, validUuid2, ListingsStatus.RESERVED),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('rejects a malformed listing ID before hitting the repository', async () => {
+      await expect(
+        service.updateListingStatus(sellerId, 'invalid-id', ListingsStatus.RESERVED),
+      ).rejects.toThrow(BadRequestException);
+      expect(mockListingRepository.findOne).not.toHaveBeenCalled();
     });
   });
 

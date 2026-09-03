@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -24,11 +25,20 @@ import {
   PaginatedSavedSearchResponseDto,
 } from './dto/saved_search.dto';
 import { User } from '../database/entities/users.entity';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Saved Searches')
+@ApiCookieAuth('access_token')
 @Controller('saved-searches')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SavedSearchesController {
   constructor(private readonly savedSearchesService: SavedSearchesService) {}
+
+  private isValidUUID(uuid: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  }
 
   //POST /saved-searches to create a new saved search
   @Post()
@@ -62,6 +72,10 @@ export class SavedSearchesController {
     @UserId() userId: string,
     @Param('id') id: string,
   ): Promise<SavedSearchResponseDto> {
+    if (!this.isValidUUID(id)) {
+      throw new NotFoundException('Saved search not found');
+    }
+
     const savedSearch = await this.savedSearchesService.getSavedSearchById(
       id,
       userId,
@@ -76,6 +90,9 @@ export class SavedSearchesController {
     @UserId() userId: string,
     @Param('id') id: string,
   ): Promise<void> {
+    if (!this.isValidUUID(id)) {
+      throw new NotFoundException('Saved search not found');
+    }
     await this.savedSearchesService.deleteSavedSearch(id, userId);
   }
 

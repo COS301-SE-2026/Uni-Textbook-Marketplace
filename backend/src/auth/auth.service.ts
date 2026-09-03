@@ -14,6 +14,8 @@ import { IsNull, Repository } from 'typeorm';
 
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 import { OtpService } from './otp.service';
 import type { IEmailService } from '../email/email.interface';
@@ -156,6 +158,10 @@ export class AuthService {
         password_hash: true,
         role: true,
         is_verified: true,
+        is_banned: true,
+        ban_reason: true,
+        first_name: true,
+        last_name: true,
       },
       where: {
         email,
@@ -176,20 +182,55 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password.');
     }
 
+    if (user.is_banned) {
+      const tokens = this.issueTokens({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          role: user.role,
+          is_banned: true,
+          ban_reason: user.ban_reason ?? 'No reason provided.',
+        },
+      };
+    }
+
     if (!user.is_verified) {
       const otp = await this.otpService.createOtp(dto.email);
       await this.emailService.sendOtp(dto.email, otp);
-
       throw new UnauthorizedException(
         'Email not verified. A new verification code has been sent.',
       );
     }
 
-    return this.issueTokens({
+    const tokens = this.issueTokens({
       id: user.id,
       email: user.email,
       role: user.role,
     });
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        is_banned: false,
+        ban_reason: null,
+      },
+    };
   }
 
   private issueTokens(user: { id: string; email: string; role: string }) {
@@ -271,6 +312,9 @@ export class AuthService {
         first_name: true,
         last_name: true,
         role: true,
+        is_banned: true,
+        ban_reason: true,
+        banned_at: true,
       },
       where: {
         id: userId,
@@ -282,6 +326,90 @@ export class AuthService {
     }
 
     return result;
+  }
+
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    if (dto.first_name === undefined && dto.last_name === undefined) {
+      throw new BadRequestException('No changes provided');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    if (dto.first_name !== undefined) {
+      user.first_name = dto.first_name;
+    }
+    if (dto.last_name !== undefined) {
+      user.last_name = dto.last_name;
+    }
+
+    await this.userRepository.save(user);
+
+    return {
+      id: user.id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+    };
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    if (dto.new_password !== dto.confirm_password) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    const user = await this.userRepository.findOne({
+      select: {
+        id: true,
+        password_hash: true,
+      },
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const currentValid = await bcrypt.compare(
+      dto.current_password,
+      user.password_hash,
+    );
+
+    if (!currentValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    const password_hash = await bcrypt.hash(
+      dto.new_password,
+      this.BCRYPT_ROUNDS,
+    );
+
+    await this.userRepository.update(
+      { id: userId },
+      { password_hash, updated_at: new Date() },
+    );
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  async deactivateAccount(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId, deleted_at: IsNull() },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    await this.userRepository.softDelete(userId);
+
+    return { message: 'Account deactivated successfully.' };
   }
 
   async forgotPassword(dto: ForgotPasswordDto) {

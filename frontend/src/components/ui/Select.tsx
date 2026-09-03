@@ -1,4 +1,5 @@
 type SelectProps = Readonly<{
+    id?: string;
     label?: string;
     name?: string;
     value?: string;
@@ -6,11 +7,11 @@ type SelectProps = Readonly<{
     children: React.ReactNode;
 }>;
 
-export default function Select({ label, name, value, onChange, children }: SelectProps) {
+export default function Select({ id, label, name, value, onChange, children }: SelectProps) {
     return (
         <div>
-            {label && <label className="form-label">{label}</label>}
-            <select name={name} value={value} onChange={onChange}>
+            {label && <label htmlFor={id} className="form-label">{label}</label>}
+            <select id={id} name={name} value={value} onChange={onChange}>
                 {children}
             </select>
         </div>

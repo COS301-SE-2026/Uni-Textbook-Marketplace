@@ -1,41 +1,56 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
-  Inject,
-  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm'; // Added DeepPartial
+import { Repository, DeepPartial } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EditEvent } from './events/edit.event';
 
-import { Listing, ListingStatus } from '../database/entities/listing.entity';
+import {
+  Listing,
+  ListingStatus,
+  ListingsStatus,
+} from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
-
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
-import { SavedSearchesService } from '../saved_search/saved_search.service';
 
+const LISTING_STATUS_TRANSITIONS: Record<ListingsStatus, ListingsStatus[]> = {
+  [ListingsStatus.AVAILABLE]: [
+    ListingsStatus.RESERVED,
+    ListingsStatus.SOLD,
+    ListingsStatus.WITHDRAWN,
+  ],
+  [ListingsStatus.RESERVED]: [
+    ListingsStatus.AVAILABLE, // un-reserve, e.g. a deal falls through
+    ListingsStatus.SOLD,
+    ListingsStatus.WITHDRAWN,
+  ],
+  [ListingsStatus.SOLD]: [],
+  [ListingsStatus.WITHDRAWN]: [],
+};
 @Injectable()
 export class ListingsService {
-  [x: string]: any;
   constructor(
     @InjectRepository(Listing)
-    private listingRepo: Repository<Listing>,
+    private readonly listingRepo: Repository<Listing>,
 
     @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private readonly userRepo: Repository<User>,
 
     @InjectRepository(Book)
-    private bookRepo: Repository<Book>,
+    private readonly bookRepo: Repository<Book>,
 
     @InjectRepository(ModuleEntity)
-    private moduleRepo: Repository<ModuleEntity>,
+    private readonly moduleRepo: Repository<ModuleEntity>,
 
-    @Inject(forwardRef(() => SavedSearchesService))
-    private savedSearchesService: SavedSearchesService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createListing(userId: string, dto: CreateListingDto) {
@@ -69,48 +84,7 @@ export class ListingsService {
 
     const savedListing = await this.listingRepo.save(listing);
 
-    this.checkSavedSearchMatches(savedListing.id).catch((error: unknown) => {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error('Error checking saved search matches:', errorMessage);
-    });
-
     return savedListing;
-  }
-
-  private async checkSavedSearchMatches(listingId: string): Promise<void> {
-    try {
-      const matches =
-        await this.savedSearchesService.findMatchingSavedSearches(listingId);
-
-      if (matches.length === 0) {
-        console.log(`No saved search matches found for listing ${listingId}`);
-        return;
-      }
-      console.log(
-        `Found ${matches.length} saved search matches for listing ${listingId}`,
-      );
-
-      for (const match of matches) {
-        console.log(
-          `User ${match.userId} has a saved search match for listing ${listingId}`,
-        );
-        // i'll uncomment this when the notification service is ready:
-        // await this.notificationService.createNotification({
-        //   userId: match.userId,
-        //   type: 'NEW_MATCH',
-        //   listingId: listingId,
-        //   message: `New listing matches your saved search`,
-        // });
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error(
-        `Error checking saved search matches for listing ${listingId}:`,
-        errorMessage,
-      );
-    }
   }
 
   //get the validated ones
@@ -221,15 +195,116 @@ export class ListingsService {
     return uuidRegex.test(uuid);
   }
 
+  private createRejectedListingChanges(
+    dto: EditListingDto,
+    listing: Listing,
+  ): string[] {
+    const changes: string[] = [];
+    const updates = [
+      {
+        shouldAdd: !!dto.title && dto.title !== listing.title,
+        message: `Title: "${listing.title}" : "${dto.title}"`,
+      },
+      {
+        shouldAdd: !!dto.price && dto.price !== listing.price,
+        message: `Price: ${listing.price} : ${dto.price}`,
+      },
+      {
+        shouldAdd: !!dto.condition && dto.condition !== listing.condition,
+        message: `Condition: ${listing.condition} : ${dto.condition}`,
+      },
+      {
+        shouldAdd: !!dto.description && dto.description !== listing.description,
+        message: 'Description updated',
+      },
+      {
+        shouldAdd: !!dto.photo_urls && dto.photo_urls !== listing.photo_urls,
+        message: 'Photos updated',
+      },
+    ];
+
+    for (const update of updates) {
+      if (update.shouldAdd) {
+        changes.push(update.message);
+      }
+    }
+
+    return changes;
+  }
+
   async editlisting(dto: EditListingDto) {
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
+      relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
     if (!listing) throw new NotFoundException('listing not found');
 
+    if (!this.isValidUUID(listing.id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
+    if (listing.status === ListingStatus.REJECTED) {
+      const event = new EditEvent();
+
+      event.adminId = listing.reviewer.id;
+      event.entityType = 'Edited listing';
+      event.listingId = listing.id;
+      event.studentId = listing.seller.id;
+
+      const changes = this.createRejectedListingChanges(dto, listing);
+
+      event.message = `Listing has been edited. Changes: ${changes.join('; ')}`;
+      listing.status = ListingStatus.PENDING;
+      this.eventEmitter.emit('listing.edit', event);
+    }
+
     Object.assign(listing, dto);
 
+    return await this.listingRepo.save(listing);
+  }
+
+  async updateListingStatus(
+    userId: string,
+    listingId: string,
+    newStatus: ListingsStatus,
+  ) {
+    if (!this.isValidUUID(listingId)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
+    const listing = await this.listingRepo.findOne({
+      where: { id: listingId },
+      relations: ['seller'],
+    });
+
+    if (!listing) throw new NotFoundException('Listing not found');
+
+    if (listing.seller.id !== userId) {
+      throw new ForbiddenException(
+        'Only the listing owner can update its sale status',
+      );
+    }
+
+    if (listing.status !== ListingStatus.APPROVED) {
+      throw new BadRequestException(
+        'Only approved listings can have their sale status changed',
+      );
+    }
+
+    if (listing.listing_status === newStatus) {
+      throw new BadRequestException(`Listing is already ${newStatus}`);
+    }
+
+    const allowedNext =
+      LISTING_STATUS_TRANSITIONS[listing.listing_status] ?? [];
+    if (!allowedNext.includes(newStatus)) {
+      throw new BadRequestException(
+        `Cannot change status from ${listing.listing_status} to ${newStatus}`,
+      );
+    }
+
+    listing.listing_status = newStatus;
     return await this.listingRepo.save(listing);
   }
 
