@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ReportsService } from '../reports/reports.service';
-import { ReportFiltersDto } from 'src/reports/dto/report-filters.dto';
+import { ReportFiltersDto } from '../reports/dto/report-filters.dto';
 
 interface AuthenticatedUser {
   id: string;

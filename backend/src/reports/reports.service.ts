@@ -83,7 +83,7 @@ export class ReportsService {
       where,
       relations: {
         reporter: true,
-        listing:{
+        listing: {
           seller: true,
         },
       },
@@ -112,7 +112,7 @@ export class ReportsService {
       },
       relations: {
         reporter: true,
-        listing:{
+        listing: {
           seller: true,
         },
       },
@@ -132,7 +132,7 @@ export class ReportsService {
       },
       relations: {
         reporter: true,
-        listing:{
+        listing: {
           seller: true,
         },
       },

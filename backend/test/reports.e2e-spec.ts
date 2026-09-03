@@ -19,6 +19,7 @@ import {
     Report,
     ReportStatus,
 } from '../src/database/entities/report.entity';
+import { randomUUID } from 'crypto';
 
 jest.setTimeout(30000);
 
@@ -39,9 +40,7 @@ describe('Reports E2E Tests', () => {
     let jwtService: JwtService;
 
     const getUniqueId = (): string => {
-        return `${Date.now()}_${Math.random()
-            .toString(36)
-            .substring(2, 10)}`;
+        return randomUUID();
     };
 
     const createUniversity = async (): Promise<University> => {
@@ -71,11 +70,7 @@ describe('Reports E2E Tests', () => {
     const createBook = async (): Promise<Book> => {
         return bookRepository.save({
             title: `Test Book ${getUniqueId()}`,
-            isbn: `978013${Date.now()
-                .toString()
-                .slice(-6)}${Math.random()
-                .toString(36)
-                .substring(2, 4)}`,
+            isbn: randomUUID().replace(/-/g, '').substring(0, 13),
             author: 'Test Author',
             edition: 3,
             publisher: 'Test Publisher',
@@ -84,11 +79,7 @@ describe('Reports E2E Tests', () => {
 
     const createModule = async (): Promise<ModuleEntity> => {
         return moduleRepository.save({
-            code: `COS${Date.now()
-                .toString()
-                .slice(-4)}${Math.random()
-                .toString(36)
-                .substring(2, 4)}`,
+            code: `COS${randomUUID().replace(/-/g, '').substring(0, 7)}`,
             name: `Imperative Programming ${getUniqueId()}`,
         });
     };

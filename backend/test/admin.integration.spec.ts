@@ -12,6 +12,7 @@ import { Module as ModuleEntity } from "../src/database/entities/module.entity";
 import { University } from "../src/database/entities/university.entity";
 import { Faculty } from "../src/database/entities/faculty.entity";
 import { AuditLog } from "../src/database/entities/audit_log.entity";
+import { randomUUID } from "crypto";
 
 
 jest.setTimeout(30000);
@@ -32,7 +33,7 @@ describe('Admin Integration Tests', () => {
 
     
     const getUniqueId = (): string => {
-        return `${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        return randomUUID();
     };
 
   const createUniversity = async (): Promise<University> => {
@@ -59,14 +60,14 @@ describe('Admin Integration Tests', () => {
 
     const createBook = () => bookRepository.save({
         title: `Test Book ${getUniqueId()}`,
-        isbn: `978013${Date.now().toString().slice(-6)}${Math.random().toString(36).substring(2, 4)}`,
+        isbn: `978013${randomUUID().replace(/-/g, '').substring(0, 9)}`,
         author: 'Test Author',
         edition: 3,
         publisher: 'Test Publisher',
     });
 
     const createModule = () => moduleRepository.save({
-        code: `COS${Date.now().toString().slice(-4)}${Math.random().toString(36).substring(2, 4)}`,
+        code: `COS${randomUUID().replace(/-/g, '').substring(0, 7)}`,
         name: `Imperative Programming ${getUniqueId()}`,
     });
 
