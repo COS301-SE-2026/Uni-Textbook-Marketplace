@@ -35,7 +35,8 @@ export class SavedSearchesController {
   constructor(private readonly savedSearchesService: SavedSearchesService) {}
 
   private isValidUUID(uuid: string): boolean {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
   }
 
@@ -71,8 +72,7 @@ export class SavedSearchesController {
     @UserId() userId: string,
     @Param('id') id: string,
   ): Promise<SavedSearchResponseDto> {
-
-     if (!this.isValidUUID(id)) {
+    if (!this.isValidUUID(id)) {
       throw new NotFoundException('Saved search not found');
     }
 
@@ -90,8 +90,7 @@ export class SavedSearchesController {
     @UserId() userId: string,
     @Param('id') id: string,
   ): Promise<void> {
-    
-        if (!this.isValidUUID(id)) {
+    if (!this.isValidUUID(id)) {
       throw new NotFoundException('Saved search not found');
     }
     await this.savedSearchesService.deleteSavedSearch(id, userId);
