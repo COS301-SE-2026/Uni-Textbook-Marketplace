@@ -1,6 +1,6 @@
 import './setup';
 import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestModule } from './test.module';
 import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
@@ -42,9 +42,7 @@ describe('Reports E2E Tests', () => {
 
     let jwtService: JwtService;
 
-    const getUniqueId = (): string => {
-        return randomUUID();
-    };
+    const getUniqueId = randomUUID;
 
     const createUniversity = async (): Promise<University> => {
         let university = await universityRepository.findOne({
@@ -123,6 +121,7 @@ describe('Reports E2E Tests', () => {
             );
         }
 
+        
         await userRepository.update(
             { email },
             { is_verified: true },
@@ -177,6 +176,12 @@ describe('Reports E2E Tests', () => {
         }).compile();
 
         app = moduleRef.createNestApplication();
+        app.useGlobalPipes(
+            new ValidationPipe({
+                whitelist: true,
+                forbidNonWhitelisted: true,
+            }),
+        );
         await app.init();
 
         dataSource = app.get(DataSource);
@@ -204,7 +209,7 @@ describe('Reports E2E Tests', () => {
     }, 30000);
 
     afterEach(async () => {
-        if (dataSource && dataSource.isInitialized) {
+        if (dataSource?.isInitialized) {
             try {
                 await dataSource.query(
                     'TRUNCATE TABLE reports CASCADE',
@@ -251,15 +256,14 @@ describe('Reports E2E Tests', () => {
             await app.close();
         }
 
-        if (dataSource && dataSource.isInitialized) {
+        if (dataSource?.isInitialized) {
             await dataSource.destroy();
         }
     });
 
     describe('Create Report', () => {
-        it('should create a report successfully', async () => {
+        async function createReport(reason: string) {
             const reporter = await createUser();
-
             const book = await createBook();
             const module = await createModule();
 
@@ -276,60 +280,44 @@ describe('Reports E2E Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     listing_id: listing.id,
-                    reason: 'Fraudulent listing',
+                    reason,
                 })
                 .expect(201);
 
+            return {
+                response,
+                reporter,
+                book,
+                module,
+                listing,
+            };
+        }
+
+        it('should create a report successfully', async () => {
+            const { response } = await createReport('Fraudulent listing');
+
             expect(response.body).toHaveProperty('id');
-            expect(response.body.reason).toBe(
-                'Fraudulent listing',
-            );
-            expect(response.body.status).toBe(
-                ReportStatus.PENDING,
-            );
+            expect(response.body.reason).toBe('Fraudulent listing');
+            expect(response.body.status).toBe(ReportStatus.PENDING);
         }, 15000);
 
         it('should save the report to the database', async () => {
-            const reporter = await createUser();
-
-            const book = await createBook();
-            const module = await createModule();
-
-            const listing = await createTestListing(
-                reporter.id,
-                book.id,
-                module.id,
-            );
-
-            const token = getAuthToken(reporter);
-
-            const response = await request(app.getHttpServer())
-                .post('/reports')
-                .set('Authorization', `Bearer ${token}`)
-                .send({
-                    listing_id: listing.id,
-                    reason: 'Misleading listing',
-                })
-                .expect(201);
+            const { response, reporter, listing } =
+                await createReport('Misleading listing');
 
             const savedReport = await reportRepository.findOne({
                 where: { id: response.body.id },
-                relations: ['reporter', 'listing'],
+                relations: {
+                    reporter: true,
+                    listing: true,
+                },
             });
 
-            expect(savedReport).toBeDefined();
-            expect(savedReport?.reason).toBe(
-                'Misleading listing',
-            );
-            expect(savedReport?.status).toBe(
-                ReportStatus.PENDING,
-            );
-            expect(savedReport?.reporter.id).toBe(
-                reporter.id,
-            );
-            expect(savedReport?.listing.id).toBe(
-                listing.id,
-            );
+            expect(savedReport).not.toBeNull();
+            expect(savedReport?.reason).toBe('Misleading listing');
+            expect(savedReport?.status).toBe(ReportStatus.PENDING);
+            expect(savedReport?.reporter.id).toBe(reporter.id);
+            expect(savedReport?.listing.id).toBe(listing.id);
         }, 15000);
 
         it('should return 401 when an unauthenticated user creates a report', async () => {
