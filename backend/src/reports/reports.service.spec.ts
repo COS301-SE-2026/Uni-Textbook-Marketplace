@@ -87,12 +87,14 @@ describe('ReportsService', () => {
             status: ReportStatus.PENDING,
         } as Report;
 
-        it('should create a report successfully', async () => {
+        beforeEach(() => {
             listingsRepository.findOne.mockResolvedValue(listing);
             usersRepository.findOne.mockResolvedValue(user);
             reportsRepository.create.mockReturnValue(report);
             reportsRepository.save.mockResolvedValue(report);
+        });
 
+        it('should create a report successfully', async () => {
             const result = await service.create(
                 userId,
                 createReportDto,
@@ -110,10 +112,6 @@ describe('ReportsService', () => {
                 },
             });
 
-            expect(
-                    reportsRepository.save,
-                ).toHaveBeenCalledWith(report);
-
             expect(reportsRepository.save).toHaveBeenCalledWith(
                 report,
             );
@@ -122,22 +120,6 @@ describe('ReportsService', () => {
         });
 
         it('should set the report status to PENDING', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             const result = await service.create(
                 userId,
                 createReportDto,
@@ -149,22 +131,6 @@ describe('ReportsService', () => {
         });
 
         it('should assign the correct reporter', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -180,22 +146,6 @@ describe('ReportsService', () => {
         });
 
         it('should assign the correct listing', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -211,22 +161,6 @@ describe('ReportsService', () => {
         });
 
         it('should save the provided reason', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -298,7 +232,6 @@ describe('ReportsService', () => {
                 reportsRepository.save,
             ).not.toHaveBeenCalled();
         });
-
 
     });
 
@@ -374,13 +307,13 @@ describe('ReportsService', () => {
         });
 
         it('should throw NotFoundException when report does not exist', async () => {
-        reportsRepository.findOne.mockResolvedValue(null);
+            reportsRepository.findOne.mockResolvedValue(null);
 
-        await expect(
-            service.findOne('does-not-exist'),
-        ).rejects.toThrow(
-            new NotFoundException('Report not found'),
-        );
+            await expect(
+                service.findOne('does-not-exist'),
+            ).rejects.toThrow(
+                new NotFoundException('Report not found'),
+            );
         });
     });
 
