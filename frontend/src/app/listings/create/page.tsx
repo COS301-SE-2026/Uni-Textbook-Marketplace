@@ -132,7 +132,7 @@ function CreateListingPageInner() {
     const [loading, setLoading] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const searchParams = useSearchParams()
-    const [tutorialActive, setTutorialActive] = useState(false)
+    const tutorialActive = searchParams.get('tutorial') === '1'
 
     const [form, setForm] = useState<ListingFormData>({
         // Book
@@ -272,12 +272,6 @@ function CreateListingPageInner() {
         })
         tour.drive()
     },[])
-
-    useEffect(() => {
-        
-        if (searchParams.get('tutorial') === '1') setTutorialActive(true)
-
-    }, [searchParams])
 
     useEffect(() => {
         
