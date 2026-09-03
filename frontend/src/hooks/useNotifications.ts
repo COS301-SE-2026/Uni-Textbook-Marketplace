@@ -5,16 +5,42 @@ import type { Notification } from "@/types/notification";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const POLL_INTERVAL_MS = 15000;
+
+export interface NotificationMeta {
+
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+}
+
+interface fetchResult {
+
+    items: Notification[];
+    meta: NotificationMeta;
+
+}
 
 
-async function fetchNotifications(): Promise<Notification[]> {
+async function fetchNotifications(page: number, limit: number): Promise<fetchResult> {
 
-    const res = await fetch(`${API_URL}/notifications/mine`, {
+    const res = await fetch(`${API_URL}/notifications/mine?page=${page}&limit=${limit}`, {
         credentials: "include",
     });
 
 
-    if (res.status === 404) return [];
+    if (res.status === 404) {
+        return {
+            items: [],
+            meta: {
+                total: 0,
+                page,
+                limit,
+                pages: 1
+            }
+        };
+    };
 
     if (!res.ok) {
         throw new Error("Failed to load notifications");
@@ -22,26 +48,39 @@ async function fetchNotifications(): Promise<Notification[]> {
 
     const data = await res.json();
 
+    if (data && typeof data === "object" && data.pagination) {
+        const list = Array.isArray(data.items)
+            ? data.items
+            : Array.isArray(data.data)
+                ? data.data
+                : [];
+        return { items: list, meta: data.pagination };
+    }
+
+    let items: Notification[] = [];
     if (Array.isArray(data)) {
-        return data;
-    }
+        items = data;
+    } else if (data && typeof data === 'object') {
 
-    if (data && typeof data === 'object' && Array.isArray(data.items)) {
-        return data.items;
-    }
+        for (const key of ["notifications", "data", "results"]) {
 
-    if (data && typeof data === 'object') {
-
-
-        for (const key of ['notifications', 'data', 'results']) {
             if (Array.isArray(data[key])) {
-                return data[key];
+                items = data[key];
+                break;
             }
         }
     }
-    
+
     console.warn('Unexpected notification response shape:', data);
-    return [];
+    return {
+        items,
+        meta: {
+            total: items.length,
+            page: 1,
+            limit,
+            pages: 1
+        },
+    };
 }
 
 async function markReadRequest(id: string): Promise<void> {
@@ -51,7 +90,7 @@ async function markReadRequest(id: string): Promise<void> {
     });
 
     if (!res.ok) throw new Error("Failed to mark notification as read");
-    
+
 }
 
 
@@ -75,13 +114,12 @@ async function deleteNotification(id: string): Promise<void> {
     if (!res.ok) throw new Error('failed to delete');
 
 }
- 
 
-const POLL_INTERVAL_MS = 15000;
 
 interface UseNotificationsResult {
     notifications: Notification[];
     unreadCount: number;
+    meta: NotificationMeta;
     isLoading: boolean;
     error: string | null;
     markRead: (id: string) => Promise<void>;
@@ -90,18 +128,22 @@ interface UseNotificationsResult {
     deleteNotif: (id: string) => Promise<void>;
 }
 
-export function useNotifications(): UseNotificationsResult {
+export function useNotifications(page: number = 1, limit: number = 5): UseNotificationsResult {
 
     const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [meta, setMeta] = useState<NotificationMeta>({ total: 0, page, limit, pages: 1 })
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
 
-    const refresh = useCallback(async () => {
+    const load = useCallback(async () => {
+
+        setIsLoading(true);
 
         try {
-            const items = await fetchNotifications();
-            setNotifications(Array.isArray(items) ? items : []);
+            const { items, meta: m } = await fetchNotifications(page, limit);
+            setNotifications(items);
+            setMeta(m);
             setError(null);
 
         } catch (err) {
@@ -111,99 +153,75 @@ export function useNotifications(): UseNotificationsResult {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [page, limit]);
 
     useEffect(() => {
-    let isMounted = true;
-
-    const loadInitial = async () => {
-      try {
-        const items = await fetchNotifications();
-        if (isMounted) {
-          setNotifications(items);
-          setError(null);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Something wrong occurred");
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadInitial();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+        const id = setTimeout(load,0);
+        return () => clearTimeout(id);
+    }, [load]);
 
 
     useEffect(() => {
-        const interval = setInterval(() => {
-        refresh();
-        }, POLL_INTERVAL_MS);
+        const interval = setInterval(load, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);
-    }, [refresh]);
+    }, [load]);
 
-    const unreadCount = Array.isArray(notifications) 
-    ? notifications.filter((n) => !n.is_read).length 
-    : 0;
+    const unreadCount = notifications.filter((n) => !n.is_read).length;
 
     const markRead = useCallback(
-    async (id: string) => {
+        async (id: string) => {
 
-      setNotifications((prev) => {
-        if (!Array.isArray(prev)) return [];
+            setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
 
-        return prev.map((n) => (n.id === id ? { ...n, is_read: true } : n));
-      });
+            try {
+                await markReadRequest(id);
+            } catch {
 
-      try {
-        await markReadRequest(id);
-      } catch {
+                load();
+            }
+        },
 
-        refresh();
-      }
-    },
-    
-    [refresh]
-  );
+        [load]
+    );
 
 
     const markAllRead = useCallback(async () => {
-        setNotifications((prev) => {
-            if (!Array.isArray(prev)) return [];
-            return prev.map((n) => ({ ...n, is_read: true }));
-        });
+        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
 
         try {
             await markAllReadRequest();
         } catch {
-            refresh();
+            load();
         }
-    }, [refresh]);
+    }, [load]);
 
-    const deleteNotif  = useCallback(async (id: string) => {
+    const deleteNotif = useCallback(async (id: string) => {
+
+        const prevNotifications = notifications;
+        const prevMeta = meta;
+
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        setMeta((m) => ({ ...m, total: Math.max(0, m.total - 1) }));
 
         try {
             await deleteNotification(id);
         } catch {
-            refresh();
+            setNotifications(prevNotifications);
+            setMeta(prevMeta)
+            setError("failed to delete notification");
         }
-    }, [refresh]);
+    }, [notifications, meta]);
 
-    return { notifications: Array.isArray(notifications) ? notifications : [],
-        unreadCount, 
-        isLoading, 
-        error, 
-        markRead, 
-        markAllRead, 
-        refresh,
+    return {
+        notifications,
+        meta,
+        unreadCount,
+        isLoading,
+        error,
+        markRead,
+        markAllRead,
+        refresh: load,
         deleteNotif,
     };
 }

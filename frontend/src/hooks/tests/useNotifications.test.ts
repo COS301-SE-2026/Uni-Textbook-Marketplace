@@ -1,7 +1,8 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useNotifications } from '../useNotifications';
 import type { Notification } from '@/types/notification';
-
+import { Pagination } from '@/components/ui/pagination';
+//correct
 
 
 const mockFetch = jest.fn();
@@ -85,7 +86,7 @@ describe('useNotifications', () => {
       expect(result.current.unreadCount).toBe(1);
 
       expect(fetch).toHaveBeenCalledWith(
-        `${API_URL}/notifications/mine`,
+        `${API_URL}/notifications/mine?page=1&limit=5`,
         expect.objectContaining({ credentials: 'include' })
       );
     });
@@ -122,13 +123,22 @@ describe('useNotifications', () => {
     it('handles paginated responses', async () => {
 
 
-      setup({ items: mockNotifications });
+      setup({ 
+        items: mockNotifications,
+        pagination: {
+          total: 2,
+          page: 1,
+          limit: 5,
+          pages: 1
+        }, 
+      });
       const { result } = renderHook(() => useNotifications());
 
       await waitForLoadingComplete(result);
 
 
       expect(result.current.notifications).toEqual(mockNotifications);
+      expect(result.current.meta).toEqual({ total: 2, page: 1, limit: 5, pages: 1 });
     });
 
     it('handles network errors', async () => {

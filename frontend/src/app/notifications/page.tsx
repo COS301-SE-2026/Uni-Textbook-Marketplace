@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { CheckCheck, Trash2, Eye, Check, BellOff } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { NotificationPagination } from "@/components/pagination/pagination";
 import { getNotificationHeading, getNotificationIcon, getNotificationRoute } from "@/utils/notificationRoutes";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 5;
 
 function timeAgo(isoDate: string): string {
 
@@ -35,14 +38,14 @@ function NotificationSkeletonRow() {
                 <div className="h-3 w-3/4 animate-pulse rounded bg-[var(--muted)]" />
                 <div className="h-3 w-3/4 animate-pulse rounded bg-[var(--muted)]" />
             </div>
-            <div className="mt1 h-3 w-10 shrink-0 animate-pulse rounded bg-[var(--muted)]" />
+            <div className="mt-1 h-3 w-10 shrink-0 animate-pulse rounded bg-[var(--muted)]" />
         </li>
     );
 }
 
-function EmptyState({filter}: { filter: 'all' | 'unread'}){
+function EmptyState({ filter }: { filter: 'all' | 'unread' }) {
 
-    return(
+    return (
 
         <div className="flex flex-col items-center px-6 py-16 text-center">
 
@@ -65,33 +68,131 @@ function EmptyState({filter}: { filter: 'all' | 'unread'}){
     );
 }
 
-export default function NotificationsPage() {
+function NotificationsContent() {
 
-    const { notifications, isLoading, error, markRead, markAllRead, deleteNotif } = useNotifications();
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [filter, setFilter] = useState<"all" | "unread">("all");
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const page = Number(searchParams.get("page") || 1);
+    const filter = (searchParams.get("filter") as "all" | "unread") || "all";
+
+    const { notifications, meta, unreadCount, isLoading, error, markRead, markAllRead, deleteNotif } =
+        useNotifications(page, PAGE_SIZE);
+
     const filtered = useMemo(
-        () => (filter === 'unread' ? notifications.filter((n) => !n.is_read) : notifications),
+        () => (filter === "unread" ? notifications.filter((n) => !n.is_read) : notifications),
         [notifications, filter]
     );
-    
-    const unreadCount = useMemo(
-        
-        () => notifications.filter((n) => !n.is_read).length,
-        [notifications]
-    )
 
-    const visible = notifications.slice(0, visibleCount);
-    const hasMore = visibleCount < notifications.length;
+    const setFilter = (tab: "all" | "unread") => {
+        const params = new URLSearchParams(searchParams);
+        params.set("filter", tab);
+        params.set("page", "1");
+        router.push(`${pathname}?${params.toString()}`);
+    };
+
 
     return (
+
+        <>
+
+        
+            <div className="relative overflow-hidden w-full" style={{
+                background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.3)',
+            }}>
+                
+                <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+
+
+                    <div className="relative w-full h-full">
+
+
+                        <Image
+                            src="/../../notification.png"
+                            alt="Student reading textbook"
+                            fill
+                            className="object-contain object-right"
+                            priority
+                            style={{ objectPosition: '100% 50%' }}
+                        />
+                        
+                        <div className="absolute inset-0" style={{
+                            background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
+                        }} />
+                    </div>
+
+
+                </div>
+                
+                
+                <div className="absolute inset-0 opacity-20" style={{
+                    background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
+                }} />
+                
+                
+                <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
+                }} />
+                
+                
+                <div className="absolute inset-0 opacity-5" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                }} />
+                
+                
+                <div className="absolute top-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                }} />
+                
+                <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
+
+
+                    <div className="flex items-start gap-4">
+
+
+
+                        <div className="p-2 rounded-xl" style={{
+                            background: 'rgba(255,255,255,0.08)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                            <BellOff size={24} className="text-[#00B4D8]" />
+                        </div>
+
+
+                        <div>
+                            <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
+                                Notifications
+                            </h1>
+                            <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
+                                Stay updated with your latest activity
+                            </p>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                
+                
+                <div className="absolute bottom-0 left-0 right-0 h-px" style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
+                }} />
+            </div>
+
         <div className="container-content py-10">
+
+
             <div className="mb-6 flex items-center justify-between">
 
 
                 <div>
 
-                    <h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>
+                    {/*<h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>*/}
                     {unreadCount > 0 && (
                         <p className="mt-1 text-sm text-[#4B4F58] dark:text-gray-400">
                             {unreadCount} unread
@@ -104,22 +205,20 @@ export default function NotificationsPage() {
                 <div className="flex items-center gap-3">
 
                     <div className="flex rounded-md border border-[var(--card-border)] bg-[var(--card-bg)] p-1 text-sm">
-                        {(["all","unread"] as const).map((tab) => (
-                           <button
+                        {(["all", "unread"] as const).map((tab) => (
+                            <button
                                 key={tab}
                                 type="button"
                                 onClick={() => {
                                     setFilter(tab);
-                                    setVisibleCount(PAGE_SIZE);
                                 }}
-                                className={`rounded px-3 py-1.5 font-medium capitalize transition-colors ${
-                                    filter === tab
-                                        ? "bg-[var(--muted)] text-[var(--foreground)]"
-                                        : "text-[#4B4F58] hover:text-[var(--foreground)] dark:text-gray-400"
-                                }`}
-                           >
+                                className={`rounded px-3 py-1.5 font-medium capitalize transition-colors ${filter === tab
+                                    ? "bg-[var(--muted)] text-[var(--foreground)]"
+                                    : "text-[#4B4F58] hover:text-[var(--foreground)] dark:text-gray-400"
+                                    }`}
+                            >
                                 {tab}
-                           </button> 
+                            </button>
                         ))}
                     </div>
 
@@ -140,7 +239,7 @@ export default function NotificationsPage() {
                 {isLoading && (
 
                     <ul>
-                        {Array.from({length: 5}).map((_,i) => (
+                        {Array.from({ length: 5 }).map((_, i) => (
                             <NotificationSkeletonRow key={i} />
                         ))}
                     </ul>
@@ -153,12 +252,12 @@ export default function NotificationsPage() {
                     </p>
                 )}
 
-                {!isLoading && !error && visible.length === 0 && <EmptyState filter={filter} />}
+                {!isLoading && !error && filtered.length === 0 && <EmptyState filter={filter} />}
 
-                {!isLoading && !error && visible.length > 0 && (
+                {!isLoading && !error && filtered.length > 0 && (
                     <ul>
 
-                        {visible.map((notification) => {
+                        {filtered.map((notification) => {
                             const Icon = getNotificationIcon(notification.entity_type);
                             const href = getNotificationRoute(notification);
                             const heading = getNotificationHeading(notification.entity_type);
@@ -168,7 +267,7 @@ export default function NotificationsPage() {
                                 <li key={notification.id}
                                     className={`flex items-start border-b border-[var(--card-border)] px-6 py-4 last:border-b-0 ${notification.is_read ? "" : "bg-[#00B4D8]/[0.06]"}`}
                                 >
-                                 
+
 
                                     <Icon
                                         className="mt-0.5 h-5 w-5 shrink-0 text-[#00B4D8] m-2"
@@ -184,7 +283,7 @@ export default function NotificationsPage() {
                                         <p className="line-clamp-2 break-words text-sm text-[var(--foreground)]">
                                             {notification.message_info}
                                         </p>
-                                        
+
                                         <span className="mt-1 block text-xs text-[#4B4F58] dark:text-gray-400">
                                             {timeAgo(notification.created_at)}
                                         </span>
@@ -196,7 +295,7 @@ export default function NotificationsPage() {
                                             aria-hidden="true"
                                         />
                                     )}
-                                
+
 
                                     <div className="flex shrink-0 items-center gap-1">
                                         <Link
@@ -241,18 +340,20 @@ export default function NotificationsPage() {
 
             </div>
 
-                {hasMore && (
-                    <div className="mt-6 flex justify-center">
-                        <button
-                            type="button"
-                            onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-                            className="rounded-md border border-[#dddddd] px-5 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-[#00B4D8] hover:text-[#00B4D8] dark:border-gray-700"
-                        >
-                            Load more
-                        </button>
-                    </div>
-                )}
+            <div className="mt-6 flex justify-center">
+                <NotificationPagination meta={meta} />
+            </div>
         </div>
 
+        </>
+
     );
+}
+
+export default function NotificationPage() {
+    return (
+        <Suspense fallback={null}>
+            <NotificationsContent />
+        </Suspense>
+    )
 }

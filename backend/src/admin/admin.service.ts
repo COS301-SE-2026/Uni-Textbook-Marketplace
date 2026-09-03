@@ -42,8 +42,8 @@ export class AdminService {
     action: 'APPROVE_LISTING' | 'REJECT_LISTING',
     reason?: string,
   ) {
-    const { savedlisting, listing, event } =
-      await this.entityManager.transaction(async (manager) => {
+    const { savedlisting, listing } = await this.entityManager.transaction(
+      async (manager) => {
         const listingRepository = manager.getRepository(Listing);
         const auditLogRepository = manager.getRepository(AuditLog);
         const userRepository = manager.getRepository(User);
@@ -93,9 +93,8 @@ export class AdminService {
         this.eventEmitter.emit('listing.reviewed', event);
 
         return { savedlisting, listing, event };
-      });
-
-    this.eventEmitter.emit('listing.reviewed', event);
+      },
+    );
 
     if (action == 'APPROVE_LISTING') {
       this.checkSavedSearchMatches(listing).catch((error: unknown) => {

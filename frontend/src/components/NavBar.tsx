@@ -7,6 +7,9 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import ThemeToggle from './ThemeToggle'
 import { NotificationBell } from './notifications/NotificationBell'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import '@/components/tutorials/tutorial.css'
 
 
 
@@ -26,7 +29,9 @@ const adminNavLinks = [
   { label: 'Browse', href: '/listings' },
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
+  { label: 'Cases', href: '/admin/cases' },
   { label: 'Audit Logs', href: '/admin/log' }
+ 
 ]
 
 
@@ -62,6 +67,44 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
     return () => window.removeEventListener('scroll', handleScroll);
 
   }, [isLandingPage]);
+
+  useEffect(() => {
+
+    const startTour = () => {
+
+      setUserMenuOpen(true)
+
+      setTimeout(() => {
+
+        const tour = driver({
+
+          showProgress: true,
+          steps: [
+            {
+              element: '#user-menu-btn',
+              popover: {
+                title: 'Your profile Menu',
+                description: 'Click your profile to open this menu'
+              }
+            },
+            {
+              element: '#my-listings-link',
+              popover: {
+                title: 'My Listings',
+                description: 'Click here to view and manage your listings'
+              }
+            }
+          ]
+        })
+
+        tour.drive()
+        
+      },100)
+    }
+
+    window.addEventListener('start-my-listings-tutorial', startTour)
+    return () => window.removeEventListener('start-my-listings-tutorial', startTour)
+  },[])
 
   const isTransparent = isLandingPage && !scrolled;
 
@@ -163,6 +206,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                 <div className="relative">
                   <button
                     type="button"
+                    id='user-menu-btn'
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center gap-2 p-1 rounded-full
                                hover:bg-[#F5F5F5] dark:hover:bg-gray-800 transition-colors duration-200"
@@ -197,7 +241,15 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                             className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
                             onClick={() => setUserMenuOpen(false)}
                           >
-                            Admin Panel
+                            Moderator Panel
+                          </Link>
+                          
+                          <Link
+                            href="/admin/cases"
+                            className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Cases
                           </Link>
                           <div className="border-t border-[var(--card-border)]" />
                         </>
@@ -205,6 +257,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                       {!isAdmin && (
                         <Link
                           href="/listings/mine"
+                          id='my-listings-link'
                           className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
                                     no-underline transition-colors duration-150"
                           onClick={() => setUserMenuOpen(false)}

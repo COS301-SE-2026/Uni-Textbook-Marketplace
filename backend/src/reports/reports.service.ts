@@ -10,6 +10,9 @@ import { User } from '../database/entities/users.entity';
 
 import { CreateReportDto } from './dto/create-report.dto';
 
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ReportEvent } from './events/report.events';
+
 @Injectable()
 export class ReportsService {
   constructor(
@@ -21,6 +24,8 @@ export class ReportsService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(
@@ -54,7 +59,18 @@ export class ReportsService {
       status: ReportStatus.PENDING,
     });
 
-    return this.reportsRepository.save(report);
+    const savedReport = await this.reportsRepository.save(report);
+
+    const event = new ReportEvent();
+    event.reportId = savedReport.id;
+    event.reporterId = user.id;
+    event.listingId = listing.id;
+    event.action = 'REPORT_CREATED';
+    event.message = `A new report has been submitted for "${listing.title}".`;
+
+    this.eventEmitter.emit('report.created', event);
+
+    return savedReport;
   }
 
   async findAll(): Promise<Report[]> {
@@ -92,6 +108,10 @@ export class ReportsService {
       where: {
         id,
       },
+      relations: {
+        reporter: true,
+        listing: true,
+      },
     });
 
     if (!report) {
@@ -99,6 +119,17 @@ export class ReportsService {
     }
 
     report.status = ReportStatus.REVIEWED;
-    return this.reportsRepository.save(report);
+
+    const savedReport = await this.reportsRepository.save(report);
+    const event = new ReportEvent();
+    event.reportId = savedReport.id;
+    event.reporterId = report.reporter.id;
+    event.listingId = report.listing.id;
+    event.action = 'REPORT_REVIEWED';
+    event.message = `Your report regarding "${report.listing.title}" has been reviewed.`;
+
+    this.eventEmitter.emit('report.reviewed', event);
+
+    return savedReport;
   }
 }

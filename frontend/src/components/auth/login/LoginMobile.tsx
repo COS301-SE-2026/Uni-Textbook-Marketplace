@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+
 import Logo from "@/components/icons/Logo";
 import { Button, Input, ErrorText } from "@/components/ui";
 import { Eye, EyeOff } from "lucide-react";
-import { loginUser } from "@/lib/auth.api"
-import type { ApiError } from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { useAuth } from '@/context/AuthContext';
-import { getMe } from '@/lib/auth.api';
+import { useLoginForm } from "@/hooks/useLoginForm";
 
 export default function LoginMobile() {
     const [email, setEmail] = useState("");
@@ -87,25 +84,48 @@ export default function LoginMobile() {
                     <div 
                         className="absolute inset-0 pointer-events-none"
                         style={{
-                            background: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255, 255, 255, 0.1) 100px, rgba(255, 255, 255, 0.1) 102px)',
+                            background: "rgba(255, 255, 255, 0.06)",
+                            backdropFilter: "blur(10px)",
+                            border:
+                                "1px solid rgba(255, 255, 255, 0.1)",
+                            boxShadow:
+                                "0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
                         }}
-                    />
-                    
-                    
-                    <div 
-                        className="absolute top-4 right-4 w-20 h-20 rounded-full opacity-10"
+                    >
+                        <Logo className="w-14 h-auto" />
+
+                        <div
+                            className="absolute -top-px left-1/4 right-1/4 h-px"
+                            style={{
+                                background:
+                                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+                            }}
+                        />
+                    </div>
+
+                    <h2
+                        className="text-center font-bold"
                         style={{
-                            background: 'radial-gradient(circle, rgba(0, 180, 216, 0.3), transparent 70%)',
-                            filter: 'blur(40px)',
+                            fontSize: "1.25rem",
+                            color: "#1a1a2e",
+                            textShadow:
+                                "0 2px 20px rgba(0, 0, 0, 0.08)",
                         }}
-                    />
-                    <div 
-                        className="absolute bottom-4 left-4 w-24 h-24 rounded-full opacity-10"
+                    >
+                        WELCOME
+                    </h2>
+
+                    <h2
+                        className="text-center font-bold mb-1"
                         style={{
-                            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%)',
-                            filter: 'blur(40px)',
+                            fontSize: "1.25rem",
+                            color: "#00B4D8",
+                            textShadow:
+                                "0 2px 20px rgba(0, 180, 216, 0.2)",
                         }}
-                    />
+                    >
+                        BACK!
+                    </h2>
 
                     
                     <div className="relative z-10 flex flex-col items-center">
@@ -114,10 +134,8 @@ export default function LoginMobile() {
                         <div 
                             className="relative mb-4 p-3 rounded-2xl"
                             style={{
-                                background: 'rgba(255, 255, 255, 0.06)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                                background:
+                                    "linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent)",
                             }}
                         >
                             <Logo className="w-14 h-auto" />
@@ -131,6 +149,11 @@ export default function LoginMobile() {
                             />
                         </div>
 
+                    <p className="text-center text-[#4B4F58]/80 text-sm">
+                        Access your university marketplace account.
+                    </p>
+                </div>
+            </div>
 
                         <h2 
                             className="text-center font-bold"
@@ -202,14 +225,18 @@ export default function LoginMobile() {
                                     type="email"
                                     placeholder="studentNO@uni.co.za"
                                     value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+                                    onChange={(event) => {
+                                        setEmail(event.target.value);
+                                        clearEmailError();
                                     }}
                                 />
-                                {errors.email && <ErrorText>{errors.email}</ErrorText>}
-                            </div>
 
+                                {errors.email && (
+                                    <ErrorText>
+                                        {errors.email}
+                                    </ErrorText>
+                                )}
+                            </div>
 
                             <div>
 
@@ -222,47 +249,79 @@ export default function LoginMobile() {
 
                                     <input
                                         id="password-mobile"
-                                        type={showPassword ? "text" : "password"}
+                                        type={
+                                            showPassword
+                                                ? "text"
+                                                : "password"
+                                        }
                                         placeholder="Enter your password"
                                         value={password}
-                                        style={{ width: "100%", paddingRight: "2.75rem" }}
-                                        onChange={(e) => {
-                                            setPassword(e.target.value);
-                                            if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
+                                        style={{
+                                            width: "100%",
+                                            paddingRight: "2.75rem",
+                                        }}
+                                        onChange={(event) => {
+                                            setPassword(
+                                                event.target.value
+                                            );
+                                            clearPasswordError();
                                         }}
                                         className="border border-[#dddddd] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#00B4D8] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.15)] transition-all w-full box-border"
                                     />
 
-
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword((p) => !p)}
-                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                        onClick={() =>
+                                            setShowPassword(
+                                                (previous) => !previous
+                                            )
+                                        }
+                                        aria-label={
+                                            showPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
                                         style={{
-                                            position: "absolute", top: 0, right: 0, bottom: 0,
-                                            width: "2.75rem", display: "flex", alignItems: "center",
-                                            justifyContent: "center", background: "transparent",
-                                            border: "none", cursor: "pointer", color: "#9ca3af",
+                                            position: "absolute",
+                                            top: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            width: "2.75rem",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            background: "transparent",
+                                            border: "none",
+                                            cursor: "pointer",
+                                            color: "#9ca3af",
                                         }}
                                     >
-                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        {showPassword ? (
+                                            <EyeOff size={16} />
+                                        ) : (
+                                            <Eye size={16} />
+                                        )}
                                     </button>
 
 
                                 </div>
 
-
-                                {errors.password && <ErrorText>{errors.password}</ErrorText>}
+                                {errors.password && (
+                                    <ErrorText>
+                                        {errors.password}
+                                    </ErrorText>
+                                )}
                             </div>
 
-                            
                             <div className="flex justify-end -mt-2">
-
-
                                 <button
                                     type="button"
                                     className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
-                                    style={{ background: "none", border: "none", padding: "0.25rem 0" }}
+                                    style={{
+                                        background: "none",
+                                        border: "none",
+                                        padding: "0.25rem 0",
+                                    }}
                                     onClick={forgotPass}
                                 >
                                     Forgot Password?
@@ -271,9 +330,10 @@ export default function LoginMobile() {
 
                             </div>
 
-                            {serverError && <ErrorText>{serverError}</ErrorText>}
+                            {serverError && (
+                                <ErrorText>{serverError}</ErrorText>
+                            )}
 
-                            
                             <div style={{ marginTop: "2rem" }}>
 
                                 <Button className="w-full cursor-pointer" disabled={loading} type="submit">
@@ -283,9 +343,12 @@ export default function LoginMobile() {
                                 
                             </div>
                         </form>
-                    </div>
+                    )}
                 </div>
             </div>
-        </main>
-    );
+        </div>
+    </main>
+);
+
+
 }

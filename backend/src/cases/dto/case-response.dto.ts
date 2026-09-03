@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Case } from '../../database/entities/case.entity';
+import { User } from '../../database/entities/users.entity';
 
 export class CaseResponseDto {
   @ApiProperty()
@@ -29,6 +30,10 @@ export class CaseResponseDto {
   @ApiProperty({ nullable: true })
   deleted_at!: Date | null;
 
+  
+  @ApiProperty({ type: () => User })
+  user!: User;
+
   static fromEntity(entity: Case): CaseResponseDto {
     const dto = new CaseResponseDto();
     dto.id = entity.id;
@@ -40,6 +45,7 @@ export class CaseResponseDto {
     dto.created_at = entity.created_at;
     dto.updated_at = entity.updated_at;
     dto.deleted_at = entity.deleted_at;
+    dto.user = entity.user; 
     return dto;
   }
 

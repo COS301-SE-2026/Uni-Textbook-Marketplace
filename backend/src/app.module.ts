@@ -23,7 +23,7 @@ import { Wishlist } from './database/entities/wishlist.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Report } from './database/entities/report.entity';
-
+import {Case} from  './database/entities/case.entity'
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -45,7 +45,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         synchronize: false,
-        logging: true,
+        logging: false,
         entities: [
           User,
           Listing,
@@ -59,7 +59,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           Notifications,
           SavedSearch,
           Report,
-          CasesModule,
+          Case,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -76,6 +76,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AdminModule,
     MessagingModule,
     ReportsModule,
+    CasesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

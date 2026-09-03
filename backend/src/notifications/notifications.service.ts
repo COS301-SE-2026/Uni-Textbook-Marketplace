@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
+import { ReportEvent } from '../reports/events/report.events';
+import { User } from '../database/entities/users.entity';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
 import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
 
@@ -13,6 +15,9 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notifications)
     private readonly notificationRepo: Repository<Notifications>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
@@ -70,7 +75,7 @@ export class NotificationsService {
     );
   }
 
-  async mynotifications(userId: string, page: number = 1, limit: number = 10) {
+  async mynotifications(userId: string, page: number = 1, limit: number = 5) {
     const skip = (page - 1) * limit;
 
     const [notifications, total] = await this.notificationRepo.findAndCount({
@@ -170,5 +175,39 @@ export class NotificationsService {
     await this.notificationRepo.remove(notification);
 
     return 'Notification successfuly deleted';
+  }
+
+  async emit(event: ReportEvent) {
+    if (event.action === 'REPORT_CREATED') {
+      //admins
+      const admins = await this.userRepo.find({
+        where: {
+          role: 'admin',
+        },
+      });
+
+      const notification = admins.map((admin) =>
+        this.notificationRepo.create({
+          user_id: admin,
+          notification_from: { id: event.reporterId },
+          entity_type: event.action,
+          entity_id: { id: event.listingId },
+          message_info: event.message,
+        }),
+      );
+
+      await this.notificationRepo.save(notification);
+
+      return;
+    }
+
+    const notification = this.notificationRepo.create({
+      user_id: { id: event.reporterId },
+      entity_type: event.action,
+      entity_id: { id: event.listingId },
+      message_info: event.message,
+    });
+
+    await this.notificationRepo.save(notification);
   }
 }
