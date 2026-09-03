@@ -26,6 +26,9 @@ jest.setTimeout(30000);
 const Test_Password = process.env.TEST_PASSWORD;
 
 describe('Reports E2E Tests', () => {
+    if (!Test_Password) {
+    throw new Error('TEST_PASSWORD environment variable is required for E2E tests');
+    }
     let app: INestApplication;
     let dataSource: DataSource;
 
