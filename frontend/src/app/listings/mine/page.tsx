@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -27,7 +27,7 @@ const TABS: { label: string; value: Tab }[] = [
 
 export default function MyListingsPage() {
 
-    
+
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<Tab>('ALL')
@@ -39,20 +39,23 @@ export default function MyListingsPage() {
 
     // Fetch
 
-    useEffect(() => {
-        const fetchMine = async () => {
-            setLoading(true)
-            try {
-                const data = await api.get<Listing[]>('/listings/mine')
-                setListings(data)
-            } catch (err) {
-                console.error('Failed to load listings', err)
-            } finally {
-                setLoading(false)
-            }
+    const fetchMine = useCallback(async () => {
+        setLoading(true)
+        try {
+            const data = await api.get<Listing[]>('/listings/mine')
+            setListings(data)
+        } catch (err) {
+            console.error('Failed to load listings', err)
+        } finally {
+            setLoading(false)
         }
-        fetchMine()
+
     }, [])
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchMine()
+    },[fetchMine])
 
     // Derived 
 
@@ -72,8 +75,9 @@ export default function MyListingsPage() {
     const closeEditPanel = () => {
         setEditPanel(false)
         setSelectedListingId(null)
+        fetchMine()
     }
- 
+
     const handleStatusChange = async (
         listingId: string,
         newStatus: ListingSaleStatus,
@@ -83,8 +87,8 @@ export default function MyListingsPage() {
         try {
             await updateListingStatus(listingId, newStatus)
             setListings(prev =>
-                prev.map(l => 
-                    l.id === listingId ? { ...l, listing_status:  newStatus } : l,
+                prev.map(l =>
+                    l.id === listingId ? { ...l, listing_status: newStatus } : l,
 
                 ),
             )
@@ -234,12 +238,12 @@ export default function MyListingsPage() {
 
     return (
         <>
-            
+
             <div className="relative overflow-hidden h-[180px] md:h-[200px] w-full" style={{
                 background: 'linear-gradient(135deg, #000f2b 0%, #001a3d 30%, #00264a 55%, #004F66 75%, #006D8A 100%)',
-                
+
             }}>
-                
+
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
                     <div className="relative w-full h-full">
 
@@ -254,7 +258,7 @@ export default function MyListingsPage() {
                         />
 
 
-                        
+
                         <div className="absolute inset-0" style={{
                             background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
                         }} />
@@ -262,28 +266,28 @@ export default function MyListingsPage() {
 
 
                 </div>
-                
-                
+
+
                 <div className="absolute inset-0 opacity-20" style={{
                     background: 'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(0,180,216,0.05) 0%, transparent 50%)',
                 }} />
-                
-                
+
+
                 <div className="absolute inset-0 opacity-10" style={{
                     backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 180, 216, 0.15) 0%, transparent 50%)',
                 }} />
-                
-                
+
+
                 <div className="absolute inset-0 opacity-5" style={{
                     backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
                     backgroundSize: '40px 40px',
                 }} />
-                
-                
+
+
                 <div className="absolute top-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
                 }} />
-                
+
                 <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
                     <div className="flex items-start gap-4">
                         <div className="p-2 rounded-xl" style={{
@@ -309,8 +313,8 @@ export default function MyListingsPage() {
 
 
                 </div>
-                
-                
+
+
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
                     background: 'linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent)',
                 }} />
@@ -318,12 +322,12 @@ export default function MyListingsPage() {
 
 
 
-           
+
             <div className="container-content py-8 relative">
-                
+
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                     <div>
-                        
+
                     </div>
                     <Link href="/listings/create">
 
@@ -339,36 +343,34 @@ export default function MyListingsPage() {
                     <p className="text-sm text-red-600 mb-4">{statusError}</p>
                 )}
 
-                
+
                 <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
                     {TABS.map(tab => (
                         <button
                             type="button"
                             key={tab.value}
                             onClick={() => setActiveTab(tab.value)}
-                            className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
-                                activeTab === tab.value
+                            className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${activeTab === tab.value
                                     ? 'border-[#00B4D8] text-[#00B4D8]'
                                     : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
+                                }`}
                         >
                             {tab.label}
                             {counts[tab.value] > 0 && (
-                                <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${
-                                    activeTab === tab.value
+                                <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${activeTab === tab.value
                                         ? 'bg-[#00B4D8] text-white'
                                         : 'bg-gray-100 text-gray-500'
-                                }`}>
+                                    }`}>
                                     {counts[tab.value]}
                                 </span>
                             )}
                         </button>
 
-                        
+
                     ))}
                 </div>
 
-                
+
                 {content}
 
                 {selectedListingId && (
