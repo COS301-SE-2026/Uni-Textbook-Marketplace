@@ -29,7 +29,7 @@ handleGoToAppeal,
 return (
     <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
         <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
-            {/* Left Panel - Glossy Header */}
+            
             <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
                 <div
                     className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
@@ -49,26 +49,18 @@ return (
                     }}
                 />
 
-        if (!validate()) return;
-
-
-        setLoading(true);
-        try {
-            const normalizedEmail = email.toLowerCase().trim();
-            await loginUser({ email: normalizedEmail, password });
-
-
-            const me = await getMe();
-
-
-            login(me);
-            router.push('/listings');
-        } catch (err) {
-            setServerError((err as ApiError).message);
-        } finally {
-            setLoading(false);
-        }
-    };
+                <div className="relative z-10 flex flex-col items-center text-center">
+                    <div
+                        className="relative mb-6 p-4 rounded-2xl"
+                        style={{
+                            background: "rgba(255, 255, 255, 0.06)",
+                            backdropFilter: "blur(10px)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            boxShadow:
+                                "0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+                        }}
+                    >
+                        <Logo className="w-20 h-auto" />
 
                         <div
                             className="absolute -top-px left-1/4 right-1/4 h-px"
@@ -79,18 +71,8 @@ return (
                         />
                     </div>
 
-    return (
-        <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
-
-
-            <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
-                
-                
-                <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
-                    
-                    
-                    <div 
-                        className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
+                    <h1
+                        className="text-3xl font-bold tracking-wide mb-2"
                         style={{
                             color: "#1a1a2e",
                             textShadow:
@@ -164,22 +146,7 @@ return (
                                         boxShadow:
                                             "0 0 12px rgba(0, 180, 216, 0.3)",
                                     }}
-                                >
-                                    <div 
-                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                        style={{
-                                            background: '#00B4D8',
-                                            boxShadow: '0 0 12px rgba(0, 180, 216, 0.3)',
-                                        }}
-                                    />
-                                    <span className="text-[#1a1a2e]/80 text-sm font-medium">
-                                        {feature.text}
-                                    </span>
-
-
-                                </div>
-                            ))}
-                        </div>
+                                />
 
                                 <span className="text-[#1a1a2e]/80 text-sm font-medium">
                                     {feature.text}
@@ -195,20 +162,71 @@ return (
                                 "linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.3), transparent)",
                         }}
                     />
-                    
-                    <div style={{ width: "100%", maxWidth: 420, padding: "0 1.5rem", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
+                </div>
+            </div>
 
-                        <div>
-                            <h2>Login</h2>
+            {/* Right Panel - Login Form */}
+            <div
+                className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative"
+                style={{
+                    background: "rgba(255, 255, 255, 0.03)",
+                    backdropFilter: "blur(5px)",
+                    borderLeft:
+                        "1px solid rgba(255, 255, 255, 0.05)",
+                }}
+            >
+                <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        background:
+                            "radial-gradient(ellipse at 30% 20%, rgba(0, 180, 216, 0.02), transparent 50%)",
+                    }}
+                />
 
-                            <p className="text-text-subtle mt-2">
-                                Enter your details to access your account
-                            </p>
+                <div
+                    style={{
+                        width: "100%",
+                        maxWidth: 420,
+                        padding: "0 1.5rem",
+                        boxSizing: "border-box",
+                        position: "relative",
+                        zIndex: 1,
+                    }}
+                >
+                    <div>
+                        <h2>Login</h2>
 
-                            <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
+                        <p className="text-text-subtle mt-2">
+                            Enter your details to access your account
+                        </p>
 
+                        {banMessage && (
+                            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-red-700 text-sm font-medium">
+                                    ⚠️ Account Banned
+                                </p>
+
+                                <p className="text-red-600 text-sm mt-1">
+                                    {banMessage}
+                                </p>
+
+                                <Button
+                                    variant="primary"
+                                    className="w-full mt-3 cursor-pointer"
+                                    onClick={handleGoToAppeal}
+                                >
+                                    Submit Appeal
+                                </Button>
+                            </div>
+                        )}
+
+                        {!banMessage && (
+                            <form
+                                className="mt-8 space-y-5"
+                                onSubmit={handleSubmit}
+                                noValidate
+                            >
                                 <div>
-
                                     <Input
                                         label="University Email"
                                         type="email"
@@ -228,13 +246,19 @@ return (
                                 </div>
 
                                 <div>
+                                    <label
+                                        htmlFor="password-desktop"
+                                        className="form-label"
+                                    >
+                                        Password
+                                    </label>
 
-
-                                    <label htmlFor="password-desktop" className="form-label">Password</label>
-
-                                    <div style={{ position: "relative", width: "100%" }}>
-
-
+                                    <div
+                                        style={{
+                                            position: "relative",
+                                            width: "100%",
+                                        }}
+                                    >
                                         <input
                                             id="password-desktop"
                                             type={
@@ -291,8 +315,6 @@ return (
                                                 <Eye size={16} />
                                             )}
                                         </button>
-
-
                                     </div>
 
                                     {errors.password && (
@@ -303,8 +325,6 @@ return (
                                 </div>
 
                                 <div className="flex justify-end -mt-2">
-
-
                                     <button
                                         type="button"
                                         className="text-sm text-primary hover:text-[#00B4D8] transition-colors cursor-pointer"
@@ -317,7 +337,6 @@ return (
                                     >
                                         Forgot Password?
                                     </button>
-
                                 </div>
 
                                 {serverError && (
@@ -325,12 +344,10 @@ return (
                                 )}
 
                                 <div style={{ marginTop: "3.5rem" }}>
-
-
-                                    <Button 
-                                        className="w-full cursor-pointer" 
-                                        disabled={loading} 
-                                        variant="default" 
+                                    <Button
+                                        className="w-full cursor-pointer"
+                                        disabled={loading}
+                                        variant="default"
                                         type="submit"
                                     >
                                         {loading
@@ -338,7 +355,6 @@ return (
                                             : "Login"}
                                     </Button>
                                 </div>
-                                
                             </form>
                         )}
                     </div>
