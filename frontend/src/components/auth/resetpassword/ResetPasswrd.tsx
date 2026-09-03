@@ -8,10 +8,12 @@ import { forgotPassword, verifyOtp } from "@/lib/auth.api";
 import { useRouter } from "next/navigation";
 
 function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
+
     const steps = ["Details", "Verification", "Success"];
 
     return (
         <div className="flex items-center justify-center mb-8">
+
             {steps.map((label, index) => {
                 const stepNum = index + 1;
                 const active = currentStep === stepNum;
@@ -30,6 +32,7 @@ function StepIndicator({ currentStep }: Readonly<{ currentStep: number }>) {
                                         : "border-gray-300 text-gray-400"
                                 } ${active ? "bg-[#00B4D8] text-white" : ""}`}
                             >
+
                                 {complete ? "✓" : stepNum}
                             </div>
 
@@ -73,15 +76,19 @@ function OtpInput({
     onChange,
 }: {
     readonly value: string[];
+
     readonly onChange: (value: string[]) => void;
 }) {
     const refs = Array.from({ length: 6 }, () => React.createRef<HTMLInputElement>());
 
     const handleChange = (index: number, val: string) => {
+
         const digit = val.replace(/\D/g, "").slice(-1);
+
         const next = [...value];
 
         next[index] = digit;
+
         onChange(next);
 
         if (digit && index < 5) {
@@ -91,20 +98,25 @@ function OtpInput({
 
     const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Backspace" && !value[index] && index > 0) {
+
             refs[index - 1].current?.focus();
         }
     };
 
     const handlePaste = (e: React.ClipboardEvent) => {
+
         e.preventDefault();
 
         const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+
         const next = [...value];
 
         pasted.split("").forEach((char, i) => {
             next[i] = char;
         });
+
         onChange(next);
+
         const focusIndex = Math.min(pasted.length, 5);
 
         refs[focusIndex].current?.focus();
@@ -112,6 +124,8 @@ function OtpInput({
 
     return (
         <div className="flex justify-center gap-2 sm:gap-3">
+
+
             {value.map((digit, index) => (
                 <input
                     key={OTP_INPUT_KEYS[index]}
@@ -134,7 +148,9 @@ function OtpInput({
 }
 
 export default function ResetPassword() {
+
     const [step, setStep] = useState(1);
+
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -143,10 +159,14 @@ export default function ResetPassword() {
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+
     const [serverError, setServerError] = useState("");
+
+
     const [showPassword, setShowPassword] = useState(false);
 
     const [showConfirm, setShowConfirm] = useState(false);
+
     const [loading, setLoading] = useState(false);
 
     const router = useRouter();
@@ -160,11 +180,15 @@ export default function ResetPassword() {
     };
 
     const renderStepContent = () => {
+
         switch (step) {
             case 1:
                 return (
                     <>
                         <h2 className="text-2xl font-semibold mb-2">Reset Password</h2>
+
+
+
                         <p className="text-text-subtle mb-6">Enter your email and new password</p>
 
                         <div className="space-y-5">
@@ -178,11 +202,15 @@ export default function ResetPassword() {
                                     value={form.email}
                                     onChange={(e) => setField("email", e.target.value)}
                                 />
+
+
                                 {errors.email && <ErrorText>{errors.email}</ErrorText>}
                             </div>
 
                             <div>
                                 <label htmlFor="re-password" className="form-label">Password</label>
+
+
                                 <div className="relative">
 
 
@@ -194,6 +222,8 @@ export default function ResetPassword() {
                                         className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                                         placeholder="Enter new password"
                                     />
+
+
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((v) => !v)}
@@ -212,6 +242,8 @@ export default function ResetPassword() {
 
 
                                 <div className="relative">
+
+
                                     <input
                                         id="re-confirm-password"
                                         type={showConfirm ? "text" : "password"}
@@ -220,6 +252,8 @@ export default function ResetPassword() {
                                         className="w-full border border-[#dddddd] rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:border-[#00B4D8] transition-all"
                                         placeholder="Confirm new password"
                                     />
+
+
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirm((v) => !v)}
@@ -249,6 +283,7 @@ export default function ResetPassword() {
                 return (
                     <>
                         <h2 className="text-2xl font-semibold mb-2">Verify OTP</h2>
+
                         <p className="text-text-subtle mb-6">
                             Enter the 6-digit code sent to your email
                         </p>
@@ -261,6 +296,7 @@ export default function ResetPassword() {
                         {errors.otp && <ErrorText>{errors.otp}</ErrorText>}
 
                         <div className="mt-6">
+
                             <Button
                                 variant="primary"
                                 onClick={() => void handleNext()}
@@ -269,6 +305,7 @@ export default function ResetPassword() {
                             >
                                 {loading ? "Verifying..." : "Verify OTP"}
                             </Button>
+
 
 
                         </div>
@@ -280,14 +317,17 @@ export default function ResetPassword() {
 
 
                             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+
                                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
 
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
+
                             </div>
 
                             <h2 className="text-2xl font-semibold mb-2">Success</h2>
+
                             <p className="text-text-subtle mb-6">
                                 Your password has been reset successfully.
                             </p>
@@ -301,6 +341,7 @@ export default function ResetPassword() {
                             </Button>
 
                     </div>
+
                 );
 
             default:
@@ -309,11 +350,14 @@ export default function ResetPassword() {
     };
 
     const handleStep1 = async () => {
+
         if (!validateStep1()) return;
 
         setLoading(true);
+
         try {
             const normalizedEmail = form.email.toLowerCase().trim();
+
             await forgotPassword({
                 email: normalizedEmail,
                 password: form.password,
@@ -330,6 +374,8 @@ export default function ResetPassword() {
     };
 
     const handleStep2 = async () => {
+
+
         if (!validateStep2()) return;
 
         setLoading(true);
@@ -379,22 +425,31 @@ export default function ResetPassword() {
         if (form.password !== form.confirmPassword) {
             e.confirmPassword = "Passwords do not match";
         }
+
+
         setErrors(e);
+
+
         return Object.keys(e).length === 0;
+
     };
 
     const validateStep2 = () => {
+
         const e: Record<string, string> = {};
+
 
         if (form.otp.some((d) => !d)) {
             e.otp = "Enter all 6 digits";
         }
         setErrors(e);
+
         return Object.keys(e).length === 0;
     };
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
+
             <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
                 
@@ -409,6 +464,7 @@ export default function ResetPassword() {
                             filter: 'blur(60px)',
                         }}
                     />
+
                     <div 
                         className="absolute bottom-8 left-8 w-40 h-40 rounded-full opacity-10"
                         style={{
@@ -451,6 +507,7 @@ export default function ResetPassword() {
                         >
                             SECURE
                         </h1>
+
                         <h1 
                             className="text-3xl font-bold tracking-wide mb-6"
                             style={{
@@ -462,6 +519,7 @@ export default function ResetPassword() {
                         </h1>
                         
                         <div className="relative w-24 h-px mb-6">
+
                             <div 
                                 className="absolute inset-0"
                                 style={{
@@ -469,6 +527,8 @@ export default function ResetPassword() {
                                 }}
                             />
                         </div>
+
+
                         <p 
                             className="text-[#4B4F58]/80 text-sm leading-relaxed max-w-xs"
                             style={{
@@ -504,6 +564,8 @@ export default function ResetPassword() {
                                     <span className="text-[#1a1a2e]/80 text-sm font-medium">
                                         {feature.text}
                                     </span>
+
+
                                 </div>
                             ))}
                         </div>
@@ -516,6 +578,7 @@ export default function ResetPassword() {
                             }}
                         />
                     </div>
+                    
                 </div>
                 
                 

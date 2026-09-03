@@ -18,6 +18,7 @@ const SECTIONS = [
 ] as const;
 
 type SectionKey = (typeof SECTIONS)[number]["key"];
+
 type OpenSection = Record<SectionKey, boolean>;
 
 type ListingFormEditProps = {
@@ -29,12 +30,16 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
+
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+
     const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
     const [originalPhotoUrls, setOriginalPhotoUrls] = useState<string[]>([]);
+
     const [errors, setErrors] = useState<Partial<Record<keyof ListingFormData, string>>>({});
     const [success, setSuccess] = useState(false);
+
     const [openSections, setOpenSection] = useState<OpenSection>({
         bookDetails: true,
         listingDetails: false,
@@ -89,8 +94,10 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
                     setForm(mapped);
                     setOriginal(mapped);
+
                     setExistingImageUrls(data.photo_urls ?? []);
                     setOriginalPhotoUrls(data.photo_urls ?? []);
+
                 }
             } catch (err) {
                 if (!cancelled) {
@@ -114,6 +121,8 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
 
         const { name, value } = e.target;
         const fieldName = name as keyof ListingFormData;
+
+
         setForm((prev) => (prev ? { ...prev, [fieldName]: value } : prev));
         setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     }
@@ -130,6 +139,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
     }
 
     function handleRemoveImage(index: number) {
+
         setForm((prev) => {
             if (!prev) return prev;
             const imgs = (prev as any).images ? Array.from((prev as any).images) : [];
@@ -160,6 +170,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
         if (!form || !original) return;
 
         setSaving(true);
+        
         setErrors({});
 
         try {

@@ -30,7 +30,7 @@ handleGoToAppeal,
 return (
     <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-6">
         <div className="card w-full max-w-[500px] flex flex-col overflow-hidden mx-auto shadow-2xl p-0">
-            {/* Top Panel - Glossy Header */}
+            
             <div
                 className="w-full relative overflow-hidden px-6 py-8 flex flex-col items-center justify-center"
                 style={{

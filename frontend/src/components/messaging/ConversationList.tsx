@@ -23,6 +23,8 @@ export default function ConversationList({
 
 
             <div className="border-b border-gray-200 dark:border-gray-700 px-5 py-4">
+
+
                 <h2 className="text-xl font-bold text-[#000f2b] dark:text-white">
                     Messages
                 </h2>
@@ -39,6 +41,8 @@ export default function ConversationList({
                     <div className="flex flex-col items-center justify-center h-64 text-gray-400 dark:text-gray-500">
                         <MessageSquare size={40} className="mb-3 opacity-50" />
                         <p className="text-sm font-medium">No conversations</p>
+
+
                         <p className="text-xs mt-1">Start messaging sellers</p>
                     </div>
                 ) : (
@@ -54,9 +58,11 @@ export default function ConversationList({
                                 onSelectConversation(conversation)
                             }
                         />
+
                     ))
                 )}
             </div>
+            
         </aside>
     );
 }

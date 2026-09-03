@@ -194,6 +194,7 @@ export default function ListingCard({
                 
                 {listing.status === 'APPROVED' && (listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
                     <div className="absolute top-2 left-2">
+                        
                         <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
                             {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
                         </Badge>

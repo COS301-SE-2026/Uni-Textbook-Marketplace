@@ -23,9 +23,12 @@ const LISTTABS: { label: string; value: Tab }[] = [
 export default function WishlistComponent() {
 
     const [loading, setLoading] = useState(true)
+
+
     const [listings, setListings] = useState<Listing[]>([])
 
     const [listactiveTab, setlistactiveTab] = useState<Tab>('ALL')
+
     const [wishlistVersion, setWishlistVersion] = useState(0);
 
     useEffect(() => {
@@ -43,6 +46,8 @@ export default function WishlistComponent() {
     useEffect(() => {
 
         const fetchMywishlist = async () => {
+
+
             setLoading(true)
 
             try {
@@ -81,6 +86,8 @@ export default function WishlistComponent() {
             }}>
                 
                 <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+
+
                     <div className="relative w-full h-full">
                         <Image
                             src="/../../wishlist_books.png"
@@ -120,6 +127,8 @@ export default function WishlistComponent() {
                 
                 <div className="relative z-10 px-6 py-4 md:px-8 lg:px-12 h-full flex flex-col justify-center max-w-7xl mx-auto w-full">
                     <div className="flex items-start gap-4">
+
+
                         <div className="p-2 rounded-xl" style={{
                             background: 'rgba(255,255,255,0.08)',
                             backdropFilter: 'blur(10px)',
@@ -127,13 +136,18 @@ export default function WishlistComponent() {
                         }}>
                             <Heart size={24} className="text-[#00B4D8] fill-[#00B4D8]" />
                         </div>
+
+
                         <div>
                             <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                                 My Wishlist
                             </h1>
+
                             <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow-md">
                                 Keep up to date with your favourite listings
                             </p>
+
+
                         </div>
 
                     </div>
@@ -147,6 +161,7 @@ export default function WishlistComponent() {
 
             
             <div className="container-content py-8">
+
                 {/* LISTTABS */}
                 <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
                     {LISTTABS.map(tab => (
@@ -190,6 +205,8 @@ export default function WishlistComponent() {
 
                 {!loading && filters.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+
+
                         <svg
                             className="w-12 h-12 mb-3"
                             fill="none"
@@ -221,6 +238,8 @@ export default function WishlistComponent() {
                                 <button className="btn-primary mt-4" type="button">
                                     Browse our listings to find your favourite listing
                                 </button>
+
+
                             </Link>
                         )}
                     </div>
@@ -230,8 +249,12 @@ export default function WishlistComponent() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filters.map(listing => (
                             <div key={listing.id} className="relative group">
+
+
                                 <ListingCard listing={listing} showStatus={false} isLiked={true} />
                             </div>
+                            
+                            
                         ))}
                     </div>
                 )}

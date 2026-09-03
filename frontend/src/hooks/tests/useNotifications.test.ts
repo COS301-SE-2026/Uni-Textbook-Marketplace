@@ -100,6 +100,8 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
       await waitForLoadingComplete(result);
+
+
       expect(result.current.notifications).toEqual([]);
 
 
@@ -147,6 +149,7 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
       await waitForLoadingComplete(result);
+      
 
       expect(result.current.error).toBe('Network error');
     });
@@ -223,6 +226,8 @@ describe('useNotifications', () => {
 
 
       setup(mockNotifications);
+
+
       mockFetch.mockResolvedValueOnce({ ok: true, json: jest.fn().mockResolvedValue({}) });
 
       const { result } = renderHook(() => useNotifications());
@@ -275,6 +280,8 @@ describe('useNotifications', () => {
       setup(mockNotifications);
 
       const { result } = renderHook(() => useNotifications());
+
+
       await waitForLoadingComplete(result);
 
       await act(async () => {
@@ -304,6 +311,9 @@ describe('useNotifications', () => {
       
       
       await waitForLoadingComplete(result);
+
+
+
       expect(fetch).toHaveBeenCalledTimes(1);
 
       
@@ -323,6 +333,8 @@ describe('useNotifications', () => {
       const mixed = [
         { ...mockNotifications[0], is_read: false },
         { ...mockNotifications[0], id: '3', is_read: false },
+
+
         { ...mockNotifications[0], id: '4', is_read: true },
       ];
       setup(mixed);
