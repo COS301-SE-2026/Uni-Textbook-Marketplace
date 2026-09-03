@@ -32,6 +32,8 @@ export default function MessageInput({
 
     return (
         <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-8 py-5">
+
+
             <div className="flex gap-3 items-center">
 
 
@@ -58,6 +60,7 @@ export default function MessageInput({
                     "
                     placeholder="Type a message..."
                 />
+
                 <Button
                     onClick={send}
                     disabled={!text.trim()}
@@ -67,6 +70,7 @@ export default function MessageInput({
 
 
                 </Button>
+                
             </div>
 
             

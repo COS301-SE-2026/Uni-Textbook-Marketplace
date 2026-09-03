@@ -107,6 +107,8 @@ function OtpInput({
 
     const ref4 = React.useRef<HTMLInputElement>(null);
     const ref5 = React.useRef<HTMLInputElement>(null);
+
+
     const inputRefs = [ref0, ref1, ref2, ref3, ref4, ref5];
     const inputKeys = ["first", "second", "third", "fourth", "fifth", "sixth"];
 
@@ -239,14 +241,19 @@ export default function RegisterDesktop() {
     const validateStep1 = () => {
         const e: Record<string, string> = {};
         if (!form.fullName.trim()) e.fullName = "Full name is required";
+
+
         if (!form.surname.trim()) e.surname = "Surname is required";
         setErrors(e);
+
+
         return Object.keys(e).length === 0;
     };
 
     const validateStep2 = () => {
         const e: Record<string, string> = {};
         if (!form.university_id) e.university = 'Please select your university';
+
         if (!form.email.trim()) {
             e.email = 'University email is required';
         } else if (selectedDomain && !form.email.endsWith(`@${selectedDomain}`)) {
@@ -367,11 +374,16 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>Create an account</h2>
+
+
                         <p className="text-text-subtle mt-1 mb-6">Fill in your details to get started</p>
+
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
                             <div>
+
+
                                 <Input
                                     label="Full Name(s)"
                                     type="text"
@@ -401,6 +413,8 @@ export default function RegisterDesktop() {
                 return (
                     <>
                         <h2>Enter university details</h2>
+
+
                         <p className="text-text-subtle mt-1 mb-6">
                             Select & Fill in your details to get started
                         </p>
@@ -408,6 +422,7 @@ export default function RegisterDesktop() {
                         <StepIndicator currentStep={step} />
 
                         <div className="space-y-5">
+
                             <div>
                                 <Select
                                     label="Name of University/Institution"
@@ -423,6 +438,8 @@ export default function RegisterDesktop() {
                                         setSelectedDomain(selected?.email_domain ?? "");
                                     }}
                                 >
+
+
                                     <option value="">Select your university</option>
                                     {universities.map((u) => (
                                         <option key={u.id} value={u.id}>
@@ -437,6 +454,8 @@ export default function RegisterDesktop() {
                             </div>
 
                             <div>
+
+
                                 <Input
                                     label="University Email"
                                     type="email"
@@ -444,6 +463,7 @@ export default function RegisterDesktop() {
                                     value={form.email}
                                     onChange={(e) => set("email", e.target.value)}
                                 />
+
                                 {errors.email && (
                                     <ErrorText>{errors.email}</ErrorText>
                                 )}
@@ -471,7 +491,10 @@ export default function RegisterDesktop() {
                         <div className="space-y-5">
 
                             <div>
+
+
                                 <label htmlFor="reg-password" className="form-label">Password</label>
+
                                 <div style={{ position: "relative" }}>
                                     <input
                                         id="reg-password"
@@ -501,6 +524,8 @@ export default function RegisterDesktop() {
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
+
+
                                 </div>
                                 {errors.password && <ErrorText>{errors.password}</ErrorText>}
                             </div>
@@ -508,6 +533,8 @@ export default function RegisterDesktop() {
                             <div>
 
                                 <label htmlFor="reg-confirm-password" className="form-label">Confirm Password</label>
+
+
                                 <div style={{ position: "relative" }}>
                                     <input
                                         id="reg-confirm-password"
@@ -537,11 +564,14 @@ export default function RegisterDesktop() {
                                     >
                                         {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
+
+
                                 </div>
                                 {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
                             </div>
 
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
+
                                 <input
                                     type="checkbox"
                                     id="terms"
@@ -566,6 +596,8 @@ export default function RegisterDesktop() {
                                         Privacy Policy
                                     </a>
                                 </label>
+
+
                             </div>
                             {errors.terms && <ErrorText>{errors.terms}</ErrorText>}
                         </div>
@@ -580,6 +612,7 @@ export default function RegisterDesktop() {
                         <p className="text-text-subtle mt-1 mb-6" style={{ maxWidth: "100%" }}>
                             Please enter the OTP (One-Time-Pin) sent to your registered email to complete verification
                         </p>
+
                         <StepIndicator currentStep={step} />
 
                         <div>
@@ -599,7 +632,10 @@ export default function RegisterDesktop() {
                                     <span style={{ color: "#00B4D8", fontWeight: 600 }}>
                                         00:{String(otpTimer).padStart(2, "0")}s
                                     </span>
+
+
                                 </span>
+
                                 <button
                                     type="button"
                                     onClick={handleResendOtp}
@@ -615,9 +651,12 @@ export default function RegisterDesktop() {
                                 >
                                     Resend OTP code
                                 </button>
+
+
                             </div>
 
                             <div style={{ marginTop: "1.5rem" }}>
+
                                 <Button 
                                     className="w-full cursor-pointer" 
                                     onClick={handleNext} 
@@ -627,6 +666,8 @@ export default function RegisterDesktop() {
                                 </Button>
 
                             </div>
+
+
                         </div>
                     </>
                 );
@@ -638,6 +679,7 @@ export default function RegisterDesktop() {
 
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
+        
             <Card className="card w-3/5 max-w-4xl flex overflow-hidden min-w-0 shadow-2xl p-0">
                 
                 

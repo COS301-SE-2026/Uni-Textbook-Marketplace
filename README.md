@@ -4,11 +4,19 @@
 
 <div align="center">
 <p align="center">
-    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="200" height="200" /><br/>
-    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="250" height="250" />
-    <br/>
-    <img src="./docs/images/Uni_Textbook.png" alt="Uni Textbook Word" width="40%" />
-    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="40%" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/images/students-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="./docs/images/students-light.svg" />
+    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="280" />
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-light.svg" />
+    <img src="./docs/images/logo-light.svg" alt="Uni Textbook Marketplace Logo" width="600" />
+  </picture>
 </p>
 
 <h2 align="center">Made for Students, by Students</h2>
@@ -18,16 +26,24 @@
 <p align="center">
   <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
     <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
-    Explore Here
+    Explore Our Web-App Here
   </a>
 </p>
 
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
-<img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/NexusDevLOGO_2.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/NexusDevLOGO_2-light.png" />
+  <img src="./docs/images/NexusDevLOGO.png" alt="NexusDev Logo" width="25%">
+</picture>
 </h2>
 
 <h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br/>
-<img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/Agile-Bridge-logo-white-2.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/Agile-Bridge-logo-dark-2.png" />
+  <img src="./docs/images/Agile_Bridge_logo_.png" alt="Agile Bridge Logo" width="25%" />
+</picture>
 </h2>
 
 <p align="center">
@@ -44,7 +60,8 @@
 [![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
 [![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
-[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
+[![Uptime](https://img.shields.io/uptimerobot/ratio/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
+[![Uptime](https://img.shields.io/uptimerobot/status/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
@@ -59,7 +76,7 @@
 
 ## Project Description
 
-**A web-based marketplace where verified university students can buy, sell, or swap second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and semester, smart filters, and privacy-first in-app messaging.**
+**A web-based marketplace where verified university students can buy and/or sell second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and edition, smart filters, privacy-first in-app messaging, a notification system and admin moderation.**
 
 Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301 Software Engineering Capstone Project at the University of Pretoria.
 
@@ -71,29 +88,30 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 <div align="center">
     <img src="https://cdn.simpleicons.org/stackshare/00B4D8" width="28" height="28" valign="middle"/>
-<h2 align="center">Tech Stack</h2>
+<h2 align="center">The Stack Behind It All</h2>
+<p align="center"><sub>Every layer chosen to ship fast without breaking under real students.</sub></p>
 
-<h3 align="center">Frontend: Considered User Experiences</h3>
+<h3 align="center">Frontend: Where Students Meet the Product</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=react,tailwindcss,figma,typescript,nextjs" />
 </p>
 
-<h3 align="center">Backend: Stable Foundation</h3>
+<h3 align="center"> Backend: The Engine Room</h3>
 <p align="center">
-<img src="https://skillicons.dev/icons?i=nestjs,postgres,typescript,firebase" /><br>
+<img src="https://skillicons.dev/icons?i=nestjs,postgres,typescript,firebase" />
 </p>
 
-<h3 align="center">DevOps: Business-Smart Delivery</h3>
+<h3 align="center">DevOps: Shipping Without Drama</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=githubactions,docker,azure" />
 </p>
 
-<h3 align="center">Testing: For Smooth System Assurance</h3>
+<h3 align="center"> Testing: Trust, Then Verify</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=jest,cypress" />
 </p>
 
-<h3 align="center">Project Management: Via Modern Tech</h3>
+<h3 align="center"> Project Management: Staying in Sync</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=github,notion,discord" />
 </p>
@@ -107,7 +125,29 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
   <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
   <h2 align="center">Documentation</h2>
 
-### DEMO 2 (Latest Documentation)
+### DEMO 3 (Latest Documentation)
+
+| Document | Link |
+|---|---|
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf) |
+|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf) |
+|  OpenAPI | [API Service Contracts](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/OpenAPI/openapi.yaml) |
+|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf) |
+|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf) |
+|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf) |
+|  Brand Style Guide (On our Web) | [View Brand Style Guide](https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/brand) |
+|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |
+|  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
+|  Issue Tracker | [GitHub Issues](../../issues) |
+| **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
+|  Setup Instructions | See [Getting Started](#getting-started) below |
+
+---
+
+### DEMO 2
+<details>
+<summary>Click to expand</summary>
 
 | Document | Link |
 |---|---|
@@ -123,14 +163,22 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 | **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
+</details>
+
 ---
 
 ### DEMO 1
+
+<details>
+<summary>Click to expand</summary>
 
 | Document | Link |
 |---|---|
 |  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf) |
 |  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) |
+
+
+</details>
 
 </div>
 
@@ -138,12 +186,13 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-<h2 align="center">Demo Video </h2>
+<h2 align="center">Demo Videos </h2>
 <div align="center">
 
 | Demo Video | Documentation |
 | --- | --- |
-| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
+| [Demo 3 Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing) | [Demo 3 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |
+| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) |
 | [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
 
 </div>
@@ -271,6 +320,18 @@ cd Uni-Textbook-Marketplace
 
 # Install all dependencies from root (installs both frontend and backend)
 npm install
+
+# Build the Container and Environment
+docker compose up --build
+
+# Move to backend
+cd backend
+
+# Install the seeding dependencies
+npm install ts-node
+
+# Run the Seed data into the database from Docker
+docker exec -it nexusdev_backend npx ts-node src/database/seeds/seed-runner.ts
 ```
 
 ### Running locally
@@ -285,6 +346,38 @@ npm run backend
 # Start the frontend (from root)
 npm run frontend
 ```
+
+### Logging into the web-app (Running Locally)
+
+<details>
+<summary>Click to expand</summary>
+
+Student credentials from seed data:
+
+Login (Email):
+```bash
+student1@tuks.co.za
+```
+
+Password:
+```bash
+Password123
+```
+
+---
+
+Admin credentials from seed data:
+
+Login (Email):
+```bash
+admin1@tuks.co.za
+```
+
+Password:
+```bash
+Admin123
+```
+</details>
 
 ### Environment variables
 

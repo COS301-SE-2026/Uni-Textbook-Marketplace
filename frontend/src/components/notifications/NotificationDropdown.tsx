@@ -17,12 +17,19 @@ const VISIBLE_COUNT = 6;
 function timeAgo(isoDate: string): string {
 
     const diffMs = Date.now() - new Date(isoDate).getTime();
+
+
     const minutes = Math.floor(diffMs / 60000);
     
     if (minutes < 1) return "just now";
+
+
     if (minutes < 60) return `${minutes}m ago`;
 
+
+
     const hours = Math.floor(minutes / 60);
+
     if (hours < 24) return `${hours}h ago`;
     
     const days = Math.floor(hours / 24);
@@ -46,9 +53,12 @@ export function NotificationDropdown({
         <div role="menu"
             className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
         >
+
+
             <div className="flex items-center justify-between border-b border-[var(--card-border)] px-4 py-3">
 
                 <h2 className="text-sm font-semibold text-[var(--foreground)]">Notifications</h2>
+
                 {hasUnread && (
                     <button type="button"
                         onClick={onMarkAllRead}
@@ -57,6 +67,7 @@ export function NotificationDropdown({
                         <CheckCheck className="h-3.5 w-3.5" aria-hidden="true" />
                         Mark all read
                     </button>
+
                 )}
             </div>
 
@@ -65,18 +76,23 @@ export function NotificationDropdown({
                     <p className="px-4 py-6 text-center text-sm text-[#4B4F58] dark:text-gray-400">
                         Loading notifications...
                     </p>
+                    
                 )}
 
                 {!isLoading && visible.length === 0 && (
                     <p className="px-4 py-6 text-center text-sm text-[#4B4F58] dark:text-gray-400">
                         You&apos;re all caught up.
                     </p>
+
+
                 )}
 
 
                 {!isLoading &&
                     visible.map((notification) => {
                         const Icon = getNotificationIcon(notification.entity_type);
+
+                        
                         const href = getNotificationRoute(notification);
 
                         return (
@@ -95,6 +111,7 @@ export function NotificationDropdown({
                                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#00B4D8]"
                                     aria-hidden="true"
                                 />
+
                                 <span className="flex-1">
 
                                     <span className="block text-[var(--foreground)]">
@@ -104,6 +121,7 @@ export function NotificationDropdown({
                                     <span className="mt-0.5 block text-xs text-[#4B4F58] dark:text-gray-400">
                                         {timeAgo(notification.created_at)}
                                     </span>
+
                                 </span>
 
                                 {!notification.is_read && (
@@ -112,6 +130,7 @@ export function NotificationDropdown({
                                     />
                                 )}
                             </Link>
+
                         );
                     })}
             </div>
@@ -124,5 +143,7 @@ export function NotificationDropdown({
             </Link>
             
         </div>
+
+
     );
 }

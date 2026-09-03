@@ -29,7 +29,7 @@ handleGoToAppeal,
 return (
     <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
         <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
-            {/* Left Panel - Glossy Header */}
+            
             <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[500px]">
                 <div
                     className="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10"
