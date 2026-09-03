@@ -76,7 +76,7 @@ export class SavedSearchesService {
     limit: number;
     totalPages: number;
   }> {
-     const { page = 1, limit = 20 } = query;
+    const { page = 1, limit = 20 } = query;
 
     const [data, total] = await this.savedSearchRepository.findAndCount({
       where: { user_id: userId },
