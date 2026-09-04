@@ -1208,3 +1208,4 @@ paths:
           description: Forbidden - admin access required
         "404":
           description: Case not found
+        
