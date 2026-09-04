@@ -21,7 +21,7 @@ export class NotificationsService {
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
-  ) {}
+  ) { }
 
   //for notifying student of their listing
   async create(event: AdminEvent) {
@@ -44,16 +44,18 @@ export class NotificationsService {
           reason: event.description,
         },
       );
-    }
+    } else {
 
-    await this.emailService.sendNotificationEmail(
-      event.studentEmail,
-      event.action,
-      {
-        recipientName: event.name,
-        listingTitle: event.title,
-      },
-    );
+      await this.emailService.sendNotificationEmail(
+        event.studentEmail,
+        event.action,
+        {
+          recipientName: event.name,
+          listingTitle: event.title,
+        },
+      );
+
+    }
   }
 
   async createFromSavedSearch(event: SavedSearchMatchEvent) {
