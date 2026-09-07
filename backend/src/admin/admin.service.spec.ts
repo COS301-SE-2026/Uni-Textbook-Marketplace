@@ -6,7 +6,7 @@ import { User } from '../database/entities/users.entity';
 import { Listing, ListingStatus, ListingsStatus } from '../database/entities/listing.entity';
 import { AuditLog } from '../database/entities/audit_log.entity';
 import { AuditLogFiltersDto } from './dto/audit-log-filters.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { SavedSearchesService } from '../saved_search/saved_search.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -69,11 +69,15 @@ describe('AdminService', () => {
   const mockUserRepository = {
     findOne: jest.fn(),
     find: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockEntityManager = {
     transaction: jest.fn(),
     getRepository: jest.fn(),
+  };
+  const mockEventEmitter = {
+    emit: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -90,15 +94,11 @@ describe('AdminService', () => {
         },
         {
           provide: getRepositoryToken(AuditLog),
-          useValue: {
-            emit: jest.fn(),
-          }
+          useValue: mockAuditLogRepository,
         },
         {
           provide: EventEmitter2,
-          useValue: {
-            emit:jest.fn()
-          }
+          useValue: mockEventEmitter,
         },
         {
           provide : SavedSearchesService,
@@ -794,4 +794,173 @@ describe('AdminService', () => {
       });
     });
   });
+  
+  describe('banUser', () => {
+    it('should ban a user successfully', async () => {
+      const user = {
+        id: 'user-456',
+        email: 'student@example.com',
+        first_name: 'John',
+        last_name: 'Doe',
+        is_banned: false,
+      } as User;
+
+      const admin = {
+        id: 'admin-123',
+        email: 'admin@example.com',
+        role: 'admin',
+      } as User;
+
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(user)
+        .mockResolvedValueOnce(admin);
+
+      mockUserRepository.save.mockResolvedValue({
+        ...user,
+        is_banned: true,
+        banned_by: admin,
+        ban_reason: 'Fraudulent activity',
+      } as User);
+
+      mockAuditLogRepository.create.mockReturnValue(
+        mockAuditLog as AuditLog,
+      );
+
+      mockAuditLogRepository.save.mockResolvedValue(
+        mockAuditLog as AuditLog,
+      );
+
+      const result = await service.banUser(
+        user.id,
+        admin.id,
+        'Fraudulent activity',
+      );
+
+      expect(result.is_banned).toBe(true);
+      expect(result.ban_reason).toBe('Fraudulent activity');
+
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: user.id,
+          is_banned: true,
+          banned_by: admin,
+          ban_reason: 'Fraudulent activity',
+        }),
+      );
+
+      expect(mockAuditLogRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entity_type: 'USER',
+          entity_id: user.id,
+          action: 'BAN_USER',
+          performedBy: admin,
+          reason: 'Fraudulent activity',
+        }),
+      );
+    });
+
+    it('should throw NotFoundException when user does not exist', async () => {
+      mockUserRepository.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        service.banUser(
+          'user-456',
+          'admin-123',
+          'Fraudulent activity',
+        ),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
+      expect(mockAuditLogRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when user is already banned', async () => {
+      const bannedUser = {
+        id: 'user-456',
+        email: 'student@example.com',
+        is_banned: true,
+      } as User;
+
+      mockUserRepository.findOne.mockResolvedValueOnce(bannedUser);
+
+      await expect(
+        service.banUser(
+          'user-456',
+          'admin-123',
+          'Fraudulent activity',
+        ),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
+      expect(mockAuditLogRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when admin does not exist', async () => {
+      const user = {
+        id: 'user-456',
+        email: 'student@example.com',
+        is_banned: false,
+      } as User;
+
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(user)
+        .mockResolvedValueOnce(null);
+
+      await expect(
+        service.banUser(
+          'user-456',
+          'admin-123',
+          'Fraudulent activity',
+        ),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
+      expect(mockAuditLogRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should emit user.banned event after successfully banning user', async () => {
+      const user = {
+        id: 'user-456',
+        email: 'student@example.com',
+        first_name: 'John',
+        last_name: 'Doe',
+        is_banned: false,
+      } as User;
+
+      const admin = {
+        id: 'admin-123',
+        email: 'admin@example.com',
+        role: 'admin',
+      } as User;
+
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(user)
+        .mockResolvedValueOnce(admin);
+
+      mockUserRepository.save.mockResolvedValue(user);
+      mockAuditLogRepository.create.mockReturnValue(
+        mockAuditLog as AuditLog,
+      );
+      mockAuditLogRepository.save.mockResolvedValue(
+        mockAuditLog as AuditLog,
+      );
+
+      await service.banUser(
+        user.id,
+        admin.id,
+        'Fraudulent activity',
+      );
+
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'user.banned',
+        expect.objectContaining({
+          userId: user.id,
+          name: 'John Doe',
+          studentEmail: user.email,
+          reason: 'Fraudulent activity',
+        }),
+      );
+    });
+  });
+
 });

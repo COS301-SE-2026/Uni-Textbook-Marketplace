@@ -286,6 +286,13 @@ export class AdminService {
       }),
     );
 
+    this.eventEmitter.emit('user.banned', {
+      userId: user.id,
+      name: `${user.first_name} ${user.last_name}`,
+      studentEmail: user.email,
+      reason,
+    });
+
     return savedUser;
   }
 }

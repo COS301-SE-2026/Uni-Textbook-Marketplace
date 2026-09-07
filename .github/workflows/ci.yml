@@ -66,6 +66,7 @@ jobs:
             MAILTRAP_PASS: ${{ secrets.MAILTRAP_PASS }}
             MAIL_FROM: ${{ secrets.MAIL_FROM }}
             FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+            TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
         - name: Upload Report
           uses: codecov/codecov-action@v4
