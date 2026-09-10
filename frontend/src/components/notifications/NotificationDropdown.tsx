@@ -51,7 +51,7 @@ export function NotificationDropdown({
 
     return (
         <div role="menu"
-            className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
+            className="absolute left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 right-0 top-full mt-2  w-80  max-w-[calc(100vw-2rem)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-md shadow-md overflow-hidden z-50"
         >
 
 
