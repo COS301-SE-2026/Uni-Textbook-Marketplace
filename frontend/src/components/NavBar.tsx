@@ -145,7 +145,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
     <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
       }`}>
       <div className="container-content">
-        <div className="flex items-center justify-between h-[70px]">
+        <div className="relative flex items-center justify-between h-[70px]">
 
 
           <Link href="/" className="flex items-center gap-2 no-underline">
@@ -297,7 +297,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                 <Link
                   href="/auth/register"
                   className={`px-5 py-2 text-sm font-semibold rounded no-underline transition-colors duration-200 ${isTransparent ? 'text-white border-2 border-white hover:bg-white hover:text-[#000f2b]'
-                      : 'text-[#00B4D8] border-2 border-[#00B4D8] hover:bg-[#00B4D8] hover:text-[#000f2b]'}`
+                    : 'text-[#00B4D8] border-2 border-[#00B4D8] hover:bg-[#00B4D8] hover:text-[#000f2b]'}`
                   }>
                   Register
                 </Link>
@@ -313,7 +313,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
             )}
           </div>
 
-          <div className='flex gap-3 '>
+          <div className='absolute right-0 top-1/2 flex -translate-y-1/2 gap-3 md:hidden'>
             {/* MOBILE: Notification Bell */}
             <div className="flex items-center gap-1 md:hidden">
               {isAuthenticated && user && <NotificationBell />}
