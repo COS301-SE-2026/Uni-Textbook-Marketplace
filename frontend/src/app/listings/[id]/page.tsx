@@ -87,7 +87,9 @@ export default function ListingDetailPage() {
     })
     const { startConversation } = useMessaging();
     const { user } = useAuth();
-    const isOwner = Boolean(user?.id && listing?.seller?.id && user.id === listing.seller.id);
+    const sellerId = listing?.seller?.id?.trim();
+    const currentUserId = user?.id?.trim();
+    const isOwner = Boolean(sellerId && currentUserId && sellerId === currentUserId);
 
     // Fetch listing
 
@@ -172,7 +174,7 @@ export default function ListingDetailPage() {
     }
 
     return (
-        <div className="container-content py-8">
+        <div className="container-content px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">
 
             <Button
                 onClick={() => router.back()}
@@ -228,8 +230,8 @@ export default function ListingDetailPage() {
                                     key={i}
                                     onClick={() => setActiveImage(i)}
                                     className={`relative w-14 h-14 rounded border-2 overflow-hidden transition-all duration-200 ${activeImage === i
-                                            ? 'border-blue-600 shadow-md shadow-blue-200'
-                                            : 'border-transparent hover:border-gray-300'
+                                        ? 'border-blue-600 shadow-md shadow-blue-200'
+                                        : 'border-transparent hover:border-gray-300'
                                         }`}
                                 >
 
@@ -417,14 +419,14 @@ export default function ListingDetailPage() {
                     </div>
 
                     {!isOwner && (
-                        <div className="flex gap-3 mt-8 flex-wrap">
+                        <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:flex sm:flex-wrap">
 
                             <Button
                                 onClick={() => setShowMessageModal(true)}
                                 variant='primary'
                                 id='message-seller-btn'
 
-                                className="flex items-center gap-2 cursor-pointer"
+                                className="flex w-full items-center justify-center gap-2 cursor-pointer sm:w-auto"
                             >
                                 <Send size={16} />
                                 MESSAGE SELLER
@@ -433,7 +435,7 @@ export default function ListingDetailPage() {
                             <Button
                                 onClick={() => setShowReportModal(true)}
                                 variant="primary"
-                                className="flex items-center gap-2 cursor-pointer"
+                                className="flex w-full items-center justify-center gap-2 cursor-pointer sm:w-auto"
                             >
                                 <AlertTriangle size={16} />
                                 REPORT LISTING
