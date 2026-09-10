@@ -42,6 +42,7 @@ export interface Listing {
     }
 
     seller?: {
+        id?: string
         first_name: string
         last_name: string
         is_verified: boolean
@@ -98,9 +99,9 @@ export default function ListingCard({
             } else {
                 await remove(listing.id)
             }
-           
+
             window.dispatchEvent(new CustomEvent('wishlist:changed'))
-            
+
         } catch (error) {
             console.error('Failed to update wishlist', error)
             setIsLiked(!liked)
@@ -121,21 +122,20 @@ export default function ListingCard({
     return (
         <div
             onClick={handleClick}
-            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden ${
-                !removeClick ? 'cursor-pointer' : ''
-            }`}
+            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
+                }`}
             style={{
                 height: '420px',
                 borderRadius: '12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
             }}
         >
-            
+
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                 background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
             }} />
 
-            
+
             <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
                 {image ? (
                     <Image
@@ -165,19 +165,19 @@ export default function ListingCard({
                     </svg>
                 )}
 
-                
+
                 <div className="absolute bottom-0 left-0 right-0 h-12" style={{
                     background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
                 }} />
 
-                
+
                 <div className="absolute top-2 right-2">
                     <Badge variant={conditionVariant}>
                         {CONDITION_LABEL[listing.condition]}
                     </Badge>
                 </div>
 
-                
+
                 {showStatus && listing.status !== 'APPROVED' && (
                     <div className="absolute top-2 left-2">
 
@@ -188,13 +188,13 @@ export default function ListingCard({
                             <Badge variant="rejected">Rejected</Badge>
                         )}
                     </div>
-                    
+
                 )}
 
-                
+
                 {listing.status === 'APPROVED' && (listing.listing_status === 'RESERVED' || listing.listing_status === 'SOLD') && (
                     <div className="absolute top-2 left-2">
-                        
+
                         <Badge variant={listing.listing_status === 'RESERVED' ? 'reserved' : 'sold'}>
                             {listing.listing_status === 'RESERVED' ? 'Reserved' : 'Sold'}
                         </Badge>
@@ -204,28 +204,28 @@ export default function ListingCard({
                 )}
             </div>
 
-            
+
             <div className="flex flex-col gap-1 px-3 pb-3 flex-1">
-                
+
                 <p className="font-semibold text-sm line-clamp-1 text-[#1a1a2e] dark:text-white">
                     {listing.title}
                 </p>
 
 
 
-                
+
                 <p className="text-xs text-gray-500">
                     {listing.book?.edition} Edition • {listing.module?.code}
                 </p>
 
-                
+
                 {listing.book?.author && (
                     <p className="text-xs text-gray-400 truncate">
                         {listing.book.author}
                     </p>
                 )}
 
-                
+
                 <div className="flex items-center justify-between mt-auto pt-1">
 
                     <span className="font-bold text-lg text-[#000f2b] dark:text-white">
@@ -246,7 +246,7 @@ export default function ListingCard({
 
                             {listing.seller.first_name} {listing.seller.last_name}
                         </span>
-                        
+
                         {listing.seller.is_verified && (
                             <span className="text-[#00B4D8] font-medium">• Verified ✓</span>
                         )}
@@ -255,7 +255,7 @@ export default function ListingCard({
                 )}
             </div>
 
-            
+
             <div className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
                 boxShadow: 'inset 0 0 0 2px rgba(0,180,216,0.3)',
             }} />

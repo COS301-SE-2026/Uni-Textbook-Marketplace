@@ -11,6 +11,7 @@ import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
 import AccordionSection from '@/components/ui/AccordionSection'
 import { useMessaging } from '@/hooks/useMessaging'
+import { useAuth } from '@/context/AuthContext'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import '@/components/tutorials/tutorial.css'
@@ -84,7 +85,9 @@ export default function ListingDetailPage() {
         bookDetails: false,
         moduleDetails: false,
     })
-    const {startConversation} = useMessaging();
+    const { startConversation } = useMessaging();
+    const { user } = useAuth();
+    const isOwner = Boolean(user?.id && listing?.seller?.id && user.id === listing.seller.id);
 
     // Fetch listing
 
@@ -104,9 +107,9 @@ export default function ListingDetailPage() {
 
     useEffect(() => {
 
-        if(loading || !listing) return;
+        if (loading || !listing || isOwner) return;
 
-        if(sessionStorage.getItem('tutorial_contact_seller') !== '1') return;
+        if (sessionStorage.getItem('tutorial_contact_seller') !== '1') return;
 
         sessionStorage.removeItem('tutorial_contact_seller')
 
@@ -123,7 +126,7 @@ export default function ListingDetailPage() {
             ]
         })
         tour.drive()
-    }, [loading,listing])
+    }, [loading, listing, isOwner])
 
     function onselect(section: SectionKey) {
         setOpenSection((prev) => ({ ...prev, [section]: !prev[section] }))
@@ -140,7 +143,7 @@ export default function ListingDetailPage() {
                     <div className="flex-1 flex flex-col gap-4">
                         <div className="h-6 bg-gray-200 rounded w-2/3" />
 
-                        
+
                         <div className="h-4 bg-gray-100 rounded w-1/3" />
 
                         <div className="h-8 bg-gray-200 rounded w-1/4 mt-4" />
@@ -178,7 +181,7 @@ export default function ListingDetailPage() {
             >
 
                 <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform duration-200" />
-                Back 
+                Back
             </Button>
 
 
@@ -224,11 +227,10 @@ export default function ListingDetailPage() {
                                     type="button"
                                     key={i}
                                     onClick={() => setActiveImage(i)}
-                                    className={`relative w-14 h-14 rounded border-2 overflow-hidden transition-all duration-200 ${
-                                        activeImage === i
+                                    className={`relative w-14 h-14 rounded border-2 overflow-hidden transition-all duration-200 ${activeImage === i
                                             ? 'border-blue-600 shadow-md shadow-blue-200'
                                             : 'border-transparent hover:border-gray-300'
-                                    }`}
+                                        }`}
                                 >
 
                                     <Image
@@ -414,29 +416,31 @@ export default function ListingDetailPage() {
 
                     </div>
 
-                    <div className="flex gap-3 mt-8 flex-wrap">
+                    {!isOwner && (
+                        <div className="flex gap-3 mt-8 flex-wrap">
 
-                        <Button
-                            onClick={() => setShowMessageModal(true)}
-                            variant='primary'
-                            id='message-seller-btn'
-                        
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <Send size={16} />
-                            MESSAGE SELLER
-                        </Button>
+                            <Button
+                                onClick={() => setShowMessageModal(true)}
+                                variant='primary'
+                                id='message-seller-btn'
 
-                        <Button
-                            onClick={() => setShowReportModal(true)}
-                            variant="primary"
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <AlertTriangle size={16} />
-                            REPORT LISTING
-                        </Button>
+                                className="flex items-center gap-2 cursor-pointer"
+                            >
+                                <Send size={16} />
+                                MESSAGE SELLER
+                            </Button>
 
-                    </div>
+                            <Button
+                                onClick={() => setShowReportModal(true)}
+                                variant="primary"
+                                className="flex items-center gap-2 cursor-pointer"
+                            >
+                                <AlertTriangle size={16} />
+                                REPORT LISTING
+                            </Button>
+
+                        </div>
+                    )}
 
                 </aside>
 
@@ -526,12 +530,12 @@ export default function ListingDetailPage() {
 
                     </div>
 
-                    
-                    
+
+
                 )}
             </Modal>
 
-            
+
             <Modal
                 isOpen={showReportModal}
                 onClose={() => {
@@ -626,7 +630,7 @@ export default function ListingDetailPage() {
                     </div>
                 )}
             </Modal>
-            
+
 
         </div>
     )
