@@ -112,7 +112,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
 
   if (isLoading) {
     return (
-      <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
+      <nav className={`w-full ${isLandingPage ? 'fixed' : 'sticky'} top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
         }`}>
         <div className="container-content">
 
@@ -142,7 +142,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
   const navLinks = isAdmin ? adminNavLinks : authNavLinks;
 
   return (
-    <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
+    <nav className={`w-full ${isLandingPage ? 'fixed' : 'sticky'} top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
       }`}>
       <div className="container-content">
         <div className="relative flex items-center justify-between h-[70px]">
