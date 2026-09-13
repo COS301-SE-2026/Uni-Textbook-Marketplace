@@ -233,6 +233,10 @@ export class ListingsService {
   }
 
   async editlisting(userId: string, dto: EditListingDto) {
+    if (!this.isValidUUID(dto.id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
       relations: ['reviewer', 'seller', 'book', 'module'],
@@ -275,12 +279,20 @@ export class ListingsService {
       listing.price = dto.price;
     }
 
+    if (dto.hasNotes !== undefined) {
+      listing.hasNotes = dto.hasNotes;
+    }
+
     if (dto.condition !== undefined) {
       listing.condition = dto.condition;
     }
 
     if (dto.description !== undefined) {
       listing.description = dto.description;
+    }
+
+    if (dto.annotation_level !== undefined) {
+      listing.annotation_level = dto.annotation_level;
     }
 
     if (dto.photo_urls !== undefined) {
