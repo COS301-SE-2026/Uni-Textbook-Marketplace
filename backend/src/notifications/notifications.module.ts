@@ -9,12 +9,14 @@ import { ReportNotificationListener } from './listeners/report.notification.list
 import { SavedSearchMatchListener } from './listeners/saved-search-match.listener';
 import { EMAIL_SERVICE } from '../email/email.interface';
 import { MailtrapEmailProvider } from '../email/mailtrap-email.provider';
+import { NotificationStreamService } from './notification-stream.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Notifications, User])],
   controllers: [NotificationsController],
   providers: [
     NotificationsService,
+    NotificationStreamService,
     ListingNotificationListener,
     SavedSearchMatchListener,
     {
