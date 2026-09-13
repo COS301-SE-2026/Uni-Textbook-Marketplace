@@ -758,7 +758,7 @@ describe('ListingsController Integration Tests', () => {
                 .send({
                     title: 'Updated Title'
                 })
-                .expect(404);
+                .expect(400);
         });
 
         it('should validate id is a valid UUID', async () => {
