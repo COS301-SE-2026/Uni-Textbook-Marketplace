@@ -279,8 +279,8 @@ export class ListingsService {
       listing.price = dto.price;
     }
 
-    if (dto.hasNotes !== undefined) {
-      listing.hasNotes = dto.hasNotes;
+    if (dto.has_notes !== undefined) {
+      listing.has_notes = dto.has_notes;
     }
 
     if (dto.condition !== undefined) {
