@@ -577,6 +577,49 @@ describe('ListingsController Integration Tests', () => {
             
         });
 
+        it('should reject a student attempting to edit another student\'s listing', async () => {
+    const university = await createUniversity();
+    const faculty = await createFaculty(university.id);
+
+    const owner = await createVerifiedUser(university.id, faculty.id);
+    const otherUser = await createVerifiedUser(university.id, faculty.id);
+
+    const book = await createBook();
+    const module = await createModule(faculty.id, university.id);
+
+    const otherUserToken = getAuthToken(otherUser);
+
+    const listing = await createTestListing(
+        owner.id,
+        book.id,
+        module.id,
+        {
+            status: ListingStatus.PENDING,
+            title: 'Owner Listing',
+            price: 49.99
+        }
+    );
+
+    const response = await request(app.getHttpServer())
+        .patch('/listings/editlist')
+        .set('Authorization', `Bearer ${otherUserToken}`)
+        .send({
+            id: listing.id,
+            title: 'Hacked Title',
+            price: 1
+        })
+        .expect(403);
+
+    expect(response.body.message).toBeDefined();
+
+    const unchangedListing = await listingRepository.findOne({
+        where: { id: listing.id }
+    });
+
+    expect(unchangedListing?.title).toBe('Owner Listing');
+    expect(Number(unchangedListing?.price)).toBe(49.99);
+});
+
         it('should allow student to update photo URLs', async () => {
             const university = await createUniversity();
             const faculty = await createFaculty(university.id);
@@ -731,7 +774,7 @@ describe('ListingsController Integration Tests', () => {
                     id: 'invalid-uuid',
                     title: 'Updated Title'
                 })
-                .expect(500);
+                .expect(400);
         });
 
         it('should validate price is positive', async () => {
