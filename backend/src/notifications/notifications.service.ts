@@ -9,6 +9,7 @@ import { ReportEvent } from '../reports/events/report.events';
 import { User } from '../database/entities/users.entity';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
 import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class NotificationsService {
@@ -21,10 +22,13 @@ export class NotificationsService {
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
+
+    private readonly eventEmitter: EventEmitter2,
   ) { }
 
   //for notifying student of their listing
   async create(event: AdminEvent) {
+
     const noti = this.notificationRepo.create({
       user_id: { id: event.studentId },
       entity_type: event.action,
@@ -32,7 +36,12 @@ export class NotificationsService {
       message_info: event.description,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.studentId,
+      notificationId: savedNotification.id,
+    });
 
     if (event.action == 'REJECT_LISTING') {
       await this.emailService.sendNotificationEmail(
@@ -65,7 +74,12 @@ export class NotificationsService {
       entity_id: { id: event.listingId },
       message_info: `New listing "${event.listingTitle}" matches your saved search!`,
     });
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.userId,
+      notificationId: savedNotification.id,
+    });
 
     await this.emailService.sendNotificationEmail(
       event.studentEmail,
@@ -88,8 +102,14 @@ export class NotificationsService {
       order: { created_at: 'DESC' },
     });
 
-    if (notifications.length === 0)
-      throw new NotFoundException('No notifications found');
+    if (notifications.length === 0) throw new NotFoundException('No notifications found');
+
+    const unread = await this.notificationRepo.count({
+      where: {
+        user_id: { id: userId},
+        is_read: false,
+      }
+    })
 
     return {
       data: notifications,
@@ -99,6 +119,7 @@ export class NotificationsService {
         limit,
         pages: Math.ceil(total / limit),
       },
+      unreadCount: unread,
     };
   }
 
@@ -138,7 +159,12 @@ export class NotificationsService {
       message_info: event.message,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.adminId,
+      notificationId: savedNotification.id,
+    });
   }
 
   async notifyStudentofMessage(event: MessageEvent) {
@@ -149,7 +175,12 @@ export class NotificationsService {
       message_info: event.messageInfo,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.userId,
+      notificationId: savedNotification.id,
+    });
 
     await this.emailService.sendNotificationEmail(
       event.studentEmail,
@@ -198,7 +229,14 @@ export class NotificationsService {
         }),
       );
 
-      await this.notificationRepo.save(notification);
+      const savedNotification = await this.notificationRepo.save(notification);
+
+      for (const notification of savedNotification) {
+        this.eventEmitter.emit('notification.created', {
+          userId: notification.user_id.id,
+          notificationId: notification.id,
+        });
+      }
 
       return;
     }
@@ -210,6 +248,12 @@ export class NotificationsService {
       message_info: event.message,
     });
 
-    await this.notificationRepo.save(notification);
+    const savedNotification = await this.notificationRepo.save(notification);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.reporterId,
+      notificationId: savedNotification.id,
+    });
+
   }
 }
