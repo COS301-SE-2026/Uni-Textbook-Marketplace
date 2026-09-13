@@ -31,7 +31,7 @@ const adminNavLinks = [
   { label: 'Moderate', href: '/admin/review' },
   { label: 'Cases', href: '/admin/cases' },
   { label: 'Audit Logs', href: '/admin/log' }
- 
+
 ]
 
 
@@ -46,21 +46,21 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
 
 
   const [mounted, setMounted] = useState(false);
-  
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-      const id = requestAnimationFrame(() => {
-          setMounted(true);
-      });
+    const id = requestAnimationFrame(() => {
+      setMounted(true);
+    });
 
-      return () => cancelAnimationFrame(id);
+    return () => cancelAnimationFrame(id);
   }, []);
 
   useEffect(() => {
     if (!isLandingPage) return;
 
-    const handleScroll = () => setScrolled (window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
 
     handleScroll();
     window.addEventListener('scroll', handleScroll);
@@ -98,13 +98,13 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
         })
 
         tour.drive()
-        
-      },100)
+
+      }, 100)
     }
 
     window.addEventListener('start-my-listings-tutorial', startTour)
     return () => window.removeEventListener('start-my-listings-tutorial', startTour)
-  },[])
+  }, [])
 
   const isTransparent = isLandingPage && !scrolled;
 
@@ -112,13 +112,12 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
 
   if (isLoading) {
     return (
-      <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
-        isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
-      }`}>
+      <nav className={`w-full ${isLandingPage ? 'fixed' : 'sticky'} top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-white border-b border-[var(--nav-border)]'
+        }`}>
         <div className="container-content">
 
           <div className="flex items-center justify-between h-[70px]">
-            <Link href="/" className="flex items-center gap-2 no-underline">  
+            <Link href="/" className="flex items-center gap-2 no-underline">
 
 
               <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
@@ -126,11 +125,11 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                 <span className={`block text-xs font-semibold tracking-widest uppercase ${isTransparent ? 'text-white' : 'text-[#00B4D8]'}`}>
                   Uni Textbook
                 </span>
-                <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white': 'text-[#000f2b]'}`}>
+                <span className={`block text-lg font-bold leading-none ${isTransparent ? 'text-white' : 'text-[#000f2b]'}`}>
                   Marketplace
                 </span>
               </div>
-            </Link> 
+            </Link>
 
           </div>
         </div>
@@ -143,13 +142,12 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
   const navLinks = isAdmin ? adminNavLinks : authNavLinks;
 
   return (
-    <nav className={`w-full sticky top-0 z-50 transition-colors duration-300 ${
-      isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
-    }`}>
+    <nav className={`w-full ${isLandingPage ? 'fixed' : 'sticky'} top-0 z-50 transition-colors duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-[var(--nav-bg)] border-b border-[var(--nav-border)]'
+      }`}>
       <div className="container-content">
-        <div className="flex items-center justify-between h-[70px]">
+        <div className="relative flex items-center justify-between h-[70px]">
 
-          
+
           <Link href="/" className="flex items-center gap-2 no-underline">
 
             <BookOpen size={24} className={isTransparent ? 'text-white' : 'text-[#00B4D8]'} aria-hidden="true" />
@@ -195,7 +193,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
           <div className="hidden md:flex items-center gap-3">
 
 
-            {isAuthenticated && <ThemeToggle /> }
+            {isAuthenticated && <ThemeToggle />}
             {isAuthenticated && user ? (
               <>
 
@@ -243,7 +241,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                           >
                             Moderator Panel
                           </Link>
-                          
+
                           <Link
                             href="/admin/cases"
                             className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
@@ -265,7 +263,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                           My Listings
                         </Link>
                       )}
-                      
+
                       <Link
                         href="/settings"
                         className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8]
@@ -274,7 +272,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                       >
                         Settings
                       </Link>
-                      
+
                       <div className="border-t border-[var(--card-border)]" />
                       <button
                         type="button"
@@ -298,43 +296,41 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
               <>
                 <Link
                   href="/auth/register"
-                  className={`px-5 py-2 text-sm font-semibold rounded no-underline transition-colors duration-200 ${
-                    isTransparent ? 'text-white border-2 border-white hover:bg-white hover:text-[#000f2b]'
+                  className={`px-5 py-2 text-sm font-semibold rounded no-underline transition-colors duration-200 ${isTransparent ? 'text-white border-2 border-white hover:bg-white hover:text-[#000f2b]'
                     : 'text-[#00B4D8] border-2 border-[#00B4D8] hover:bg-[#00B4D8] hover:text-[#000f2b]'}`
                   }>
                   Register
                 </Link>
                 <Link
                   href="/auth/login"
-                  className={`text-sm px-5 py-2 rounded transition-colors duration-200 ${
-                    isTransparent ? 'bg-white text-[#000f2b] hover:bg-white/90' : 'btn-primary'}`
+                  className={`text-sm px-5 py-2 rounded transition-colors duration-200 ${isTransparent ? 'bg-white text-[#000f2b] hover:bg-white/90' : 'btn-primary'}`
                   }
                 >
                   Login
                 </Link>
-                
+
               </>
             )}
           </div>
 
-          {/* MOBILE: Notification Bell */}
-          <div className="flex items-center gap-1 md:hidden">
-            {isAuthenticated && user && <NotificationBell />}
+          <div className='absolute right-0 top-1/2 flex -translate-y-1/2 gap-3 md:hidden'>
+            {/* MOBILE: Notification Bell */}
+            <div className="flex items-center gap-1 md:hidden">
+              {isAuthenticated && user && <NotificationBell />}
+            </div>
+
+            {/* HAMBURGER: Mobile only */}
+            <button
+              type="button"
+              className={`md:hidden p-2 transition-colors duration-200 ${isTransparent ? 'text-white' : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
+                }`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
-
-          {/* HAMBURGER: Mobile only */}
-          <button
-            type="button"
-            className={`md:hidden p-2 transition-colors duration-200 ${
-              isTransparent ? 'text-white' : 'text-[#3a3a3a] dark:text-gray-300 hover:text-[#00B4D8]'
-            }`}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
 
         </div>
       </div>
@@ -362,9 +358,9 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                     className={`py-3 text-sm font-medium no-underline
                                border-b border-[var(--card-border)] transition-colors
                                ${pathname === link.href
-                                 ? 'text-[#00B4D8]!'
-                                 : 'text-[var(--foreground)] hover:text-[#00B4D8]'
-                               }`}
+                        ? 'text-[#00B4D8]!'
+                        : 'text-[var(--foreground)] hover:text-[#00B4D8]'
+                      }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
@@ -372,7 +368,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                 ))}
 
                 {!isAdmin && (
-                    <Link
+                  <Link
                     href="/listings/mine"
                     className="py-3 text-sm text-[var(--foreground)] hover:text-[#00B4D8]
                               no-underline border-b border-[var(--card-border)] transition-colors"
@@ -430,7 +426,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
             )}
           </div>
 
-          
+
         </div>
       )}
     </nav>

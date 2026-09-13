@@ -78,7 +78,7 @@ export default function MessagesMobile() {
                         Messages
                     </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                        Your conversations
+                        Your conversations 
                     </p>
                 </header>
 
@@ -126,9 +126,9 @@ export default function MessagesMobile() {
     }
 
     return (
-        <main className="flex h-screen flex-col bg-gray-50 dark:bg-[#0a0f1a]">
-            
-            <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 flex-shrink-0">
+        <main className="flex h-[calc(100dvh-70px)] min-h-0 flex-col overflow-hidden bg-gray-50 dark:bg-[#0a0f1a]">
+
+            <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 shrink-0">
 
                 <button
                     type="button"
@@ -148,16 +148,16 @@ export default function MessagesMobile() {
                     />
                 </div>
 
-                
+
             </div>
 
-            
-            <div className="flex-1 overflow-hidden dark:text-white">
+
+            <div className="min-h-0 flex-1 overflow-hidden dark:text-white">
                 {chatContent}
             </div>
 
             <MessageInput onSend={send} />
-            
+
         </main>
     );
 }

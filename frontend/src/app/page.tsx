@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import {
-  Search, CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
+  CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
   MessageCircle, Microscope, MessageSquare, Mail
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
@@ -150,7 +150,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'Rethabile',
       last_name: 'Zwide',
       is_verified: true,
-      university: {name: ''}
+      university: { name: '' }
     },
   },
   {
@@ -180,7 +180,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'Emily',
       last_name: 'Brown',
       is_verified: true,
-      university: {name: ''}
+      university: { name: '' }
     },
   },
   {
@@ -210,7 +210,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'David',
       last_name: 'Wilson',
       is_verified: true,
-      university: {name: ''}
+      university: { name: '' }
     },
   },
   {
@@ -240,7 +240,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'Novuka',
       last_name: 'Mtembu',
       is_verified: true,
-      university: { name: ''}
+      university: { name: '' }
     },
   },
   {
@@ -270,7 +270,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'Teboho',
       last_name: 'Modise',
       is_verified: true,
-      university: {name: ''}
+      university: { name: '' }
     },
   },
   {
@@ -300,7 +300,7 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       first_name: 'Chuku',
       last_name: 'Obioha',
       is_verified: true,
-      university: {name: ''}
+      university: { name: '' }
     },
   },
 
@@ -310,7 +310,7 @@ export default function LandingPage() {
   return (
     <>
       {/* Hero section */}
-      <section className="relative h-screen w-full bg-[#000f2b] flex items-center overflow-hidden -mt-[70px]">
+      <section className="relative min-h-[100svh] md:min-h-screen w-full bg-[#000f2b] flex items-center overflow-hidden pt-[40px]">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
 
@@ -323,11 +323,11 @@ export default function LandingPage() {
           />
         </div>
 
-        
+
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
 
-        <div className="container-content relative z-20 py-16 w-full">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-12 min-h-[80vh]">
+        <div className="container-content relative z-20 w-full py-10 md:py-16">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10 md:gap-12">
 
             {/* LEFT text + buttons */}
             <div className="max-w-lg">
@@ -386,7 +386,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          
+
         </div>
       </section>
 
@@ -408,42 +408,42 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
             <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
 
-              {PLATFORM_STEPS.map((item, idx) => (
-                <ScrollAnimation key={idx} delay={idx * 650}>
+            {PLATFORM_STEPS.map((item, idx) => (
+              <ScrollAnimation key={idx} delay={idx * 650}>
 
                 <div className="relative flex flex-col items-center text-center px-4">
                   <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
 
-                  {item.icon}
-                  <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
-                    {item.num}
+                    {item.icon}
+                    <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
+                      {item.num}
 
-                  </span>
+                    </span>
+                  </div>
+                  {/* Content */}
+                  <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-                {/* Content */}
-                <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
-                  {item.title}
-                </h3>
-
-                <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
               </ScrollAnimation>
-              ))}
-            </div>
-
+            ))}
           </div>
+
+        </div>
       </section>
-      
+
 
       {/* Find a variety of textbooks */}
       <ScrollAnimation delay={550}>
-      <section className="py-20 bg-white">
+        <section className="py-20 bg-white">
 
-        <div className="container-content">
+          <div className="container-content">
             <div className="text-center mb-14">
-              
+
               <h2 className="text-3xl md:text-4xl fint-extrabold text-[#000f2b] tracking tight">
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
               </h2>
@@ -453,12 +453,12 @@ export default function LandingPage() {
               </p>
 
             </div>
-              {/* Faculty Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
-                {UNIVERSITY_FACULTIES.map((fac, idx) => (
-                  <ScrollAnimation key={idx} delay={idx * 500}>
-                  <div key = {idx}
-                        
+            {/* Faculty Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
+              {UNIVERSITY_FACULTIES.map((fac, idx) => (
+                <ScrollAnimation key={idx} delay={idx * 500}>
+                  <div key={idx}
+
                     className="flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                       {fac.icon}
@@ -467,128 +467,128 @@ export default function LandingPage() {
                       {fac.name}
                     </span>
                   </div>
-                  </ScrollAnimation>
-                ))}
-              </div>
+                </ScrollAnimation>
+              ))}
             </div>
-      </section>
+          </div>
+        </section>
       </ScrollAnimation>
 
       {/* Trust & Safety */}
       <ScrollAnimation delay={700}>
-      <section className="py-20 bg-[#00B4D8]">
-        <div className="container-content">
+        <section className="py-20 bg-[#00B4D8]">
+          <div className="container-content">
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
               <div>
-                  <span className="text-white font-bold text-lg tracking-wider uppercase bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
-                      Campus Safety
-                  </span>
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
-                        Built for Safe, On-Campus Exchanges
-                    </h2>
-                    <p className="text-white/90 text-sm mt-3 max-w-md leading-relaxed">
-                        This platform is built specifically to handle face-to-face transactions around campus. We prioritize internal student verification to keep the trading pool trusted.
-                    </p>
-                    {/* Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-                      {CAMPUS_SECURITY.map((item, idx) => (
-                        <ScrollAnimation key={idx} delay={idx * 650}>
-                        <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                            {item.icon}
-                          </div>
-                          <div>
-                            <h4 className="text-white font-bold text-sm">
-                              {item.title}
-                            </h4>
-                            <p className="text-white font-bold text-sm">
-                              {item.desc}
-                            </p>
-                          </div>
-
+                <span className="text-white font-bold text-lg tracking-wider uppercase bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
+                  Campus Safety
+                </span>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                  Built for Safe, On-Campus Exchanges
+                </h2>
+                <p className="text-white/90 text-sm mt-3 max-w-md leading-relaxed">
+                  This platform is built specifically to handle face-to-face transactions around campus. We prioritize internal student verification to keep the trading pool trusted.
+                </p>
+                {/* Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                  {CAMPUS_SECURITY.map((item, idx) => (
+                    <ScrollAnimation key={idx} delay={idx * 650}>
+                      <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                          {item.icon}
                         </div>
-                        </ScrollAnimation>
+                        <div>
+                          <h4 className="text-white font-bold text-sm">
+                            {item.title}
+                          </h4>
+                          <p className="text-white font-bold text-sm">
+                            {item.desc}
+                          </p>
+                        </div>
+
+                      </div>
+                    </ScrollAnimation>
                   ))}
+                </div>
+
               </div>
+              <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+                <video src="/in-app-chat.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                  poster="/students-sitting.jpg"
+                />
+              </div>
+            </div>
 
-            </div>
-            <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
-              <video src="/in-app-chat.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                poster="/students-sitting.jpg"
-              />
-            </div>
           </div>
-
-        </div>
-      </section>
+        </section>
       </ScrollAnimation>
 
       {/* Featured Books */}
       <ScrollAnimation delay={400}>
-      <section className="py-16 bg-white">
-        <div className="container-content">
+        <section className="py-16 bg-white">
+          <div className="container-content">
 
-          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8">
 
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
-              A SAMPLE OF OUR INTERFACE
-            </h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
+                A SAMPLE OF OUR INTERFACE
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {MOCK_FEATURED_BOOKS.map((listing, index) => (
+                <ListingCard key={index} listing={listing} removeClick={true} />
+              ))}
+            </div>
+
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {MOCK_FEATURED_BOOKS.map((listing, index) => (
-              <ListingCard key={index} listing={listing} removeClick={true}/>
-            ))}
-          </div>
-
-        </div>
-      </section>
+        </section>
       </ScrollAnimation>
 
       {/* Call To Action */}
       <ScrollAnimation delay={450}>
-      <section className="py-24 bg-slate-50">
-        
-        <div className="container-content">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <section className="py-24 bg-slate-50">
 
-             <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
-              <video src="/Woman_Reading.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                poster="/students-sitting-2.jpg"
-              />
+          <div className="container-content">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-             </div>
+              <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+                <video src="/Woman_Reading.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                  poster="/students-sitting-2.jpg"
+                />
 
-             <div className="px-2">
-              <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
-                Get Started
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#000f2b] tracking-tight leading-tight">
-                Ready to find your textbooks or sell a few?
-              </h2>
+              </div>
 
-              <Link href='/auth/register'
-                className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#00B4D8] text-lg font-extrabold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 shadow-sm uppercase tracking-wider">
+              <div className="px-2">
+                <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
+                  Get Started
+                </span>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-[#000f2b] tracking-tight leading-tight">
+                  Ready to find your textbooks or sell a few?
+                </h2>
+
+                <Link href='/auth/register'
+                  className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[#00B4D8] text-lg font-extrabold text-[#000f2b] rounded-lg hover:bg-[#0096B4] transition-all duration-200 shadow-sm uppercase tracking-wider">
                   <UserPlus size={15} />
                   REGISTER
                 </Link>
-             </div>
+              </div>
+            </div>
+
+
           </div>
-
-
-        </div>
-      </section>
+        </section>
       </ScrollAnimation>
       <Footer />
     </>

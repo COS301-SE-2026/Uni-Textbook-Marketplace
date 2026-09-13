@@ -18,11 +18,11 @@ export default function ConversationList({
 }: Readonly<Props>) {
 
     return (
-        <aside className="w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] flex flex-col h-full flex-shrink-0">
+        <aside className=" md:w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] flex flex-col h-full flex-shrink-0">
             
 
 
-            <div className="border-b border-gray-200 dark:border-gray-700 px-5 py-4">
+            <div className="hidden md:block border-b border-gray-200 dark:border-gray-700 px-5 py-4">
 
 
                 <h2 className="text-xl font-bold text-[#000f2b] dark:text-white">
