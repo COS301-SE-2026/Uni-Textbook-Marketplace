@@ -23,7 +23,7 @@ import { Wishlist } from './database/entities/wishlist.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Report } from './database/entities/report.entity';
-import {Case} from  './database/entities/case.entity'
+import { Case } from './database/entities/case.entity';
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
