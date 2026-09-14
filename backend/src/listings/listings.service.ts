@@ -232,13 +232,23 @@ export class ListingsService {
     return changes;
   }
 
-  async editlisting(dto: EditListingDto) {
+  async editlisting(userId: string, dto: EditListingDto) {
+    if (!this.isValidUUID(dto.id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
       relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
     if (!listing) throw new NotFoundException('listing not found');
+
+    if (listing.seller.id !== userId) {
+      throw new ForbiddenException(
+        'Only the listing owner can edit this listing',
+      );
+    }
 
     if (!this.isValidUUID(listing.id)) {
       throw new BadRequestException('Invalid listing ID format');
@@ -259,7 +269,35 @@ export class ListingsService {
       this.eventEmitter.emit('listing.edit', event);
     }
 
-    Object.assign(listing, dto);
+    // Object.assign(listing, dto); - fix to copy only an explicit list of editable fields
+
+    if (dto.title !== undefined) {
+      listing.title = dto.title;
+    }
+
+    if (dto.price !== undefined) {
+      listing.price = dto.price;
+    }
+
+    if (dto.has_notes !== undefined) {
+      listing.has_notes = dto.has_notes;
+    }
+
+    if (dto.condition !== undefined) {
+      listing.condition = dto.condition;
+    }
+
+    if (dto.description !== undefined) {
+      listing.description = dto.description;
+    }
+
+    if (dto.annotation_level !== undefined) {
+      listing.annotation_level = dto.annotation_level;
+    }
+
+    if (dto.photo_urls !== undefined) {
+      listing.photo_urls = dto.photo_urls;
+    }
 
     return await this.listingRepo.save(listing);
   }
