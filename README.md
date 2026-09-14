@@ -15,7 +15,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-light.svg" />
-    <img src="./docs/images/logo-light.svg" alt="Uni Textbook Marketplace Logo" width="600" />
+    <img src="./docs/images/logo-dark.svg" alt="Uni Textbook Marketplace Logo" width="600" />
   </picture>
 </p>
 
@@ -33,16 +33,16 @@
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/NexusDevLOGO_2.png" />
-  <source media="(prefers-color-scheme: light)" srcset="./docs/images/NexusDevLOGO_2-light.png" />
-  <img src="./docs/images/NexusDevLOGO.png" alt="NexusDev Logo" width="25%">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/_NexusDev_LOGO.png" />
+  <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
 </picture>
 </h2>
 
 <h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br/>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/Agile-Bridge-logo-white-2.png" />
-  <source media="(prefers-color-scheme: light)" srcset="./docs/images/Agile-Bridge-logo-dark-2.png" />
-  <img src="./docs/images/Agile_Bridge_logo_.png" alt="Agile Bridge Logo" width="25%" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/Agile_bridge_logo_.png" />
+  <img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%" />
 </picture>
 </h2>
 
