@@ -7,7 +7,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./docs/images/students-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="./docs/images/students-light.svg" />
-    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="280" />
+    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="180" />
   </picture>
 </p>
 
@@ -15,7 +15,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-light.svg" />
-    <img src="./docs/images/logo-dark.svg" alt="Uni Textbook Marketplace Logo" width="600" />
+    <img src="./docs/images/logo-dark.svg" alt="Uni Textbook Marketplace Logo" width="1020" />
   </picture>
 </p>
 
@@ -34,7 +34,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/NexusDevLOGO_2.png" />
   <source media="(prefers-color-scheme: light)" srcset="./docs/images/_NexusDev_LOGO.png" />
-  <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
+  <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="22%">
 </picture>
 </h2>
 
@@ -114,6 +114,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 <h3 align="center"> Project Management: Staying in Sync</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=github,notion,discord" />
+<img src="https://cdn.simpleicons.org/overleaf/47A141" width="48" height="48" />
 </p>
 </div>
 
@@ -125,7 +126,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
   <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
   <h2 align="center">Documentation</h2>
 
-### DEMO 3 (Latest Documentation)
+### DEMO 4 (Latest Documentation)
 
 | Document | Link |
 |---|---|
@@ -144,64 +145,27 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
 ---
+---
+---
 
-### DEMO 2
-<details>
-<summary>Click to expand</summary>
+| | Demo 1 | Demo 2 | Demo 3 |
+|---|---|---|---|
+| **Documentation** | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |
+| **Demo Recording** | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |
 
-| Document | Link |
-|---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf) |
-|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf) |
-|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf) |
-|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf) |
-|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf) |
-|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf) |
-|  Design Specifications (Design and Wireframes) | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
-|  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
-|  Issue Tracker | [GitHub Issues](../../issues) |
-| **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
-|  Setup Instructions | See [Getting Started](#getting-started) below |
-
-</details>
+</div>
 
 ---
 
-### DEMO 1
-
-<details>
-<summary>Click to expand</summary>
-
-| Document | Link |
-|---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) |
-
-
-</details>
-
-</div>
-
 <p align="center">
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-<h2 align="center">Demo Videos </h2>
 <div align="center">
-
-| Demo Video | Documentation |
-| --- | --- |
-| [Demo 3 Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing) | [Demo 3 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |
-| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) |
-| [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
-
-</div>
-
-<p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
-</p>
+    <img src="https://api.iconify.design/mdi/folder-open.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Project Structure
+</div>
 
 <details>
 <summary>Click to expand</summary>
@@ -301,8 +265,18 @@ Uni-Textbook-Marketplace/
 ```
 
 </details>
+</br>
+
+<p align="center">
+<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/rocket-launch.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Getting Started
+</div>
+
 
 ### Prerequisites
 
@@ -391,8 +365,13 @@ cp frontend/.env.example frontend/.env.local
 <p align="center">
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
+</div>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/source-branch.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Branching Strategy
+</div>
 
 We follow **GitHub Flow**:
 
@@ -410,10 +389,17 @@ All changes go through a **Pull Request** with at least one review before mergin
 > See [CONTRIBUTING.md](./CONTRIBUTING.md) for full branching rules and commit conventions.
 
 <p align="center">
+
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
+<div align="center">
+    <img src="https://api.iconify.design/mdi/test-tube.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
 ## Testing
+</div>
+
+<div align = "center">
 
 | Layer | Framework |
 |---|---|
@@ -421,6 +407,8 @@ All changes go through a **Pull Request** with at least one review before mergin
 | Backend integration tests | Jest + Supertest |
 | Frontend component tests | Jest + React Testing Library |
 | End-to-end tests | Cypress |
+
+</div>
 
 ```bash
 # Run backend tests
@@ -440,22 +428,8 @@ npm run test:all
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-## Architecture Overview
-
-The system follows a **modular monolith** architecture for core features with an **external messaging microservice**:
-
-- **Frontend** : Next.js (React) responsive web app
-- **Backend** : NestJS modular monolith (Auth, Listings, Moderation, Modules)
-- **Database** : Azure Database for PostgreSQL
-- **Messaging** : Firebase Firestore real-time chat (external microservice)
-- **Hosting** : Azure Static Web Apps + Azure App Service
-- **CI/CD** : GitHub Actions
-
-<p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
-</p>
-
-<div align = "center">
+<div align="center">
+    <img src="https://api.iconify.design/mdi/account-group.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Meet The Team
 
@@ -478,9 +452,13 @@ The system follows a **modular monolith** architecture for core features with an
 <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
-<div align = "center">
+<div align="center">
+    <img src="https://api.iconify.design/mdi/email-outline.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Contact
+</div>
+
+<div align = "center">
 
 | | |
 |---|---|
