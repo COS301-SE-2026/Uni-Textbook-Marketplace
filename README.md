@@ -4,10 +4,14 @@
 
 <div align="center">
 <p align="center">
+  <img src="docs/images/textbook_cyan.gif" width="27%" align="center"/>
+</p>
+
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./docs/images/students-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="./docs/images/students-light.svg" />
-    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="180" />
+    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="200" />
   </picture>
 </p>
 
@@ -19,7 +23,9 @@
   </picture>
 </p>
 
-<h2 align="center">Made for Students, by Students</h2>
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=00E5FF&center=true&vCenter=true&width=500&lines=Made+for+Students%2C+by+Students" alt="Typing animation" />
+</p>
 
 </div>
 
@@ -130,15 +136,15 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf) |
-|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf) |
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Requirements_Specifications.pdf) |
+|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Architecture_Specifications.pdf) |
 |  OpenAPI | [API Service Contracts](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/OpenAPI/openapi.yaml) |
-|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf) |
-|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf) |
-|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf) |
+|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Coding_Standards.pdf) |
+|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Testing_Policy.pdf) |
+|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/User_Manual.pdf) |
 |  Brand Style Guide (On our Web) | [View Brand Style Guide](https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/brand) |
-|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |
+|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Brand_Style_Guide.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Design_Specifications.pdf) |
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
 | **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
@@ -158,7 +164,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 ---
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -267,8 +273,9 @@ Uni-Textbook-Marketplace/
 </details>
 </br>
 
+
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -277,13 +284,13 @@ Uni-Textbook-Marketplace/
 ## Getting Started
 </div>
 
-
 ### Prerequisites
-
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 - Docker (for local PostgreSQL)
 - Git (system-installed - no GUI clients)
+
+---
 
 ### Installation
 
@@ -308,6 +315,8 @@ npm install ts-node
 docker exec -it nexusdev_backend npx ts-node src/database/seeds/seed-runner.ts
 ```
 
+---
+
 ### Running locally
 
 ```bash
@@ -320,6 +329,8 @@ npm run backend
 # Start the frontend (from root)
 npm run frontend
 ```
+
+---
 
 ### Logging into the web-app (Running Locally)
 
@@ -363,9 +374,8 @@ cp frontend/.env.example frontend/.env.local
 ```
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
 </p>
-</div>
 
 <div align="center">
     <img src="https://api.iconify.design/mdi/source-branch.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
