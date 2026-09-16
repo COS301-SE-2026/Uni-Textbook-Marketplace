@@ -459,7 +459,7 @@ npm run test:all
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Tiego Mokwena</h2>
-          <h5>Project Manager + UI Engineer + DevOps</h5>
+          <h5>Team Lead + Project Manager + UI Engineer + DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
@@ -469,37 +469,16 @@ npm run test:all
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6></h6>
+          <h6>I'm a final-year BSc Computer Science student at the University of Pretoria with a background in Biological Sciences, which has shaped my interest in fusing Biology and Software Engineering. I'm drawn to computational solutions for problems in Biology, Health, and BioTech, and I bring hands-on experience in Software Development, Database Systems, Human-Computer Interaction, and Bioinformatics/Computational Biology, applying algorithmic thinking to biological data. Beyond this niche, I'm equally comfortable building multi-purpose software, from full-stack web applications to database-driven systems and enjoy tackling problems across domains, not just BioTech.</h6>
           <h4>Project Contributions:</h4>
-          <h6>
-            Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy.
-          </h6>
-        </td>
-      </tr>
-    </table>
-  </tr>
-  <!-- Josh -->
-  <tr>
-    <table>
-      <tr>
-        <td align="left" colspan="2">
-          <h4>Bio:</h4>
-          <h6></h6>
-          <h4>Project Contributions:</h4>
-          <h6>
-            Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup.
-          </h6>
-        </td>
-        <td align="center">
-          <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
-          <h2>Josh Kretschmer</h2>
-          <h5>Services Engineer 1 + Integration Engineer 1</h5>
-          <a href="https://github.com/JoshKretschmer">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
-          </a>
-          <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
-            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-          </a>
+          <ul>
+            <li>Sprint planning, client communication, and milestone tracking</li>
+            <li>Frontend UI development (Next.js, Tailwind) and the notification centre UI</li>
+            <li>CI/CD pipeline (GitHub Actions, Cypress end-to-end testing)</li>
+            <li>Azure deployment and infrastructure (Container Apps, Blob Storage, custom domain configuration)</li>
+            <li>QA strategy</li>
+            <li>Computer-vision-assisted listing creation flow (automatic text extraction and photo background removal with user-adjustable cropping) built on Azure AI Vision</li>
+          </ul>
         </td>
       </tr>
     </table>
@@ -508,10 +487,23 @@ npm run test:all
   <tr>
     <table>
       <tr>
+      <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h6>I am a final year Computer Science with interest in software development and technology. I enjoy building and working on software projects, solving problems, and exploring how different technologies can be used to create practical solutions. I am naturally curious and enjoy learning new concepts, experimenting with different approaches, and understanding how things work rather than simply knowing how to use them. Through my studies and personal projects, I have developed a strong foundation in software development and a desire to continuously improve my skills. I am looking forward to gaining more practical experience, taking on new challenges, and growing into a well rounded software developer.</h6>
+          <h4>Project Contributions:</h4>
+          <ul>
+            <li>Backend API development</li>
+            <li>User authentication (JWT) and university email OTP verification</li>
+            <li>API security</li>
+            <li>Integration between frontend and backend</li>
+            <li>Notification system (event-driven alerts across approvals, messages, and listing changes)</li>
+            <li>Module-scoped discussion feature, letting students post and answer threaded questions tied to specific course modules, with no schema change needed for arbitrarily deep threads</li>
+          </ul>
+        </td>
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Gift Mohuba</h2>
-          <h5>Services Engineer 2 + Integration Engineer 2</h5>
+          <h5>Services Engineer + Integration Engineer</h5>
           <a href="https://github.com/GiftMHB">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
@@ -519,13 +511,36 @@ npm run test:all
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
         </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Josh -->
+  <tr>
+    <table>
+      <tr>
+        <td align="center">
+          <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <h2>Josh Kretschmer</h2>
+          <h5>Services Engineer + Integration Engineer</h5>
+          <a href="https://github.com/JoshKretschmer">
+            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+        </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6></h6>
+          <h6>I'm a final year Information knowledge systems: data science student. The logical side of programming has always been a strong intrigue of mine and Cyber Security and the associated challenges with ensuring the safety (or finding flaws) within systems are the two areas I've enjoyed most throughout my time at university. Stats and maths always came more quickly to me than the software development side of life, but I always appreciate solving a problem or building a project to completion.</h6>
           <h4>Project Contributions:</h4>
-          <h6>
-            Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend.
-          </h6>
+          <ul>
+            <li>Backend API development (NestJS)</li>
+            <li>Real-time messaging microservice (Firebase Firestore)</li>
+            <li>Integration between frontend and backend</li>
+            <li>Reporting, ban, and appeal moderation workflow (student reports, admin review, ban enforcement, appeal case review)</li>
+            <li>Docker environment setup</li>
+            <li>Seller-facing interface for the multi-book bundle price optimizer</li>
+          </ul>
         </td>
       </tr>
     </table>
@@ -536,11 +551,16 @@ npm run test:all
       <tr>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6></h6>
+          <h6>Final-year BSc Information and Knowledge Systems student at the University of Pretoria, passionate about software engineering, data engineering and cybersecurity. I enjoy building backend systems, designing and maintaining PostgreSQL databases, working with APIs, and making software more reliable through unit and integration testing.</h6>
           <h4>Project Contributions:</h4>
-          <h6>
-            PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests.
-          </h6>
+          <ul>
+            <li>PostgreSQL database design and management, complex queries, indexing, and seed data</li>
+            <li>Unit and integration testing</li>
+            <li>Non-functional requirement testing lead (load testing with k6, accessibility auditing with axe-core)</li>
+            <li>Saved-search alert matching logic</li>
+            <li>Appeal case review backend</li>
+            <li>Greedy optimization algorithm behind the multi-book bundle price recommender</li>
+          </ul>
         </td>
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
