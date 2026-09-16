@@ -153,8 +153,6 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 |  Setup Instructions | See [Getting Started](#getting-started) below |
 
 ---
----
----
 
 | | Demo 1 | Demo 2 | Demo 3 |
 |---|---|---|---|
