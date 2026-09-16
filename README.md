@@ -469,8 +469,9 @@ npm run test:all
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6>I'm a final-year BSc Computer Science student at the University of Pretoria with a background in Biological Sciences, which has shaped my interest in fusing Biology and Software Engineering. I'm drawn to computational solutions for problems in Biology, Health, and BioTech, and I bring hands-on experience in Software Development, Database Systems, Human-Computer Interaction, and Bioinformatics/Computational Biology, applying algorithmic thinking to biological data. Beyond this niche, I'm equally comfortable building multi-purpose software, from full-stack web applications to database-driven systems and enjoy tackling problems across domains, not just BioTech.</h6>
+          <h5>I'm a final-year BSc Computer Science student at the University of Pretoria with a background in Biological Sciences, which has shaped my interest in fusing Biology and Software Engineering. I'm drawn to computational solutions for problems in Biology, Health, and BioTech, and I bring hands-on experience in Software Development, Database Systems, Human-Computer Interaction, and Bioinformatics/Computational Biology, applying algorithmic thinking to biological data. Beyond this niche, I'm equally comfortable building multi-purpose software, from full-stack web applications to database-driven systems and enjoy tackling problems across domains, not just BioTech.</h5>
           <h4>Project Contributions:</h4>
+          <h6>
           <ul>
             <li>Sprint planning, client communication, and milestone tracking</li>
             <li>Frontend UI development (Next.js, Tailwind) and the notification centre UI</li>
@@ -479,6 +480,7 @@ npm run test:all
             <li>QA strategy</li>
             <li>Computer-vision-assisted listing creation flow (automatic text extraction and photo background removal with user-adjustable cropping) built on Azure AI Vision</li>
           </ul>
+          </h6>
         </td>
       </tr>
     </table>
@@ -489,8 +491,9 @@ npm run test:all
       <tr>
       <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6>I am a final year Computer Science with interest in software development and technology. I enjoy building and working on software projects, solving problems, and exploring how different technologies can be used to create practical solutions. I am naturally curious and enjoy learning new concepts, experimenting with different approaches, and understanding how things work rather than simply knowing how to use them. Through my studies and personal projects, I have developed a strong foundation in software development and a desire to continuously improve my skills. I am looking forward to gaining more practical experience, taking on new challenges, and growing into a well rounded software developer.</h6>
+          <h5>I am a final year Computer Science with interest in software development and technology. I enjoy building and working on software projects, solving problems, and exploring how different technologies can be used to create practical solutions. I am naturally curious and enjoy learning new concepts, experimenting with different approaches, and understanding how things work rather than simply knowing how to use them. Through my studies and personal projects, I have developed a strong foundation in software development and a desire to continuously improve my skills. I am looking forward to gaining more practical experience, taking on new challenges, and growing into a well rounded software developer.</h5>
           <h4>Project Contributions:</h4>
+          <h6>
           <ul>
             <li>Backend API development</li>
             <li>User authentication (JWT) and university email OTP verification</li>
@@ -499,6 +502,7 @@ npm run test:all
             <li>Notification system (event-driven alerts across approvals, messages, and listing changes)</li>
             <li>Module-scoped discussion feature, letting students post and answer threaded questions tied to specific course modules, with no schema change needed for arbitrarily deep threads</li>
           </ul>
+          </h6>
         </td>
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
@@ -531,8 +535,9 @@ npm run test:all
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6>I'm a final year Information knowledge systems: data science student. The logical side of programming has always been a strong intrigue of mine and Cyber Security and the associated challenges with ensuring the safety (or finding flaws) within systems are the two areas I've enjoyed most throughout my time at university. Stats and maths always came more quickly to me than the software development side of life, but I always appreciate solving a problem or building a project to completion.</h6>
+          <h5>I'm a final year Information knowledge systems: data science student. The logical side of programming has always been a strong intrigue of mine and Cyber Security and the associated challenges with ensuring the safety (or finding flaws) within systems are the two areas I've enjoyed most throughout my time at university. Stats and maths always came more quickly to me than the software development side of life, but I always appreciate solving a problem or building a project to completion.</h5>
           <h4>Project Contributions:</h4>
+          <h6>
           <ul>
             <li>Backend API development (NestJS)</li>
             <li>Real-time messaging microservice (Firebase Firestore)</li>
@@ -541,6 +546,7 @@ npm run test:all
             <li>Docker environment setup</li>
             <li>Seller-facing interface for the multi-book bundle price optimizer</li>
           </ul>
+          </h6>
         </td>
       </tr>
     </table>
@@ -551,8 +557,9 @@ npm run test:all
       <tr>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
-          <h6>Final-year BSc Information and Knowledge Systems student at the University of Pretoria, passionate about software engineering, data engineering and cybersecurity. I enjoy building backend systems, designing and maintaining PostgreSQL databases, working with APIs, and making software more reliable through unit and integration testing.</h6>
+          <h5>Final-year BSc Information and Knowledge Systems student at the University of Pretoria, passionate about software engineering, data engineering and cybersecurity. I enjoy building backend systems, designing and maintaining PostgreSQL databases, working with APIs, and making software more reliable through unit and integration testing.</h5>
           <h4>Project Contributions:</h4>
+          <h6>
           <ul>
             <li>PostgreSQL database design and management, complex queries, indexing, and seed data</li>
             <li>Unit and integration testing</li>
@@ -561,6 +568,7 @@ npm run test:all
             <li>Appeal case review backend</li>
             <li>Greedy optimization algorithm behind the multi-book bundle price recommender</li>
           </ul>
+          </h6>
         </td>
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
