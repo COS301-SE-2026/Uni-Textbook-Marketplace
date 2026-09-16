@@ -107,7 +107,6 @@ components:
           type: string
           format: date-time
 
-    # (Gift): confirm this matches the final notifications table shape
     Notification:
       type: object
       properties:
@@ -143,8 +142,6 @@ components:
           type: string
           format: date-time
 
-    # (Josh): confirm field names against the actual reports table
-    # migration once committed.
     Report:
       type: object
       properties:
@@ -171,8 +168,6 @@ components:
           format: date-time
           description: Timestamp of report creation
 
-    # (Neo): confirm field names against the actual cases table
-    # migration once committed.
     Case:
       type: object
       properties:
@@ -182,7 +177,7 @@ components:
         userId:
           type: string
           format: uui
-        #ban_id foreign key removed as there is no ban table to reference
+        
         appeal_message:
           type: string
         status:
@@ -972,12 +967,10 @@ paths:
         "201":
           description: Message sent
 
-  # (Josh): UC10 report submission + admin review.
   /reports:
     post:
       tags: [Reports]
       summary: A student submits a report against a listing.
-      # TODO (Josh): confirm request body against reports.dto.ts.
       security:
         - bearerAuth: []
       requestBody:
@@ -1065,10 +1058,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  # (Josh): confirm the actual route/verb for the ban action once
-  # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
-  # banned_by, ban_reason set on the reported listing's seller) but not yet
-  # a confirmed endpoint path. Likely PATCH /admin/users/{id}/ban or similar.
   /admin/users/{id}/ban:
     patch:
       tags: [Reports]
@@ -1102,12 +1091,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-
-  # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
-  # the admin review + decide endpoint.
-
-  # Neo: UC10 appeal/case flow
-  # Updated to match CasesController implementation
 
   /cases:
     post:
