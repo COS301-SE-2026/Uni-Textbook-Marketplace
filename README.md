@@ -29,6 +29,8 @@
 
 </div>
 
+---
+</br>
 <p align="center">
   <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
     <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
@@ -94,7 +96,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 <div align="center">
     <img src="https://cdn.simpleicons.org/stackshare/00B4D8" width="28" height="28" valign="middle"/>
-<h2 align="center">The Stack Behind It All</h2>
+<h2 align="center">Tech Stack: The Foundation Behind It All</h2>
 <p align="center"><sub>Every layer chosen to ship fast without breaking under real students.</sub></p>
 
 <h3 align="center">Frontend: Where Students Meet the Product</h3>
@@ -441,7 +443,7 @@ npm run test:all
 <div align="center">
     <img src="https://api.iconify.design/mdi/account-group.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
-## Meet The Team
+## Meet The Team: NexusDev
 
 ![Team Members](docs/images/The_Team.png) 
 
@@ -449,12 +451,112 @@ npm run test:all
 
 <div align="center">
 
-| Photo | Team Member | Role | Contributions | Connect |
-|:---:|---|---|---|:---:|
-| <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Tiego Mokwena"/> | **Tiego Mokwena** | Project Manager + UI Engineer + DevOps | Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/tl21thebe)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tiego%20Mokwena-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3) |
-| <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Josh Kretschmer"/> | **Josh Kretschmer** | Services Engineer 1 + Integration Engineer 1 | Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/JoshKretschmer)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Josh%20Kretschmer-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/josh-kretsch-754804401) |
-| <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Gift Mohuba"/> | **Gift Mohuba** | Services Engineer 2 + Integration Engineer 2 | Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/GiftMHB)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Gift%20Mohuba-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gift-mohuba-67097b23b/) |
-| <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Neo Bosoga"/> | **Neo Bosoga** | Data Engineer + Test Engineer | PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/u23591732)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/neo-bosoga-67167227a/) |
+<table>
+  <!-- Tiego -->
+  <tr>
+    <table>
+      <tr>
+        <td align="center">
+          <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <h2>Tiego Mokwena</h2>
+          <h5>Project Manager + UI Engineer + DevOps</h5>
+          <a href="https://github.com/tl21thebe">
+            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+        </td>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h6></h6>
+          <h4>Project Contributions:</h4>
+          <h6>
+            Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy.
+          </h6>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Josh -->
+  <tr>
+    <table>
+      <tr>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h6></h6>
+          <h4>Project Contributions:</h4>
+          <h6>
+            Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup.
+          </h6>
+        </td>
+        <td align="center">
+          <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <h2>Josh Kretschmer</h2>
+          <h5>Services Engineer 1 + Integration Engineer 1</h5>
+          <a href="https://github.com/JoshKretschmer">
+            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Gift -->
+  <tr>
+    <table>
+      <tr>
+        <td align="center">
+          <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <h2>Gift Mohuba</h2>
+          <h5>Services Engineer 2 + Integration Engineer 2</h5>
+          <a href="https://github.com/GiftMHB">
+            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/gift-mohuba-67097b23b/">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+        </td>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h6></h6>
+          <h4>Project Contributions:</h4>
+          <h6>
+            Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend.
+          </h6>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Neo -->
+  <tr>
+    <table>
+      <tr>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h6></h6>
+          <h4>Project Contributions:</h4>
+          <h6>
+            PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests.
+          </h6>
+        </td>
+        <td align="center">
+          <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <h2>Neo Bosoga</h2>
+          <h5>Data Engineer + Test Engineer</h5>
+          <a href="https://github.com/u23591732">
+            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/neo-bosoga-67167227a/">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+        </td>
+      </tr>
+    </table>
+  </tr>
+</table>
 
 </div>
 
