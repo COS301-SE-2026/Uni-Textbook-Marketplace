@@ -14,11 +14,15 @@ import {
 } from './book-matcher.util';
 
 interface AzureLine {
-    text: string;
-    boundingPolygon: { x: number; y: number }[];
+  text: string;
+  boundingPolygon: { x: number; y: number }[];
 }
 interface AzureBlock {
-    readResult?: { blocks?: AzureBlock[] };
+  lines: AzureLine[];
+}
+
+interface AzureReadResponse {
+  readResult?: { blocks?: AzureBlock[] };
 }
 
 @Injectable()
@@ -46,7 +50,7 @@ export class VisionService {
 
   async extractLines(imageUrl: string): Promise<OcrLine[]> {
     if (!imageUrl) {
-        throw new BadRequestException('imageUrl is required');
+      throw new BadRequestException('imageUrl is required');
     }
 
     const url = `${this.endpoint}/computervision/imageanalysis:analyze?api-version=2024-02-01&features=read`;
@@ -72,6 +76,40 @@ export class VisionService {
         `Azure Vision returned ${res.status}`,
       );
     }
-    
-}
+
+    const data = (await res.json()) as AzureReadResponse;
+    const blocks = data.readResult?.blocks ?? [];
+
+    const lines: OcrLine[] = [];
+    for (const block of blocks) {
+      for (const line of block.lines ?? []) {
+        const ys = line.boundingPolygon?.map((p) => p.y) ?? [];
+        const topY = ys.length ? Math.min(...ys) : 0;
+        const bottomY = ys.length ? Math.max(...ys) : 0;
+        lines.push({
+          text: line.text,
+          topY,
+          height: bottomY - topY,
+        });
+      }
+    }
+    return lines;
+  }
+
+  async extractTextAndMatch(imageUrl: string): Promise<{
+    rawText: string;
+    matchBook: BookMatchResult | null;
+  }> {
+    const lines = await this.extractLines(imageUrl);
+
+    const rawText = [...lines]
+      .sort((a, b) => a.topY - b.topY)
+      .map((l) => l.text)
+      .join('\n');
+
+    const candidates = await this.bookRepo.find();
+    const matchedBook = matchBookFromText(lines, candidates);
+
+    return { rawText, matchBook: matchedBook };
+  }
 }
