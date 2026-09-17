@@ -8,6 +8,7 @@ import {
 
 import { University } from './university.entity';
 import { Faculty } from './faculty.entity';
+import { ModuleBook } from './module-book.entity';
 
 @Entity('modules')
 export class Module {
@@ -40,4 +41,7 @@ export class Module {
   })
   @JoinColumn({ name: 'university_id' })
   university!: University;
+
+  @OneToMany(() => ModuleBook, (moduleBook) => moduleBook.module)
+  moduleBooks!: ModuleBook[];
 }
