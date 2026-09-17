@@ -30,6 +30,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { VisionModule } from './vision/vision.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     MessagingModule,
     ReportsModule,
     CasesModule,
+    VisionModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
