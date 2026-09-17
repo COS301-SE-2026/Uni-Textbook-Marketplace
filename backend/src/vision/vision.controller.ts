@@ -1,0 +1,40 @@
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
+import { ExtractTextDto } from './dto/extract-text.dto';
+import { ExtractTextResponseDto } from './dto/extract-text-response.dto';
+import { VisionService } from './vision.service';
+
+@Controller('vision')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class VisionController {
+  constructor(private readonly visionService: VisionService) {}
+
+  @Post('extract-text')
+  @Roles('student')
+  async extractText(
+    @Body() dto: ExtractTextDto,
+  ): Promise<ExtractTextResponseDto> {
+    const { rawText, matchBook: matchedBook } =
+      await this.visionService.extractTextAndMatch(dto.imageUrl);
+
+    return {
+      rawText,
+      matchedBook: matchedBook
+        ? {
+            id: matchedBook.book.id,
+            title: matchedBook.book.title,
+            author: matchedBook.book.author ?? null,
+            isbn: matchedBook.book.isbn ?? null,
+            edition:
+              matchedBook.book.edition != null
+                ? String(matchedBook.book.edition)
+                : '',
+            confidence: matchedBook.confidence,
+          }
+        : null,
+    };
+  }
+}

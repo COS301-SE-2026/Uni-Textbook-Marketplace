@@ -9,5 +9,5 @@ export class MatchedBookDto {
 
 export class ExtractTextResponseDto {
   rawText!: string;
-  matchedBooks!: MatchedBookDto | null;
+  matchedBook!: MatchedBookDto | null;
 }
