@@ -1,4 +1,4 @@
-import { Book } from '../../books/entities/book.entity';
+import { Book } from '../database/entities/book.entity';
 
 export interface OcrLine {
   text: string;
@@ -73,4 +73,89 @@ export function similarity(a: string, b: string): number {
   }
   const total = A.length - 1 + (B.length - 1);
   return total > 0 ? (2 * overlap) / total : 0;
+}
+
+export function titleScore(ocrCandidate: string, storedTitle: string): number {
+  const sim = similarity(ocrCandidate, storedTitle);
+  const a = normaliseText(ocrCandidate);
+  const b = normaliseText(storedTitle);
+
+  if (!a || !b) return sim;
+
+  const contains = a.includes(b) || b.includes(a);
+  const containsScore = contains
+    ? Math.min(a.length, b.length) / Math.max(a.length, b.length)
+    : 0;
+
+  return Math.max(sim, containsScore);
+}
+
+export function authorScore(
+  ocrCandidate: string,
+  storedAuthor: string,
+): number {
+  const normalised = (s: string) =>
+    normaliseText(s)
+      .replace(/\band\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  return similarity(normalised(ocrCandidate), normalised(storedAuthor));
+}
+
+function buildTitleCandidates(lines: OcrLine[]): string[] {
+  if (lines.length === 0) return [];
+
+  const sortedByY = [...lines].sort((a, b) => a.topY - b.topY);
+  const full = sortedByY.map((l) => l.text).join(' ');
+
+  const maxY = Math.max(...lines.map((l) => l.topY + l.height));
+  const cutoff = maxY * 0.6;
+  const topRegion = sortedByY
+    .filter((l) => l.topY < cutoff)
+    .map((l) => l.text)
+    .join(' ');
+
+  const tallest = [...lines]
+    .sort((a, b) => b.height - a.height)
+    .slice(0, 4)
+    .sort((a, b) => a.topY - b.topY)
+    .map((l) => l.text)
+    .join(' ');
+
+  return Array.from(new Set([full, topRegion, tallest])).filter(Boolean);
+}
+
+export function matchBookFromText(
+  lines: OcrLine[],
+  candidates: Book[],
+): BookMatchResult | null {
+  if (candidates.length === 0) return null;
+
+  const titleCandidates = buildTitleCandidates(lines);
+  const ocrText = lines.map((l) => l.text).join(' ');
+  const ocrDigits = digitsOnly(ocrText);
+
+  if (ocrDigits.length === 10 || ocrDigits.length === 13) {
+    for (const book of candidates) {
+      const bookDigits = digitsOnly(book.isbn);
+      if (!bookDigits || bookDigits !== ocrDigits) continue;
+      if (!isValidIsbn(bookDigits)) continue;
+      return { book, confidence: 1.0 };
+    }
+  }
+
+  let best: BookMatchResult | null = null;
+  for (const book of candidates) {
+    const bestTitle = Math.max(
+      ...titleCandidates.map((t) => titleScore(t, book.title)),
+      0,
+    );
+    const auth = book.author ? authorScore(ocrText, book.author) : 0;
+    const score = 0.7 * bestTitle + 0.3 * auth;
+
+    if (score >= CONFIDENCE_THRESHOLD && (!best || score > best.confidence)) {
+      best = { book, confidence: score };
+    }
+  }
+  return best;
 }
