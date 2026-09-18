@@ -229,7 +229,9 @@ CREATE TABLE bid (
 )
 
 
+CREATE INDEX idx_bid_auction_id ON bid(auction_id);
 
+CREATE INDEX idx_auction_status_endtime ON auction(status, end_time);
 
 -- indexes
 
