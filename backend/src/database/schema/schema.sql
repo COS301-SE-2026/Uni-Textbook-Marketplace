@@ -202,6 +202,21 @@ CREATE TABLE cases (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+--auction
+CREATE TABLE auction (
+    id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    listings_id UUID NOT NULL REFERENCES listings(id) ON DELETE SET NULL,
+    seller_id UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    starting_price number NOT NULL,
+    reserve_price number,
+    current_highest_bid number,
+    current_highest_bidder_id UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    start_time TIMESTAMPTZ,
+    end_time TIMESTAMPTZ,
+    status VARCHAR(20) DEFAULT 'SCHEDULED' CHECK (status IN ('SCHEDULED','ACTIVE','ENDED', 'CANCELLED'))
+)
+
+
 
 
 
