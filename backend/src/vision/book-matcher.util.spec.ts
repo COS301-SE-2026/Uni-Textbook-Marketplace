@@ -270,13 +270,61 @@ describe('book-matcher.util', () => {
       const result = matchBookFromText(lines, stagingBooks);
 
       expect(result).not.toBeNull();
-      
+
       expect(result!.book.id).toBe('b1');
     });
 
+    it('picks the best match when multiple candidates score', () => {
+      
+      const books: Book[] = [
+        makeBook({
+          id: 'first',
+          title: 'ISE Biology',
+          author: 'George Johnson',
+          isbn: '978-1260565959',
+        }),
+        makeBook({
+          id: 'second',
+          title: 'Software',
+          author: 'Anthony Debarros',
+          isbn: undefined,
+        }),
+      ];
+      const lines = [makeLine('Software', 0, 40)];
+      const result = matchBookFromText(lines, books);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('second');
+    });
 
+    it('returns null when best score is below threshold', () => {
+      const lines = [makeLine('Quantum Mechanics For Engineers')];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).toBeNull();
+    });
 
+    it('ignores garbled / empty OCR output', () => {
+      const lines = [makeLine('###'), makeLine('')];
+      expect(matchBookFromText(lines, stagingBooks)).toBeNull();
+    });
 
+    it('prefers a valid-ISBN match over a fuzzy title match', () => {
+      
+      const lines = [
+        makeLine('South African Constitutional Law In Context', 0, 40),
+        makeLine('ISBN 978-0133970777', 200, 15),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('b2');
+      expect(result!.confidence).toBe(1.0);
+    });
 
+    it('handles single-line OCR (no multi-line title)', () => {
+      const lines = [makeLine('ISE Biology')];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('b5');
+    });
+  });
 
 })
