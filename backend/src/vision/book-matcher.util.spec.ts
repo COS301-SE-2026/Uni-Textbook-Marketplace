@@ -115,8 +115,11 @@ describe('book-matcher.util', () => {
       expect(similarity('Software Engineering', 'software engineering!')).toBe(1);
     });
 
-    it('returns 0 when either side is empty', () => {
+    it('returns 0 when first argument is empty', () => {
       expect(similarity('', 'anything')).toBe(0);
+    });
+
+    it('returns 0 when second argument is empty', () => {
       expect(similarity('anything', '')).toBe(0);
     });
 
@@ -159,6 +162,14 @@ describe('book-matcher.util', () => {
         'Fundamentals of Databse Systems',
       );
       expect(score).toBeGreaterThan(0.7);
+    });
+
+    it('returns 0 when OCR candidate is empty', () => {
+      expect(titleScore('', 'Fundamentals of Database Systems')).toBe(0);
+    });
+
+    it('returns 0 when stored title is empty', () => {
+      expect(titleScore('Fundamentals of Database Systems', '')).toBe(0);
     });
   });
 
@@ -324,6 +335,35 @@ describe('book-matcher.util', () => {
       const result = matchBookFromText(lines, stagingBooks);
       expect(result).not.toBeNull();
       expect(result!.book.id).toBe('b5');
+    });
+
+    it('handles OCR lines with zero height without crashing', () => {
+      const lines = [
+        { text: 'Fundamentals of Database Systems', topY: 0, height: 0 },
+      ];  
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('b2');
+    });
+
+    it('handles fewer than 4 lines (exercises tallest-lines slice)', () => {
+      const lines = [
+        makeLine('Fundamentals of', 0, 40),
+        makeLine('Database Systems', 45, 40),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('b2');
+    });
+
+    it('handles lines with identical heights (tie-break sort)', () => {
+      const lines = [
+        makeLine('Fundamentals of', 0, 20),
+        makeLine('Database Systems', 25, 20),
+        makeLine('Ramez Elmasri', 50, 20),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
     });
   });
 

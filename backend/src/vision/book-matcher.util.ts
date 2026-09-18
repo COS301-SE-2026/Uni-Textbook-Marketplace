@@ -23,9 +23,9 @@ export function normaliseText(input: string): string {
 }
 
 export function isValidIsbn(raw: string): boolean {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.length === 10) return isValidIsbn10(digits);
-  if (digits.length === 13) return isValidIsbn13(digits);
+  const cleaned = raw.replace(/[^0-9Xx]/g, '').toUpperCase();
+  if (cleaned.length === 10) return isValidIsbn10(cleaned);
+  if (cleaned.length === 13) return isValidIsbn13(cleaned);
   return false;
 }
 
