@@ -74,7 +74,209 @@ describe('book-matcher.util', () => {
         });
     });
 
+    describe('isValidIsbn', () => {
+    it('accepts a valid ISBN-13', () => {
+      expect(isValidIsbn('9780133970777')).toBe(true);
+    });
 
-    
+    it('rejects the junk ISBN used in seed data', () => {
+      
+      expect(isValidIsbn('9781234567890')).toBe(false);
+    });
+
+    it('accepts a valid ISBN-10', () => {
+      expect(isValidIsbn('0306406152')).toBe(true);
+    });
+
+    it('accepts ISBN-10 ending in X', () => {
+      
+      expect(isValidIsbn('097522980X')).toBe(true);
+    });
+
+    it('rejects strings of the wrong length', () => {
+      expect(isValidIsbn('12345')).toBe(false);
+      expect(isValidIsbn('')).toBe(false);
+    });
+
+    it('ignores separators when validating', () => {
+      expect(isValidIsbn('978-0-13-397077-7')).toBe(true);
+    });
+  });
+
+
+  describe('similarity', () => {
+    it('returns 1 for identical strings', () => {
+      expect(similarity('Software Engineering', 'Software Engineering')).toBe(
+        1,
+      );
+    });
+
+    it('is case- and punctuation-insensitive', () => {
+      expect(similarity('Software Engineering', 'software engineering!')).toBe(1);
+    });
+
+    it('returns 0 when either side is empty', () => {
+      expect(similarity('', 'anything')).toBe(0);
+      expect(similarity('anything', '')).toBe(0);
+    });
+
+    it('returns a value between 0 and 1 for partial overlap', () => {
+      const s = similarity('Introduction to Philosophy', 'Philosophy Intro');
+      expect(s).toBeGreaterThan(0);
+      expect(s).toBeLessThan(1);
+    });
+
+    it('scores unrelated strings low', () => {
+      expect(similarity('Software Engineering', 'ISE Biology')).toBeLessThan(
+        0.2,
+      );
+    });
+  });
+
+
+
+
+  describe('titleScore', () => {
+    it('scores high when stored title is a prefix of OCR text', () => {
+      
+      const stored = 'South African Constitutional Law In Cont...';
+      const ocr =
+        'South African Constitutional Law In Context Pierre De Vos';
+      const score = titleScore(ocr, stored);
+      
+      expect(score).toBeGreaterThan(0.6);
+    });
+
+    it('scores high when OCR text is contained in stored title', () => {
+      const stored = 'Fundamentals of Database Systems';
+      const ocr = 'Fundamentals of Database';
+      expect(titleScore(ocr, stored)).toBeGreaterThan(0.6);
+    });
+
+    it('falls back to fuzzy similarity when no containment', () => {
+      const score = titleScore(
+        'Fundamentals of Database Systems',
+        'Fundamentals of Databse Systems',
+      );
+      expect(score).toBeGreaterThan(0.7);
+    });
+  });
+
+
+  describe('authorScore', () => {
+    it('normalises "&" and "and"', () => {
+      const a = authorScore(
+        'Pierre De Vos & Warren Freedman',
+        'Pierre De Vos and Warren Freedman',
+      );
+      expect(a).toBeGreaterThan(0.8);
+    });
+
+    it('returns 0 for empty author', () => {
+      expect(authorScore('Some Author', '')).toBe(0);
+    });
+  });
+
+
+  describe('matchBookFromText', () => {
+    const stagingBooks: Book[] = [
+      makeBook({
+        id: 'b1',
+        title: 'South African Constitutional Law In Cont...',
+        author: 'Pierre De Vos & Warren Freedman',
+        isbn: '978-0190746162',
+        edition: 2,
+      }),
+      makeBook({
+        id: 'b2',
+        title: 'Fundamentals of Database Systems',
+        author: 'Ramez Elmasri & Shamkant Navathe',
+        isbn: '978-0133970777',
+        edition: 7,
+      }),
+      makeBook({
+        id: 'b3',
+        title: 'Software',
+        author: 'Anthony Debarros',
+        isbn: '978-1234567890', 
+        edition: -11,
+      }),
+      makeBook({
+        id: 'b4',
+        title: 'Economics For South African Students',
+        author: 'Prof. Philip Mohr & Cecilia J. Van Zyl',
+        isbn: '978-0627043475',
+        edition: 7,
+      }),
+      makeBook({
+        id: 'b5',
+        title: 'ISE Biology',
+        author: 'George Johnson, Jonathan Losos & Kenneth Mason',
+        isbn: '978-1260565959',
+        edition: 12,
+      }),
+    ];
+
+    it('returns null when there are no candidates', () => {
+      const lines = [makeLine('Fundamentals of Database Systems')];
+      expect(matchBookFromText(lines, [])).toBeNull();
+    });
+
+    it('returns null for empty OCR lines', () => {
+      expect(matchBookFromText([], stagingBooks)).toBeNull();
+    });
+
+    it('matches by exact valid ISBN (short-circuits)', () => {
+      const lines = [
+        makeLine('Some cover noise'),
+        makeLine('ISBN 978-0133970777'),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('b2');
+      expect(result!.confidence).toBe(1.0);
+    });
+
+    it('does NOT short-circuit on invalid ISBN that matches a junk row', () => {
+      
+      const lines = [makeLine('978-1234567890')];
+
+      const result = matchBookFromText(lines, stagingBooks);
+      if (result) {
+        expect(result.confidence).toBeLessThan(1.0);
+      }
+    });
+
+    it('matches by fuzzy title + author when no ISBN present', () => {
+      const lines = [
+        makeLine('Fundamentals of Database', 0, 40),
+        makeLine('Systems', 45, 40),
+        makeLine('Ramez Elmasri & Shamkant Navathe', 100, 15),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+      expect(result).not.toBeNull();
+
+
+      expect(result!.book.id).toBe('b2');
+      expect(result!.confidence).toBeGreaterThan(0.6);
+    });
+
+    it('handles the truncated-title case via containment', () => {
+      const lines = [
+        makeLine('South African Constitutional Law', 0, 40),
+        makeLine('In Context', 45, 40),
+        makeLine('Pierre De Vos & Warren Freedman', 100, 15),
+      ];
+      const result = matchBookFromText(lines, stagingBooks);
+
+      expect(result).not.toBeNull();
+      
+      expect(result!.book.id).toBe('b1');
+    });
+
+
+
+
+
 
 })
