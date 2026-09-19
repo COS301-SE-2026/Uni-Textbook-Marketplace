@@ -133,6 +133,12 @@ describe('BundlesService', () => {
       expect(result.optimizedBundle.sellerIds).toEqual(['seller-1']);
       expect(result.optimizedBundle.totalPrice).toBe(1050);
       expect(result.optimizedBundle.booksCovered).toBe(2);
+      expect(result.cheapestIndividualOption.listings).toHaveLength(2);
+      expect(result.cheapestIndividualOption.sellerIds).toEqual([
+      'seller-1',
+      ]);
+      expect(result.cheapestIndividualOption.totalPrice).toBe(1050);
+      expect(result.cheapestIndividualOption.booksCovered).toBe(2);
 
       expect(mockModuleBookRepository.find).toHaveBeenCalledWith({
         where: [
@@ -222,6 +228,11 @@ describe('BundlesService', () => {
   expect(result.optimizedBundle.sellerIds).toEqual([]);
   expect(result.optimizedBundle.totalPrice).toBe(0);
   expect(result.optimizedBundle.booksCovered).toBe(0);
+
+  expect(result.cheapestIndividualOption.listings).toEqual([]);
+expect(result.cheapestIndividualOption.sellerIds).toEqual([]);
+expect(result.cheapestIndividualOption.totalPrice).toBe(0);
+expect(result.cheapestIndividualOption.booksCovered).toBe(0);
 });
   });
   describe('findOptimizedBundle', () => {
@@ -324,6 +335,95 @@ describe('BundlesService', () => {
     expect(result.sellerIds).toHaveLength(1);
     expect(result.totalPrice).toBe(450);
     expect(result.booksCovered).toBe(1);
+  });
+});
+
+describe('findCheapestIndividualOption', () => {
+  it('should select the cheapest listing for each book', () => {
+    const cheaperListing1 = {
+      ...mockApprovedListing1,
+      id: 'listing-3',
+      price: 300,
+    };
+
+    const cheaperListing2 = {
+      ...mockApprovedListing2,
+      id: 'listing-4',
+      price: 500,
+    };
+
+    const result = (service as any).findCheapestIndividualOption(
+      ['book-1', 'book-2'],
+      [
+        mockApprovedListing1,
+        cheaperListing1,
+        mockApprovedListing2,
+        cheaperListing2,
+      ],
+    );
+
+    expect(result.listings).toHaveLength(2);
+    expect(result.listings.map((listing) => listing.price)).toEqual([
+      300,
+      500,
+    ]);
+    expect(result.totalPrice).toBe(800);
+    expect(result.sellerIds).toEqual(['seller-1']);
+    expect(result.booksCovered).toBe(2);
+  });
+
+  it('should skip books that have no listings', () => {
+    const result = (service as any).findCheapestIndividualOption(
+      ['book-1', 'book-2'],
+      [mockApprovedListing1],
+    );
+
+    expect(result.listings).toHaveLength(1);
+    expect(result.totalPrice).toBe(450);
+    expect(result.booksCovered).toBe(1);
+  });
+
+  it('should return an empty result when there are no listings', () => {
+    const result = (service as any).findCheapestIndividualOption(
+      ['book-1'],
+      [],
+    );
+
+    expect(result.listings).toEqual([]);
+    expect(result.sellerIds).toEqual([]);
+    expect(result.totalPrice).toBe(0);
+    expect(result.booksCovered).toBe(0);
+  });
+});
+describe('getCheapestListingsPerBook', () => {
+  it('should keep only the cheapest listing for each book', () => {
+    const moreExpensiveBook1 = {
+      ...mockApprovedListing1,
+      id: 'listing-3',
+      price: 600,
+    };
+
+    const cheaperBook1 = {
+      ...mockApprovedListing1,
+      id: 'listing-4',
+      price: 300,
+    };
+
+    const result = (service as any).getCheapestListingsPerBook([
+      moreExpensiveBook1,
+      cheaperBook1,
+      mockApprovedListing2,
+    ]);
+
+    expect(result).toHaveLength(2);
+
+    expect(
+      result.find((listing) => listing.book.id === 'book-1')?.price,
+    ).toBe(300);
+
+    expect(
+      result.find((listing) => listing.book.id === 'book-2')?.price,
+    ).toBe(600);
   });
 });
 });

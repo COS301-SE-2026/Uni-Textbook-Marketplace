@@ -54,10 +54,16 @@ export class BundlesService {
       listingsBySeller,
     );
 
+    const cheapestIndividualOption = this.findCheapestIndividualOption(
+      requiredBookIds,
+      approvedListings,
+    );
+
     return {
       requiredBooks: [...requiredBooks.values()],
       approvedListings,
       optimizedBundle,
+      cheapestIndividualOption,
     };
   }
 
@@ -77,6 +83,24 @@ export class BundlesService {
     return listingsBySeller;
   }
 
+  private getCheapestListingsPerBook(listings: Listing[]): Listing[] {
+    const cheapestListings = new Map<string, Listing>();
+
+    for (const listing of listings) {
+      const bookId = listing.book.id;
+      const currentCheapest = cheapestListings.get(bookId);
+
+      if (
+        !currentCheapest ||
+        Number(listing.price) < Number(currentCheapest.price)
+      ) {
+        cheapestListings.set(bookId, listing);
+      }
+    }
+
+    return [...cheapestListings.values()];
+  }
+
   private findOptimizedBundle(
     requiredBookIds: string[],
     listingsBySeller: Map<string, Listing[]>,
@@ -91,7 +115,9 @@ export class BundlesService {
       let bestScore = 0;
 
       for (const [sellerId, listings] of listingsBySeller.entries()) {
-        const usefulListings = listings.filter((listing) =>
+        const cheapestListings = this.getCheapestListingsPerBook(listings);
+
+        const usefulListings = cheapestListings.filter((listing) =>
           uncoveredBookIds.has(listing.book.id),
         );
 
@@ -104,7 +130,7 @@ export class BundlesService {
           0,
         );
 
-        const score = usefulListings.length / totalPrice;
+        const score = usefulListings.length / Math.max(totalPrice, 1);
 
         if (score > bestScore) {
           bestScore = score;
@@ -135,6 +161,45 @@ export class BundlesService {
       sellerIds: selectedSellerIds,
       totalPrice,
       booksCovered: requiredBookIds.length - uncoveredBookIds.size,
+    };
+  }
+
+  private findCheapestIndividualOption(
+    requiredBookIds: string[],
+    listings: Listing[],
+  ) {
+    const selectedListings: Listing[] = [];
+
+    for (const bookId of requiredBookIds) {
+      const bookListings = listings.filter(
+        (listing) => listing.book.id === bookId,
+      );
+
+      if (bookListings.length === 0) {
+        continue;
+      }
+
+      const cheapestListing = bookListings.reduce((cheapest, listing) =>
+        Number(listing.price) < Number(cheapest.price) ? listing : cheapest,
+      );
+
+      selectedListings.push(cheapestListing);
+    }
+
+    const sellerIds = [
+      ...new Set(selectedListings.map((listing) => listing.seller.id)),
+    ];
+
+    const totalPrice = selectedListings.reduce(
+      (total, listing) => total + Number(listing.price),
+      0,
+    );
+
+    return {
+      listings: selectedListings,
+      sellerIds,
+      totalPrice,
+      booksCovered: selectedListings.length,
     };
   }
 }
