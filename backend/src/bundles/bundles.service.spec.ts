@@ -129,6 +129,10 @@ describe('BundlesService', () => {
 
       expect(result.requiredBooks).toHaveLength(2);
       expect(result.approvedListings).toHaveLength(2);
+      expect(result.optimizedBundle.listings).toHaveLength(2);
+      expect(result.optimizedBundle.sellerIds).toEqual(['seller-1']);
+      expect(result.optimizedBundle.totalPrice).toBe(1050);
+      expect(result.optimizedBundle.booksCovered).toBe(2);
 
       expect(mockModuleBookRepository.find).toHaveBeenCalledWith({
         where: [
@@ -203,17 +207,22 @@ describe('BundlesService', () => {
     });
 
     it('should return an empty listing array when no approved listings exist', async () => {
-      mockModuleBookRepository.find.mockResolvedValue([
-        mockModuleBook1,
-      ]);
+  mockModuleBookRepository.find.mockResolvedValue([
+    mockModuleBook1,
+  ]);
 
-      mockListingRepository.find.mockResolvedValue([]);
+  mockListingRepository.find.mockResolvedValue([]);
 
-      const result = await service.optimizeBundle(['module-1']);
+  const result = await service.optimizeBundle(['module-1']);
 
-      expect(result.requiredBooks).toHaveLength(1);
-      expect(result.approvedListings).toEqual([]);
-    });
+  expect(result.requiredBooks).toHaveLength(1);
+  expect(result.approvedListings).toEqual([]);
+
+  expect(result.optimizedBundle.listings).toEqual([]);
+  expect(result.optimizedBundle.sellerIds).toEqual([]);
+  expect(result.optimizedBundle.totalPrice).toBe(0);
+  expect(result.optimizedBundle.booksCovered).toBe(0);
+});
   });
   describe('findOptimizedBundle', () => {
   it('should select sellers that cover the required books', () => {

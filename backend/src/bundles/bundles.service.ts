@@ -47,9 +47,17 @@ export class BundlesService {
       relations: ['book', 'seller'],
     });
 
+    const listingsBySeller = this.groupListingsBySeller(approvedListings);
+
+    const optimizedBundle = this.findOptimizedBundle(
+      requiredBookIds,
+      listingsBySeller,
+    );
+
     return {
       requiredBooks: [...requiredBooks.values()],
       approvedListings,
+      optimizedBundle,
     };
   }
 
