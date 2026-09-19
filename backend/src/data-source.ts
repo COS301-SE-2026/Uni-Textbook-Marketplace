@@ -15,6 +15,8 @@ import { Wishlist } from './database/entities/wishlist.entity';
 import { Case } from './database/entities/case.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { Report } from './database/entities/report.entity';
+import { Auction } from './database/entities/auction.entity';
+import { Bid } from './database/entities/bid.entity';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ export const AppDataSource = new DataSource({
     Case,
     Notifications,
     Report,
+    Auction,
+    Bid,
   ],
   migrations: ['src/database/migrations/*.ts'],
 });
@@ -54,5 +58,7 @@ console.log(
     AuditLog,
     SavedSearch,
     Wishlist,
+    Auction,
+    Bid,
   ].map((e) => e?.name || 'undefined'),
 );
