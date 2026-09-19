@@ -30,6 +30,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BundlesModule } from './bundles/bundles.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           SavedSearch,
           Report,
           Case,
+          BundlesModule,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
