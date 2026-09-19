@@ -4,14 +4,13 @@ import { seedFaculties } from './faculty.seed';
 import { seedModules } from './module.seed';
 import { seedStudents } from './student.seed';
 import { seedAdmins } from './admin.seed';
-import { seedBooks } from './book.seed';
 import { seedModuleBooks } from './module-books.seed';
 import { seedListings } from './listing.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
 
-  // Refuse to run against a schema that isn't migration-managed.
+  
   if (AppDataSource.options.synchronize) {
     throw new Error(
       'synchronize: true is enabled in the data source. ' +
@@ -32,11 +31,11 @@ async function runSeeds() {
     await seedUniversities(manager);   
     await seedFaculties(manager);      
     await seedModules(manager);       
-    await seedStudents(manager);       // 4. needs universities + faculties
-    await seedAdmins(manager);         // 5. needs universities + faculties
-    await seedBooks(manager);          // 6. independent
-    await seedModuleBooks(manager);    // 7. needs modules + books
-    await seedListings(manager);       // 8. needs users + books + modules
+    await seedStudents(manager);      
+    await seedAdmins(manager);         
+            
+    await seedModuleBooks(manager);    
+    await seedListings(manager);       
 
     await queryRunner.commitTransaction();
 
