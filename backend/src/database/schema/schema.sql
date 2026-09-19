@@ -205,7 +205,7 @@ CREATE TABLE cases (
 --auction
 CREATE TABLE auction (
     id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    listings_id UUID REFERENCES listings(id) ON DELETE SET NULL,
+    listing_id UUID REFERENCES listings(id) ON DELETE SET NULL,
     seller_id UUID REFERENCES users(id) ON DELETE SET NULL,
     starting_price NUMERIC NOT NULL,
     reserve_price NUMERIC,
