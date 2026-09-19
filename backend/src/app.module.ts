@@ -31,6 +31,8 @@ import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BundlesModule } from './bundles/bundles.module';
+import { Auction } from './database/entities/auction.entity';
+import { Bid } from './database/entities/bid.entity';
 
 @Module({
   imports: [
@@ -62,6 +64,8 @@ import { BundlesModule } from './bundles/bundles.module';
           Report,
           Case,
           BundlesModule,
+          Auction,
+          Bid,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
