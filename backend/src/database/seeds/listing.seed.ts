@@ -212,7 +212,8 @@ export async function seedListings(manager: EntityManager) {
       condition: 'fair',
       annotation: 'heavy',
       hasNotes: true,
-      description: 'Well used. Plenty of notes — some students find these useful.',
+      description:
+        'Well used. Plenty of notes — some students find these useful.',
       status: ListingStatus.APPROVED,
       photo: './images/cos212.webp',
     },

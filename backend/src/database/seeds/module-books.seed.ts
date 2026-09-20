@@ -1,4 +1,4 @@
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { Logger } from '@nestjs/common';
 
 import { ModuleBook } from '../entities/module-book.entity';
@@ -118,6 +118,7 @@ function logMissingModules(logger: Logger, missingModules: string[]): void {
   if (!missingModules.length) return;
 
   const displayedModules = missingModules.slice(0, 10).join(', ');
+
   const suffix = missingModules.length > 10 ? ' …' : '';
 
   logger.warn(
@@ -136,7 +137,7 @@ function needsBookUpdate(existing: Book, row: SeedRow): boolean {
 }
 
 async function createBook(
-  bookRepo: ReturnType<EntityManager['getRepository']>,
+  bookRepo: Repository<Book>,
   row: SeedRow,
 ): Promise<Book> {
   const created = bookRepo.create({
@@ -150,7 +151,7 @@ async function createBook(
 }
 
 async function updateBook(
-  bookRepo: ReturnType<EntityManager['getRepository']>,
+  bookRepo: Repository<Book>,
   existing: Book,
   row: SeedRow,
 ): Promise<Book> {
@@ -168,7 +169,7 @@ async function updateBook(
 }
 
 async function processBooks(
-  bookRepo: ReturnType<EntityManager['getRepository']>,
+  bookRepo: Repository<Book>,
   rows: SeedRow[],
   existingBooks: Book[],
 ): Promise<{
@@ -186,6 +187,7 @@ async function processBooks(
 
     if (!existing) {
       const saved = await createBook(bookRepo, row);
+
       bookByIsbn.set(row.isbn, saved);
       booksCreated++;
       continue;
@@ -194,6 +196,7 @@ async function processBooks(
     if (!needsBookUpdate(existing, row)) continue;
 
     const saved = await updateBook(bookRepo, existing, row);
+
     bookByIsbn.set(row.isbn, saved);
     booksUpdated++;
   }
@@ -210,7 +213,7 @@ function createLinkKey(moduleId: string, bookId: string): string {
 }
 
 async function createModuleBookLinks(
-  moduleBookRepo: ReturnType<EntityManager['getRepository']>,
+  moduleBookRepo: Repository<ModuleBook>,
   rows: SeedRow[],
   moduleByNormalisedCode: Map<string, Module>,
   bookByIsbn: Map<string, Book>,
@@ -226,8 +229,12 @@ async function createModuleBookLinks(
 
   const existingLinks = await moduleBookRepo.find({
     where: {
-      module: { id: In(validModuleIds) },
-      book: { id: In(validBookIds) },
+      module: {
+        id: In(validModuleIds),
+      },
+      book: {
+        id: In(validBookIds),
+      },
     },
     relations: ['module', 'book'],
   });
@@ -243,6 +250,7 @@ async function createModuleBookLinks(
 
   for (const row of rows) {
     const module = moduleByNormalisedCode.get(row.moduleCode);
+
     const book = bookByIsbn.get(row.isbn);
 
     if (!module || !book) continue;
@@ -280,7 +288,9 @@ export async function seedModuleBooks(
   const logger = new Logger(seedModuleBooks.name);
 
   const moduleBookRepo = manager.getRepository(ModuleBook);
+
   const moduleRepo = manager.getRepository(Module);
+
   const bookRepo = manager.getRepository(Book);
 
   const rows = buildSeedRows();
@@ -292,6 +302,7 @@ export async function seedModuleBooks(
   const normalisedCodes = [...new Set(rows.map((row) => row.moduleCode))];
 
   const allModules = await moduleRepo.find();
+
   const moduleByNormalisedCode = createModuleMap(allModules);
 
   const missingModules = findMissingModules(

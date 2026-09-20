@@ -180,11 +180,10 @@ export class BundlesService {
       }
 
       const cheapestListing = bookListings.reduce(
-  (cheapest, listing) =>
-     Number(listing.price) < Number(cheapest.price) ? listing : cheapest,
-     bookListings[0],
-    );
-      
+        (cheapest, listing) =>
+          Number(listing.price) < Number(cheapest.price) ? listing : cheapest,
+        bookListings[0],
+      );
 
       selectedListings.push(cheapestListing);
     }
