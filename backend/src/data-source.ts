@@ -15,6 +15,7 @@ import { Wishlist } from './database/entities/wishlist.entity';
 import { Case } from './database/entities/case.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { Report } from './database/entities/report.entity';
+import { ModuleBook } from './database/entities/module-book.entity';
 import { Auction } from './database/entities/auction.entity';
 import { Bid } from './database/entities/bid.entity';
 
@@ -31,6 +32,7 @@ export const AppDataSource = new DataSource({
     Listing,
     Book,
     Module,
+    ModuleBook,
     University,
     OTP,
     AuditLog,
@@ -53,6 +55,7 @@ console.log(
     Listing,
     Book,
     Module,
+    ModuleBook,
     University,
     OTP,
     AuditLog,

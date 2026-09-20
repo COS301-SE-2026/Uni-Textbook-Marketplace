@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index , OneToMany } from 'typeorm';
+import { ModuleBook } from './module-book.entity';
 
 @Entity('books')
 @Index('idx_books_isbn', ['isbn'])
@@ -33,4 +34,7 @@ export class Book {
     nullable: true,
   })
   publisher!: string;
+
+  @OneToMany(() => ModuleBook, (moduleBook) => moduleBook.book)
+moduleBooks?: ModuleBook[];
 }
