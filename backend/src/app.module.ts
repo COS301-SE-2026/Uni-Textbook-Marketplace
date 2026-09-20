@@ -31,6 +31,7 @@ import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BundlesModule } from './bundles/bundles.module';
+import { ModuleBook } from './database/entities/module-book.entity';
 
 @Module({
   imports: [
@@ -61,7 +62,7 @@ import { BundlesModule } from './bundles/bundles.module';
           SavedSearch,
           Report,
           Case,
-          BundlesModule,
+          ModuleBook,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -79,6 +80,7 @@ import { BundlesModule } from './bundles/bundles.module';
     MessagingModule,
     ReportsModule,
     CasesModule,
+    BundlesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

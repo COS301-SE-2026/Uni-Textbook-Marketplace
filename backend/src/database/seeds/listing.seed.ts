@@ -1,4 +1,4 @@
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   Listing,
   ListingStatus,
@@ -21,23 +21,44 @@ interface ListingSpec {
   photo?: string;
 }
 
+interface ListingDeps {
+  sellerByEmail: Map<string, User>;
+  moduleByCode: Map<string, Module>;
+  bookByIsbn: Map<string, Book>;
+  defaultReviewer: User;
+}
 
-export async function seedListings(manager: EntityManager) {
-  const listingRepo = manager.getRepository(Listing);
-  const userRepo = manager.getRepository(User);
-  const moduleRepo = manager.getRepository(Module);
-  const bookRepo = manager.getRepository(Book);
+interface ResolvedTargets {
+  seller: User;
+  module: Module;
+  book: Book;
+}
 
-  
-  const sellerEmails = [
-    'student1@tuks.co.za',
-    'student2@tuks.co.za',
-    'student3@tuks.co.za',
-    'student4@tuks.co.za',
-    'student5@tuks.co.za',
-  ];
+const SELLER_EMAILS = [
+  'student1@tuks.co.za',
+  'student2@tuks.co.za',
+  'student3@tuks.co.za',
+  'student4@tuks.co.za',
+  'student5@tuks.co.za',
+];
+
+const MODULE_CODES = ['COS212', 'COS216', 'COS214', 'COS284', 'INF214'];
+
+const ISBNS = [
+  '9789814392785', // COS212 - Data Structures and Algorithms in Java (Drozdek)
+  '9780132126953', // COS216 - Computer Networks (Tanenbaum)
+  '9781259080791', // COS214 - OOSE (Kung)
+  '9781292459925', // COS284 - Computer Organization and Architecture (Stallings)
+  '9781473768055', // INF214 - Database Principles (Coronel, online)
+];
+
+async function loadListingDeps(
+  userRepo: Repository<User>,
+  moduleRepo: Repository<Module>,
+  bookRepo: Repository<Book>,
+): Promise<ListingDeps> {
   const sellers = await userRepo.find({
-    where: { email: In(sellerEmails), role: 'student' },
+    where: { email: In(SELLER_EMAILS), role: 'student' },
   });
   const sellerByEmail = new Map(sellers.map((s) => [s.email, s]));
 
@@ -45,21 +66,11 @@ export async function seedListings(manager: EntityManager) {
   if (!reviewers.length) {
     throw new Error('No admin users found — seed admins before listings.');
   }
-  const defaultReviewer = reviewers[0];
 
-  const moduleCodes = ['COS212', 'COS216', 'COS214', 'COS284', 'INF214'];
-  const modules = await moduleRepo.find({ where: { code: In(moduleCodes) } });
+  const modules = await moduleRepo.find({ where: { code: In(MODULE_CODES) } });
   const moduleByCode = new Map(modules.map((m) => [m.code, m]));
 
- 
-  const isbns = [
-    '9789814392785', // COS212 - Data Structures and Algorithms in Java (Drozdek)
-    '9780132126953', // COS216 - Computer Networks (Tanenbaum)
-    '9781259080791', // COS214 - OOSE (Kung)
-    '9781292459925', // COS284 - Computer Organization and Architecture (Stallings)
-    '9781473768055', // INF214 - Database Principles (Coronel, online)
-  ];
-  const books = await bookRepo.find({ where: { isbn: In(isbns) } });
+  const books = await bookRepo.find({ where: { isbn: In(ISBNS) } });
   const bookByIsbn = new Map(books.map((b) => [b.isbn, b]));
 
   if (!sellers.length || !modules.length || !books.length) {
@@ -69,9 +80,106 @@ export async function seedListings(manager: EntityManager) {
     );
   }
 
+  return {
+    sellerByEmail,
+    moduleByCode,
+    bookByIsbn,
+    defaultReviewer: reviewers[0],
+  };
+}
+
+/**
+ * Returns the resolved seller/module/book for a spec, or `null` (and logs
+ * which dependency was missing) so the caller can count it as skipped.
+ */
+function resolveTargets(
+  spec: ListingSpec,
+  deps: ListingDeps,
+): ResolvedTargets | null {
+  const seller = deps.sellerByEmail.get(spec.sellerEmail);
+  if (!seller) {
+    console.warn(`Skipped: seller not found (${spec.sellerEmail})`);
+    return null;
+  }
+
+  const module = deps.moduleByCode.get(spec.moduleCode);
+  if (!module) {
+    console.warn(`Skipped: module not found (${spec.moduleCode})`);
+    return null;
+  }
+
+  const book = deps.bookByIsbn.get(spec.isbn);
+  if (!book) {
+    console.warn(
+      `Skipped: book not found (ISBN ${spec.isbn} — is seedModuleBooks up to date?)`,
+    );
+    return null;
+  }
+
+  return { seller, module, book };
+}
+
+async function upsertListing(
+  listingRepo: Repository<Listing>,
+  spec: ListingSpec,
+  targets: ResolvedTargets,
+  defaultReviewer: User,
+): Promise<'created' | 'updated'> {
+  const { seller, module, book } = targets;
+
+  const existing = await listingRepo.findOne({
+    where: {
+      seller: { id: seller.id },
+      book: { id: book.id },
+      module: { id: module.id },
+    },
+  });
+
+  if (existing) {
+    existing.title = `${spec.moduleCode} — ${book.title}`;
+    existing.price = spec.price;
+    existing.condition = spec.condition;
+    existing.annotation_level = spec.annotation;
+    existing.has_notes = spec.hasNotes;
+    existing.description = spec.description;
+    existing.status = spec.status ?? ListingStatus.APPROVED;
+    existing.photo_urls = spec.photo ? [spec.photo] : [];
+    existing.reviewer = defaultReviewer;
+    existing.reviewed_at = new Date();
+    await listingRepo.save(existing);
+    return 'updated';
+  }
+
+  const listing = listingRepo.create({
+    title: `${spec.moduleCode} — ${book.title}`,
+    seller,
+    book,
+    module,
+    condition: spec.condition,
+    annotation_level: spec.annotation,
+    price: spec.price,
+    reviewer: defaultReviewer,
+    reviewed_at: new Date(),
+    photo_urls: spec.photo ? [spec.photo] : [],
+    status: spec.status ?? ListingStatus.APPROVED,
+    listing_status: ListingsStatus.AVAILABLE,
+    has_notes: spec.hasNotes,
+    description: spec.description,
+  });
+
+  await listingRepo.save(listing);
+  return 'created';
+}
+
+export async function seedListings(manager: EntityManager) {
+  const listingRepo = manager.getRepository(Listing);
+  const userRepo = manager.getRepository(User);
+  const moduleRepo = manager.getRepository(Module);
+  const bookRepo = manager.getRepository(Book);
+
+  const deps = await loadListingDeps(userRepo, moduleRepo, bookRepo);
 
   const specs: ListingSpec[] = [
-    
     {
       sellerEmail: 'student1@tuks.co.za',
       isbn: '9789814392785',
@@ -108,7 +216,6 @@ export async function seedListings(manager: EntityManager) {
       status: ListingStatus.APPROVED,
       photo: './images/cos212.webp',
     },
-
     {
       sellerEmail: 'student2@tuks.co.za',
       isbn: '9780132126953',
@@ -133,8 +240,6 @@ export async function seedListings(manager: EntityManager) {
       status: ListingStatus.APPROVED,
       photo: './images/cos216.jpg',
     },
-
-    
     {
       sellerEmail: 'student2@tuks.co.za',
       isbn: '9781259080791',
@@ -159,8 +264,6 @@ export async function seedListings(manager: EntityManager) {
       status: ListingStatus.APPROVED,
       photo: './images/cos214.webp',
     },
-
-    
     {
       sellerEmail: 'student4@tuks.co.za',
       isbn: '9781292459925',
@@ -173,8 +276,6 @@ export async function seedListings(manager: EntityManager) {
       status: ListingStatus.APPROVED,
       photo: './images/cos284.jpg',
     },
-
-   
     {
       sellerEmail: 'student5@tuks.co.za',
       isbn: '9781473768055',
@@ -189,78 +290,26 @@ export async function seedListings(manager: EntityManager) {
     },
   ];
 
- 
   let createdCount = 0;
   let updatedCount = 0;
   let skippedCount = 0;
 
   for (const spec of specs) {
-    const seller = sellerByEmail.get(spec.sellerEmail);
-    const module = moduleByCode.get(spec.moduleCode);
-    const book = bookByIsbn.get(spec.isbn);
-
-    if (!seller) {
-      console.warn(`Skipped: seller not found (${spec.sellerEmail})`);
-      skippedCount++;
-      continue;
-    }
-    if (!module) {
-      console.warn(`Skipped: module not found (${spec.moduleCode})`);
-      skippedCount++;
-      continue;
-    }
-    if (!book) {
-      console.warn(
-        `Skipped: book not found (ISBN ${spec.isbn} — is seedModuleBooks up to date?)`,
-      );
+    const targets = resolveTargets(spec, deps);
+    if (!targets) {
       skippedCount++;
       continue;
     }
 
-    const existing = await listingRepo.findOne({
-      where: {
-        seller: { id: seller.id },
-        book: { id: book.id },
-        module: { id: module.id },
-      },
-    });
+    const outcome = await upsertListing(
+      listingRepo,
+      spec,
+      targets,
+      deps.defaultReviewer,
+    );
 
-    if (existing) {
-      
-      existing.title = `${spec.moduleCode} — ${book.title}`;
-      existing.price = spec.price;
-      existing.condition = spec.condition;
-      existing.annotation_level = spec.annotation;
-      existing.has_notes = spec.hasNotes;
-      existing.description = spec.description;
-      existing.status = spec.status ?? ListingStatus.APPROVED;
-      existing.photo_urls = spec.photo ? [spec.photo] : [];
-      existing.reviewer = defaultReviewer;
-      existing.reviewed_at = new Date();
-      await listingRepo.save(existing);
-      updatedCount++;
-      continue;
-    }
-
-    const listing = listingRepo.create({
-      title: `${spec.moduleCode} — ${book.title}`,
-      seller,
-      book,
-      module,
-      condition: spec.condition,
-      annotation_level: spec.annotation,
-      price: spec.price,
-      reviewer: defaultReviewer,
-      reviewed_at: new Date(),
-      photo_urls: spec.photo ? [spec.photo] : [],
-      status: spec.status ?? ListingStatus.APPROVED,
-      listing_status: ListingsStatus.AVAILABLE,
-      has_notes: spec.hasNotes,
-      description: spec.description,
-    });
-
-    await listingRepo.save(listing);
-    createdCount++;
+    if (outcome === 'created') createdCount++;
+    else updatedCount++;
   }
 
   console.log(
