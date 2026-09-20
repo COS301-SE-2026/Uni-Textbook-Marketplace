@@ -44,5 +44,5 @@ export class Module {
   university!: University;
 
   @OneToMany(() => ModuleBook, (moduleBook) => moduleBook.module)
-  moduleBooks!: ModuleBook[];
+  moduleBooks?: ModuleBook[];
 }

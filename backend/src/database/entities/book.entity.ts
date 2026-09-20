@@ -36,5 +36,5 @@ export class Book {
   publisher!: string;
 
   @OneToMany(() => ModuleBook, (moduleBook) => moduleBook.book)
-moduleBooks!: ModuleBook[];
+moduleBooks?: ModuleBook[];
 }
