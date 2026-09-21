@@ -263,18 +263,34 @@ export class MessagingService {
       );
     }
 
-    const messageRef = await conversationRef.collection('messages').add({
+    const sentAt = Timestamp.now();
+
+    const messageData: MessageData = {
       senderId: userId,
       text,
-      sentAt: Timestamp.now(),
+      sentAt,
       read: false,
-    });
+    };
+
+    const messageRef = await conversationRef
+      .collection('messages')
+      .add(messageData);
 
     await conversationRef.update({
       updatedAt: new Date(),
       lastMessage: text,
       lastSenderId: userId,
     });
+
+    const newMessage = {
+      id: messageRef.id,
+      ...messageData,
+    };
+
+    this.messagingGateway.sendMessageToConversation(
+      conversationId,
+      newMessage,
+    );
 
     return {
       messageId: messageRef.id,
