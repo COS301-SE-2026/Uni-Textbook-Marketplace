@@ -23,8 +23,11 @@ export class VisionController {
   async extractText(
     @Body() dto: ExtractTextDto,
   ): Promise<ExtractTextResponseDto> {
-    const { rawText, matchBook: matchedBook } =
-      await this.visionService.extractTextAndMatch(dto.imageUrl);
+    const {
+      rawText,
+      matchBook: matchedBook,
+      details,
+    } = await this.visionService.extractTextAndMatch(dto.imageUrl);
 
     return {
       rawText,
@@ -42,6 +45,7 @@ export class VisionController {
             confidence: matchedBook.confidence,
           }
         : null,
+      extracted: details,
     };
   }
 }

@@ -82,6 +82,22 @@ const NOT_A_NAME = new Set([
   'workbook',
   'bestseller',
   'isbn',
+  'systems',
+  'science',
+  'sciences',
+  'engineering',
+  'design',
+  'theory',
+  'analysis',
+  'networks',
+  'algorithms',
+  'programming',
+  'structures',
+  'database',
+  'databases',
+  'management',
+  'computing',
+  'architecture',
 ]);
 
 const NOT_IN_A_NAME = new Set([
@@ -97,7 +113,6 @@ const NOT_IN_A_NAME = new Set([
 ]);
 
 const TITLE_HEIGHT_CLUSTER = 0.7;
-const AUTHOR_MAX_HEIGHT = 0.75;
 const MAX_AUTHOR_LINES = 6;
 
 function tidy(text: string): string {
@@ -185,12 +200,11 @@ function looksLikeName(text: string): boolean {
   const cleaned = text.replace(/^\s*by\s+/i, '').trim();
   if (!cleaned || /\d/.test(cleaned)) return false;
 
-  const parts = cleaned.split(/[,/&]|\band\b|\s+/).filter(Boolean);
+  const parts = cleaned.split(/[,&·•]+|\band\b|\s+/).filter(Boolean);
   if (parts.length === 0 || parts.length > MAX_AUTHOR_LINES) return false;
   if (!parts.every((p) => /^[A-Za-z][A-Za-z.'’-]*$/.test(p))) return false;
   return !parts.some((p) => {
     const bare = p.toLowerCase().replace(/[.'’]/g, '');
-
     return (
       NOT_A_NAME.has(bare) || (NOT_IN_A_NAME.has(bare) && !p.endsWith('.'))
     );
@@ -239,18 +253,25 @@ export function extractBookDetails(lines: OcrLine[]): ExtractedBookDetails {
     .sort((a, b) => a.line.topY - b.line.topY);
   if (candidates.length === 0) return result;
 
-  const tallest = candidates.reduce((best, c) =>
-    c.line.height > best.line.height ? c : best,
+  const tallest = candidates.reduce(
+    (best, c) => (c.line.height > best.line.height ? c : best),
+    candidates[0],
   );
   const seed = candidates.indexOf(tallest);
   const minHeight = tallest.line.height * TITLE_HEIGHT_CLUSTER;
 
   let first = seed;
-  while (first > 0 && candidates[first - 1].line.height >= minHeight) first--;
+  while (
+    first > 0 &&
+    candidates[first - 1].line.height >= minHeight &&
+    !looksLikeName(candidates[first - 1].line.text)
+  )
+    first--;
   let last = seed;
   while (
     last < candidates.length - 1 &&
-    candidates[last + 1].line.height >= minHeight
+    candidates[last + 1].line.height >= minHeight &&
+    !looksLikeName(candidates[last + 1].line.text)
   )
     last++;
 
@@ -260,14 +281,13 @@ export function extractBookDetails(lines: OcrLine[]): ExtractedBookDetails {
   const titleBottom = titleLines[titleLines.length - 1].line.topY;
   const authorLines = candidates
     .slice(last + 1)
-    .filter(
-      ({ line }) =>
-        line.topY > titleBottom &&
-        line.height <= tallest.line.height * AUTHOR_MAX_HEIGHT &&
-        looksLikeName(line.text),
-    )
+    .filter(({ line }) => line.topY > titleBottom && looksLikeName(line.text))
     .slice(0, MAX_AUTHOR_LINES)
-    .map(({ line }) => tidy(line.text.replace(/^\s*by\s+/i, '')));
+    .map(({ line }) =>
+      tidy(
+        line.text.replace(/^\s*by\s+/i, '').replace(/[ \t]*[·•][ \t]*/g, ', '),
+      ),
+    );
 
   if (authorLines.length > 0) result.author = authorLines.join(', ');
 

@@ -134,7 +134,6 @@ interface AiMatch {
     isbn: string
 }
 
-
 function isUnchangedAiMatch(match: AiMatch | null, form: ListingFormData): match is AiMatch {
     if (!match) return false
     return (
@@ -179,9 +178,7 @@ function CreateListingPageInner() {
 
     const [errors, setErrors] = useState<FormErrors>({})
 
-    
     const [aiMatch, setAiMatch] = useState<AiMatch | null>(null)
-    
     const scanUploads = useRef(new Map<File, string>())
 
     const handleChange = (
@@ -203,25 +200,32 @@ function CreateListingPageInner() {
     }
 
     const handleAiScan = (result: AiScanResult) => {
-        const { file, uploadedUrl, matchedBook } = result
+        const { file, uploadedUrl, matchedBook, extracted } = result
 
         if (uploadedUrl) scanUploads.current.set(file, uploadedUrl)
+
+        const bookFields: Partial<ListingFormData> = {}
+        if (matchedBook) {
+            bookFields.bookName = matchedBook.title ?? ''
+            bookFields.author = matchedBook.author ?? ''
+            bookFields.edition = String(matchedBook.edition ?? '')
+            bookFields.isbn = matchedBook.isbn ?? ''
+           
+            if (matchedBook.publisher) bookFields.publisher = matchedBook.publisher
+        } else if (extracted) {
+            if (extracted.title) bookFields.bookName = extracted.title
+            if (extracted.author) bookFields.author = extracted.author
+            if (extracted.edition) bookFields.edition = extracted.edition
+            if (extracted.isbn) bookFields.isbn = extracted.isbn
+            if (extracted.publisher) bookFields.publisher = extracted.publisher
+        }
 
         setForm(prev => ({
             ...prev,
             
             images: [...prev.images, file],
             
-            ...(matchedBook
-                ? {
-                    bookName: matchedBook.title ?? '',
-                    author: matchedBook.author ?? '',
-                    edition: String(matchedBook.edition ?? ''),
-                    isbn: matchedBook.isbn ?? '',
-                    
-                    publisher: matchedBook.publisher || prev.publisher,
-                }
-                : {}),
+            ...bookFields,
         }))
 
         if (matchedBook) {
@@ -232,10 +236,13 @@ function CreateListingPageInner() {
                 edition: String(matchedBook.edition ?? ''),
                 isbn: matchedBook.isbn ?? '',
             })
-            setErrors(prev => ({ ...prev, bookName: '', author: '', edition: '', isbn: '', publisher: '', images: '' }))
-        } else {
-            setErrors(prev => ({ ...prev, images: '' }))
+        } else if (Object.keys(bookFields).length > 0) {
+            
+            setAiMatch(null)
         }
+
+        const cleared = Object.fromEntries(Object.keys(bookFields).map(key => [key, '']))
+        setErrors(prev => ({ ...prev, ...cleared, images: '' }) as FormErrors)
     }
 
     const handleRemoveImage = (index: number) => {
@@ -369,7 +376,7 @@ function CreateListingPageInner() {
                             priority
                             style={{ objectPosition: '100% 50%' }}
                         />
-                        {/* Gradient overlay*/}
+                        
                         <div className="absolute inset-0" style={{
                             background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
                         }} />

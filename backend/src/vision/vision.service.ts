@@ -13,6 +13,10 @@ import {
   OcrLine,
   BookMatchResult,
 } from './book-matcher.util';
+import {
+  extractBookDetails,
+  ExtractedBookDetails,
+} from './book-details-extractor.util';
 
 interface AzureLine {
   text: string;
@@ -106,6 +110,7 @@ export class VisionService {
   async extractTextAndMatch(imageUrl: string): Promise<{
     rawText: string;
     matchBook: BookMatchResult | null;
+    details: ExtractedBookDetails;
   }> {
     const lines = await this.extractLines(imageUrl);
 
@@ -117,6 +122,8 @@ export class VisionService {
     const candidates = await this.bookRepo.find();
     const matchedBook = matchBookFromText(lines, candidates);
 
-    return { rawText, matchBook: matchedBook };
+    const details = extractBookDetails(lines);
+
+    return { rawText, matchBook: matchedBook, details };
   }
 }

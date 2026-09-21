@@ -5,13 +5,14 @@ import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import CornerCropEditor from '@/components/listings/CornerCropEditor'
 import { uploadImages } from '@/lib/listings.api'
-import { extractText, type MatchedBook } from '@/lib/vision.api'
+import { extractText, type ExtractedBookDetails, type MatchedBook } from '@/lib/vision.api'
 
 export interface AiScanResult {
     file: File
     uploadedUrl: string | null
     rawText: string
     matchedBook: MatchedBook | null
+    extracted: ExtractedBookDetails | null
 }
 
 interface AiPhotoCaptureProps {
@@ -20,8 +21,15 @@ interface AiPhotoCaptureProps {
 }
 
 const MAX_SIDE_PX = 1600
+
 const FALLBACK_MESSAGE = 'Auto-fill unavailable, please enter details manually.'
-const NO_MATCH_MESSAGE = "We couldn't match this book, please enter details manually."
+const MATCHED_MESSAGE = 'We found your book. Please check the details below.'
+const EXTRACTED_MESSAGE = 'We read these details from your cover. Please check them before continuing.'
+const NOTHING_READ_MESSAGE = "We couldn't read any book details from that photo, please enter them manually."
+
+function hasAnyDetail(details: ExtractedBookDetails | null): boolean {
+    return details !== null && Object.values(details).some(Boolean)
+}
 
 async function dataUrlToFile(dataUrl: string): Promise<File> {
     const img = new Image()
@@ -72,7 +80,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
     function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
-       
+        
         e.target.value = ''
         if (!file) return
 
@@ -102,6 +110,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
         let uploadedUrl: string | null = null
         let rawText = ''
         let matchedBook: MatchedBook | null = null
+        let extracted: ExtractedBookDetails | null = null
 
         let failedStep = 'upload'
         try {
@@ -113,9 +122,13 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
             const result = await extractText(uploadedUrl)
             rawText = result.rawText
             matchedBook = result.matchedBook
-            if (!matchedBook) setNotice(NO_MATCH_MESSAGE)
+            extracted = result.extracted ?? null
+
+            if (matchedBook) setNotice(MATCHED_MESSAGE)
+            else if (hasAnyDetail(extracted)) setNotice(EXTRACTED_MESSAGE)
+            else setNotice(NOTHING_READ_MESSAGE)
         } catch (err) {
-           
+            
             console.error(`[AiPhotoCapture] Auto-fill failed at step "${failedStep}"`, err, { uploadedUrl })
             const detail = err instanceof Error ? err.message : ''
             setNotice(
@@ -125,7 +138,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
             )
         }
 
-        onResult({ file, uploadedUrl, rawText, matchedBook })
+        onResult({ file, uploadedUrl, rawText, matchedBook, extracted })
         setProcessing(false)
     }
 
