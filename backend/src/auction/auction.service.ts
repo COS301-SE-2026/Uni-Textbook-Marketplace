@@ -100,9 +100,9 @@ export class AuctionService {
 
         const savedAuction = await this.auctionRepository.save(auction);
 
-        await this.auctionQueue.add('close-auction',{
+        await this.auctionQueue.add('close-auction', {
             auctionId: savedAuction.id,
-        },{
+        }, {
             delay: endTime.getTime() - Date.now(),
         })
 
@@ -193,5 +193,13 @@ export class AuctionService {
         }
 
         return result;
+    }
+
+    async getAuctions(): Promise<Auction[]> {
+        return this.auctionRepository.find({
+            relations: {
+                listing: true,
+            },
+        });
     }
 }
