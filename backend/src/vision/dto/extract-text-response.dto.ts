@@ -1,8 +1,9 @@
 export class MatchedBookDto {
   id!: string;
   title!: string;
-  author!: string;
-  isbn!: string;
+  author!: string | null;
+  isbn!: string | null;
+  publisher!: string | null;
   edition!: string;
   confidence!: number;
 }

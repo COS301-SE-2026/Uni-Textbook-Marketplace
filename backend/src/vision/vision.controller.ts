@@ -34,6 +34,7 @@ export class VisionController {
             title: matchedBook.book.title,
             author: matchedBook.book.author ?? null,
             isbn: matchedBook.book.isbn ?? null,
+            publisher: matchedBook.book.publisher ?? null,
             edition:
               matchedBook.book.edition != null
                 ? String(matchedBook.book.edition)
