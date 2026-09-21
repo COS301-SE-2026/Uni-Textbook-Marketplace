@@ -19,6 +19,7 @@ import { io, Socket } from 'socket.io-client';
 
 export function useMessaging() {
     const socketRef = useRef<Socket | null>(null);
+    const selectedConversationIdRef = useRef<string | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
     const [selectedConversation, setSelectedConversation] =
@@ -81,6 +82,7 @@ export function useMessaging() {
     ) => {
         try {
             setSelectedConversation(conversation);
+            selectedConversationIdRef.current = conversation.conversationId;
             setLoadingMessages(true);
 
             const data = await getMessages(
@@ -147,6 +149,16 @@ export function useMessaging() {
 
         socket.on('connect', () => {
             console.log('Connected to messaging socket');
+
+            const conversationId =
+                selectedConversationIdRef.current;
+
+            if (conversationId) {
+                socket.emit(
+                    'joinConversation',
+                    conversationId,
+                );
+            }
         });
 
         socket.on('connect_error', (error) => {

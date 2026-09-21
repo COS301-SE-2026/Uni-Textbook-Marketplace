@@ -284,7 +284,13 @@ export class MessagingService {
 
     const newMessage = {
       id: messageRef.id,
-      ...messageData,
+      senderId: userId,
+      text,
+      sentAt: {
+        _seconds: sentAt.seconds,
+        _nanoseconds: sentAt.nanoseconds,
+      },
+      read: false,
     };
 
     this.messagingGateway.sendMessageToConversation(
