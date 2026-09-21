@@ -6,6 +6,7 @@ import { Listing } from '../database/entities/listing.entity';
 import { AuctionService } from './auction.service';
 import { AuctionController } from './auction.controller';
 import { User } from '../database/entities/users.entity';
+import { AuctionProcessor } from './auction.processor';
 
 @Module({
     imports: [
@@ -13,7 +14,7 @@ import { User } from '../database/entities/users.entity';
         BullModule.registerQueue({ name: 'auction' }),
     ],
     controllers: [AuctionController],
-    providers: [AuctionService],
+    providers: [AuctionService,AuctionProcessor],
     exports: [AuctionService],
 })
 export class AuctionModule { }
