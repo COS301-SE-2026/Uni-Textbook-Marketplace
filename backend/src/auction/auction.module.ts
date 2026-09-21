@@ -5,10 +5,11 @@ import { Auction } from '../database/entities/auction.entity';
 import { Listing } from '../database/entities/listing.entity';
 import { AuctionService } from './auction.service';
 import { AuctionController } from './auction.controller';
+import { User } from '../database/entities/users.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Auction, Listing]),
+        TypeOrmModule.forFeature([Auction, Listing,User]),
         BullModule.registerQueue({ name: 'auction' }),
     ],
     controllers: [AuctionController],
