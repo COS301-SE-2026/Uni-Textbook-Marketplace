@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef} from 'react';
 
 import {
     createConversation,
@@ -14,17 +14,11 @@ import type {
     Message,
 } from '@/types/messaging'; 
 
-import {
-    collection,
-    onSnapshot,
-    orderBy,
-    query,
-} from 'firebase/firestore';
+import { io, Socket } from 'socket.io-client';
 
-import { db } from '@/lib/firebase';
 
 export function useMessaging() {
-
+    const socketRef = useRef<Socket | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
     const [selectedConversation, setSelectedConversation] =
@@ -132,44 +126,46 @@ export function useMessaging() {
     }, []);
 
     useEffect(() => {
-        if (!selectedConversation) {
-            return;
-        }
+        const socketUrl =
+            process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') ||
+            window.location.origin;
 
-        const messagesRef = collection(
-            db,
-            'conversations',
-            selectedConversation.conversationId,
-            'messages',
-        );
+        const socket = io(`${socketUrl}/messaging`, {
+            withCredentials: true,
+            transports: ['websocket'],
+        });
 
-        const messagesQuery = query(
-            messagesRef,
-            orderBy('sentAt', 'asc'),
-        );
+        socketRef.current = socket;
 
-        const unsubscribe = onSnapshot(
-            messagesQuery,
-            (snapshot) => {
-                const updatedMessages: Message[] = snapshot.docs.map(
-                    (doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    } as Message),
-                );
+        socket.on('connect', () => {
+            console.log('Connected to messaging socket');
+        });
 
-                setMessages(updatedMessages);
-            },
-            (error) => {
-                console.error(
-                    'Error listening for messages:',
-                    error,
-                );
-            },
-        );
+        socket.on('connect_error', (error) => {
+            console.error('Messaging socket connection error:', error);
+        });
 
-        return () => unsubscribe();
-    }, [selectedConversation]);
+        socket.on('newMessage', (message: Message) => {
+            setMessages((currentMessages) => {
+                if (
+                    currentMessages.some(
+                        (existingMessage) => existingMessage.id === message.id,
+                    )
+                ) {
+                    return currentMessages;
+                }
+
+                return [...currentMessages, message];
+            });
+
+            void loadConversations();
+        });
+
+        return () => {
+            socket.disconnect();
+            socketRef.current = null;
+        };
+    }, []);
 
     return {
         conversations,
