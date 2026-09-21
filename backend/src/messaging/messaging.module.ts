@@ -6,11 +6,12 @@ import { MessagingService } from './messaging.service';
 
 import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
+import { MessagingGateway } from './messaging.gateway';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Listing, User])],
   controllers: [MessagingController],
-  providers: [MessagingService],
-  exports: [MessagingService],
+  providers: [MessagingService, MessagingGateway],
+  exports: [MessagingService,  MessagingGateway],
 })
 export class MessagingModule {}
