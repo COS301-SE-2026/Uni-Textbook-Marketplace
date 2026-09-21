@@ -73,6 +73,12 @@ export class Auction {
     })
     current_highest_bid!: number | null;
 
+    @Column({
+        type: 'uuid',
+        nullable: true
+    })
+    current_highest_bidder_id: string | null;
+
     @ManyToOne(() => User, {
         nullable: true,
         onDelete: 'SET NULL',

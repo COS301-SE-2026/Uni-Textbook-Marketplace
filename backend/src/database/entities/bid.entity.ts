@@ -21,12 +21,24 @@ export class Bid {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
+    @Column({
+        type: 'uuid',
+        nullable: true
+    })
+    auction_id: string | null;
+
     @ManyToOne(() => Auction, {
         nullable: true,
         onDelete: 'SET NULL',
     })
     @JoinColumn({ name: 'auction_id' })
     auction!: Auction | null;
+
+    @Column({
+        type: 'uuid',
+        nullable: true
+    })
+    bidder_id: string | null;
 
     @ManyToOne(() => User, {
         nullable: true,
