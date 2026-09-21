@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,6 +28,7 @@ interface AzureReadResponse {
 
 @Injectable()
 export class VisionService {
+  private readonly logger = new Logger(VisionService.name);
   private readonly endpoint: string;
   private readonly key: string;
 
@@ -65,13 +67,18 @@ export class VisionService {
         },
         body: JSON.stringify({ url: imageUrl }),
       });
-    } catch {
+    } catch (err) {
+      this.logger.error(`Could not reach Azure Vision: ${String(err)}`);
       throw new InternalServerErrorException(
         'Failed to reach Azure Vision service',
       );
     }
 
     if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      this.logger.error(
+        `Azure Vision ${res.status} for ${imageUrl.split('?')[0]}: ${body}`,
+      );
       throw new InternalServerErrorException(
         `Azure Vision returned ${res.status}`,
       );

@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
-import CornerCropEditor from "./CornerCropEditor"
-import { uploadImages } from "@/lib/listings.api"
-import { extractText, type MatchedBook } from "@/lib/vision.api"
+import CornerCropEditor from '@/components/listings/CornerCropEditor'
+import { uploadImages } from '@/lib/listings.api'
+import { extractText, type MatchedBook } from '@/lib/vision.api'
 
 export interface AiScanResult {
     file: File
@@ -21,7 +21,7 @@ interface AiPhotoCaptureProps {
 
 const MAX_SIDE_PX = 1600
 const FALLBACK_MESSAGE = 'Auto-fill unavailable, please enter details manually.'
-const NO_MATCH_MESSAGE = "We couldn't match this book, please enter the details manually."
+const NO_MATCH_MESSAGE = "We couldn't match this book, please enter details manually."
 
 async function dataUrlToFile(dataUrl: string): Promise<File> {
     const img = new Image()
@@ -34,13 +34,12 @@ async function dataUrlToFile(dataUrl: string): Promise<File> {
     const scale = Math.min(1, MAX_SIDE_PX / Math.max(img.naturalWidth, img.naturalHeight))
 
     let blob: Blob
-    if(scale === 1) {
+    if (scale === 1) {
         blob = await (await fetch(dataUrl)).blob()
     } else {
         const canvas = document.createElement('canvas')
         canvas.width = Math.round(img.naturalWidth * scale)
         canvas.height = Math.round(img.naturalHeight * scale)
-
         const ctx = canvas.getContext('2d')
         if (!ctx) throw new Error('Canvas 2D context unavailable')
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
@@ -64,6 +63,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
     const [processing, setProcessing] = useState(false)
     const [notice, setNotice] = useState<string | null>(null)
 
+    
     useEffect(() => {
         return () => {
             if (sourceUrl) URL.revokeObjectURL(sourceUrl)
@@ -72,7 +72,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
     function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
-
+       
         e.target.value = ''
         if (!file) return
 
@@ -93,7 +93,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
         try {
             file = await dataUrlToFile(croppedDataUrl)
         } catch (err) {
-            console.error('[AiPhototCapture] Could not prepare cropped photo', err)
+            console.error('[AiPhotoCapture] Could not prepare cropped photo', err)
             setNotice('Something went wrong with that photo, please try again or add photos manually.')
             setProcessing(false)
             return
@@ -103,19 +103,26 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
         let rawText = ''
         let matchedBook: MatchedBook | null = null
 
+        let failedStep = 'upload'
         try {
             const { urls } = await uploadImages([file])
             uploadedUrl = urls[0] ?? null
             if (!uploadedUrl) throw new Error('Upload returned no URL')
 
+            failedStep = 'extract-text'
             const result = await extractText(uploadedUrl)
             rawText = result.rawText
             matchedBook = result.matchedBook
-
             if (!matchedBook) setNotice(NO_MATCH_MESSAGE)
         } catch (err) {
-            console.error('[AiPhotoCapture] Auto-fill failed', err)
-            setNotice(FALLBACK_MESSAGE)
+           
+            console.error(`[AiPhotoCapture] Auto-fill failed at step "${failedStep}"`, err, { uploadedUrl })
+            const detail = err instanceof Error ? err.message : ''
+            setNotice(
+                process.env.NODE_ENV === 'production'
+                    ? FALLBACK_MESSAGE
+                    : `${FALLBACK_MESSAGE} (dev: ${failedStep} failed${detail ? `, ${detail}` : ''})`,
+            )
         }
 
         onResult({ file, uploadedUrl, rawText, matchedBook })
@@ -129,7 +136,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
             <div>
                 <h4>Scan with AI</h4>
                 <p className="text-sm text-[#4B4F58]">
-                    Photograph your book&apos;s front cover and we&apos;ll try to fill in the details. 
+                    Photograph your book&apos;s front cover and we&apos;ll try to fill in the details.
                     You can still enter everything manually.
                 </p>
             </div>
@@ -162,7 +169,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
                 capture="environment"
                 onChange={handleFileSelected}
                 className="hidden"
-                aria-label="Take a photo of book cover"
+                aria-label="Take a photo of the book cover"
             />
             <input
                 ref={galleryInputRef}
@@ -175,7 +182,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
             {processing && (
                 <output className="text-sm text-[#3a3a3a]">
-                    Reading your book cover...
+                    Reading your book cover…
                 </output>
             )}
             {notice && !processing && (

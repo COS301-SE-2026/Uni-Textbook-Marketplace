@@ -102,6 +102,44 @@ export function authorScore(
   return similarity(normalised(ocrCandidate), normalised(storedAuthor));
 }
 
+const STOPWORDS = new Set([
+  'the',
+  'of',
+  'and',
+  'a',
+  'an',
+  'to',
+  'in',
+  'for',
+  'with',
+  'on',
+]);
+
+function tokenise(input: string): string[] {
+  return normaliseText(input)
+    .split(' ')
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+}
+
+export function titleCoverage(
+  ocrTokens: Set<string>,
+  storedTitle: string,
+): number {
+  const tokens = tokenise(storedTitle);
+  if (tokens.length === 0) return 0;
+  return tokens.filter((t) => ocrTokens.has(t)).length / tokens.length;
+}
+
+export function authorCoverage(
+  ocrTokens: Set<string>,
+  storedAuthor: string,
+): number {
+  const tokens = tokenise(storedAuthor).filter((t) => t.length > 2);
+  if (tokens.length === 0) return 0;
+  const matched = tokens.filter((t) => ocrTokens.has(t)).length;
+  return Math.min(1, matched / Math.min(tokens.length, 3));
+}
+
 function buildTitleCandidates(lines: OcrLine[]): string[] {
   if (lines.length === 0) return [];
 
@@ -134,6 +172,7 @@ export function matchBookFromText(
   const titleCandidates = buildTitleCandidates(lines);
   const ocrText = lines.map((l) => l.text).join(' ');
   const ocrDigits = digitsOnly(ocrText);
+  const ocrTokens = new Set(tokenise(ocrText));
 
   if (ocrDigits.length === 10 || ocrDigits.length === 13) {
     for (const book of candidates) {
@@ -146,11 +185,19 @@ export function matchBookFromText(
 
   let best: BookMatchResult | null = null;
   for (const book of candidates) {
-    const bestTitle = Math.max(
+    const similarityTitle = Math.max(
       ...titleCandidates.map((t) => titleScore(t, book.title)),
       0,
     );
-    const auth = book.author ? authorScore(ocrText, book.author) : 0;
+    const authorCov = book.author ? authorCoverage(ocrTokens, book.author) : 0;
+    const auth = book.author
+      ? Math.max(authorScore(ocrText, book.author), authorCov)
+      : 0;
+
+    const titleCov = titleCoverage(ocrTokens, book.title);
+    const coverageTitle = authorCov >= 0.5 ? titleCov : Math.min(titleCov, 0.5);
+
+    const bestTitle = Math.max(similarityTitle, coverageTitle);
     const score = 0.7 * bestTitle + 0.3 * auth;
 
     if (score >= CONFIDENCE_THRESHOLD && (!best || score > best.confidence)) {
