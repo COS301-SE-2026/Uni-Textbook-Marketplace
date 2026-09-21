@@ -7,6 +7,7 @@ import TextArea from '@/components/ui/TextArea'
 import ErrorText from '@/components/ui/ErrorText'
 import { useEffect, useState } from 'react'
 import { Faculties, getFaculties } from '@/lib/listings.api'
+import AiPhotoCapture, { type AiScanResult } from '@/components/listings/AiPhotoCapture'
 
 export interface ListingFormData {
     bookName: string
@@ -34,6 +35,7 @@ interface ListingFormProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
     onRemoveImage: (index: number) => void
+    onAiScan?: (result: AiScanResult) => void
 }
 
 export default function ListingForm({
@@ -43,7 +45,8 @@ export default function ListingForm({
     onChange,
     onImageUpload,
     onRemoveImage,
-}: ListingFormProps) {
+    onAiScan,
+}: Readonly<ListingFormProps>) {
 
     const [faculties, setFaculties] = useState<Faculties[]>([])
 
@@ -67,6 +70,8 @@ export default function ListingForm({
             <div className="card flex flex-col gap-5">
 
                 <h3>Book Details</h3>
+
+                {onAiScan && <AiPhotoCapture onResult={onAiScan} />}
 
                 <div>
                     <Input
