@@ -100,6 +100,12 @@ export class AuctionService {
 
         const savedAuction = await this.auctionRepository.save(auction);
 
+        await this.auctionQueue.add('close-auction',{
+            auctionId: savedAuction.id,
+        },{
+            delay: endTime.getTime() - Date.now(),
+        })
+
         if (!isImmediate) {
             await this.auctionQueue.add('activate-auction', {
                 auctionId: savedAuction.id,
