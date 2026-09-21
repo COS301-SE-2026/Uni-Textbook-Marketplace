@@ -13,6 +13,7 @@ import { ConversationResponseDto } from './dto/conversation-response.dto';
 import { User } from '../database/entities/users.entity';
 import { MessageEvent } from './events/message.event';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MessagingGateway } from './messaging.gateway';
 
 interface ConversationData {
   buyerId: string;
@@ -41,6 +42,8 @@ export class MessagingService {
     private readonly usersRepository: Repository<User>,
 
     private readonly eventEmitter: EventEmitter2,
+
+    private readonly messagingGateway: MessagingGateway,
   ) {}
 
   async createConversation(buyerId: string, listingId: string) {
