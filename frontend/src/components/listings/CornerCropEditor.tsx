@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { removeUniformBackground } from '@/utils/removeUniformBackground';
 
 interface CornerPoint {
     x: number;
@@ -47,10 +48,14 @@ export default function CornerCropEditor({
                     img.onerror = reject;
                 });
 
-                
+                const result = removeUniformBackground(img);
 
                 if (!cancelled) {
-                    
+                    // null means "background not uniform enough": show the original, no error
+                    setProcessedUrl(result?.dataUrl ?? imageUrl);
+                    // Start the handles on the detected book corners, else the defaults
+                    setCorners(result?.corners ?? DEFAULT_CORNERS);
+                    setError(null);
                 }
             } catch (e) {
                 console.error('[CornerCropEditor] Background removal failed:', e);
