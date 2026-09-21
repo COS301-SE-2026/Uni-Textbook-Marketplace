@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorator/user.decorator';
@@ -19,7 +19,7 @@ export class AuctionController {
         private readonly auctionService: AuctionService
     ) { }
 
-    @Post()
+    @Post('auction')
     @ApiOperation({
         summary: 'Create an auction',
         description: 'Creates an auction for an approved listing',
@@ -36,6 +36,14 @@ export class AuctionController {
     @Roles('student')
     async placeBid(@Param('id') auctionId: string, @Body() dto: PlaceBidDto, @CurrentUser() user: User){
         return this.auctionService.placeBid(auctionId, user.id, dto.amount);
+    }
+
+    @Get('auctions')
+    @ApiOperation({
+        summary: 'retuns the avilable auctions'
+    })
+    async getAuctions(){
+        return this.auctionService.getAuctions();
     }
 
 }
