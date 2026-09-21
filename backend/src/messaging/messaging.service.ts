@@ -277,7 +277,7 @@ export class MessagingService {
       .add(messageData);
 
     await conversationRef.update({
-      updatedAt: new Date(),
+      updatedAt: sentAt,
       lastMessage: text,
       lastSenderId: userId,
     });

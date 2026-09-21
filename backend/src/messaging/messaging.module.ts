@@ -12,6 +12,6 @@ import { MessagingGateway } from './messaging.gateway';
   imports: [TypeOrmModule.forFeature([Listing, User])],
   controllers: [MessagingController],
   providers: [MessagingService, MessagingGateway],
-  exports: [MessagingService,  MessagingGateway],
+  exports: [MessagingService],
 })
 export class MessagingModule {}

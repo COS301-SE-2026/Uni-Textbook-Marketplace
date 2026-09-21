@@ -87,6 +87,10 @@ export function useMessaging() {
                 conversation.conversationId,
             );
             setMessages(data);
+            socketRef.current?.emit(
+                'joinConversation',
+                conversation.conversationId,
+            );
         } catch (error: any) {
             console.error('Error loading messages');
             console.log(error);
@@ -102,12 +106,16 @@ export function useMessaging() {
         if (!selectedConversation) {
             return;
         }
+        try{
 
-        await sendMessage(
-            selectedConversation.conversationId,
-            text,
-        );
-        await loadConversations();
+            await sendMessage(
+                selectedConversation.conversationId,
+                text,
+            );
+        } catch (error) {
+            console.error('Error sending message');
+            console.log(error);
+        }
     };
 
     useEffect(() => {
