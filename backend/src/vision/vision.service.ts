@@ -123,6 +123,13 @@ export class VisionService {
     const matchedBook = matchBookFromText(lines, candidates);
 
     const details = extractBookDetails(lines);
+    this.logger.debug(
+      `OCR layout: ${JSON.stringify(
+        [...lines]
+          .sort((a, b) => a.topY - b.topY)
+          .map((l) => ({ text: l.text, topY: l.topY, height: l.height })),
+      )}`,
+    );
 
     return { rawText, matchBook: matchedBook, details };
   }

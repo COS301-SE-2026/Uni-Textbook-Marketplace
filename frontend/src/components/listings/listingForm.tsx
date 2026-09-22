@@ -340,7 +340,10 @@ export default function ListingForm({
                 {form.images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {form.images.map((image, index) => (
-                            <div key={index} className="relative group">
+                            <div
+                                key={`${image.name}-${image.lastModified}-${image.size}-${image.type}`}
+                                className="relative group"
+                            >
                                 <div className="relative h-32 w-full rounded border overflow-hidden">
                                     <Image
                                         src={URL.createObjectURL(image)}
@@ -352,9 +355,15 @@ export default function ListingForm({
                                 <button
                                     type="button"
                                     onClick={() => onRemoveImage(index)}
-                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                    aria-label={`Remove photo ${index + 1}`}
+                                    className="absolute top-0.5 right-0.5 flex h-11 w-11 items-center justify-center rounded-full text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
                                 >
-                                    ×
+                                    <span
+                                        aria-hidden="true"
+                                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm leading-none"
+                                    >
+                                        ×
+                                    </span>
                                 </button>
                                 <span className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
                                     {index + 1}

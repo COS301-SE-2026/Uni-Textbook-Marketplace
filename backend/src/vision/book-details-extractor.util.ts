@@ -65,42 +65,7 @@ const PUBLISHERS: { pattern: RegExp; name: string }[] = [
   { pattern: /\bvan schaik\b/, name: 'Van Schaik' },
 ];
 
-const NOT_A_NAME = new Set([
-  'edition',
-  'university',
-  'press',
-  'education',
-  'international',
-  'global',
-  'study',
-  'guide',
-  'volume',
-  'introduction',
-  'principles',
-  'fundamentals',
-  'handbook',
-  'workbook',
-  'bestseller',
-  'isbn',
-  'systems',
-  'science',
-  'sciences',
-  'engineering',
-  'design',
-  'theory',
-  'analysis',
-  'networks',
-  'algorithms',
-  'programming',
-  'structures',
-  'database',
-  'databases',
-  'management',
-  'computing',
-  'architecture',
-]);
-
-const NOT_IN_A_NAME = new Set([
+const FUNCTION_WORDS = new Set([
   'a',
   'an',
   'the',
@@ -112,8 +77,9 @@ const NOT_IN_A_NAME = new Set([
   'on',
 ]);
 
-const TITLE_HEIGHT_CLUSTER = 0.7;
-const MAX_AUTHOR_LINES = 6;
+const BLOCK_GAP_RATIO = 0.6;
+
+const MAX_AUTHOR_TOKENS = 8;
 
 function tidy(text: string): string {
   const t = text.trim().replace(/\s+/g, ' ');
@@ -196,19 +162,51 @@ function findIsbn(lines: OcrLine[]): {
   return { isbn, consumed };
 }
 
-function looksLikeName(text: string): boolean {
+function looksNameShaped(text: string): boolean {
   const cleaned = text.replace(/^\s*by\s+/i, '').trim();
   if (!cleaned || /\d/.test(cleaned)) return false;
 
-  const parts = cleaned.split(/[,&·•]+|\band\b|\s+/).filter(Boolean);
-  if (parts.length === 0 || parts.length > MAX_AUTHOR_LINES) return false;
-  if (!parts.every((p) => /^[A-Za-z][A-Za-z.'’-]*$/.test(p))) return false;
-  return !parts.some((p) => {
-    const bare = p.toLowerCase().replace(/[.'’]/g, '');
-    return (
-      NOT_A_NAME.has(bare) || (NOT_IN_A_NAME.has(bare) && !p.endsWith('.'))
-    );
+  const tokens = cleaned.split(/[,&·•]+|\band\b|\s+/).filter(Boolean);
+  if (tokens.length === 0 || tokens.length > MAX_AUTHOR_TOKENS) return false;
+  if (!tokens.every((t) => /^[A-Za-z][A-Za-z.'’-]*$/.test(t))) return false;
+
+  return !tokens.some((t) => {
+    const bare = t.toLowerCase().replace(/[.'’]/g, '');
+    return FUNCTION_WORDS.has(bare) && !t.endsWith('.');
   });
+}
+
+interface Candidate {
+  line: OcrLine;
+  i: number;
+}
+
+interface Block {
+  lines: Candidate[];
+}
+
+function groupIntoBlocks(candidates: Candidate[]): Block[] {
+  const blocks: Block[] = [];
+  let current: Block | null = null;
+  let prevBottom: number | null = null;
+  let prevHeight = 0;
+
+  for (const c of candidates) {
+    const avgHeight =
+      prevBottom === null ? c.line.height : (prevHeight + c.line.height) / 2;
+    const gap = prevBottom === null ? Infinity : c.line.topY - prevBottom;
+    const startsNewBlock =
+      current === null || gap > BLOCK_GAP_RATIO * avgHeight;
+
+    if (startsNewBlock) {
+      current = { lines: [] };
+      blocks.push(current);
+    }
+    current!.lines.push(c);
+    prevBottom = c.line.topY + c.line.height;
+    prevHeight = c.line.height;
+  }
+  return blocks;
 }
 
 export function extractBookDetails(lines: OcrLine[]): ExtractedBookDetails {
@@ -244,52 +242,46 @@ export function extractBookDetails(lines: OcrLine[]): ExtractedBookDetails {
     }
   });
 
-  const candidates = lines
+  const candidates: Candidate[] = lines
     .map((line, i) => ({ line, i }))
     .filter(
       ({ line, i }) =>
-        !consumed.has(i) && line.text.replace(/[^A-Za-z]/g, '').length >= 3,
+        !consumed.has(i) && line.text.replace(/[^A-Za-z]/g, '').length >= 2,
     )
     .sort((a, b) => a.line.topY - b.line.topY);
   if (candidates.length === 0) return result;
 
-  const tallest = candidates.reduce(
-    (best, c) => (c.line.height > best.line.height ? c : best),
-    candidates[0],
-  );
-  const seed = candidates.indexOf(tallest);
-  const minHeight = tallest.line.height * TITLE_HEIGHT_CLUSTER;
+  const blocks = groupIntoBlocks(candidates);
 
-  let first = seed;
-  while (
-    first > 0 &&
-    candidates[first - 1].line.height >= minHeight &&
-    !looksLikeName(candidates[first - 1].line.text)
-  )
-    first--;
-  let last = seed;
-  while (
-    last < candidates.length - 1 &&
-    candidates[last + 1].line.height >= minHeight &&
-    !looksLikeName(candidates[last + 1].line.text)
-  )
-    last++;
+  let titleBlockIndex = 0;
+  let tallestSeen = -1;
+  blocks.forEach((block, bi) => {
+    for (const c of block.lines) {
+      if (c.line.height > tallestSeen) {
+        tallestSeen = c.line.height;
+        titleBlockIndex = bi;
+      }
+    }
+  });
 
-  const titleLines = candidates.slice(first, last + 1);
-  result.title = tidy(titleLines.map((c) => c.line.text).join(' '));
+  const titleBlock = blocks[titleBlockIndex];
+  result.title = tidy(titleBlock.lines.map((c) => c.line.text).join(' '));
 
-  const titleBottom = titleLines[titleLines.length - 1].line.topY;
-  const authorLines = candidates
-    .slice(last + 1)
-    .filter(({ line }) => line.topY > titleBottom && looksLikeName(line.text))
-    .slice(0, MAX_AUTHOR_LINES)
-    .map(({ line }) =>
-      tidy(
-        line.text.replace(/^\s*by\s+/i, '').replace(/[ \t]*[·•][ \t]*/g, ', '),
-      ),
-    );
-
-  if (authorLines.length > 0) result.author = authorLines.join(', ');
+  const authorBlock = blocks[titleBlockIndex + 1];
+  if (authorBlock) {
+    const rawJoined = authorBlock.lines.map((c) => c.line.text).join(' ');
+    if (looksNameShaped(rawJoined)) {
+      result.author = authorBlock.lines
+        .map((c) =>
+          tidy(
+            c.line.text
+              .replace(/^\s*by\s+/i, '')
+              .replace(/[ \t]*[·•][ \t]*/g, ', '),
+          ),
+        )
+        .join(', ');
+    }
+  }
 
   return result;
 }
