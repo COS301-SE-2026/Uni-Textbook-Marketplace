@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorator/user.decorator';
@@ -19,7 +19,7 @@ export class AuctionController {
         private readonly auctionService: AuctionService
     ) { }
 
-    @Post('auction')
+    @Post()
     @ApiOperation({
         summary: 'Create an auction',
         description: 'Creates an auction for an approved listing',
@@ -44,6 +44,26 @@ export class AuctionController {
     })
     async getAuctions(){
         return this.auctionService.getAuctions();
+    }
+
+    @Get(':id/bids')
+    @ApiOperation({
+        summary: 'Get paginated bid history for an auction',
+    })
+    async getBidHistory(
+        @Param('id') auctionId: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    ) {
+        return this.auctionService.getBidHistory(auctionId, page, limit);
+    }
+
+    @Get(':id')
+    @ApiOperation({
+        summary: 'Full current state of one auction',
+    })
+    async getAuction(@Param('id') id: string){
+        return this.auctionService.getAuction(id);
     }
 
 }
