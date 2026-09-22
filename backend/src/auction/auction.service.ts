@@ -48,6 +48,9 @@ export class AuctionService {
         @InjectRepository(Auction)
         private readonly auctionRepository: Repository<Auction>,
 
+        @InjectRepository(Bid)
+        private readonly bidRepository: Repository<Bid>,
+
         @InjectRepository(Listing)
         private readonly listingRepo: Repository<Listing>,
 
@@ -201,5 +204,49 @@ export class AuctionService {
                 listing: true,
             },
         });
+    }
+
+    async getBidHistory(auctionId: string, page = 1, limit = 20) {
+        const validPage = Math.max(1, page);
+        const validLimit = Math.min(100, Math.max(1, limit));
+        const [data, total] = await this.bidRepository.findAndCount({
+            where: {
+                auction: { id: auctionId}
+            },
+            relations: {
+                bidder: true,
+            },
+            order: {
+                placed_at: 'DESC',
+            },
+            skip: (validPage - 1) * validLimit,
+            take: validLimit,
+        });
+
+        return {
+            data,
+            meta: {
+                total,
+                page: validPage,
+                limit: validLimit,
+                totalPages: Math.ceil(total / validLimit),
+            },
+        };
+    }
+
+    async getAuction(id: string){
+        
+        const auction = await this.auctionRepository.findOne({
+            where: { id},
+            relations: {
+                listing: true,
+                seller: true,
+                current_highest_bidder: true
+            }
+        });
+
+        if(!auction) throw new NotFoundException('auction not found');
+
+        return auction;
     }
 }
