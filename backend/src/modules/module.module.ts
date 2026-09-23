@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ModuleService } from './module.service';
+import { ModuleBook } from '../database/entities/module-book.entity';
 import { ModuleController } from './module.controller';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { Faculty } from '../database/entities/faculty.entity';
 import { User } from '../database/entities/users.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ModuleEntity, Faculty, User])],
+  imports: [TypeOrmModule.forFeature([ModuleEntity, Faculty, User , ModuleBook ,])],
   controllers: [ModuleController],
   providers: [ModuleService],
   exports: [ModuleService],
