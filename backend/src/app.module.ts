@@ -36,7 +36,6 @@ import { ModuleBook } from './database/entities/module-book.entity';
 import { Auction } from './database/entities/auction.entity';
 import { Bid } from './database/entities/bid.entity';
 
-
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -67,7 +66,6 @@ import { Bid } from './database/entities/bid.entity';
           Report,
           Case,
           ModuleBook,
-          BundlesModule,
           Auction,
           Bid,
         ],
