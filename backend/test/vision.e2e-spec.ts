@@ -2,15 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import cookieParser from 'cookie-parser';
+import { DataSource } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'node:crypto';
 import { AppModule } from '../src/app.module';
 
-const TEST_STUDENT_EMAIL = process.env.TEST_STUDENT_EMAIL ?? 'student1@tuks.co.za';
-const TEST_STUDENT_PASSWORD = process.env.TEST_STUDENT_PASSWORD ?? 'Password123';
 const TEST_IMAGE_URL = process.env.TEST_IMAGE_URL ?? '';
 
 describe('VisionController (e2e)', () => {
     let app: INestApplication;
+    let dataSource: DataSource;
     let accessCookie: string;
+
+    const testEmail = `vision_test_${randomUUID()}@tuks.co.za`;
+    const testPassword = 'Password123!';
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -25,9 +30,24 @@ describe('VisionController (e2e)', () => {
 
         await app.init();
 
+        dataSource = app.get(DataSource);
+
+        const passwordHash = await bcrypt.hash(testPassword, 10);
+        await dataSource.query(
+            `INSERT INTO users (
+                id, email, password_hash, first_name, last_name,
+                role, is_verified, is_banned, created_at, updated_at
+             )
+             VALUES (
+                gen_random_uuid(), $1, $2, 'Vision', 'Test',
+                'student', true, false, NOW(), NOW()
+             )`,
+            [testEmail, passwordHash],
+        );
+
         const loginRes = await request(app.getHttpServer())
             .post('/auth/login')
-            .send({ email: TEST_STUDENT_EMAIL, password: TEST_STUDENT_PASSWORD });
+            .send({ email: testEmail, password: testPassword });
 
         if (loginRes.status !== 200) {
             throw new Error(
@@ -47,10 +67,22 @@ describe('VisionController (e2e)', () => {
         }
     }, 30000);
 
+    afterAll(async () => {
+        
+        try {
+            await dataSource.query(`DELETE FROM users WHERE email = $1`, [
+                testEmail,
+            ]);
+        } catch {
+            // ignore
+        }
+        await app.close();
+    });
+
     it('POST /vision/extract-text -> 401 without auth', async () => {
         await request(app.getHttpServer())
             .post('/vision/extract-text')
-            .send({ imageUrl: 'https://example.com/x.jpg'})
+            .send({ imageUrl: 'https://example.com/x.jpg' })
             .expect(401);
     });
 
@@ -58,7 +90,7 @@ describe('VisionController (e2e)', () => {
         await request(app.getHttpServer())
             .post('/vision/extract-text')
             .set('Cookie', accessCookie)
-            .send({ imageUrl: 'not-a-url'})
+            .send({ imageUrl: 'not-a-url' })
             .expect(400);
     });
 
