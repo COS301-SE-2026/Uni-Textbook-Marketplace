@@ -254,6 +254,17 @@ function CreateListingPageInner() {
         }))
     }
 
+    const handleReplaceImage = (index: number, newFile: File) => {
+
+        const old = form.images[index]
+        if (old) scanUploads.current.delete(old)
+        setForm(prev => {
+            const images = [...prev.images]
+            images[index] = newFile
+            return { ...prev, images }
+        })
+    }
+
     const isValid = () => {
         const newErrors = validateStep(step, form)
         setErrors(newErrors)
@@ -499,6 +510,7 @@ function CreateListingPageInner() {
                     onImageUpload={handleImageUpload}
                     onRemoveImage={handleRemoveImage}
                     onAiScan={handleAiScan}
+                    onReplaceImage={handleReplaceImage}
                 />
 
                 

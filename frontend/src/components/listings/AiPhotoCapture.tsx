@@ -6,6 +6,7 @@ import Modal from '@/components/ui/Modal'
 import CornerCropEditor from '@/components/listings/CornerCropEditor'
 import { uploadImages } from '@/lib/listings.api'
 import { extractText, type ExtractedBookDetails, type MatchedBook } from '@/lib/vision.api'
+import { dataUrlToFile } from '@/utils/dataUrlToFile'
 
 export interface AiScanResult {
     file: File
@@ -20,8 +21,6 @@ interface AiPhotoCaptureProps {
     readonly disabled?: boolean
 }
 
-const MAX_SIDE_PX = 1600
-
 const FALLBACK_MESSAGE = 'Auto-fill unavailable, please enter details manually.'
 const MATCHED_MESSAGE = 'We found your book. Please check the details below.'
 const EXTRACTED_MESSAGE = 'We read these details from your cover. Please check them before continuing.'
@@ -29,38 +28,6 @@ const NOTHING_READ_MESSAGE = "We couldn't read any book details from that photo,
 
 function hasAnyDetail(details: ExtractedBookDetails | null): boolean {
     return details !== null && Object.values(details).some(Boolean)
-}
-
-async function dataUrlToFile(dataUrl: string): Promise<File> {
-    const img = new Image()
-    img.src = dataUrl
-    await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve()
-        img.onerror = () => reject(new Error('Failed to read cropped image'))
-    })
-
-    const scale = Math.min(1, MAX_SIDE_PX / Math.max(img.naturalWidth, img.naturalHeight))
-
-    let blob: Blob
-    if (scale === 1) {
-        blob = await (await fetch(dataUrl)).blob()
-    } else {
-        const canvas = document.createElement('canvas')
-        canvas.width = Math.round(img.naturalWidth * scale)
-        canvas.height = Math.round(img.naturalHeight * scale)
-        const ctx = canvas.getContext('2d')
-        if (!ctx) throw new Error('Canvas 2D context unavailable')
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        blob = await new Promise<Blob>((resolve, reject) => {
-            canvas.toBlob(
-                (b) => (b ? resolve(b) : reject(new Error('Image encoding failed'))),
-                'image/jpeg',
-                0.9,
-            )
-        })
-    }
-
-    return new File([blob], `scan-${Date.now()}.jpg`, { type: 'image/jpeg' })
 }
 
 export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCaptureProps) {
@@ -99,7 +66,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
         let file: File
         try {
-            file = await dataUrlToFile(croppedDataUrl)
+            file = await dataUrlToFile(croppedDataUrl, 'scan')
         } catch (err) {
             console.error('[AiPhotoCapture] Could not prepare cropped photo', err)
             setNotice('Something went wrong with that photo, please try again or add photos manually.')

@@ -22,8 +22,12 @@ export async function dataUrlToFile(dataUrl: string, namePrefix = 'photo'): Prom
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
         blob = await new Promise<Blob>((resolve, reject) => {
             canvas.toBlob(
-                
+                (b) => (b ? resolve(b) : reject(new Error('Image encoding failed'))),
+                'image/jpeg',
+                0.9,
             )
         })
     }
+
+    return new File([blob], `${namePrefix}-${Date.now()}.jpg`, { type: 'image/jpeg' })
 }

@@ -8,6 +8,9 @@ import ErrorText from '@/components/ui/ErrorText'
 import { useEffect, useState } from 'react'
 import { Faculties, getFaculties } from '@/lib/listings.api'
 import AiPhotoCapture, { type AiScanResult } from '@/components/listings/AiPhotoCapture'
+import CornerCropEditor from '@/components/listings/CornerCropEditor'
+import Modal from '@/components/ui/Modal'
+import { dataUrlToFile } from '@/utils/dataUrlToFile'
 
 export interface ListingFormData {
     bookName: string
@@ -36,6 +39,8 @@ interface ListingFormProps {
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
     onRemoveImage: (index: number) => void
     onAiScan?: (result: AiScanResult) => void
+    /** Optional. When provided, step 4 lets the seller crop any already-added photo. */
+    onReplaceImage?: (index: number, file: File) => void
 }
 
 export default function ListingForm({
@@ -46,6 +51,7 @@ export default function ListingForm({
     onImageUpload,
     onRemoveImage,
     onAiScan,
+    onReplaceImage,
 }: Readonly<ListingFormProps>) {
 
     const [faculties, setFaculties] = useState<Faculties[]>([])
@@ -62,6 +68,46 @@ export default function ListingForm({
 
         void loadFaculties()
     }, [])
+
+    // Per-photo crop, step 4 only. Index of the photo being cropped, plus
+    // the object URL CornerCropEditor reads it from.
+    const [cropIndex, setCropIndex] = useState<number | null>(null)
+    const [cropSourceUrl, setCropSourceUrl] = useState<string | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (cropSourceUrl) URL.revokeObjectURL(cropSourceUrl)
+        }
+    }, [cropSourceUrl])
+
+    function openCrop(index: number) {
+        const file = form.images[index]
+        if (!file) return
+        setCropIndex(index)
+        setCropSourceUrl(URL.createObjectURL(file))
+    }
+
+    function closeCrop() {
+        if (cropSourceUrl) URL.revokeObjectURL(cropSourceUrl)
+        setCropSourceUrl(null)
+        setCropIndex(null)
+    }
+
+    async function handleCropConfirm(dataUrl: string) {
+        const index = cropIndex
+        if (index === null || !onReplaceImage) {
+            closeCrop()
+            return
+        }
+        try {
+            const file = await dataUrlToFile(dataUrl, `photo-${index + 1}`)
+            onReplaceImage(index, file)
+        } catch (err) {
+            console.error('[ListingForm] Could not save cropped photo', err)
+        } finally {
+            closeCrop()
+        }
+    }
 
     // Book Details
 
@@ -340,10 +386,7 @@ export default function ListingForm({
                 {form.images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {form.images.map((image, index) => (
-                            <div
-                                key={`${image.name}-${image.lastModified}-${image.size}-${image.type}`}
-                                className="relative group"
-                            >
+                            <div key={index} className="relative group">
                                 <div className="relative h-32 w-full rounded border overflow-hidden">
                                     <Image
                                         src={URL.createObjectURL(image)}
@@ -365,6 +408,21 @@ export default function ListingForm({
                                         ×
                                     </span>
                                 </button>
+                                {onReplaceImage && (
+                                    <button
+                                        type="button"
+                                        onClick={() => openCrop(index)}
+                                        aria-label={`Crop photo ${index + 1}`}
+                                        className="absolute bottom-0.5 right-0.5 flex h-11 w-11 items-center justify-center text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                                    >
+                                        <span
+                                            aria-hidden="true"
+                                            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#00B4D8] text-xs leading-none"
+                                        >
+                                            ✂
+                                        </span>
+                                    </button>
+                                )}
                                 <span className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
                                     {index + 1}
                                 </span>
@@ -376,6 +434,18 @@ export default function ListingForm({
                 <p className="text-xs text-gray-400">
                     {form.images.length} / 4+ images uploaded
                 </p>
+
+                {onReplaceImage && (
+                    <Modal isOpen={cropIndex !== null} title="Adjust the corners" onClose={closeCrop}>
+                        {cropSourceUrl && (
+                            <CornerCropEditor
+                                imageUrl={cropSourceUrl}
+                                onConfirm={handleCropConfirm}
+                                onCancel={closeCrop}
+                            />
+                        )}
+                    </Modal>
+                )}
 
             </div>
         )
