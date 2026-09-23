@@ -173,16 +173,15 @@ export class ListingsService {
       throw new BadRequestException('Invalid listing ID format');
     }
 
-    const listing = await this.listingRepo.findOne({
-      where: { id },
-      relations: [
-        'book',
-        'module',
-        'module.faculty',
-        'seller',
-        'seller.university',
-      ],
-    });
+    const listing = await this.listingRepo
+      .createQueryBuilder('listing')
+      .leftJoinAndSelect('listing.book', 'book')
+      .leftJoinAndSelect('listing.module', 'module')
+      .leftJoinAndSelect('module.faculty', 'faculty')
+      .leftJoinAndSelect('listing.seller', 'seller')
+      .leftJoinAndSelect('seller.university', 'university')
+      .where('listing.id = CAST(:id AS uuid)', { id })
+      .getOne();
 
     if (!listing) throw new NotFoundException('Listing not found');
 
