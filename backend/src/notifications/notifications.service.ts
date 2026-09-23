@@ -24,11 +24,10 @@ export class NotificationsService {
     private readonly emailService: IEmailService,
 
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   //for notifying student of their listing
   async create(event: AdminEvent) {
-
     const noti = this.notificationRepo.create({
       user_id: { id: event.studentId },
       entity_type: event.action,
@@ -54,7 +53,6 @@ export class NotificationsService {
         },
       );
     } else {
-
       await this.emailService.sendNotificationEmail(
         event.studentEmail,
         event.action,
@@ -63,7 +61,6 @@ export class NotificationsService {
           listingTitle: event.title,
         },
       );
-
     }
   }
 
@@ -102,14 +99,15 @@ export class NotificationsService {
       order: { created_at: 'DESC' },
     });
 
-    if (notifications.length === 0) throw new NotFoundException('No notifications found');
+    if (notifications.length === 0)
+      throw new NotFoundException('No notifications found');
 
     const unread = await this.notificationRepo.count({
       where: {
-        user_id: { id: userId},
+        user_id: { id: userId },
         is_read: false,
-      }
-    })
+      },
+    });
 
     return {
       data: notifications,
@@ -254,6 +252,5 @@ export class NotificationsService {
       userId: event.reporterId,
       notificationId: savedNotification.id,
     });
-
   }
 }

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index , OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+} from 'typeorm';
 import { ModuleBook } from './module-book.entity';
 
 @Entity('books')
@@ -36,5 +42,5 @@ export class Book {
   publisher!: string;
 
   @OneToMany(() => ModuleBook, (moduleBook) => moduleBook.book)
-moduleBooks?: ModuleBook[];
+  moduleBooks?: ModuleBook[];
 }

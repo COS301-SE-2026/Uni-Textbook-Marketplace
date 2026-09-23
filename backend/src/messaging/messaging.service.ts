@@ -293,10 +293,7 @@ export class MessagingService {
       read: false,
     };
 
-    this.messagingGateway.sendMessageToConversation(
-      conversationId,
-      newMessage,
-    );
+    this.messagingGateway.sendMessageToConversation(conversationId, newMessage);
 
     return {
       messageId: messageRef.id,

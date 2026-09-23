@@ -8,7 +8,9 @@ import { Faculty } from '../database/entities/faculty.entity';
 import { User } from '../database/entities/users.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ModuleEntity, Faculty, User , ModuleBook ,])],
+  imports: [
+    TypeOrmModule.forFeature([ModuleEntity, Faculty, User, ModuleBook]),
+  ],
   controllers: [ModuleController],
   providers: [ModuleService],
   exports: [ModuleService],
