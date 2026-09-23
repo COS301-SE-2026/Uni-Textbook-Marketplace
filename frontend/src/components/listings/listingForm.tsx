@@ -7,6 +7,10 @@ import TextArea from '@/components/ui/TextArea'
 import ErrorText from '@/components/ui/ErrorText'
 import { useEffect, useState } from 'react'
 import { Faculties, getFaculties } from '@/lib/listings.api'
+import AiPhotoCapture, { type AiScanResult } from '@/components/listings/AiPhotoCapture'
+import CornerCropEditor from '@/components/listings/CornerCropEditor'
+import Modal from '@/components/ui/Modal'
+import { dataUrlToFile } from '@/utils/dataUrlToFile'
 
 export interface ListingFormData {
     bookName: string
@@ -34,6 +38,9 @@ interface ListingFormProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
     onRemoveImage: (index: number) => void
+    onAiScan?: (result: AiScanResult) => void
+    /** Optional. When provided, step 4 lets the seller crop any already-added photo. */
+    onReplaceImage?: (index: number, file: File) => void
 }
 
 export default function ListingForm({
@@ -43,7 +50,9 @@ export default function ListingForm({
     onChange,
     onImageUpload,
     onRemoveImage,
-}: ListingFormProps) {
+    onAiScan,
+    onReplaceImage,
+}: Readonly<ListingFormProps>) {
 
     const [faculties, setFaculties] = useState<Faculties[]>([])
 
@@ -60,6 +69,46 @@ export default function ListingForm({
         void loadFaculties()
     }, [])
 
+    // Per-photo crop, step 4 only. Index of the photo being cropped, plus
+    // the object URL CornerCropEditor reads it from.
+    const [cropIndex, setCropIndex] = useState<number | null>(null)
+    const [cropSourceUrl, setCropSourceUrl] = useState<string | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (cropSourceUrl) URL.revokeObjectURL(cropSourceUrl)
+        }
+    }, [cropSourceUrl])
+
+    function openCrop(index: number) {
+        const file = form.images[index]
+        if (!file) return
+        setCropIndex(index)
+        setCropSourceUrl(URL.createObjectURL(file))
+    }
+
+    function closeCrop() {
+        if (cropSourceUrl) URL.revokeObjectURL(cropSourceUrl)
+        setCropSourceUrl(null)
+        setCropIndex(null)
+    }
+
+    async function handleCropConfirm(dataUrl: string) {
+        const index = cropIndex
+        if (index === null || !onReplaceImage) {
+            closeCrop()
+            return
+        }
+        try {
+            const file = await dataUrlToFile(dataUrl, `photo-${index + 1}`)
+            onReplaceImage(index, file)
+        } catch (err) {
+            console.error('[ListingForm] Could not save cropped photo', err)
+        } finally {
+            closeCrop()
+        }
+    }
+
     // Book Details
 
     if (step === 1) {
@@ -67,6 +116,8 @@ export default function ListingForm({
             <div className="card flex flex-col gap-5">
 
                 <h3>Book Details</h3>
+
+                {onAiScan && <AiPhotoCapture onResult={onAiScan} />}
 
                 <div>
                     <Input
@@ -347,10 +398,31 @@ export default function ListingForm({
                                 <button
                                     type="button"
                                     onClick={() => onRemoveImage(index)}
-                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                    aria-label={`Remove photo ${index + 1}`}
+                                    className="absolute top-0.5 right-0.5 flex h-11 w-11 items-center justify-center rounded-full text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
                                 >
-                                    ×
+                                    <span
+                                        aria-hidden="true"
+                                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm leading-none"
+                                    >
+                                        ×
+                                    </span>
                                 </button>
+                                {onReplaceImage && (
+                                    <button
+                                        type="button"
+                                        onClick={() => openCrop(index)}
+                                        aria-label={`Crop photo ${index + 1}`}
+                                        className="absolute bottom-0.5 right-0.5 flex h-11 w-11 items-center justify-center text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                                    >
+                                        <span
+                                            aria-hidden="true"
+                                            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#00B4D8] text-xs leading-none"
+                                        >
+                                            ✂
+                                        </span>
+                                    </button>
+                                )}
                                 <span className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
                                     {index + 1}
                                 </span>
@@ -362,6 +434,18 @@ export default function ListingForm({
                 <p className="text-xs text-gray-400">
                     {form.images.length} / 4+ images uploaded
                 </p>
+
+                {onReplaceImage && (
+                    <Modal isOpen={cropIndex !== null} title="Adjust the corners" onClose={closeCrop}>
+                        {cropSourceUrl && (
+                            <CornerCropEditor
+                                imageUrl={cropSourceUrl}
+                                onConfirm={handleCropConfirm}
+                                onCancel={closeCrop}
+                            />
+                        )}
+                    </Modal>
+                )}
 
             </div>
         )

@@ -30,6 +30,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { VisionModule } from './vision/vision.module';
 import { BundlesModule } from './bundles/bundles.module';
 import { ModuleBook } from './database/entities/module-book.entity';
 import { Auction } from './database/entities/auction.entity';
@@ -86,6 +87,7 @@ import { Bid } from './database/entities/bid.entity';
     MessagingModule,
     ReportsModule,
     CasesModule,
+    VisionModule,
     BundlesModule,
   ],
   controllers: [AppController],
