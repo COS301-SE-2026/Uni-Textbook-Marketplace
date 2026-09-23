@@ -4,13 +4,19 @@ import { seedFaculties } from './faculty.seed';
 import { seedModules } from './module.seed';
 import { seedStudents } from './student.seed';
 import { seedAdmins } from './admin.seed';
-import { seedBooks } from './book.seed';
+import { seedModuleBooks } from './module-books.seed';
 import { seedListings } from './listing.seed';
 
 async function runSeeds() {
   await AppDataSource.initialize();
 
-  await AppDataSource.synchronize(false); // false means don't drop data
+  
+  if (AppDataSource.options.synchronize) {
+    throw new Error(
+      'synchronize: true is enabled in the data source. ' +
+        'Turn it off and use migrations before running seeds.',
+    );
+  }
 
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
@@ -21,13 +27,15 @@ async function runSeeds() {
 
     const manager = queryRunner.manager;
 
-    await seedUniversities(manager);
-    await seedFaculties(manager);
-    await seedModules(manager);
-    await seedStudents(manager);
-    await seedAdmins(manager);
-    await seedBooks(manager);
-    await seedListings(manager);
+    
+    await seedUniversities(manager);   
+    await seedFaculties(manager);      
+    await seedModules(manager);       
+    await seedStudents(manager);      
+    await seedAdmins(manager);         
+            
+    await seedModuleBooks(manager);    
+    await seedListings(manager);       
 
     await queryRunner.commitTransaction();
 
