@@ -63,7 +63,7 @@ export class AuctionService {
         private readonly dataSource: DataSource,
     ) { }
 
-    async createAuction(dto: CreateAuctionDto, userId: string): Promise<Auction> {
+    async createAuction(dto: CreateAuctionDto,userId: string): Promise<{ message: string }> {
 
         const listing = await this.listingRepo.findOne({
             where: {
@@ -117,7 +117,7 @@ export class AuctionService {
             });
         }
 
-        return savedAuction;
+        return { message: 'Auction created successfully' };
 
     }
 
@@ -201,7 +201,13 @@ export class AuctionService {
     async getAuctions(): Promise<Auction[]> {
         return this.auctionRepository.find({
             relations: {
-                listing: true,
+                listing: {
+                    book: true,
+                    module: {
+                        faculty: true,
+                    },
+                    seller: true,
+                },
             },
         });
     }
@@ -235,7 +241,7 @@ export class AuctionService {
     }
 
     async getAuction(id: string){
-        
+
         const auction = await this.auctionRepository.findOne({
             where: { id},
             relations: {

@@ -38,7 +38,7 @@ export class AuctionController {
         return this.auctionService.placeBid(auctionId, user.id, dto.amount);
     }
 
-    @Get('auctions')
+    @Get()
     @ApiOperation({
         summary: 'retuns the avilable auctions'
     })
