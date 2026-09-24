@@ -35,6 +35,10 @@ export interface Listing {
         name: string
         code: string
         semester: number
+        university?: {
+            id: string
+            name: string
+        }
         faculty?: {
             name: string
         }
@@ -57,6 +61,7 @@ interface ListingCardProps {
     readonly showStatus?: boolean
     readonly isLiked?: boolean
     readonly removeClick?: boolean
+    readonly horizontal?: boolean
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -80,6 +85,7 @@ export default function ListingCard({
 
     isLiked: initialIsliked = false,
     removeClick = false,
+    horizontal = false,
 }: ListingCardProps) {
     const router = useRouter()
 
@@ -122,10 +128,10 @@ export default function ListingCard({
     return (
         <div
             onClick={handleClick}
-            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
+            className={`group card hover:shadow-xl transition-all duration-300 flex ${horizontal ? 'flex-row h-full' : 'flex-col gap-2'} relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
                 }`}
             style={{
-                height: '420px',
+                height: horizontal ? undefined : '420px',
                 borderRadius: '12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
             }}
@@ -136,7 +142,7 @@ export default function ListingCard({
             }} />
 
 
-            <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
+            <div className={`relative ${horizontal ? 'w-2/5 min-w-45 min-h-55' : 'w-full h-60'} bg-gray-100 overflow-hidden flex items-center justify-center`}>
                 {image ? (
                     <Image
                         src={image}
@@ -205,7 +211,7 @@ export default function ListingCard({
             </div>
 
 
-            <div className="flex flex-col gap-1 px-3 pb-3 flex-1">
+            <div className={`flex flex-col gap-1 px-3 pb-3 flex-1 ${horizontal ? 'justify-center' : ''}`}>
 
                 <p className="font-semibold text-sm line-clamp-1 text-[#1a1a2e] dark:text-white">
                     {listing.title}
@@ -223,6 +229,27 @@ export default function ListingCard({
                     <p className="text-xs text-gray-400 truncate">
                         {listing.book.author}
                     </p>
+                )}
+
+                {horizontal && (
+                    <div className="mt-1 space-y-0.5 text-xs text-gray-500">
+                        <p className="truncate">
+                            {listing.module?.name || 'Module not specified'}
+                            {listing.module?.semester ? ` · Semester ${listing.module.semester}` : ''}
+                        </p>
+                        {listing.module?.faculty?.name && (
+                            <p className="truncate">{listing.module.faculty.name}</p>
+                        )}
+                        {listing.book?.publisher && (
+                            <p className="truncate">{listing.book.publisher}</p>
+                        )}
+                        {listing.book?.isbn && (
+                            <p className="truncate">ISBN {listing.book.isbn}</p>
+                        )}
+                        {listing.description && (
+                            <p className="line-clamp-2 text-gray-400">{listing.description}</p>
+                        )}
+                    </div>
                 )}
 
 

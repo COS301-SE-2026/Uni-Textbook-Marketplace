@@ -23,6 +23,7 @@ const authNavLinks = [
   { label: 'Sell', href: '/listings/create' },
   { label: 'Messages', href: '/messages' },
   { label: 'Wishlist', href: '/wishlist' },
+  { label: 'Auctions', href: '/auction' },
 ]
 
 const adminNavLinks = [
@@ -248,6 +249,14 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
                             onClick={() => setUserMenuOpen(false)}
                           >
                             Cases
+                          </Link>
+                          
+                          <Link
+                            href="/auction"
+                            className="block px-4 py-3 text-sm text-[var(--foreground)] hover:bg-[#F5F5F5] dark:hover:bg-gray-800 hover:text-[#00B4D8] no-underline transition-colors duration-150"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            Auctions
                           </Link>
                           <div className="border-t border-[var(--card-border)]" />
                         </>

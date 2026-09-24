@@ -9,6 +9,8 @@ import { mapListing } from '@/lib/mappers/listingMapper'
 import { getListings } from '@/lib/listings.api'
 import SearchBar from '@/components/SearchBar'
 import { mylist } from '@/lib/wishlist.api'
+import { getUniversities, type University } from '@/lib/auth.api'
+import { useAuth } from '@/context/AuthContext'
 import { useSearchParams } from 'next/navigation'
 
 import SaveSearchButton from '@/components/listings/SaveSearchButton'
@@ -30,6 +32,7 @@ import '@/components/tutorials/tutorial.css'
 
 // Filter state
 interface Filters {
+    university: string
     faculty: string
     moduleCode: string
     edition: string
@@ -41,6 +44,7 @@ interface Filters {
 }
 
 const EMPTY_FILTERS: Filters = {
+    university: '',
     faculty: '',
     moduleCode: '',
     edition: '',
@@ -125,12 +129,15 @@ function ConditionBadge({
 // Page Content
 function BrowseListingsContent() {
     const boundSearches = useSearchParams()
+    const { user } = useAuth()
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
+    const [universities, setUniversities] = useState<University[]>([])
 
     const getInitialFilters = (): Filters => {
         return {
+            university: boundSearches?.get('university') || user?.university?.id || '',
             faculty: boundSearches?.get('faculty') || '',
             moduleCode: boundSearches?.get('moduleCode') || '',
             edition: boundSearches?.get('edition') || '',
@@ -152,6 +159,7 @@ function BrowseListingsContent() {
     const fetchListings = useCallback(async (f: Filters) => {
         try {
             const params = new URLSearchParams()
+            if (f.university) params.set('university', f.university)
             if (f.search) params.set('search', f.search)
             if (f.faculty) params.set('faculty', f.faculty)
 
@@ -177,6 +185,19 @@ function BrowseListingsContent() {
             return { listings: [], total: 0 }
         }
     }, [])
+
+    useEffect(() => {
+        getUniversities().then(setUniversities).catch((error) => {
+            console.error('Failed to fetch universities', error)
+        })
+    }, [])
+
+    useEffect(() => {
+        if (!user?.university?.id || boundSearches?.get('university')) return
+
+        setFilters((current) => current.university ? current : { ...current, university: user.university!.id })
+        setApplied((current) => current.university ? current : { ...current, university: user.university!.id })
+    }, [boundSearches, user])
 
     useEffect(() => {
         const loadListings = async () => {
@@ -261,6 +282,7 @@ function BrowseListingsContent() {
     // Count active filters
     const getActiveFilterCount = () => {
         let count = 0
+        if (filters.university) count++
         if (filters.faculty) count++
         if (filters.moduleCode) count++
         if (filters.edition) count++
@@ -374,6 +396,23 @@ function BrowseListingsContent() {
                                 </div>
 
                                 
+                                <div className="mb-4">
+                                    <label htmlFor="university-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        University
+                                    </label>
+                                    <Select
+                                        id="university-filter"
+                                        name="university"
+                                        value={filters.university}
+                                        onChange={handleFilterChange}
+                                    >
+                                        <option value="">All universities</option>
+                                        {universities.map((university) => (
+                                            <option key={university.id} value={university.id}>{university.name}</option>
+                                        ))}
+                                    </Select>
+                                </div>
+
                                 <div className="mb-4">
                                     <label htmlFor="faculty-filter" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         Faculty

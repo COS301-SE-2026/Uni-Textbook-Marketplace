@@ -60,6 +60,10 @@ export interface AuthUser {
   is_banned: boolean;     
   banned_at: string | null; 
   ban_reason: string | null;
+  university: {
+    id: string;
+    name: string;
+  } | null;
 }
 
 // GET /auth/universities
