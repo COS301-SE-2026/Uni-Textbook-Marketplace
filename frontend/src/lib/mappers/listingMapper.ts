@@ -27,12 +27,20 @@ export function mapListing(apiListing: any): Listing {
             author: apiListing.book?.author || '',
             isbn: apiListing.book?.isbn || '',
             title: apiListing.book?.title || '',
-            publisher: apiListing.book?.publiser || '',
+            publisher: apiListing.book?.publisher || '',
         },
 
         module: {
             code: apiListing.module?.code || '',
-            faculty: apiListing.module?.faculty || '',
+            university: apiListing.module?.university
+                ? {
+                    id: apiListing.module.university.id,
+                    name: apiListing.module.university.name,
+                }
+                : undefined,
+            faculty: apiListing.module?.faculty
+                ? { name: apiListing.module.faculty.name }
+                : undefined,
             name: apiListing.module?.name || '',
             semester: apiListing.module?.semester || '',
         },
@@ -43,7 +51,7 @@ export function mapListing(apiListing: any): Listing {
                 last_name: apiListing.seller.last_name,
                 is_verified: apiListing.seller.is_verified,
                 university: {
-                    name: apiListing.university?.name || '',
+                    name: apiListing.seller.university?.name || '',
                 },
             }
             : undefined,

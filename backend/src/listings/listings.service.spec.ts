@@ -8,6 +8,7 @@ import { Listing, ListingStatus, ListingsStatus } from '../database/entities/lis
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
+import { Auction } from '../database/entities/auction.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { SavedSearchesService } from '../saved_search/saved_search.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -80,6 +81,7 @@ describe('ListingsService', () => {
 
   const createQueryBuilderMock = () => ({
     leftJoinAndSelect: jest.fn().mockReturnThis(),
+    leftJoin: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
     getMany: jest.fn().mockResolvedValue([]),
@@ -107,6 +109,10 @@ describe('ListingsService', () => {
     findOneBy: jest.fn(),
   };
 
+  const mockAuctionRepository = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -130,6 +136,10 @@ describe('ListingsService', () => {
         {
           provide: getRepositoryToken(ModuleEntity),
           useValue: mockModuleRepository,
+        },
+        {
+          provide: getRepositoryToken(Auction),
+          useValue: mockAuctionRepository,
         },
         {
           provide: SavedSearchesService,
@@ -355,6 +365,18 @@ describe('ListingsService', () => {
       });
 
       expect(qb.andWhere).not.toHaveBeenCalled();
+    });
+
+    it('should filter by university', async () => {
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      await service.getAllApproved({ university: 'university-1' });
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'university.id = :university',
+        { university: 'university-1' },
+      );
     });
   });
 
