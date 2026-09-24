@@ -4,6 +4,9 @@ import { Job, Queue } from "bullmq";
 import { Auction, AuctionStatus } from "src/database/entities/auction.entity";
 import { Repository } from "typeorm";
 import { Listing, ListingsStatus } from "../database/entities/listing.entity";
+import { db } from "../firebase/firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
+import { NotificationsService } from "../notifications/notifications.service";
 
 
 @Processor('auction')
@@ -18,11 +21,13 @@ export class AuctionProcessor extends WorkerHost {
 
         @InjectRepository(Listing)
         private readonly listingdb: Repository<Listing>,
+
+        private readonly notificationsService: NotificationsService,
     ) { super(); }
 
     async process(job: Job): Promise<any> {
 
-        if (job.name === 'active-auction') {
+        if (job.name === 'activate-auction') {
             await this.handleActivateAuction(job.data.auctionId);
         }
 
@@ -39,9 +44,14 @@ export class AuctionProcessor extends WorkerHost {
             }
         });
 
-        if (auction && auction.status === AuctionStatus.SCHEDULED) {
+        if (auction?.status === AuctionStatus.SCHEDULED) {
             auction.status = AuctionStatus.ACTIVE;
             await this.auctiondb.save(auction);
+            await db.doc(`actions/${auctionId}`).set({
+                status: AuctionStatus.ACTIVE,
+                startTime: Timestamp.fromDate(auction.start_time!),
+                endTime: Timestamp.fromDate(auction.end_time!),
+            }, { merge: true });
         }
     }
 
@@ -51,10 +61,10 @@ export class AuctionProcessor extends WorkerHost {
             where: {
                 id: auctionId
             },
-            relations: { listing: true},
+            relations: { listing: { seller: true } },
         });
 
-        if (!auction || auction.status !== AuctionStatus.ACTIVE) {
+        if (auction?.status !== AuctionStatus.ACTIVE) {
             return;
         }
 
@@ -69,6 +79,14 @@ export class AuctionProcessor extends WorkerHost {
         }
 
         const reserveMet = auction.current_highest_bid != null && auction.current_highest_bid >= (auction.reserve_price ?? auction.starting_price);
+        let outcome: 'SOLD' | 'RESERVE_NOT_MET' | 'NO_BIDS';
+        if (reserveMet) {
+            outcome = 'SOLD';
+        } else if (auction.current_highest_bid == null) {
+            outcome = 'NO_BIDS';
+        } else {
+            outcome = 'RESERVE_NOT_MET';
+        }
 
         if (reserveMet) {
 
@@ -83,16 +101,32 @@ export class AuctionProcessor extends WorkerHost {
                 await this.listingdb.save(auction.listing); 
             }
 
-            //wire notification for seller and winner
+            await db.doc(`actions/${auctionId}`).set({
+                status: AuctionStatus.ENDED,
+                outcome: 'SOLD',
+                winnerId: auction.current_highest_bidder_id,
+                endedAt: Timestamp.now(),
+            }, { merge: true });
         } else {
 
             auction.status = AuctionStatus.ENDED;
             await this.auctiondb.save(auction);
 
-            // const reason = auction.current_highest_bid == null 
-            //     ? "No bids recived" : "Reserve not met"
-
-            //notify seller
+            await db.doc(`actions/${auctionId}`).set({
+                status: AuctionStatus.ENDED,
+                outcome: auction.current_highest_bid == null ? 'NO_BIDS' : 'RESERVE_NOT_MET',
+                winnerId: null,
+                endedAt: Timestamp.now(),
+            }, { merge: true });
         }
+
+        await this.notificationsService.notifyAuctionEnded({
+            sellerId: auction.seller_id ?? auction.listing?.seller?.id ?? null,
+            bidderId: auction.current_highest_bidder_id,
+            listingId: auction.listing?.id ?? auction.listing_id,
+            listingTitle: auction.listing?.title ?? 'your textbook listing',
+            outcome,
+            finalBid: auction.current_highest_bid,
+        });
     }
 }

@@ -1,10 +1,10 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Auction, AuctionStatus } from "../database/entities/auction.entity";
 import { Bid, BidStatus } from "../database/entities/bid.entity";
-import { Queue } from "bullmq";
-import { DataSource, Repository } from "typeorm";
+import { Job, Queue } from "bullmq";
+import { DataSource, In, Repository } from "typeorm";
 import { CreateAuctionDto } from "./dto/CreateAuctionDto";
 import { Listing } from "../database/entities/listing.entity";
 import { User } from "src/database/entities/users.entity";
@@ -82,6 +82,25 @@ export class AuctionService {
             throw new BadRequestException('Listing must be approved');
         }
 
+        if (listing.listing_status === 'SOLD') {
+            throw new BadRequestException('Sold listings cannot be auctioned');
+        }
+
+        if (listing.listing_status === 'RESERVED') {
+            throw new BadRequestException('Reserved listings cannot be auctioned');
+        }
+
+        const existingAuction = await this.auctionRepository.findOne({
+            where: {
+                listing_id: listing.id,
+                status: In([AuctionStatus.ACTIVE, AuctionStatus.SCHEDULED]),
+            },
+        });
+
+        if (existingAuction) {
+            throw new BadRequestException('This listing already has an active or scheduled auction');
+        }
+
         const startTime = dto.start_time ? new Date(dto.start_time) : new Date();
         const endTime = new Date(dto.end_time);
 
@@ -103,19 +122,35 @@ export class AuctionService {
 
         const savedAuction = await this.auctionRepository.save(auction);
 
-        await this.auctionQueue.add('close-auction', {
-            auctionId: savedAuction.id,
-        }, {
-            delay: endTime.getTime() - Date.now(),
-        })
-
-        if (!isImmediate) {
-            await this.auctionQueue.add('activate-auction', {
+        let closeJob: Job | undefined;
+        try {
+            closeJob = await this.auctionQueue.add('close-auction', {
                 auctionId: savedAuction.id,
             }, {
-                delay: savedAuction.start_time!.getTime() - Date.now(),
+                delay: endTime.getTime() - Date.now(),
             });
+
+            if (!isImmediate) {
+                await this.auctionQueue.add('activate-auction', {
+                    auctionId: savedAuction.id,
+                }, {
+                    delay: savedAuction.start_time!.getTime() - Date.now(),
+                });
+            }
+        } catch (error) {
+            console.error('Failed to schedule auction jobs', error);
+            await closeJob?.remove();
+            await this.auctionRepository.remove(savedAuction);
+            throw new InternalServerErrorException('Auction could not be scheduled');
         }
+
+        await db.doc(`actions/${savedAuction.id}`).set({
+            status: savedAuction.status,
+            currentHighestBid: null,
+            startTime: Timestamp.fromDate(savedAuction.start_time!),
+            endTime: Timestamp.fromDate(savedAuction.end_time!),
+            extensionCount: 0,
+        });
 
         return { message: 'Auction created successfully' };
 
@@ -198,13 +233,54 @@ export class AuctionService {
         return result;
     }
 
-    async getAuctions(): Promise<Auction[]> {
-        return this.auctionRepository.find({
+    async getAuctions(): Promise<Array<Auction & { bidCount: number }>> {
+        const auctions = await this.auctionRepository.find({
             relations: {
                 listing: {
                     book: true,
                     module: {
                         faculty: true,
+                        university: true,
+                    },
+                    seller: true,
+                },
+            },
+        });
+
+        if (auctions.length === 0) return [];
+
+        const counts = await this.bidRepository
+            .createQueryBuilder('bid')
+            .select('bid.auction_id', 'auctionId')
+            .addSelect('COUNT(bid.id)', 'count')
+            .where('bid.auction_id IN (:...auctionIds)', {
+                auctionIds: auctions.map((auction) => auction.id),
+            })
+            .groupBy('bid.auction_id')
+            .getRawMany<{ auctionId: string; count: string }>();
+
+        const countByAuctionId = new Map(
+            counts.map((row) => [row.auctionId, Number(row.count)]),
+        );
+
+        return auctions.map((auction) => ({
+            ...auction,
+            bidCount: countByAuctionId.get(auction.id) ?? 0,
+        }));
+    }
+
+    async getAuctionForListing(listingId: string): Promise<Auction | null> {
+        return this.auctionRepository.findOne({
+            where: {
+                listing_id: listingId,
+                status: In([AuctionStatus.ACTIVE, AuctionStatus.SCHEDULED]),
+            },
+            relations: {
+                listing: {
+                    book: true,
+                    module: {
+                        faculty: true,
+                        university: true,
                     },
                     seller: true,
                 },
@@ -245,7 +321,13 @@ export class AuctionService {
         const auction = await this.auctionRepository.findOne({
             where: { id},
             relations: {
-                listing: true,
+                listing: {
+                    book: true,
+                    module: {
+                        faculty: true,
+                    },
+                    seller: true,
+                },
                 seller: true,
                 current_highest_bidder: true
             }
