@@ -1,12 +1,14 @@
 import { Book } from '../database/entities/book.entity';
 import {
   OcrLine,
+  authorCoverage,
   authorScore,
   digitsOnly,
   isValidIsbn,
   matchBookFromText,
   normaliseText,
   similarity,
+  titleCoverage,
   titleScore,
 } from './book-matcher.util';
 
@@ -31,13 +33,10 @@ describe('book-matcher.util', () => {
 
     describe('normaliseText', () => {
         it('lowercases and collapses whitespace', () => {
-
-
         expect(normaliseText('  Hello   WORLD  ')).toBe('hello world');
         });
 
         it('strips trailing ellipsis (single and unicode)', () => {
-
         expect(normaliseText('South African Constitutional Law In Cont...')).toBe(
             'south african constitutional law in cont',
         );
@@ -47,29 +46,23 @@ describe('book-matcher.util', () => {
         });
 
         it('replaces punctuation with spaces', () => {
-
         expect(normaliseText('Data-Structures & Algorithms')).toBe(
             'data structures algorithms',
         );
         });
 
         it('handles empty input', () => {
-
         expect(normaliseText('')).toBe('');
         });
     });
 
     describe('digitsOnly', () => {
         it('strips hyphens from ISBN', () => {
-
         expect(digitsOnly('978-0-13-397077-7')).toBe('9780133970777');
         });
 
         it('returns empty string for null / undefined', () => {
-
         expect(digitsOnly(null)).toBe('');
-
-
         expect(digitsOnly(undefined)).toBe('');
         });
     });
@@ -80,7 +73,6 @@ describe('book-matcher.util', () => {
     });
 
     it('rejects the junk ISBN used in seed data', () => {
-      
       expect(isValidIsbn('9781234567890')).toBe(false);
     });
 
@@ -89,7 +81,6 @@ describe('book-matcher.util', () => {
     });
 
     it('accepts ISBN-10 ending in X', () => {
-      
       expect(isValidIsbn('097522980X')).toBe(true);
     });
 
@@ -100,6 +91,10 @@ describe('book-matcher.util', () => {
 
     it('ignores separators when validating', () => {
       expect(isValidIsbn('978-0-13-397077-7')).toBe(true);
+    });
+
+    it('rejects a 13-char string containing X', () => {
+      expect(isValidIsbn('97801339707X7')).toBe(false);
     });
   });
 
@@ -134,6 +129,12 @@ describe('book-matcher.util', () => {
         0.2,
       );
     });
+
+    it('handles strict substring (asymmetric bigrams)', () => {
+      const s = similarity('Database', 'Database Systems');
+      expect(s).toBeGreaterThan(0);
+      expect(s).toBeLessThan(1);
+    });
   });
 
 
@@ -141,12 +142,10 @@ describe('book-matcher.util', () => {
 
   describe('titleScore', () => {
     it('scores high when stored title is a prefix of OCR text', () => {
-      
       const stored = 'South African Constitutional Law In Cont...';
       const ocr =
         'South African Constitutional Law In Context Pierre De Vos';
       const score = titleScore(ocr, stored);
-      
       expect(score).toBeGreaterThan(0.6);
     });
 
@@ -189,6 +188,30 @@ describe('book-matcher.util', () => {
   });
 
 
+  describe('titleCoverage / authorCoverage', () => {
+    it('returns 0 when stored title is all stopwords', () => {
+      expect(titleCoverage(new Set<string>(), 'The Of And')).toBe(0);
+    });
+
+    it('returns 0 when OCR token set is empty', () => {
+      expect(titleCoverage(new Set<string>(), 'Clean Code')).toBe(0);
+    });
+
+    it('returns 1 for full token coverage', () => {
+      expect(
+        titleCoverage(new Set(['clean', 'code']), 'Clean Code'),
+      ).toBe(1);
+    });
+
+    it('caps author coverage at three matched tokens', () => {
+      const ocr = new Set(['alpha', 'beta', 'gamma', 'delta', 'epsilon']);
+      expect(
+        authorCoverage(ocr, 'Alpha Beta Gamma Delta Epsilon'),
+      ).toBe(1);
+    });
+  });
+
+
   describe('matchBookFromText', () => {
     const stagingBooks: Book[] = [
       makeBook({
@@ -209,7 +232,7 @@ describe('book-matcher.util', () => {
         id: 'b3',
         title: 'Software',
         author: 'Anthony Debarros',
-        isbn: '978-1234567890', 
+        isbn: '978-1234567890',
         edition: -11,
       }),
       makeBook({
@@ -249,9 +272,7 @@ describe('book-matcher.util', () => {
     });
 
     it('does NOT short-circuit on invalid ISBN that matches a junk row', () => {
-      
       const lines = [makeLine('978-1234567890')];
-
       const result = matchBookFromText(lines, stagingBooks);
       if (result) {
         expect(result.confidence).toBeLessThan(1.0);
@@ -266,8 +287,6 @@ describe('book-matcher.util', () => {
       ];
       const result = matchBookFromText(lines, stagingBooks);
       expect(result).not.toBeNull();
-
-
       expect(result!.book.id).toBe('b2');
       expect(result!.confidence).toBeGreaterThan(0.6);
     });
@@ -279,14 +298,11 @@ describe('book-matcher.util', () => {
         makeLine('Pierre De Vos & Warren Freedman', 100, 15),
       ];
       const result = matchBookFromText(lines, stagingBooks);
-
       expect(result).not.toBeNull();
-
       expect(result!.book.id).toBe('b1');
     });
 
     it('picks the best match when multiple candidates score', () => {
-      
       const books: Book[] = [
         makeBook({
           id: 'first',
@@ -319,7 +335,6 @@ describe('book-matcher.util', () => {
     });
 
     it('prefers a valid-ISBN match over a fuzzy title match', () => {
-      
       const lines = [
         makeLine('South African Constitutional Law In Context', 0, 40),
         makeLine('ISBN 978-0133970777', 200, 15),
@@ -340,7 +355,7 @@ describe('book-matcher.util', () => {
     it('handles OCR lines with zero height without crashing', () => {
       const lines = [
         { text: 'Fundamentals of Database Systems', topY: 0, height: 0 },
-      ];  
+      ];
       const result = matchBookFromText(lines, stagingBooks);
       expect(result).not.toBeNull();
       expect(result!.book.id).toBe('b2');
@@ -364,6 +379,25 @@ describe('book-matcher.util', () => {
       ];
       const result = matchBookFromText(lines, stagingBooks);
       expect(result).not.toBeNull();
+    });
+
+    it('returns the first book on a score tie', () => {
+      const books: Book[] = [
+        makeBook({ id: 'a', title: 'Software', author: 'Anthony Debarros' }),
+        makeBook({ id: 'b', title: 'Software', author: 'Anthony Debarros' }),
+      ];
+      const result = matchBookFromText([makeLine('Software')], books);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('a');
+    });
+
+    it('handles a candidate book with no author', () => {
+      const books: Book[] = [
+        makeBook({ id: 'x', title: 'ISE Biology', author: undefined }),
+      ];
+      const result = matchBookFromText([makeLine('ISE Biology')], books);
+      expect(result).not.toBeNull();
+      expect(result!.book.id).toBe('x');
     });
   });
 
