@@ -46,6 +46,14 @@ export class AuctionController {
         return this.auctionService.getAuctions();
     }
 
+    @Get('listing/:listingId')
+    @ApiOperation({
+        summary: 'Get the active or scheduled auction for a listing',
+    })
+    async getAuctionForListing(@Param('listingId') listingId: string) {
+        return this.auctionService.getAuctionForListing(listingId);
+    }
+
     @Get(':id/bids')
     @ApiOperation({
         summary: 'Get paginated bid history for an auction',
