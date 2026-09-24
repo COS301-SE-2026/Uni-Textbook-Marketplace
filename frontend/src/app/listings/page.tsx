@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState, useCallback } from 'react'
+import { Suspense, startTransition, useEffect, useState, useCallback } from 'react'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
 import ListingCard, { Listing } from '@/components/listings/listingCard'
@@ -195,8 +195,10 @@ function BrowseListingsContent() {
     useEffect(() => {
         if (!user?.university?.id || boundSearches?.get('university')) return
 
-        setFilters((current) => current.university ? current : { ...current, university: user.university!.id })
-        setApplied((current) => current.university ? current : { ...current, university: user.university!.id })
+        startTransition(() => {
+            setFilters((current) => current.university ? current : { ...current, university: user.university!.id })
+            setApplied((current) => current.university ? current : { ...current, university: user.university!.id })
+        })
     }, [boundSearches, user])
 
     useEffect(() => {

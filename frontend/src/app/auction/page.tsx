@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, type ChangeEvent } from "react"
+import { startTransition, useEffect, useState, type ChangeEvent } from "react"
 import { Clock3, Filter, Gavel, Search, SlidersHorizontal, X } from "lucide-react"
 import AuctionCard from "@/components/auction/auctionCard"
 import ProtectedRoute from "@/components/auth/ProtectedRoute"
@@ -82,8 +82,10 @@ export default function AuctionPage() {
     useEffect(() => {
         if (!user?.university?.id) return
 
-        setFilters((current) => current.university ? current : { ...current, university: user.university!.id })
-        setAppliedFilters((current) => current.university ? current : { ...current, university: user.university!.id })
+        startTransition(() => {
+            setFilters((current) => current.university ? current : { ...current, university: user.university!.id })
+            setAppliedFilters((current) => current.university ? current : { ...current, university: user.university!.id })
+        })
     }, [user])
 
     useEffect(() => {

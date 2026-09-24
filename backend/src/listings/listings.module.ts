@@ -16,7 +16,14 @@ import { Auction } from '../database/entities/auction.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Listing, User, Book, ModuleEntity, AuditLog, Auction]),
+    TypeOrmModule.forFeature([
+      Listing,
+      User,
+      Book,
+      ModuleEntity,
+      AuditLog,
+      Auction,
+    ]),
     forwardRef(() => SavedSearchesModule),
     EventEmitterModule.forRoot(),
   ],

@@ -11,13 +11,13 @@ import { AuctionProcessor } from './auction.processor';
 import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Auction, Bid, Listing,User]),
-        BullModule.registerQueue({ name: 'auction' }),
-        NotificationsModule,
-    ],
-    controllers: [AuctionController],
-    providers: [AuctionService,AuctionProcessor],
-    exports: [AuctionService],
+  imports: [
+    TypeOrmModule.forFeature([Auction, Bid, Listing, User]),
+    BullModule.registerQueue({ name: 'auction' }),
+    NotificationsModule,
+  ],
+  controllers: [AuctionController],
+  providers: [AuctionService, AuctionProcessor],
+  exports: [AuctionService],
 })
-export class AuctionModule { }
+export class AuctionModule {}

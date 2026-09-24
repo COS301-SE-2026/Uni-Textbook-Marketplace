@@ -344,7 +344,10 @@ export class ListingsService {
       throw new BadRequestException(`Listing is already ${newStatus}`);
     }
 
-    if (newStatus === ListingsStatus.RESERVED || newStatus === ListingsStatus.SOLD) {
+    if (
+      newStatus === ListingsStatus.RESERVED ||
+      newStatus === ListingsStatus.SOLD
+    ) {
       const activeAuction = await this.auctionRepo.findOne({
         where: [
           { listing_id: listingId, status: AuctionStatus.ACTIVE },

@@ -46,11 +46,14 @@ export function auctionEndedTemplate(
   } else if (data.isSeller) {
     result = 'The auction ended because the reserve price was not met.';
   } else {
-    result = 'The reserve price was not met, so the auction did not result in a sale.';
+    result =
+      'The reserve price was not met, so the auction did not result in a sale.';
   }
 
   return {
-    subject: sold ? `Auction ended: ${data.listingTitle} was sold` : `Auction ended: ${data.listingTitle}`,
+    subject: sold
+      ? `Auction ended: ${data.listingTitle} was sold`
+      : `Auction ended: ${data.listingTitle}`,
     text: `Hi ${data.recipientName}, ${result}`,
     bodyHtml: `
       <tr>

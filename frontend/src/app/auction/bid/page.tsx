@@ -92,11 +92,15 @@ function BidPageContent() {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
+    const [currentTime, setCurrentTime] = useState(() => Date.now())
+
+    useEffect(() => {
+        const timer = window.setInterval(() => setCurrentTime(Date.now()), 1000)
+        return () => window.clearInterval(timer)
+    }, [])
 
     useEffect(() => {
         if (!auctionId) {
-            setLoading(false)
-            setError("No auction was selected.")
             return
         }
 
@@ -157,7 +161,8 @@ function BidPageContent() {
     const listing = auction?.listing
     const endTimestamp = endTime ? new Date(endTime).getTime() : Number.NaN
     const auctionStatus = liveState.status ?? auction?.status
-    const auctionClosed = auctionStatus !== "ACTIVE" || !Number.isFinite(endTimestamp) || endTimestamp <= Date.now()
+    const auctionClosed = auctionStatus !== "ACTIVE" || !Number.isFinite(endTimestamp) || endTimestamp <= currentTime
+    const selectedError = error || (!auctionId ? "No auction was selected." : "")
     const statusLabel = auctionStatusLabel(auctionStatus, auctionClosed)
     const statusVariant = auctionBadgeVariant(statusLabel)
     let bidButtonLabel = "Place bid"
@@ -209,12 +214,12 @@ function BidPageContent() {
         }
     }
 
-    if (loading) {
+    if (loading && auctionId) {
         return <div className="mx-auto max-w-6xl animate-pulse px-5 py-10"><div className="h-8 w-64 rounded bg-gray-200" /><div className="mt-4 h-72 rounded-xl bg-gray-100" /></div>
     }
 
-    if (error && !auction) {
-        return <div className="mx-auto max-w-6xl px-5 py-10"><p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">{error}</p></div>
+    if (selectedError && !auction) {
+        return <div className="mx-auto max-w-6xl px-5 py-10"><p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">{selectedError}</p></div>
     }
 
     return (
