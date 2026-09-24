@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
@@ -10,6 +10,15 @@ import { User } from '../database/entities/users.entity';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
 import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+export interface AuctionEndedNotification {
+  sellerId: string | null;
+  bidderId: string | null;
+  listingId: string | null;
+  listingTitle: string;
+  outcome: 'SOLD' | 'RESERVE_NOT_MET' | 'NO_BIDS';
+  finalBid: number | null;
+}
 
 @Injectable()
 export class NotificationsService {
@@ -89,6 +98,58 @@ export class NotificationsService {
         listingTitle: event.listingTitle,
       },
     );
+  }
+
+  async notifyAuctionEnded(event: AuctionEndedNotification) {
+    const recipientIds = [event.sellerId, event.bidderId].filter(
+      (id, index, ids): id is string => Boolean(id) && ids.indexOf(id) === index,
+    );
+    const recipients = recipientIds.length
+      ? await this.userRepo.find({ where: { id: In(recipientIds) } })
+      : [];
+
+    for (const recipient of recipients) {
+      const isSeller = recipient.id === event.sellerId;
+      let message: string;
+      if (isSeller) {
+        if (event.outcome === 'SOLD') {
+          message = `Your auction for "${event.listingTitle}" ended with a successful sale.`;
+        } else if (event.outcome === 'RESERVE_NOT_MET') {
+          message = `Your auction for "${event.listingTitle}" ended without a sale because the reserve price was not met.`;
+        } else {
+          message = `Your auction for "${event.listingTitle}" ended without any bids.`;
+        }
+      } else if (event.outcome === 'SOLD') {
+        message = `You won the auction for "${event.listingTitle}".`;
+      } else {
+        message = `You were the highest bidder for "${event.listingTitle}", but the reserve price was not met.`;
+      }
+
+      const notification = this.notificationRepo.create({
+        user_id: { id: recipient.id },
+        entity_type: 'AUCTION_ENDED',
+        entity_id: event.listingId ? { id: event.listingId } : undefined,
+        message_info: message,
+      });
+      const savedNotification = await this.notificationRepo.save(notification);
+
+      this.eventEmitter.emit('notification.created', {
+        userId: recipient.id,
+        notificationId: savedNotification.id,
+      });
+
+      await this.emailService.sendNotificationEmail(
+        recipient.email,
+        'AUCTION_ENDED',
+        {
+          recipientName: recipient.first_name,
+          listingTitle: event.listingTitle,
+          outcome: event.outcome,
+          finalBid: event.finalBid,
+          isSeller,
+        },
+      );
+    }
   }
 
   async mynotifications(userId: string, page: number = 1, limit: number = 5) {
