@@ -21,10 +21,27 @@ interface AiPhotoCaptureProps {
     readonly disabled?: boolean
 }
 
+type Stage = 'idle' | 'uploading' | 'reading' | 'done'
+type NoticeTone = 'success' | 'info' | 'neutral' | 'error'
+
 const FALLBACK_MESSAGE = 'Auto-fill unavailable, please enter details manually.'
 const MATCHED_MESSAGE = 'We found your book. Please check the details below.'
 const EXTRACTED_MESSAGE = 'We read these details from your cover. Please check them before continuing.'
 const NOTHING_READ_MESSAGE = "We couldn't read any book details from that photo, please enter them manually."
+
+const STAGE_MESSAGES: Record<Stage, string> = {
+    idle: '',
+    uploading: 'Uploading your photo…',
+    reading: 'Scanning the cover for title, author and ISBN…',
+    done: '',
+}
+
+const TONE_STYLES: Record<NoticeTone, string> = {
+    success: 'bg-emerald-400/15 text-emerald-100 border border-emerald-300/30',
+    info: 'bg-[#00B4D8]/15 text-white border border-[#00B4D8]/40',
+    neutral: 'bg-white/10 text-white/80 border border-white/20',
+    error: 'bg-red-400/15 text-red-100 border border-red-300/30',
+}
 
 function hasAnyDetail(details: ExtractedBookDetails | null): boolean {
     return details !== null && Object.values(details).some(Boolean)
@@ -35,10 +52,10 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
     const galleryInputRef = useRef<HTMLInputElement>(null)
 
     const [sourceUrl, setSourceUrl] = useState<string | null>(null)
-    const [processing, setProcessing] = useState(false)
+    const [stage, setStage] = useState<Stage>('idle')
     const [notice, setNotice] = useState<string | null>(null)
+    const [noticeTone, setNoticeTone] = useState<NoticeTone>('neutral')
 
-    
     useEffect(() => {
         return () => {
             if (sourceUrl) URL.revokeObjectURL(sourceUrl)
@@ -47,7 +64,6 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
     function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
-        
         e.target.value = ''
         if (!file) return
 
@@ -61,7 +77,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
 
     async function handleConfirm(croppedDataUrl: string) {
         setSourceUrl(null)
-        setProcessing(true)
+        setStage('uploading')
         setNotice(null)
 
         let file: File
@@ -70,7 +86,8 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
         } catch (err) {
             console.error('[AiPhotoCapture] Could not prepare cropped photo', err)
             setNotice('Something went wrong with that photo, please try again or add photos manually.')
-            setProcessing(false)
+            setNoticeTone('error')
+            setStage('done')
             return
         }
 
@@ -85,17 +102,24 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
             uploadedUrl = urls[0] ?? null
             if (!uploadedUrl) throw new Error('Upload returned no URL')
 
+            setStage('reading')
             failedStep = 'extract-text'
             const result = await extractText(uploadedUrl)
             rawText = result.rawText
             matchedBook = result.matchedBook
             extracted = result.extracted ?? null
 
-            if (matchedBook) setNotice(MATCHED_MESSAGE)
-            else if (hasAnyDetail(extracted)) setNotice(EXTRACTED_MESSAGE)
-            else setNotice(NOTHING_READ_MESSAGE)
+            if (matchedBook) {
+                setNotice(MATCHED_MESSAGE)
+                setNoticeTone('success')
+            } else if (hasAnyDetail(extracted)) {
+                setNotice(EXTRACTED_MESSAGE)
+                setNoticeTone('info')
+            } else {
+                setNotice(NOTHING_READ_MESSAGE)
+                setNoticeTone('neutral')
+            }
         } catch (err) {
-            
             console.error(`[AiPhotoCapture] Auto-fill failed at step "${failedStep}"`, err, { uploadedUrl })
             const detail = err instanceof Error ? err.message : ''
             setNotice(
@@ -103,25 +127,42 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
                     ? FALLBACK_MESSAGE
                     : `${FALLBACK_MESSAGE} (dev: ${failedStep} failed${detail ? `, ${detail}` : ''})`,
             )
+            setNoticeTone('error')
         }
 
         onResult({ file, uploadedUrl, rawText, matchedBook, extracted })
-        setProcessing(false)
+        setStage('done')
     }
 
-    const busy = disabled || processing
+    const working = stage === 'uploading' || stage === 'reading'
+    const busy = disabled || working
 
     return (
-        <div className="flex flex-col gap-3 rounded-[6px] border border-[#dddddd] bg-[#F5F5F5] p-4">
-            <div>
-                <h4>Scan with AI</h4>
-                <p className="text-sm text-[#4B4F58]">
-                    Photograph your book&apos;s front cover and we&apos;ll try to fill in the details.
-                    You can still enter everything manually.
-                </p>
+        <div
+            className="relative overflow-hidden rounded-xl p-5 sm:p-6"
+            style={{ background: 'linear-gradient(135deg, #000f2b 0%, #004F66 60%, #00B4D8 130%)' }}
+        >
+            <div
+                className="pointer-events-none absolute inset-0 opacity-10"
+                style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, rgba(255,255,255,0.4) 0%, transparent 45%)' }}
+            />
+
+            <div className="relative z-10 flex items-start gap-3 mb-4">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-lg">
+                    ✨
+                </span>
+                <div>
+                    <h4 className="text-white font-bold text-base sm:text-lg tracking-tight">
+                        Scan with AI
+                    </h4>
+                    <p className="text-white/80 text-xs sm:text-sm mt-0.5">
+                        Photograph your book&apos;s front cover and we&apos;ll try to fill in the
+                        details. You can still enter everything manually.
+                    </p>
+                </div>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="relative z-10 flex flex-wrap gap-3">
                 <Button
                     type="button"
                     variant="primary"
@@ -134,7 +175,7 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
                 <Button
                     type="button"
                     variant="outline"
-                    className="min-h-[44px]"
+                    className="min-h-[44px] !border-white/50 !text-[#00B4D8] hover:!bg-white/10"
                     disabled={busy}
                     onClick={() => galleryInputRef.current?.click()}
                 >
@@ -160,13 +201,18 @@ export default function AiPhotoCapture({ onResult, disabled = false }: AiPhotoCa
                 aria-label="Choose a photo of the book cover from your gallery"
             />
 
-            {processing && (
-                <output className="text-sm text-[#3a3a3a]">
-                    Reading your book cover…
+            {working && (
+                <output className="relative z-10 mt-4 flex items-center gap-2 text-sm font-semibold text-white">
+                    <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00B4D8] opacity-75" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#00B4D8]" />
+                    </span>
+                    {STAGE_MESSAGES[stage]}
                 </output>
             )}
-            {notice && !processing && (
-                <output className="text-sm text-[#3a3a3a]">
+
+            {notice && stage === 'done' && (
+                <output className={`relative z-10 mt-4 block rounded-lg px-3 py-2 text-sm font-medium ${TONE_STYLES[noticeTone]}`}>
                     {notice}
                 </output>
             )}

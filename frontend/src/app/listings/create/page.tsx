@@ -179,6 +179,7 @@ function CreateListingPageInner() {
     const [errors, setErrors] = useState<FormErrors>({})
 
     const [aiMatch, setAiMatch] = useState<AiMatch | null>(null)
+    const [aiReviewOpen, setAiReviewOpen] = useState(false)
     const scanUploads = useRef(new Map<File, string>())
 
     const handleChange = (
@@ -236,9 +237,11 @@ function CreateListingPageInner() {
                 edition: String(matchedBook.edition ?? ''),
                 isbn: matchedBook.isbn ?? '',
             })
+            setAiReviewOpen(true)
         } else if (Object.keys(bookFields).length > 0) {
             
             setAiMatch(null)
+            setAiReviewOpen(true)
         }
 
         const cleared = Object.fromEntries(Object.keys(bookFields).map(key => [key, '']))
@@ -272,6 +275,7 @@ function CreateListingPageInner() {
     }
 
     const nextStep = () => {
+        if (step === 1 && aiReviewOpen) return // must confirm the AI results first
         if (isValid() && step < 4) setStep(s => s + 1)
     }
 
@@ -522,7 +526,15 @@ function CreateListingPageInner() {
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} id='next-step-btn' variant="primary" className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6">Next</Button>
+                        <Button
+                            onClick={nextStep}
+                            id='next-step-btn'
+                            variant="primary"
+                            disabled={step === 1 && aiReviewOpen}
+                            className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6"
+                        >
+                            Next
+                        </Button>
                     ) : (
                         <Button onClick={handleSubmit} id='post-listing-btn' variant="primary" disabled={loading} className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6">
                             {loading ? 'Posting...' : 'POST LISTING'}
@@ -533,6 +545,59 @@ function CreateListingPageInner() {
                 </div>
 
             </div>
+
+            <Modal
+                isOpen={aiReviewOpen}
+                title="Check what the AI found"
+                onClose={() => setAiReviewOpen(false)}
+            >
+                <p className="text-sm text-gray-600 mb-4">
+                    We pulled these details from your photo. Double-check them, you can
+                    still edit any field afterward.
+                </p>
+                <dl className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Title</dt>
+                        <dd className="font-medium text-right">{form.bookName || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Author</dt>
+                        <dd className="font-medium text-right">{form.author || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Edition</dt>
+                        <dd className="font-medium text-right">{form.edition || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">ISBN</dt>
+                        <dd className="font-medium text-right">{form.isbn || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Publisher</dt>
+                        <dd className="font-medium text-right">{form.publisher || '—'}</dd>
+                    </div>
+                </dl>
+                <div className="mt-6 flex flex-wrap justify-end gap-4">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setForm(prev => ({ ...prev, bookName: '', author: '', edition: '', isbn: '', publisher: '' }))
+                            setAiMatch(null)
+                            setAiReviewOpen(false)
+                        }}
+                        className="text-sm border border-[#00B4D8] text-[#00B4D8] rounded-[4px] px-3 py-1.5 hover:bg-[#00B4D8] hover:text-white transition-colors cursor-pointer"
+                    >
+                        Clear, I&apos;ll enter it myself
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setAiReviewOpen(false)}
+                        className="btn-primary cursor-pointer"
+                    >
+                        Looks good, continue
+                    </button>
+                </div>
+            </Modal>
 
             <Modal
                 isOpen={showSuccess}
