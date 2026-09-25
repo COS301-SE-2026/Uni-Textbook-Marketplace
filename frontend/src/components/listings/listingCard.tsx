@@ -35,10 +35,6 @@ export interface Listing {
         name: string
         code: string
         semester: number
-        university?: {
-            id: string
-            name: string
-        }
         faculty?: {
             name: string
         }
@@ -61,7 +57,6 @@ interface ListingCardProps {
     readonly showStatus?: boolean
     readonly isLiked?: boolean
     readonly removeClick?: boolean
-    readonly horizontal?: boolean
 }
 
 function ordinalSuffix(n: number): string {
@@ -97,7 +92,6 @@ export default function ListingCard({
 
     isLiked: initialIsliked = false,
     removeClick = false,
-    horizontal = false,
 }: ListingCardProps) {
     const router = useRouter()
 
@@ -139,15 +133,15 @@ export default function ListingCard({
 
     return (
         <div
-          onClick={handleClick}
-          className={`group card hover:shadow-xl transition-all duration-300 flex ${horizontal ? 'flex-row h-full' : 'flex-col gap-2'} relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
-              }`}
-          style={{
-              height: horizontal ? undefined : '420px',
-              borderRadius: '12px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
-          }}
-      >
+            onClick={handleClick}
+            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden !p-0 ${!removeClick ? 'cursor-pointer' : ''
+                }`}
+            style={{
+                height: '420px',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
+            }}
+        >
 
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                 background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
@@ -223,7 +217,7 @@ export default function ListingCard({
             </div>
 
 
-            <div className={`flex flex-col gap-1 px-3 pb-3 flex-1 ${horizontal ? 'justify-center' : ''}`}>
+            <div className="flex flex-col gap-1 px-3 pb-3 flex-1">
 
                 <p className="font-semibold text-sm line-clamp-1 text-[#1a1a2e] dark:text-white">
                     {listing.title}
@@ -241,27 +235,6 @@ export default function ListingCard({
                     <p className="text-xs text-gray-400 truncate">
                         {listing.book.author}
                     </p>
-                )}
-
-                {horizontal && (
-                    <div className="mt-1 space-y-0.5 text-xs text-gray-500">
-                        <p className="truncate">
-                            {listing.module?.name || 'Module not specified'}
-                            {listing.module?.semester ? ` · Semester ${listing.module.semester}` : ''}
-                        </p>
-                        {listing.module?.faculty?.name && (
-                            <p className="truncate">{listing.module.faculty.name}</p>
-                        )}
-                        {listing.book?.publisher && (
-                            <p className="truncate">{listing.book.publisher}</p>
-                        )}
-                        {listing.book?.isbn && (
-                            <p className="truncate">ISBN {listing.book.isbn}</p>
-                        )}
-                        {listing.description && (
-                            <p className="line-clamp-2 text-gray-400">{listing.description}</p>
-                        )}
-                    </div>
                 )}
 
 
