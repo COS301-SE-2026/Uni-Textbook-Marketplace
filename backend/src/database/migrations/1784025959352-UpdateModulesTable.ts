@@ -63,39 +63,24 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       }
     }
 
-    if (facultyIdExists) {
-      const columnType = await this.getColumnType(
-        queryRunner,
-        'modules',
-        'faculty_id',
-      );
+    const currentFacultyIdExists = await this.columnExists( queryRunner, 'modules', 'faculty_id', );
 
-      if (
-        columnType?.includes('varchar') ||
-        columnType === 'character varying' ||
-        columnType === 'text'
-      ) {
-        const constraintExists = await this.constraintExists(
-          queryRunner,
-          'FK_70de6abbb8d2dc5bae2ea096764',
-        );
-        if (constraintExists) {
-          await queryRunner.query(
-            `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`,
-          );
+    if (currentFacultyIdExists) 
+      { const columnType = await this.getColumnType( queryRunner, 'modules', 'faculty_id', );
+        if ( columnType?.includes('varchar') || columnType === 'character varying' || columnType === 'text' )
+          { const constraintExists = await this.constraintExists( queryRunner, 'FK_70de6abbb8d2dc5bae2ea096764', );
+            if (constraintExists) { 
+              await queryRunner.query( `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`, ); 
+            }
+            await queryRunner.query(` ALTER TABLE "modules" ALTER COLUMN "faculty_id" TYPE uuid USING faculty_id::uuid `);
+          }
         }
 
-        await queryRunner.query(`
-          ALTER TABLE "modules" 
-          ALTER COLUMN "faculty_id" TYPE uuid 
-          USING faculty_id::uuid
-        `);
-      }
-    }
 
-    if (!facultyIdExists && !facultyColumnExists) {
-      await queryRunner.query(`ALTER TABLE "modules" ADD "faculty_id" uuid`);
-    }
+    if (!currentFacultyIdExists && !facultyColumnExists) 
+      { 
+        await queryRunner.query( `ALTER TABLE "modules" ADD "faculty_id" uuid`, ); 
+      }
   }
 
   private async updateBooksIsbnColumn(queryRunner: QueryRunner): Promise<void> {
