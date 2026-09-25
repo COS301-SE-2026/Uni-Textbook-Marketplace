@@ -9,6 +9,7 @@ import {
   newMessageTemplate,
   listingEditedTemplate,
   savedSearchMatchTemplate,
+  auctionEndedTemplate,
 } from './email.templates';
 import { wrapEmailPage } from './wrapper';
 
@@ -195,7 +196,8 @@ export class MailtrapEmailProvider implements IEmailService {
       | 'REJECT_LISTING'
       | 'message'
       | 'Edited listing'
-      | 'SAVED_SEARCH_MATCH',
+      | 'SAVED_SEARCH_MATCH'
+      | 'AUCTION_ENDED',
     data: any,
   ): Promise<void> {
     if (this.isTestEnvironment || !this.transporter) {
@@ -218,6 +220,7 @@ export class MailtrapEmailProvider implements IEmailService {
       message: newMessageTemplate,
       'Edited listing': listingEditedTemplate,
       SAVED_SEARCH_MATCH: savedSearchMatchTemplate,
+      AUCTION_ENDED: auctionEndedTemplate,
     };
 
     const template = templateMap[entityType];

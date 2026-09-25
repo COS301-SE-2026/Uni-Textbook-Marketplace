@@ -31,11 +31,13 @@ export class NotificationsController {
   constructor(
     private readonly notificationService: NotificationsService,
     private readonly notificationStreamService: NotificationStreamService,
-  ) { }
+  ) {}
 
   @Sse('stream')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Streams live notifications for the authenticated user' })
+  @ApiOperation({
+    summary: 'Streams live notifications for the authenticated user',
+  })
   notificationStream(@Req() req: RequestWithUser): Observable<MessageEvent> {
     return this.notificationStreamService.streamForUser(req.user.id);
   }

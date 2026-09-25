@@ -386,6 +386,12 @@
     border: 3px solid #2c6040a4;
   }
 
+  .badge-active {
+    background-color: #CCFBF1;
+    color: #115E59;
+    border: 3px solid #5EEAD4;
+  }
+
   .badge-rejected {
     background-color: #FDE8E8;
     color: #7F1D1D;
