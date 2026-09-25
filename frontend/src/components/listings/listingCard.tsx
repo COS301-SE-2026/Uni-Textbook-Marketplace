@@ -64,6 +64,18 @@ interface ListingCardProps {
     readonly horizontal?: boolean
 }
 
+function ordinalSuffix(n: number): string {
+    const remainder100 = n % 100
+    if (remainder100 >= 11 && remainder100 <= 13) return `${n}th`
+
+    switch (n % 10) {
+        case 1: return `${n}st`
+        case 2: return `${n}nd`
+        case 3: return `${n}rd`
+        default: return `${n}th`
+    }
+}
+
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
     new: 'New',
     good: 'Good',
@@ -127,15 +139,15 @@ export default function ListingCard({
 
     return (
         <div
-            onClick={handleClick}
-            className={`group card hover:shadow-xl transition-all duration-300 flex ${horizontal ? 'flex-row h-full' : 'flex-col gap-2'} relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
-                }`}
-            style={{
-                height: horizontal ? undefined : '420px',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
-            }}
-        >
+          onClick={handleClick}
+          className={`group card hover:shadow-xl transition-all duration-300 flex ${horizontal ? 'flex-row h-full' : 'flex-col gap-2'} relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
+              }`}
+          style={{
+              height: horizontal ? undefined : '420px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)',
+          }}
+      >
 
             <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                 background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
@@ -148,7 +160,7 @@ export default function ListingCard({
                         src={image}
                         alt={listing.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
                     <svg
@@ -221,7 +233,7 @@ export default function ListingCard({
 
 
                 <p className="text-xs text-gray-500">
-                    {listing.book?.edition} Edition • {listing.module?.code}
+                    {listing.book?.edition ? ordinalSuffix(listing.book.edition) : listing.book?.edition} Edition • {listing.module?.code}
                 </p>
 
 

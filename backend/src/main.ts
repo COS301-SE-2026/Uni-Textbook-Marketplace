@@ -25,6 +25,7 @@ async function bootstrap() {
       'https://localhost:3001',
       'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
       'https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
+      'https://www.unitextbookmarketplace.co.za',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
