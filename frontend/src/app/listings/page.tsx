@@ -432,7 +432,7 @@ function BrowseListingsContent() {
                                         onChange={handleFilterChange}
                                     >
                                         <option value="">Any Edition</option>
-                                        {['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(e => (
+                                        {['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'].map(e => (
                                             <option key={e} value={e}>{getOrdinal(Number.parseInt(e))}</option>
                                         ))}
                                     </Select>

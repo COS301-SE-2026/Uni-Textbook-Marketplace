@@ -275,7 +275,7 @@ function CreateListingPageInner() {
     }
 
     const nextStep = () => {
-        if (step === 1 && aiReviewOpen) return // must confirm the AI results first
+        if (step === 1 && aiReviewOpen) return 
         if (isValid() && step < 4) setStep(s => s + 1)
     }
 
