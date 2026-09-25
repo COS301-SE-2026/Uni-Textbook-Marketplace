@@ -8,15 +8,22 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - '5433:5432'
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/database/schema:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexusdev_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
 
   backend:
     image: node:22
@@ -27,12 +34,16 @@ services:
       - /app/node_modules
     command: sh -c "npm install && npm run start:dev"
     ports:
-      - '3001:3001'
+      - "3001:3001"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
@@ -62,7 +73,7 @@ services:
       - /app/node_modules
     command: sh -c "npm install && npm run dev"
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - backend
     environment:

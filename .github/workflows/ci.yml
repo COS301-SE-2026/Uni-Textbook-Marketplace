@@ -28,6 +28,16 @@ jobs:
             --health-timeout 5s
             --health-retries 5
 
+        redis:
+          image: redis:7-alpine
+          ports:
+            - 6379:6379
+          options: >-
+            --health-cmd "redis-cli ping"
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
       steps:
         - uses: actions/checkout@v4
         - name: Init Node.js
@@ -49,6 +59,8 @@ jobs:
             JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
             NODE_ENV: test
             FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+            REDIS_HOST: localhost
+            REDIS_PORT: 6379
 
         - name: E2E Tests (Supertest)
           working-directory: backend
@@ -72,6 +84,8 @@ jobs:
             TEST_STUDENT_EMAIL: ${{ secrets.TEST_STUDENT_EMAIL }}
             TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
             TEST_IMAGE_URL: ${{ secrets.TEST_IMAGE_URL }}
+            REDIS_HOST: localhost
+            REDIS_PORT: 6379
 
         - name: Upload Report
           uses: codecov/codecov-action@v4
@@ -132,10 +146,22 @@ jobs:
             --health-timeout 5s
             --health-retries 5
 
+        redis:
+          image: redis:7-alpine
+          ports:
+            - 6379:6379
+          options: >-
+            --health-cmd "redis-cli ping"
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
       env:
         DATABASE_URL: postgresql://nexusdev:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/textbook_marketplace_e2e
         JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
         NODE_ENV: test
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
 
         MAIL_HOST: ${{ secrets.MAIL_HOST }}
         MAIL_PORT: 587

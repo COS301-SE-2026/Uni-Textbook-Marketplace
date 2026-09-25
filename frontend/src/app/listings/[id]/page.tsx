@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
@@ -9,6 +10,7 @@ import Button from '@/components/ui/Button'
 import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
+import { getAuctionForListing, type Auction } from '@/lib/auction.api'
 import AccordionSection from '@/components/ui/AccordionSection'
 import { useMessaging } from '@/hooks/useMessaging'
 import { useAuth } from '@/context/AuthContext'
@@ -65,6 +67,16 @@ function timeAgo(dateStr: string): string {
     return `${weeks} weeks ago`
 }
 
+function auctionDate(value: string | null): string {
+    if (!value) return 'Not available'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return 'Not available'
+    return new Intl.DateTimeFormat('en-ZA', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(date)
+}
+
 //Page 
 
 export default function ListingDetailPage() {
@@ -73,6 +85,7 @@ export default function ListingDetailPage() {
     const router = useRouter()
 
     const [listing, setListing] = useState<Listing | null>(null)
+    const [listingAuction, setListingAuction] = useState<Auction | null>(null)
     const [loading, setLoading] = useState(true)
     const [activeImage, setActiveImage] = useState(0)
     const [showMessageModal, setShowMessageModal] = useState(false)
@@ -105,6 +118,18 @@ export default function ListingDetailPage() {
             }
         }
         fetchListing()
+    }, [id])
+
+    useEffect(() => {
+        const fetchListingAuction = async () => {
+            try {
+                setListingAuction(await getAuctionForListing(id))
+            } catch (err) {
+                console.error('Error fetching listing auction:', err)
+            }
+        }
+
+        fetchListingAuction()
     }, [id])
 
     useEffect(() => {
@@ -266,6 +291,29 @@ export default function ListingDetailPage() {
                             R {Number(listing.price).toFixed(2)}
                         </p>
 
+                        {listingAuction && (
+                            <div className="mt-5 rounded-lg border border-[#00B4D8]/40 bg-[#E8F9FC] p-4 dark:bg-[#003847]">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-sm font-semibold text-[#000f2b] dark:text-white">Auction available</h3>
+                                        <Badge variant={listingAuction.status === 'ACTIVE' ? 'active' : 'pending'}>
+                                            {listingAuction.status === 'ACTIVE' ? 'In progress' : 'Scheduled'}
+                                        </Badge>
+                                    </div>
+                                    <Link
+                                        href={`/auction/bid?auctionId=${listingAuction.id}`}
+                                        className="text-sm font-semibold text-[#006D8A] hover:underline dark:text-[#7DE3F2]"
+                                    >
+                                        View auction
+                                    </Link>
+                                </div>
+                                <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-600 sm:grid-cols-2 dark:text-gray-200">
+                                    <p><span className="font-semibold">Starts:</span> {auctionDate(listingAuction.start_time)}</p>
+                                    <p><span className="font-semibold">Ends:</span> {auctionDate(listingAuction.end_time)}</p>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="mt-6">
 
 
@@ -363,7 +411,7 @@ export default function ListingDetailPage() {
 
                 </div>
 
-                <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
+                <aside className="w-full shrink-0 lg:w-64 flex flex-col gap-4">
 
                     <div className="card p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
 

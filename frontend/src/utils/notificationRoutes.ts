@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { CheckCircle2, XCircle, MessageSquare,SquarePen,Bookmark as BellIcon, Bookmark } from "lucide-react";
+import { CheckCircle2, XCircle, MessageSquare,SquarePen,Bookmark as BellIcon, Bookmark, Gavel } from "lucide-react";
 import type { Notification } from "@/types/notification";
 
 
@@ -9,6 +9,7 @@ const ENTITY_TYPE_ICON: Record<string, LucideIcon> = {
     message: MessageSquare,
     "Edited listing": SquarePen,
     SAVED_SEARCH_MATCH: Bookmark,
+    AUCTION_ENDED: Gavel,
 };
 
 const ENTITY_TYPE_LABEL: Record<string, string> = {
@@ -17,6 +18,7 @@ const ENTITY_TYPE_LABEL: Record<string, string> = {
     message: "New Message",
     "Edited listing": "Listing Edited",
     SAVED_SEARCH_MATCH: "Saved Search Match",
+    AUCTION_ENDED: "Auction Ended",
 };
 
 export function getNotificationHeading(entityType: string): string {
@@ -48,6 +50,9 @@ export function getNotificationRoute(notification: Notification): string {
             return "/messages";
 
         case "SAVED_SEARCH_MATCH":
+            return `/listings/${notification.entity_id?.id}`;
+
+        case "AUCTION_ENDED":
             return `/listings/${notification.entity_id?.id}`;
 
         default:

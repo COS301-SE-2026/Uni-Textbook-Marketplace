@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -35,10 +36,17 @@ import { BundlesModule } from './bundles/bundles.module';
 import { ModuleBook } from './database/entities/module-book.entity';
 import { Auction } from './database/entities/auction.entity';
 import { Bid } from './database/entities/bid.entity';
+import { AuctionModule } from './auction/auction.module';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST ?? 'localhost',
+        port: Number(process.env.REDIS_PORT ?? 6379),
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -85,6 +93,7 @@ import { Bid } from './database/entities/bid.entity';
     MessagingModule,
     ReportsModule,
     CasesModule,
+    AuctionModule,
     VisionModule,
     BundlesModule,
   ],
