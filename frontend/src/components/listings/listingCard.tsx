@@ -148,7 +148,7 @@ export default function ListingCard({
             }} />
 
 
-            <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
+            <div className="relative w-full h-[240px] bg-gray-100 dark:bg-gray-800 overflow-hidden flex items-center justify-center">
                 {image ? (
                     <Image
                         src={image}

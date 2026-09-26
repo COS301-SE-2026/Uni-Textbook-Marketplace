@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, MessageCircle, Loader2 } from 'lucide-react';
 
 import { useAuth } from '@/context/AuthContext';
@@ -25,6 +25,10 @@ export default function MessagesMobile() {
     } = useMessaging();
 
     const [chatOpen, setChatOpen] = useState(false);
+
+    useEffect(() => {
+        if (selectedConversation) setChatOpen(true);
+    }, [selectedConversation]);
 
     let conversationContent;
 
@@ -152,7 +156,7 @@ export default function MessagesMobile() {
             </div>
 
 
-            <div className="min-h-0 flex-1 overflow-hidden dark:text-white">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden dark:text-white">
                 {chatContent}
             </div>
 

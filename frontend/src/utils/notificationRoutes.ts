@@ -53,6 +53,9 @@ export function getNotificationRoute(notification: Notification): string {
             return `/listings/${notification.entity_id?.id}`;
 
         case "AUCTION_ENDED":
+            if (notification.entity_id?.id && notification.notification_from?.id) {
+                return `/messages?listingId=${encodeURIComponent(notification.entity_id.id)}&contactId=${encodeURIComponent(notification.notification_from.id)}`;
+            }
             return `/listings/${notification.entity_id?.id}`;
 
         default:

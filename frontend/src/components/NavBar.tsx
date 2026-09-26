@@ -194,7 +194,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
           <div className="hidden md:flex items-center gap-3">
 
 
-            {isAuthenticated && <ThemeToggle />}
+            <ThemeToggle />
             {isAuthenticated && user ? (
               <>
 
@@ -325,6 +325,7 @@ export default function NavBar() { // NOSONAR - navigation markup intentionally 
           <div className='absolute right-0 top-1/2 flex -translate-y-1/2 gap-3 md:hidden'>
             {/* MOBILE: Notification Bell */}
             <div className="flex items-center gap-1 md:hidden">
+              <ThemeToggle />
               {isAuthenticated && user && <NotificationBell />}
             </div>
 

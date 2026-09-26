@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Image from 'next/image'
-import { ChevronDown, Gavel, Package } from 'lucide-react'
+import { ChevronDown,  Package } from 'lucide-react'
 
 import { api } from '@/lib/api'
 import { updateListingStatus, ListingSaleStatus } from '@/lib/listings.api'
@@ -44,6 +45,7 @@ const TABS: { label: string; value: Tab }[] = [
 
 export default function MyListingsPage() {
 
+    const router = useRouter()
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
@@ -58,6 +60,7 @@ export default function MyListingsPage() {
     const [auctionForm, setAuctionForm] = useState<AuctionForm>(EMPTY_AUCTION_FORM)
     const [auctionSubmitting, setAuctionSubmitting] = useState(false)
     const [auctionError, setAuctionError] = useState<string | null>(null)
+    const [auctionSuccess, setAuctionSuccess] = useState<string | null>(null)
 
     // Fetch
 
@@ -128,12 +131,18 @@ export default function MyListingsPage() {
         setAuctionListing(listing)
         setAuctionForm(EMPTY_AUCTION_FORM)
         setAuctionError(null)
+        setAuctionSuccess(null)
     }
 
     const closeAuctionModal = () => {
         if (auctionSubmitting) return
+        if (auctionSuccess) {
+            router.push('/auction?sort=newest')
+            return
+        }
         setAuctionListing(null)
         setAuctionError(null)
+        setAuctionSuccess(null)
     }
 
     const handleAuctionFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,7 +181,7 @@ export default function MyListingsPage() {
                 throw new Error('The end time must be after the start time.')
             }
 
-            await createAuction({
+            const response = await createAuction({
                 listing_id: auctionListing.id,
                 starting_price: startingPrice,
                 reserve_price: reservePrice,
@@ -182,7 +191,7 @@ export default function MyListingsPage() {
                 end_time: endDate.toISOString(),
             })
 
-            closeAuctionModal()
+            setAuctionSuccess(response.message)
             await fetchMine()
         } catch (error) {
             const message = error && typeof error === 'object' && 'message' in error
@@ -307,7 +316,6 @@ export default function MyListingsPage() {
                                                         openAuctionModal(listing)
                                                     }}
                                                 >
-                                                    <Gavel size={15} />
                                                     Create auction
                                                 </button>
                                             )}
@@ -476,7 +484,6 @@ export default function MyListingsPage() {
                     <p className="text-sm text-red-600 mb-4">{statusError}</p>
                 )}
 
-
                 <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
                     {TABS.map(tab => (
                         <button
@@ -524,6 +531,15 @@ export default function MyListingsPage() {
                             Create an auction for <span className="font-semibold text-gray-900 dark:text-white">{auctionListing?.title}</span>.
                         </p>
 
+                        {auctionSuccess ? (
+                            <div aria-live="polite" className="space-y-4">
+                                <p className="text-sm">{auctionSuccess}</p>
+                                <div className="flex justify-end">
+                                    <Button type="button" variant="primary" onClick={closeAuctionModal}>Done</Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Input
                                 id="auction-starting-price"
@@ -587,6 +603,8 @@ export default function MyListingsPage() {
                                 {auctionSubmitting ? 'Creating...' : 'Create auction'}
                             </Button>
                         </div>
+                            </>
+                        )}
                     </form>
                 </Modal>
             </div>

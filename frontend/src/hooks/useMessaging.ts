@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import {
     createConversation,
@@ -24,6 +25,10 @@ import {
 import { db } from '@/lib/firebase';
 
 export function useMessaging() {
+
+    const searchParams = useSearchParams();
+    const listingId = searchParams.get('listingId');
+    const contactId = searchParams.get('contactId');
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
@@ -130,6 +135,28 @@ export function useMessaging() {
         };
         void fetchConversations();
     }, []);
+
+    useEffect(() => {
+        if (!listingId || !contactId) return;
+        if (
+            selectedConversation?.listing.id === listingId &&
+            selectedConversation.otherUser.id === contactId
+        ) return;
+
+        const targetConversation = conversations.find(
+            (conversation) =>
+                conversation.listing.id === listingId &&
+                conversation.otherUser.id === contactId,
+        );
+        if (!targetConversation) return;
+
+        setSelectedConversation(targetConversation);
+        setLoadingMessages(true);
+        void getMessages(targetConversation.conversationId)
+            .then(setMessages)
+            .catch((error) => console.error(error))
+            .finally(() => setLoadingMessages(false));
+    }, [listingId, contactId, conversations, selectedConversation]);
 
     useEffect(() => {
         if (!selectedConversation) {
