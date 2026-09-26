@@ -43,6 +43,42 @@ export class MessagingService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async ensureAuctionConversation(
+    listingId: string,
+    buyerId: string,
+    sellerId: string,
+  ): Promise<boolean> {
+    if (buyerId === sellerId) return false;
+
+    const listing = await this.listingsRepository.findOne({
+      where: { id: listingId },
+      relations: ['seller'],
+    });
+    if (listing?.seller?.id !== sellerId) return false;
+
+    const existingConversation = await db
+      .collection('conversations')
+      .where('buyerId', '==', buyerId)
+      .where('sellerId', '==', sellerId)
+      .where('listingId', '==', listingId)
+      .limit(1)
+      .get();
+
+    if (!existingConversation.empty) return true;
+
+    const now = Timestamp.now();
+    await db.collection('conversations').add({
+      buyerId,
+      sellerId,
+      listingId,
+      createdAt: now,
+      updatedAt: now,
+      lastMessage: null,
+      lastSenderId: null,
+    });
+    return true;
+  }
+
   async createConversation(buyerId: string, listingId: string) {
     const listing = await this.listingsRepository.findOne({
       where: { id: listingId },

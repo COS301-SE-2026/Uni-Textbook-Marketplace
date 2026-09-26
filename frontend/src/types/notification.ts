@@ -10,6 +10,7 @@ export interface Notification {
     is_read: boolean;
     entity_type: string;
     entity_id: NotificationListing | null;
+    notification_from?: { id: string } | null;
     message_info: string;
     created_at: string;
 }

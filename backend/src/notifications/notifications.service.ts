@@ -20,6 +20,34 @@ export interface AuctionEndedNotification {
   finalBid: number | null;
 }
 
+function getAuctionEndedMessage(
+  event: AuctionEndedNotification,
+  isSeller: boolean,
+): string {
+  if (isSeller) {
+    if (event.outcome === 'SOLD') {
+      return `Your auction for "${event.listingTitle}" ended with a successful sale, Message the winner.`;
+    }
+    if (event.outcome === 'RESERVE_NOT_MET') {
+      return `Your auction for "${event.listingTitle}" ended without a sale because the reserve price was not met, Message the highest bidder`;
+    }
+    return `Your auction for "${event.listingTitle}" ended without any bids.`;
+  }
+
+  if (event.outcome === 'SOLD') {
+    return `You won the auction for "${event.listingTitle}".Message the seller`;
+  }
+  return `You were the highest bidder for "${event.listingTitle}", but the reserve price was not met.Message the seller`;
+}
+
+function getAuctionCounterpartyId(
+  event: AuctionEndedNotification,
+  isSeller: boolean,
+): string | null {
+  if (!event.sellerId || !event.bidderId) return null;
+  return isSeller ? event.bidderId : event.sellerId;
+}
+
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -108,23 +136,12 @@ export class NotificationsService {
 
     for (const recipient of recipients) {
       const isSeller = recipient.id === event.sellerId;
-      let message: string;
-      if (isSeller) {
-        if (event.outcome === 'SOLD') {
-          message = `Your auction for "${event.listingTitle}" ended with a successful sale.`;
-        } else if (event.outcome === 'RESERVE_NOT_MET') {
-          message = `Your auction for "${event.listingTitle}" ended without a sale because the reserve price was not met.`;
-        } else {
-          message = `Your auction for "${event.listingTitle}" ended without any bids.`;
-        }
-      } else if (event.outcome === 'SOLD') {
-        message = `You won the auction for "${event.listingTitle}".`;
-      } else {
-        message = `You were the highest bidder for "${event.listingTitle}", but the reserve price was not met.`;
-      }
+      const message = getAuctionEndedMessage(event, isSeller);
+      const counterpartyId = getAuctionCounterpartyId(event, isSeller);
 
       const notification = this.notificationRepo.create({
         user_id: { id: recipient.id },
+        notification_from: counterpartyId ? { id: counterpartyId } : undefined,
         entity_type: 'AUCTION_ENDED',
         entity_id: event.listingId ? { id: event.listingId } : undefined,
         message_info: message,

@@ -141,7 +141,6 @@ export class AdminService {
           matchDate: new Date(),
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     } catch (error) {
       const errorMessage =

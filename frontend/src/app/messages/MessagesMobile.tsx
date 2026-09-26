@@ -24,7 +24,12 @@ export default function MessagesMobile() {
         send,
     } = useMessaging();
 
-    const [chatOpen, setChatOpen] = useState(false);
+    const [closedConversationId, setClosedConversationId] =
+        useState<string | null>(null);
+    const chatOpen = Boolean(
+        selectedConversation &&
+        selectedConversation.conversationId !== closedConversationId,
+    );
 
     let conversationContent;
 
@@ -59,8 +64,8 @@ export default function MessagesMobile() {
                 conversations={conversations}
                 selectedConversationId={selectedConversation?.conversationId}
                 onSelectConversation={(conversation) => {
-                    selectConversation(conversation);
-                    setChatOpen(true);
+                    setClosedConversationId(null);
+                    void selectConversation(conversation);
                 }}
             />
         );
@@ -78,7 +83,7 @@ export default function MessagesMobile() {
                         Messages
                     </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                        Your conversations 
+                        Your conversations
                     </p>
                 </header>
 
@@ -132,7 +137,11 @@ export default function MessagesMobile() {
 
                 <button
                     type="button"
-                    onClick={() => setChatOpen(false)}
+                    onClick={() =>
+                        setClosedConversationId(
+                            selectedConversation?.conversationId ?? null,
+                        )
+                    }
                     className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1e293b] transition-colors cursor-pointer text-[#000f2b] dark:text-white"
                     aria-label="Back to conversations"
                 >
@@ -152,7 +161,7 @@ export default function MessagesMobile() {
             </div>
 
 
-            <div className="min-h-0 flex-1 overflow-hidden dark:text-white">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden dark:text-white">
                 {chatContent}
             </div>
 
