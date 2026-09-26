@@ -46,11 +46,15 @@ const TYPE_LEVEL = [
 const UI_COMPONENTS = [
     { name: 'Listing Card', description: 'Product card with image, title, edition, price, condition badge, seller info, and wishlist heart.' },
     { name: 'Condition Badges', description: 'Color-coded badges for listing conditions (New, Good, Fair, Poor) used in filters and listing cards.' },
-    { name: 'Status Badges', description: 'Queue status badges (Pending, Approved, Rejected) and sale status badges (Reserved, Sold).' },
+    { name: 'Status Badges', description: 'Queue status badges (Pending, Approved, Rejected), sale status badges (Reserved, Sold), and auction status badges (In progress, Scheduled, Ended).' },
     { name: 'Glossy Hero Sections', description: 'Full-width hero banners with gradient backgrounds, glossy overlays, and decorative patterns.' },
     { name: 'Glassmorphism Cards', description: 'Cards with backdrop blur, semi-transparent backgrounds, and subtle border effects.' },
     { name: 'Filter Sidebar', description: 'Collapsible filter panel with condition badge buttons, range inputs, and active filter count.' },
     { name: 'Multi-step Forms', description: 'Flag/arrow shaped steppers with progress indicators for listing creation and registration.' },
+    { name: 'Auction Card', description: 'Two-column card pairing a listing preview with a live bid summary panel (current bid, bid count, start/end dates, status badge, action button).' },
+    { name: 'Countdown Timer', description: 'Tabular-figure countdown displayed on the auction detail page, switching to Danger Red under 60 seconds to communicate urgency without animation.' },
+    { name: 'Corner-Drag Crop Editor', description: 'Interactive image adjustment overlay with four draggable corner handles connected by a live polygon, sized for 44x44px touch targets on mobile.' },
+    { name: 'AI Scan Panel', description: 'Gradient-panel entry point for AI-assisted listing creation, with dual photo source buttons, staged progress messaging, and non-blocking fallback notices.' },
 ]
 
 export default function BrandPage() {
@@ -136,6 +140,32 @@ export default function BrandPage() {
                     </section>
 
                     
+                    <section aria-labelledby="demo3-heading" className="border-t border-slate-100 pt-8">
+                        <h2 id="demo3-heading" className="text-xl font-extrabold text-[#000f2b] tracking-tight mb-4">
+                            Evolution from Demo 3
+                        </h2>
+                        <div className="space-y-4 max-w-3xl text-sm text-slate-600 leading-relaxed">
+                            <p>
+                                Demo 3 and Demo 4 shifted focus away from visual rework and toward interaction depth. The platform&apos;s established component vocabulary, badge system, hero treatment, and dark-mode coverage carried through unchanged. What changed was the addition of three new interaction-heavy features — real-time auctions, AI-assisted listing creation, and the corner-drag crop editor, each of which needed new component patterns that could slot into the existing design language without introducing a parallel system.
+                            </p>
+                            <p>
+                                <strong>Real-Time Auction Surfaces:</strong> The auction browse and detail pages reuse the platform&apos;s existing card, badge, and hero conventions rather than inventing new ones. Auction cards pair a standard listing preview with a compact bid summary panel on the right (current or starting bid, bid count, start date, end date, status badge, primary action button). Status badges extend the existing badge system with three auction-specific states (In progress, Scheduled, Ended) mapped onto the same colour tokens already used for queue states, so nothing new had to be taught to the user. The auction detail page leads with a dark-navy header carrying an icon badge, the auction status badge, and the listing title, before dropping into a two-column layout: a live bid activity stream on the left, and a sticky bid panel on the right. A live countdown uses tabular figures so the digits don&apos;t shift width as they tick, and switches to Danger Red under sixty seconds to communicate urgency through colour rather than motion.
+                            </p>
+                            <p>
+                                <strong>Live-Update Indicators:</strong> Because auction state updates in real time through a Firestore listener rather than a page reload, the surfaces needed a way to signal &quot;this is live&quot; without being distracting. A small pulsing cyan dot with a subtle <span className="font-mono-brand text-[11px] bg-slate-100 px-1 py-0.5 rounded">animate-ping</span> halo appears next to any actively-updating value, matching the loading-indicator treatment already used elsewhere in the app. The effect is deliberately small and non-blocking, and respects the same reduced-motion conventions as the rest of the interface.
+                            </p>
+                            <p>
+                                <strong>AI-Assisted Listing Creation Panel:</strong> The &quot;Scan with AI&quot; entry point inside the Create Listing form uses a full-bleed cyan-to-navy gradient panel to distinguish it from the plain form fields around it, with a small sparkle icon in a glass-morphism container as the visual anchor. Two actions sit side by side: a solid primary cyan &quot;Take photo&quot; button and an outline &quot;Choose from gallery&quot; button styled to work against the dark gradient background. Because the AI pipeline is an optional accelerator rather than a required step, every failure state resolves to a non-blocking notice, a coloured band beneath the buttons that reports either success, partial extraction, or &quot;auto-fill unavailable, please enter details manually&quot; ,while leaving the manual form fields fully usable underneath.
+                            </p>
+                            <p>
+                                <strong>Corner-Drag Crop Editor:</strong> The crop editor introduces the platform&apos;s first direct-manipulation image component. Four draggable corner handles sit over the uploaded photo, connected by a live SVG polygon that redraws as the user drags. The overlay uses a two-layer stroke technique (a thicker white outline beneath a thinner cyan line) so the crop boundary remains legible against both light and dark image content. Handles are rendered as 44×44px interactive zones with a small visual dot inside, meeting the mobile tap-target rule while keeping the on-screen element itself visually compact. When the background detector can&apos;t confidently isolate the book, the component falls back to the original photo with default corner positions and no error state, a silent, non-blocking degradation rather than a failure message.
+                            </p>
+                            <p>
+                                <strong>Documentation Same-Sprint Discipline:</strong> Every Demo 3 and Demo 4 surface documented in the Design Specifications ships with its component styling, badge mappings, and interaction notes written up in the same sprint it was built. The Brand Style Guide page you&apos;re reading now is regenerated against the live token set in <code className="font-mono-brand text-xs text-[#006D8A]">globals.css</code> on each build, so the colour cards and component previews below reflect what&apos;s actually rendering in the app rather than what was intended at planning time.
+                            </p>
+                        </div>
+                    </section>
+
                     
                     <section aria-labelledby="colour-heading">
 
@@ -308,6 +338,33 @@ export default function BrandPage() {
                                 <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#c6c6c6] text-[#606060]">Sold</span>
                             </div>
                         </div>
+
+                        <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
+
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Auction Status Badges</h3>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0DC] text-[#155E2E]">In progress</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#D0F0F7] text-[#004F66]">Scheduled</span>
+                                <span className="px-3.5 py-2 text-[12px] font-bold rounded-full bg-[#c6c6c6] text-[#606060]">Ended</span>
+                            </div>
+                        </div>
+
+                        <div className="border border-slate-100 rounded-xl p-5 bg-white shadow-sm space-y-4">
+
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Live Update Indicator</h3>
+
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
+                                    <span className="relative flex h-2.5 w-2.5">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00B4D8] opacity-75" />
+                                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#00B4D8]" />
+                                    </span>
+                                    Live
+                                </span>
+                                <span className="text-xs text-slate-400">Used beside any value that updates in real time</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -323,6 +380,8 @@ export default function BrandPage() {
                         <li>Tap target sizing maintains a 44x44px safety boundary for mobile viewports.</li>
                         <li>All interactive elements use <code className="font-mono-brand text-[11px]">cursor-pointer</code> for improved UX.</li>
                         <li>Condition and status badges maintain a minimum 4.5:1 contrast ratio on their respective backgrounds.</li>
+                        <li>Live-update animations and countdown transitions respect the user&apos;s reduced-motion preference.</li>
+                        <li>Direct-manipulation components (corner-drag editor) provide keyboard-accessible controls in addition to pointer interaction, with descriptive <code className="font-mono-brand text-[11px]">aria-label</code> values on each handle.</li>
                     </ul>
 
                     <div className="mt-4 flex items-center gap-3">
