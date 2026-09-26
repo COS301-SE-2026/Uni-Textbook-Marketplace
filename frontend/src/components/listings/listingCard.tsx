@@ -35,6 +35,10 @@ export interface Listing {
         name: string
         code: string
         semester: number
+        university?: {
+            id: string
+            name: string
+        }
         faculty?: {
             name: string
         }

@@ -42,7 +42,7 @@ export function mapListing(apiListing: any): Listing {
                 ? { name: apiListing.module.faculty.name }
                 : undefined,
             name: apiListing.module?.name || '',
-            semester: apiListing.module?.semester || '',
+            semester: apiListing.module?.semester || 0,
         },
 
         seller: apiListing.seller
