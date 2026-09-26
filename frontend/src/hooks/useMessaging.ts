@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import {
@@ -13,7 +13,7 @@ import {
 import type {
     Conversation,
     Message,
-} from '@/types/messaging'; 
+} from '@/types/messaging';
 
 import {
     collection,
@@ -32,16 +32,59 @@ export function useMessaging() {
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
-    const [selectedConversation, setSelectedConversation] =
+    const [manuallySelectedConversation, setManuallySelectedConversation] =
         useState<Conversation | null>(null);
 
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messageState, setMessageState] = useState<{
+        conversationId: string | null;
+        messages: Message[];
+        loaded: boolean;
+    }>({ conversationId: null, messages: [], loaded: false });
 
     const [loadingConversations, setLoadingConversations] =
         useState(true);
 
-    const [loadingMessages, setLoadingMessages] =
-        useState(false);
+    const messageLoadRequest = useRef(0);
+
+    const urlConversation = listingId && contactId
+        ? conversations.find(
+            (conversation) =>
+                conversation.listing.id === listingId &&
+                conversation.otherUser.id === contactId,
+        ) ?? null
+        : null;
+    const selectedConversation = urlConversation ?? manuallySelectedConversation;
+    const messages = messageState.messages;
+    const loadingMessages = Boolean(
+        selectedConversation &&
+        (!messageState.loaded ||
+            messageState.conversationId !== selectedConversation.conversationId),
+    );
+
+    const loadMessagesForConversation = async (conversationId: string) => {
+        const requestId = ++messageLoadRequest.current;
+        try {
+            const data = await getMessages(conversationId);
+            if (requestId === messageLoadRequest.current) {
+                setMessageState({ conversationId, messages: data, loaded: true });
+            }
+        } catch (error: any) {
+            console.error('Error loading messages');
+            console.log(error);
+            console.log('status:', error?.status);
+            console.log('message:', error?.message);
+            if (requestId === messageLoadRequest.current) {
+                setMessageState((current) => ({
+                    conversationId,
+                    messages:
+                        current.conversationId === conversationId
+                            ? current.messages
+                            : [],
+                    loaded: true,
+                }));
+            }
+        }
+    };
 
     /**Start a new conversation */
     const startConversation = async (
@@ -90,22 +133,11 @@ export function useMessaging() {
     const selectConversation = async (
         conversation: Conversation,
     ) => {
-        try {
-            setSelectedConversation(conversation);
-            setLoadingMessages(true);
-
-            const data = await getMessages(
-                conversation.conversationId,
-            );
-            setMessages(data);
-        } catch (error: any) {
-            console.error('Error loading messages');
-            console.log(error);
-            console.log('status:', error?.status);
-            console.log('message:', error?.message);
-        } finally {
-            setLoadingMessages(false);
+        const activeConversation = urlConversation ?? conversation;
+        if (!urlConversation) {
+            setManuallySelectedConversation(conversation);
         }
+        await loadMessagesForConversation(activeConversation.conversationId);
     };
 
     /** Send a message*/
@@ -137,28 +169,6 @@ export function useMessaging() {
     }, []);
 
     useEffect(() => {
-        if (!listingId || !contactId) return;
-        if (
-            selectedConversation?.listing.id === listingId &&
-            selectedConversation.otherUser.id === contactId
-        ) return;
-
-        const targetConversation = conversations.find(
-            (conversation) =>
-                conversation.listing.id === listingId &&
-                conversation.otherUser.id === contactId,
-        );
-        if (!targetConversation) return;
-
-        setSelectedConversation(targetConversation);
-        setLoadingMessages(true);
-        void getMessages(targetConversation.conversationId)
-            .then(setMessages)
-            .catch((error) => console.error(error))
-            .finally(() => setLoadingMessages(false));
-    }, [listingId, contactId, conversations, selectedConversation]);
-
-    useEffect(() => {
         if (!selectedConversation) {
             return;
         }
@@ -185,7 +195,11 @@ export function useMessaging() {
                     } as Message),
                 );
 
-                setMessages(updatedMessages);
+                setMessageState({
+                    conversationId: selectedConversation.conversationId,
+                    messages: updatedMessages,
+                    loaded: true,
+                });
             },
             (error) => {
                 console.error(
