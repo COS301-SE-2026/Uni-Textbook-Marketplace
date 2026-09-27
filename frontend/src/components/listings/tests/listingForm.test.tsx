@@ -7,8 +7,17 @@ jest.mock('@/lib/listings.api', () => ({
     getFaculties: jest.fn(),
 }));
 
+jest.mock('next/image', () => ({
+    __esModule: true,
+    default: (props: Record<string, unknown>) => {
+        const { fill, ...rest } = props as { fill?: boolean };
+        return <img {...(rest as React.ImgHTMLAttributes<HTMLImageElement>)} />;
+    },
+}));
+
 beforeAll(() => {
     global.URL.createObjectURL = jest.fn(() => 'mock-image-url');
+    global.URL.revokeObjectURL = jest.fn();
 });
 
 const formData: ListingFormData = {
@@ -42,10 +51,10 @@ const defaultProps = {
 describe('ListingForm', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        (getFaculties as jest.Mock).mockResolvedValue([]);
     });
 
     describe('Step 1: Book Details', () => {
-
         it('renders book details fields', () => {
             render(<ListingForm {...defaultProps} step={1} />);
             expect(screen.getByText('Book Details')).toBeInTheDocument();
@@ -74,6 +83,16 @@ describe('ListingForm', () => {
             fireEvent.change(input, { target: { name: 'bookName', value: 'New Book' } });
             expect(handleChange).toHaveBeenCalledTimes(1);
         });
+
+        it('renders AiPhotoCapture on step 1 when onAiScan is provided', () => {
+            render(<ListingForm {...defaultProps} step={1} onAiScan={jest.fn()} />);
+            expect(screen.getByText(/scan with ai/i)).toBeInTheDocument();
+        });
+
+        it('hides AiPhotoCapture on step 1 when onAiScan is omitted', () => {
+            render(<ListingForm {...defaultProps} step={1} />);
+            expect(screen.queryByText(/scan with ai/i)).not.toBeInTheDocument();
+        });
     });
 
     describe('Step 2: Module Details', () => {
@@ -92,21 +111,34 @@ describe('ListingForm', () => {
                 { id: 'fac-2', name: 'Natural and Agricultural Sciences' },
             ]);
 
-            
             await act(async () => {
                 render(<ListingForm {...defaultProps} step={2} />);
             });
 
-            
             await waitFor(() => {
                 expect(getFaculties).toHaveBeenCalled();
             });
 
-            
             await waitFor(() => {
                 expect(screen.getByRole('option', { name: 'Engineering, Built Environment and IT' })).toBeInTheDocument();
                 expect(screen.getByRole('option', { name: 'Natural and Agricultural Sciences' })).toBeInTheDocument();
             });
+        });
+
+        it('logs and clears faculties when the fetch fails', async () => {
+            jest.spyOn(console, 'error').mockImplementation(() => {});
+            (getFaculties as jest.Mock).mockRejectedValueOnce(new Error('nope'));
+            render(<ListingForm {...defaultProps} step={2} />);
+
+            await waitFor(() =>
+                expect(console.error).toHaveBeenCalledWith(
+                    'Failed to load faculties',
+                    expect.any(Error),
+                ),
+            );
+            expect(
+                screen.queryByRole('option', { name: /engineering/i }),
+            ).not.toBeInTheDocument();
         });
     });
 
@@ -126,7 +158,6 @@ describe('ListingForm', () => {
 
     describe('Step 4: Upload Pictures', () => {
         it('renders upload section', () => {
-
             render(<ListingForm {...defaultProps} step={4} />);
             expect(screen.getByText('Upload Pictures')).toBeInTheDocument();
 
@@ -134,17 +165,16 @@ describe('ListingForm', () => {
         });
 
         it('shows image previews when images are uploaded', async () => {
-
             const mockFiles = [new File([''], 'image1.jpg', { type: 'image/jpeg' })];
             const formWithImages = {
                 ...defaultProps.form,
                 images: mockFiles,
             };
-            
+
             await act(async () => {
                 render(<ListingForm {...defaultProps} step={4} form={formWithImages as ListingFormData} />);
             });
-            
+
             expect(screen.getByText('1 / 4+ images uploaded')).toBeInTheDocument();
         });
 
@@ -156,13 +186,61 @@ describe('ListingForm', () => {
 
             expect(fileInput).toBeInTheDocument();
         });
+
+        it('calls onRemoveImage with the correct index', () => {
+            const onRemoveImage = jest.fn();
+            const form = { ...formData, images: [new File([''], 'a.jpg')] };
+            render(
+                <ListingForm
+                    {...defaultProps}
+                    step={4}
+                    form={form}
+                    onRemoveImage={onRemoveImage}
+                />,
+            );
+            fireEvent.click(
+                screen.getByRole('button', { name: /remove photo 1/i }),
+            );
+            expect(onRemoveImage).toHaveBeenCalledWith(0);
+        });
+
+        it('shows a crop button only when onReplaceImage is provided', () => {
+            const form = { ...formData, images: [new File([''], 'a.jpg')] };
+            const { rerender } = render(
+                <ListingForm {...defaultProps} step={4} form={form} />,
+            );
+            expect(
+                screen.queryByRole('button', { name: /crop photo 1/i }),
+            ).not.toBeInTheDocument();
+            rerender(
+                <ListingForm
+                    {...defaultProps}
+                    step={4}
+                    form={form}
+                    onReplaceImage={jest.fn()}
+                />,
+            );
+            expect(
+                screen.getByRole('button', { name: /crop photo 1/i }),
+            ).toBeInTheDocument();
+        });
+
+        it('shows images error on step 4', () => {
+            render(
+                <ListingForm
+                    {...defaultProps}
+                    step={4}
+                    errors={{ images: 'Add at least 4 photos' }}
+                />,
+            );
+            expect(screen.getByText('Add at least 4 photos')).toBeInTheDocument();
+        });
     });
 
     it('returns null for invalid step', () => {
         render(<ListingForm {...defaultProps} step={99} />);
         expect(screen.queryByText('Book Details')).not.toBeInTheDocument();
         expect(screen.queryByText('Module Details')).not.toBeInTheDocument();
-
 
         expect(screen.queryByText('Listing Details')).not.toBeInTheDocument();
 

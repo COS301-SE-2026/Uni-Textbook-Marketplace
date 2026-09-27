@@ -100,6 +100,7 @@ describe('notificationRoutes', () => {
       ['REJECTED_LISTING', '/listings/listing-123'],
       ['Edited listing', '/listings/listing-123'],
       ['message', '/messages'],
+      ['AUCTION_ENDED', '/listings/listing-123'],
       ['UNKNOWN', '/notifications'],
     ];
 
@@ -138,6 +139,18 @@ describe('notificationRoutes', () => {
         entity_id: null as any ,
     };
       expect(getNotificationRoute(notification)).toBe('/listings/undefined');
+    });
+
+    it('routes auction notifications with a contact to the matching message thread', () => {
+      const notification = {
+        ...baseNotification,
+        entity_type: 'AUCTION_ENDED',
+        notification_from: { id: 'seller-456' },
+      };
+
+      expect(getNotificationRoute(notification)).toBe(
+        '/messages?listingId=listing-123&contactId=seller-456',
+      );
     });
   });
 

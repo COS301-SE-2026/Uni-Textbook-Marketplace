@@ -457,7 +457,7 @@ npm run test:all
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Tiego Mokwena</h2>
-          <h5>Team Lead  </br>+ Project Manager  </br>+ UI Engineer </br>+   DevOps Engineer</h5>
+          <h5>Team Lead  </br>+ </br>Project Manager  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
@@ -505,7 +505,7 @@ npm run test:all
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Gift Mohuba</h2>
-          <h5>Services Engineer </br>+ Integration Engineer</h5>
+          <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/GiftMHB">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
@@ -523,7 +523,7 @@ npm run test:all
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Josh Kretschmer</h2>
-          <h5>Services Engineer </br>+ Integration Engineer</h5>
+          <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/JoshKretschmer">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
@@ -571,7 +571,7 @@ npm run test:all
         <td align="center">
           <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
           <h2>Neo Bosoga</h2>
-          <h5>Data Engineer </br>+ Test Engineer</h5>
+          <h5>Data Engineer </br>+ </br>Test Engineer</h5>
           <a href="https://github.com/u23591732">
             <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>

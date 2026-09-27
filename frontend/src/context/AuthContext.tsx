@@ -62,8 +62,7 @@ export function AuthProvider({
 
   // Only fetch getMe on protected routes
   useEffect(() => {
-    // If we already have a user, we're done
-    if (user) {
+    if (user?.university?.id) {
       return;
     }
 

@@ -23,6 +23,59 @@ interface SavedSearchMatchData {
   listingId?: string;
 }
 
+interface AuctionEndedData {
+  recipientName: string;
+  listingTitle: string;
+  outcome: 'SOLD' | 'RESERVE_NOT_MET' | 'NO_BIDS';
+  finalBid: number | null;
+  isSeller: boolean;
+}
+
+export function auctionEndedTemplate(
+  data: AuctionEndedData,
+): NotificationEmailContent {
+  const sold = data.outcome === 'SOLD';
+  const noBids = data.outcome === 'NO_BIDS';
+  let result: string;
+  if (sold) {
+    result = data.isSeller
+      ? `Your listing sold for ${data.finalBid ?? 0}.`
+      : 'You won the auction.';
+  } else if (noBids) {
+    result = 'The auction ended without any bids.';
+  } else if (data.isSeller) {
+    result = 'The auction ended because the reserve price was not met.';
+  } else {
+    result =
+      'The reserve price was not met, so the auction did not result in a sale.';
+  }
+
+  return {
+    subject: sold
+      ? `Auction ended: ${data.listingTitle} was sold`
+      : `Auction ended: ${data.listingTitle}`,
+    text: `Hi ${data.recipientName}, ${result}`,
+    bodyHtml: `
+      <tr>
+        <td style="padding:8px 30px 0 30px; font-family:'Montserrat',Helvetica, Arial, sans-serif; font-size:16px; line-height:1.6; color:#3a3a3a;">
+          <p style="margin:0 0 20px 0;">Hi ${data.recipientName},</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:0 30px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background-color:${sold ? '#D0F0DC' : '#FDE8E8'}; border-radius:6px; padding:16px; font-family:'Montserrat',Helvetica, Arial, sans-serif; font-size:15px; color:#3a3a3a;">
+                <strong>${data.listingTitle}</strong><br />${result}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    `,
+  };
+}
+
 export function approveListingTemplate(
   data: ListingNotificationData,
 ): NotificationEmailContent {

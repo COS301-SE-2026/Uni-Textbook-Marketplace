@@ -136,6 +136,7 @@ export class AuthService {
       where: {
         email: email,
       },
+      relations: { university: true },
     });
 
     if (!userResult) {
@@ -163,6 +164,7 @@ export class AuthService {
         first_name: true,
         last_name: true,
       },
+      relations: { university: true },
       where: {
         email,
         deleted_at: IsNull(),
@@ -200,6 +202,9 @@ export class AuthService {
           role: user.role,
           is_banned: true,
           ban_reason: user.ban_reason ?? 'No reason provided.',
+          university: user.university
+            ? { id: user.university.id, name: user.university.name }
+            : null,
         },
       };
     }
@@ -229,6 +234,9 @@ export class AuthService {
         role: user.role,
         is_banned: false,
         ban_reason: null,
+        university: user.university
+          ? { id: user.university.id, name: user.university.name }
+          : null,
       },
     };
   }
@@ -315,10 +323,15 @@ export class AuthService {
         is_banned: true,
         ban_reason: true,
         banned_at: true,
+        university: {
+          id: true,
+          name: true,
+        },
       },
       where: {
         id: userId,
       },
+      relations: { university: true },
     });
 
     if (!result) {

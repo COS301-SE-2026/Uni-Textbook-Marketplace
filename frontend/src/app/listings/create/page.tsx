@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState, Suspense, useCallback } from 'react'
+import { useEffect, useRef, useState, Suspense, useCallback } from 'react'
 import { useRouter,useSearchParams } from 'next/navigation'
 import ListingForm, { ListingFormData } from '@/components/listings/listingForm'
 import Button from '@/components/ui/Button'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { createBook, createModule, uploadImages, createListing, CreateListingData } from '@/lib/listings.api'
 import Modal from '@/components/ui/Modal'
+import { type AiScanResult } from '@/components/listings/AiPhotoCapture'
 import Image from 'next/image'
 import { PlusCircle } from 'lucide-react'
 import { driver } from 'driver.js'
@@ -125,6 +126,24 @@ const TUTORIAL_STEPS: Record<number,TutorialStep>  = {
 }
 
 
+interface AiMatch {
+    bookId: string
+    bookName: string
+    author: string
+    edition: string
+    isbn: string
+}
+
+function isUnchangedAiMatch(match: AiMatch | null, form: ListingFormData): match is AiMatch {
+    if (!match) return false
+    return (
+        form.bookName.trim() === match.bookName.trim() &&
+        form.author.trim() === match.author.trim() &&
+        form.edition.trim() === match.edition.trim() &&
+        form.isbn.trim() === match.isbn.trim()
+    )
+}
+
 function CreateListingPageInner() {
 
     const router = useRouter()
@@ -159,6 +178,10 @@ function CreateListingPageInner() {
 
     const [errors, setErrors] = useState<FormErrors>({})
 
+    const [aiMatch, setAiMatch] = useState<AiMatch | null>(null)
+    const [aiReviewOpen, setAiReviewOpen] = useState(false)
+    const scanUploads = useRef(new Map<File, string>())
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
@@ -177,11 +200,72 @@ function CreateListingPageInner() {
         setErrors(prev => ({ ...prev, images: '' }))
     }
 
+    const handleAiScan = (result: AiScanResult) => {
+        const { file, uploadedUrl, matchedBook, extracted } = result
+
+        if (uploadedUrl) scanUploads.current.set(file, uploadedUrl)
+
+        const bookFields: Partial<ListingFormData> = {}
+        if (matchedBook) {
+            bookFields.bookName = matchedBook.title ?? ''
+            bookFields.author = matchedBook.author ?? ''
+            bookFields.edition = String(matchedBook.edition ?? '')
+            bookFields.isbn = matchedBook.isbn ?? ''
+           
+            if (matchedBook.publisher) bookFields.publisher = matchedBook.publisher
+        } else if (extracted) {
+            if (extracted.title) bookFields.bookName = extracted.title
+            if (extracted.author) bookFields.author = extracted.author
+            if (extracted.edition) bookFields.edition = extracted.edition
+            if (extracted.isbn) bookFields.isbn = extracted.isbn
+            if (extracted.publisher) bookFields.publisher = extracted.publisher
+        }
+
+        setForm(prev => ({
+            ...prev,
+            
+            images: [...prev.images, file],
+            
+            ...bookFields,
+        }))
+
+        if (matchedBook) {
+            setAiMatch({
+                bookId: matchedBook.id,
+                bookName: matchedBook.title ?? '',
+                author: matchedBook.author ?? '',
+                edition: String(matchedBook.edition ?? ''),
+                isbn: matchedBook.isbn ?? '',
+            })
+            setAiReviewOpen(true)
+        } else if (Object.keys(bookFields).length > 0) {
+            
+            setAiMatch(null)
+            setAiReviewOpen(true)
+        }
+
+        const cleared = Object.fromEntries(Object.keys(bookFields).map(key => [key, '']))
+        setErrors(prev => ({ ...prev, ...cleared, images: '' }) as FormErrors)
+    }
+
     const handleRemoveImage = (index: number) => {
+        const removed = form.images[index]
+        if (removed) scanUploads.current.delete(removed)
         setForm(prev => ({
             ...prev,
             images: prev.images.filter((_, i) => i !== index),
         }))
+    }
+
+    const handleReplaceImage = (index: number, newFile: File) => {
+
+        const old = form.images[index]
+        if (old) scanUploads.current.delete(old)
+        setForm(prev => {
+            const images = [...prev.images]
+            images[index] = newFile
+            return { ...prev, images }
+        })
     }
 
     const isValid = () => {
@@ -191,6 +275,7 @@ function CreateListingPageInner() {
     }
 
     const nextStep = () => {
+        if (step === 1 && aiReviewOpen) return 
         if (isValid() && step < 4) setStep(s => s + 1)
     }
 
@@ -204,13 +289,15 @@ function CreateListingPageInner() {
         setLoading(true)
 
         try {
-            const book = await createBook({
-                title: form.bookName,
-                author: form.author,
-                edition: Number(form.edition),
-                isbn: form.isbn,
-                publisher: form.publisher,
-            })
+            const bookId = isUnchangedAiMatch(aiMatch, form)
+                ? aiMatch.bookId
+                : (await createBook({
+                    title: form.bookName,
+                    author: form.author,
+                    edition: Number(form.edition),
+                    isbn: form.isbn,
+                    publisher: form.publisher,
+                })).id
 
             const createdModule = await createModule({
                 code: form.code,
@@ -219,12 +306,17 @@ function CreateListingPageInner() {
                 semester: Number(form.semester),
             })
 
-            const { urls } = await uploadImages(form.images)
             
+            const pending = form.images.filter(f => !scanUploads.current.has(f))
+            const { urls: uploaded } = await uploadImages(pending)
+            let next = 0
+            const urls = form.images
+                .map(f => scanUploads.current.get(f) ?? uploaded[next++])
+                .filter((u): u is string => Boolean(u))
 
             await createListing({
                 title: form.listingTitle,
-                bookId: book.id,
+                bookId,
                 moduleId: createdModule.id,
                 condition: form.condition as CreateListingData['condition'],
                 annotationLevel: form.annotationLevel as CreateListingData['annotationLevel'],
@@ -287,7 +379,7 @@ function CreateListingPageInner() {
                 
             }}>
                 
-                <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto">
+                <div className="absolute inset-0 right-0 w-full md:w-3/5 lg:w-1/2 ml-auto opacity-30 md:opacity-100">
                     <div className="relative w-full h-full">
 
 
@@ -299,7 +391,7 @@ function CreateListingPageInner() {
                             priority
                             style={{ objectPosition: '100% 50%' }}
                         />
-                        {/* Gradient overlay*/}
+                        
                         <div className="absolute inset-0" style={{
                             background: 'linear-gradient(90deg, rgba(0,15,43,0.9) 0%, rgba(0,26,61,0.6) 30%, rgba(0,38,74,0.3) 50%, transparent 70%)',
                         }} />
@@ -364,9 +456,9 @@ function CreateListingPageInner() {
                 }} />
             </div>
 
-            <div className="container-content py-8">
+            <div className="container-content py-6 md:py-8">
                 
-                <div className="flex my-8 w-full gap-1">
+                <div className="flex my-4 sm:my-8 w-full gap-1">
                     {STEP_LABELS.map((label, i) => {
                         const stepNum = i + 1
                         const isActive = step === stepNum
@@ -385,8 +477,8 @@ function CreateListingPageInner() {
                                 
                                 <div 
                                     className={`
-                                        relative flex items-center justify-center px-4 py-3
-                                        text-sm font-medium transition-all duration-300
+                                        relative flex items-center justify-center px-2 sm:px-4 py-3
+                                        text-xs sm:text-sm font-medium transition-all duration-300
                                         ${textColor}
                                     `}
                                     style={{
@@ -397,8 +489,9 @@ function CreateListingPageInner() {
                                     }}
                                 >
                                     <span className="relative z-10 flex items-center gap-2">
-                                        {isCompleted && <span className="text-white text-sm">✓</span>}
-                                        <span className="truncate">{label}</span>
+                                        <span className="sm:hidden font-semibold">{isCompleted ? '✓' : stepNum}</span>
+{isCompleted && <span className="hidden sm:inline text-white text-sm">✓</span>}
+                                        <span className="hidden sm:inline truncate">{label}</span>
                                     </span>
                                 </div>
 
@@ -409,27 +502,41 @@ function CreateListingPageInner() {
                 </div>
 
                 
-                <ListingForm
+                <p className="sm:hidden -mt-2 mb-4 text-sm font-semibold text-[#3a3a3a]" aria-live="polite">
+    Step {step} of {STEP_LABELS.length}: {STEP_LABELS[step - 1]}
+</p>
+
+<ListingForm
                     step={step}
                     form={form}
                     errors={errors}
                     onChange={handleChange}
                     onImageUpload={handleImageUpload}
                     onRemoveImage={handleRemoveImage}
+                    onAiScan={handleAiScan}
+                    onReplaceImage={handleReplaceImage}
                 />
 
                 
-                <div className="flex justify-between mt-8">
+                <div className="flex justify-between gap-3 mt-6 sm:mt-8">
                     {step > 1 ? (
-                        <Button onClick={prevStep} variant="primary" className="cursor-pointer">Previous</Button>
+                        <Button onClick={prevStep} variant="primary" className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6">Previous</Button>
                     ) : (
-                        <div />
+                        <div className="hidden sm:block" />
                     )}
 
                     {step < 4 ? (
-                        <Button onClick={nextStep} id='next-step-btn' variant="primary" className="cursor-pointer">Next</Button>
+                        <Button
+                            onClick={nextStep}
+                            id='next-step-btn'
+                            variant="primary"
+                            disabled={step === 1 && aiReviewOpen}
+                            className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6"
+                        >
+                            Next
+                        </Button>
                     ) : (
-                        <Button onClick={handleSubmit} id='post-listing-btn' variant="primary" disabled={loading} className="cursor-pointer">
+                        <Button onClick={handleSubmit} id='post-listing-btn' variant="primary" disabled={loading} className="cursor-pointer min-h-[44px] flex-1 sm:flex-none sm:px-6">
                             {loading ? 'Posting...' : 'POST LISTING'}
                         </Button>
 
@@ -438,6 +545,59 @@ function CreateListingPageInner() {
                 </div>
 
             </div>
+
+            <Modal
+                isOpen={aiReviewOpen}
+                title="Check what the AI found"
+                onClose={() => setAiReviewOpen(false)}
+            >
+                <p className="text-sm text-gray-600 mb-4">
+                    We pulled these details from your photo. Double-check them, you can
+                    still edit any field afterward.
+                </p>
+                <dl className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Title</dt>
+                        <dd className="font-medium text-right">{form.bookName || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Author</dt>
+                        <dd className="font-medium text-right">{form.author || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Edition</dt>
+                        <dd className="font-medium text-right">{form.edition || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">ISBN</dt>
+                        <dd className="font-medium text-right">{form.isbn || '—'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt className="text-gray-500">Publisher</dt>
+                        <dd className="font-medium text-right">{form.publisher || '—'}</dd>
+                    </div>
+                </dl>
+                <div className="mt-6 flex flex-wrap justify-end gap-4">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setForm(prev => ({ ...prev, bookName: '', author: '', edition: '', isbn: '', publisher: '' }))
+                            setAiMatch(null)
+                            setAiReviewOpen(false)
+                        }}
+                        className="text-sm border border-[#00B4D8] text-[#00B4D8] rounded-[4px] px-3 py-1.5 hover:bg-[#00B4D8] hover:text-white transition-colors cursor-pointer"
+                    >
+                        Clear, I&apos;ll enter it myself
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setAiReviewOpen(false)}
+                        className="btn-primary cursor-pointer"
+                    >
+                        Looks good, continue
+                    </button>
+                </div>
+            </Modal>
 
             <Modal
                 isOpen={showSuccess}

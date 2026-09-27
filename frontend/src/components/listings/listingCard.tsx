@@ -35,6 +35,10 @@ export interface Listing {
         name: string
         code: string
         semester: number
+        university?: {
+            id: string
+            name: string
+        }
         faculty?: {
             name: string
         }
@@ -57,6 +61,18 @@ interface ListingCardProps {
     readonly showStatus?: boolean
     readonly isLiked?: boolean
     readonly removeClick?: boolean
+}
+
+function ordinalSuffix(n: number): string {
+    const remainder100 = n % 100
+    if (remainder100 >= 11 && remainder100 <= 13) return `${n}th`
+
+    switch (n % 10) {
+        case 1: return `${n}st`
+        case 2: return `${n}nd`
+        case 3: return `${n}rd`
+        default: return `${n}th`
+    }
 }
 
 const CONDITION_LABEL: Record<Listing['condition'], string> = {
@@ -122,7 +138,7 @@ export default function ListingCard({
     return (
         <div
             onClick={handleClick}
-            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden ${!removeClick ? 'cursor-pointer' : ''
+            className={`group card hover:shadow-xl transition-all duration-300 flex flex-col gap-2 relative overflow-hidden !p-0 ${!removeClick ? 'cursor-pointer' : ''
                 }`}
             style={{
                 height: '420px',
@@ -136,13 +152,13 @@ export default function ListingCard({
             }} />
 
 
-            <div className="relative w-full h-[240px] bg-gray-100 overflow-hidden flex items-center justify-center">
+            <div className="relative w-full h-[240px] bg-gray-100 dark:bg-gray-800 overflow-hidden flex items-center justify-center">
                 {image ? (
                     <Image
                         src={image}
                         alt={listing.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
                     <svg
@@ -215,7 +231,7 @@ export default function ListingCard({
 
 
                 <p className="text-xs text-gray-500">
-                    {listing.book?.edition} Edition • {listing.module?.code}
+                    {listing.book?.edition ? ordinalSuffix(listing.book.edition) : listing.book?.edition} Edition • {listing.module?.code}
                 </p>
 
 

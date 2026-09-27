@@ -23,12 +23,24 @@ export class Auction {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({
+    type: 'uuid',
+    nullable: true,
+  })
+  listing_id: string | null;
+
   @ManyToOne(() => Listing, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'listing_id' })
   listing!: Listing | null;
+
+  @Column({
+    type: 'uuid',
+    nullable: true,
+  })
+  seller_id: string | null;
 
   @ManyToOne(() => User, {
     nullable: true,
@@ -60,6 +72,12 @@ export class Auction {
     nullable: true,
   })
   current_highest_bid!: number | null;
+
+  @Column({
+    type: 'uuid',
+    nullable: true,
+  })
+  current_highest_bidder_id: string | null;
 
   @ManyToOne(() => User, {
     nullable: true,

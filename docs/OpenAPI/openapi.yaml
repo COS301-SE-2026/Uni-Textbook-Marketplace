@@ -37,6 +37,8 @@ tags:
     description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
   - name: Profile
     description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+  - name: Vision
+    description: "Sprint 6 / Wow Factor 1, AI-Assisted Listing Creation. Owner: Tiego."
 
 components:
   securitySchemes:
@@ -269,6 +271,41 @@ components:
             totalPages:
               type: integer
               description: Total number of pages
+
+    MatchedBook:
+      type: object
+      description: >
+        The Book record the OCR text was fuzzy-matched against. Absent
+        (matchedBook is null on the parent response) when no confident
+        match was found.
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        edition:
+          type: integer
+        confidence:
+          type: number
+          format: float
+          description: Fuzzy-match confidence score (0 to 1) between the OCR text and this Book record.
+
+    ExtractTextResponse:
+      type: object
+      properties:
+        rawText:
+          type: string
+          description: Raw text lines returned by Azure AI Vision's Read API (Image Analysis 4.0), before fuzzy matching.
+        matchedBook:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/MatchedBook"
+          description: Best fuzzy match against the Book table, or null if nothing matched with enough confidence.
 
   responses:
     Unauthorized:
@@ -909,6 +946,48 @@ paths:
       responses:
         "200":
           description: Deleted
+
+  /vision/extract-text:
+    post:
+      tags: [Vision]
+      summary: >
+        Runs Azure AI Vision OCR (Image Analysis 4.0 Read API) on a listing
+        photo already uploaded to Blob Storage via the existing /images/upload
+        flow, then fuzzy-matches the extracted text against the Book table.
+        Pre-fills CreateListingDto fields for the seller to review and edit,
+        never auto-submits a listing. Backend-mediated: the Azure Vision
+        endpoint and key are never exposed to the client. Background removal
+        and corner-crop detection are not part of this endpoint - they run
+        entirely client-side (frontend/src/utils/removeUniformBackground.ts).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [imageUrl]
+              properties:
+                imageUrl:
+                  type: string
+                  description: URL of the photo already uploaded via the existing /images/upload flow.
+      responses:
+        "200":
+          description: >
+            OCR text extracted. matchedBook is null if no confident match
+            was found - the frontend falls back to manual entry with the
+            photo kept and every field still editable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtractTextResponse"
+        "400":
+          description: Missing or invalid imageUrl
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /conversations:
     post:
