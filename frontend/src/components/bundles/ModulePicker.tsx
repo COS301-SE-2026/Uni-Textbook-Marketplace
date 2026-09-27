@@ -22,7 +22,6 @@ const API_URL =
 
     useEffect(() => {
         if (!search.trim()) {
-        setResults([]);
         return;
         }
 
