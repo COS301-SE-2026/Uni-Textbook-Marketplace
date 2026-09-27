@@ -10,7 +10,6 @@ import { seedListings } from './listing.seed';
 async function runSeeds() {
   await AppDataSource.initialize();
 
-  
   if (AppDataSource.options.synchronize) {
     throw new Error(
       'synchronize: true is enabled in the data source. ' +
@@ -27,15 +26,14 @@ async function runSeeds() {
 
     const manager = queryRunner.manager;
 
-    
-    await seedUniversities(manager);   
-    await seedFaculties(manager);      
-    await seedModules(manager);       
-    await seedStudents(manager);      
-    await seedAdmins(manager);         
-            
-    await seedModuleBooks(manager);    
-    await seedListings(manager);       
+    await seedUniversities(manager);
+    await seedFaculties(manager);
+    await seedModules(manager);
+    await seedStudents(manager);
+    await seedAdmins(manager);
+
+    await seedModuleBooks(manager);
+    await seedListings(manager);
 
     await queryRunner.commitTransaction();
 

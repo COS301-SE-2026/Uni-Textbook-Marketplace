@@ -63,13 +63,18 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
       }
     }
 
-    if (facultyIdExists) {
+    const currentFacultyIdExists = await this.columnExists(
+      queryRunner,
+      'modules',
+      'faculty_id',
+    );
+
+    if (currentFacultyIdExists) {
       const columnType = await this.getColumnType(
         queryRunner,
         'modules',
         'faculty_id',
       );
-
       if (
         columnType?.includes('varchar') ||
         columnType === 'character varying' ||
@@ -84,16 +89,13 @@ export class UpdateModulesTable1784025959352 implements MigrationInterface {
             `ALTER TABLE "modules" DROP CONSTRAINT IF EXISTS "FK_70de6abbb8d2dc5bae2ea096764"`,
           );
         }
-
-        await queryRunner.query(`
-          ALTER TABLE "modules" 
-          ALTER COLUMN "faculty_id" TYPE uuid 
-          USING faculty_id::uuid
-        `);
+        await queryRunner.query(
+          ` ALTER TABLE "modules" ALTER COLUMN "faculty_id" TYPE uuid USING faculty_id::uuid `,
+        );
       }
     }
 
-    if (!facultyIdExists && !facultyColumnExists) {
+    if (!currentFacultyIdExists && !facultyColumnExists) {
       await queryRunner.query(`ALTER TABLE "modules" ADD "faculty_id" uuid`);
     }
   }

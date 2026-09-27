@@ -15,17 +15,13 @@ import type {
     Message,
 } from '@/types/messaging';
 
-import {
-    collection,
-    onSnapshot,
-    orderBy,
-    query,
-} from 'firebase/firestore';
+import { io, Socket } from 'socket.io-client';
 
-import { db } from '@/lib/firebase';
 
 export function useMessaging() {
-
+    const socketRef = useRef<Socket | null>(null);
+    const selectedConversationIdRef = useRef<string | null>(null);
+    
     const searchParams = useSearchParams();
     const listingId = searchParams.get('listingId');
     const contactId = searchParams.get('contactId');
@@ -133,11 +129,24 @@ export function useMessaging() {
     const selectConversation = async (
         conversation: Conversation,
     ) => {
-        const activeConversation = urlConversation ?? conversation;
+        const activeConversation =
+            urlConversation ?? conversation;
+
         if (!urlConversation) {
             setManuallySelectedConversation(conversation);
         }
-        await loadMessagesForConversation(activeConversation.conversationId);
+
+        selectedConversationIdRef.current =
+            activeConversation.conversationId;
+
+        socketRef.current?.emit(
+            'joinConversation',
+            activeConversation.conversationId,
+        );
+
+        await loadMessagesForConversation(
+            activeConversation.conversationId,
+        );
     };
 
     /** Send a message*/
@@ -146,26 +155,21 @@ export function useMessaging() {
             return;
         }
 
-        await sendMessage(
-            selectedConversation.conversationId,
-            text,
-        );
-        await loadConversations();
+        try {
+            await sendMessage(
+                selectedConversation.conversationId,
+                text,
+            );
+
+            await loadConversations();
+        } catch (error) {
+            console.error('Error sending message');
+            console.log(error);
+        }
     };
 
     useEffect(() => {
-        const fetchConversations = async () => {
-            try {
-                setLoadingConversations(true);
-                const data = await getMyConversations();
-                setConversations(data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoadingConversations(false);
-            }
-        };
-        void fetchConversations();
+        void loadConversations();
     }, []);
 
     useEffect(() => {
@@ -173,44 +177,109 @@ export function useMessaging() {
             return;
         }
 
-        const messagesRef = collection(
-            db,
-            'conversations',
+        selectedConversationIdRef.current =
+            selectedConversation.conversationId;
+
+        socketRef.current?.emit(
+            'joinConversation',
             selectedConversation.conversationId,
-            'messages',
         );
+    }, [selectedConversation]);
 
-        const messagesQuery = query(
-            messagesRef,
-            orderBy('sentAt', 'asc'),
-        );
+    useEffect(() => {
+        if (!urlConversation) {
+            return;
+        }
 
-        const unsubscribe = onSnapshot(
-            messagesQuery,
-            (snapshot) => {
-                const updatedMessages: Message[] = snapshot.docs.map(
-                    (doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    } as Message),
-                );
+        const conversationId =
+            urlConversation.conversationId;
 
-                setMessageState({
-                    conversationId: selectedConversation.conversationId,
-                    messages: updatedMessages,
-                    loaded: true,
-                });
+        const timeoutId = window.setTimeout(() => {
+            void loadMessagesForConversation(conversationId);
+        }, 0);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [urlConversation]);
+
+    useEffect(() => {
+        const socketUrl =
+            process.env.NEXT_PUBLIC_API_URL?.replace(
+                /\/api\/?$/,
+                '',
+            ) || window.location.origin;
+
+        const socket = io(
+            `${socketUrl}/messaging`,
+            {
+                withCredentials: true,
+                transports: ['websocket'],
             },
+        );
+
+        socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log(
+                'Connected to messaging socket',
+            );
+
+            const conversationId =
+                selectedConversationIdRef.current;
+
+            if (conversationId) {
+                socket.emit(
+                    'joinConversation',
+                    conversationId,
+                );
+            }
+        });
+
+        socket.on(
+            'connect_error',
             (error) => {
                 console.error(
-                    'Error listening for messages:',
+                    'Messaging socket connection error:',
                     error,
                 );
             },
         );
 
-        return () => unsubscribe();
-    }, [selectedConversation]);
+        socket.on(
+            'newMessage',
+            (message: Message) => {
+                setMessageState((current) => {
+                    if (
+                        current.messages.some(
+                            (existingMessage) =>
+                                existingMessage.id ===
+                                message.id,
+                        )
+                    ) {
+                        return current;
+                    }
+
+                    return {
+                        conversationId:
+                            current.conversationId,
+                        messages: [
+                            ...current.messages,
+                            message,
+                        ],
+                        loaded: true,
+                    };
+                });
+
+                void loadConversations();
+            },
+        );
+
+        return () => {
+            socket.disconnect();
+            socketRef.current = null;
+        };
+    }, []);
 
     return {
         conversations,
