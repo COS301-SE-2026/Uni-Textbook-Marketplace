@@ -481,6 +481,9 @@ describe('CasesService', () => {
         expect(caseRepo.find).toHaveBeenCalledWith({
           where: { status: 'pending' },
           order: { created_at: 'ASC' },
+          relations: {
+            user: true,
+          },
         });
       });
 
