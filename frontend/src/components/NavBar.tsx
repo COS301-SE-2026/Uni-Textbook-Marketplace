@@ -23,6 +23,7 @@ const authNavLinks = [
   { label: 'Sell', href: '/listings/create' },
   { label: 'Messages', href: '/messages' },
   { label: 'Wishlist', href: '/wishlist' },
+  { label: 'Reading List', href: '/reading-list' },
   { label: 'Auctions', href: '/auction' },
 ]
 
@@ -31,7 +32,8 @@ const adminNavLinks = [
   { label: 'Messages', href: '/messages' },
   { label: 'Moderate', href: '/admin/review' },
   { label: 'Cases', href: '/admin/cases' },
-  { label: 'Audit Logs', href: '/admin/log' }
+  { label: 'Audit Logs', href: '/admin/log' },
+  { label: 'Reading List', href: '/reading-list' },
 
 ]
 

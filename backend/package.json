@@ -5,13 +5,16 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "_moduleAliases": {
+    "src": "dist"
+  },
   "scripts": {
-    "build": "nest build",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node -r module-alias/register dist/main",
     "seed": "ts-node  src/database/seeds/seed-runner.ts",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
@@ -59,6 +62,7 @@
     "firebase-admin": "14.2.0",
     "ioredis": "5.11.1",
     "lodash.includes": "4.3.0",
+    "module-alias": "2.3.4",
     "next": "16.2.9",
     "nodemailer": "9.0.0",
     "passport": "0.7.0",
