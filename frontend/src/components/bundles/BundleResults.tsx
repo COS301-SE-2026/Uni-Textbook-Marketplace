@@ -25,6 +25,7 @@ export default function BundleResults({ result }: BundleResultsProps) {
         setMessageStatus('');
 
         try {
+            let messagesSent = 0;
             for (const group of result.recommended.sellerGroups) {
                 if (group.listings.length === 0) {
                     continue;
@@ -46,9 +47,10 @@ export default function BundleResults({ result }: BundleResultsProps) {
                     conversationResponse.conversationId,
                     message,
                 );
+                messagesSent++;
             }
 
-            setMessageStatus('Messages sent successfully!');
+            setMessageStatus(`Sent message number ${messagesSent} seller(s).`);
         } catch (error) {
             setMessageStatus(
                 error instanceof Error
@@ -187,6 +189,23 @@ export default function BundleResults({ result }: BundleResultsProps) {
                 </div>
             </div>
         </Card>
-    </div>
+            <div className="flex justify-end">
+                <Button
+                    type="button"
+                    variant="primary"
+                    onClick={handleMessageSellers}
+                    disabled={messaging}
+                    className="rounded-xl px-5 py-3 font-bold transition disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                    {messaging ? 'Contacting sellers...' : 'Message Sellers'}
+                </Button>
+            </div>
+
+            {messageStatus && (
+                <p className="text-sm text-muted-foreground">
+                    {messageStatus}
+                </p>
+            )}
+        </div>
     );
 }
