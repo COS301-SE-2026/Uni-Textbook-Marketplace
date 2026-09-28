@@ -47,7 +47,7 @@ const FOOTER_DIVISIONS = [
       { label: 'Brand Style Guide', href: '/brand' },
 
       
-      { label: 'Our Collaborators', href: '/https://www2.agilebridge.co.za/our-company/' },
+      { label: 'Our Collaborators', href: 'https://www2.agilebridge.co.za/our-company/', target: '_blank' },
     ],
   },
 
