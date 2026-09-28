@@ -26,6 +26,7 @@ export default function BundleResults({ result }: BundleResultsProps) {
 
         try {
             let messagesSent = 0;
+            let skipped = 0;
             for (const group of result.recommended.sellerGroups) {
                 if (group.listings.length === 0) {
                     continue;
@@ -39,23 +40,45 @@ export default function BundleResults({ result }: BundleResultsProps) {
 
                 const message = `Hello, I am interested in purchasing the following books from your listings: ${books}.`;
 
-                const conversationResponse = await createConversation(
-                    listing.id,
-                );
+                try{
+                    const conversationResponse = await createConversation(
+                        listing.id,
+                    );
 
-                await sendMessage(
-                    conversationResponse.conversationId,
-                    message,
-                );
-                messagesSent++;
+                    await sendMessage(
+                        conversationResponse.conversationId,
+                        message,
+                    );
+                    messagesSent++;
+                } catch (error) {
+                if (
+                    error instanceof Error &&
+                    error.message.includes(
+                        'cannot start a conversation with yourself',
+                    )
+                    ) {
+                        skipped++;
+                        continue;
+                    }
+
+                    throw error;
+                }
+                
             }
-
-            setMessageStatus(`Sent message number ${messagesSent} seller(s).`);
+            if (skipped > 0) {
+                setMessageStatus(
+                    `Sent messages to ${messagesSent} seller(s). Skipped ${skipped} seller(s) because you cannot message yourself.`,
+                );
+            } else {
+                setMessageStatus(
+                    `Sent messages to ${messagesSent} seller(s).`,
+                );
+            }
         } catch (error) {
             setMessageStatus(
                 error instanceof Error
                     ? error.message
-                    : 'Failed to send messages.',
+                    : 'Failed to send messages. Please note you should not be attempting to message yourself.',
             );
         } finally {
             setMessaging(false);
