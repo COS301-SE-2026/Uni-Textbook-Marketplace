@@ -202,9 +202,36 @@ CREATE TABLE cases (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+--auction
+CREATE TABLE auction (
+    id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    listing_id UUID REFERENCES listings(id) ON DELETE SET NULL,
+    seller_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    starting_price NUMERIC NOT NULL,
+    reserve_price NUMERIC,
+    current_highest_bid NUMERIC,
+    current_highest_bidder_id UUID  REFERENCES users(id) ON DELETE SET NULL,
+    start_time TIMESTAMPTZ,
+    end_time TIMESTAMPTZ,
+    status VARCHAR(20) DEFAULT 'SCHEDULED' CHECK (status IN ('SCHEDULED','ACTIVE','ENDED', 'CANCELLED'))
+    extension_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)
+
+CREATE TABLE bid (
+    id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    auction_id UUID REFERENCES auction(id) ON DELETE SET NULL,
+    bidder_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    amount NUMERIC NOT NULL,
+    placed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACCEPTED','REJECTED')),
+    rejection_reason TEXT,
+)
 
 
+CREATE INDEX idx_bid_auction_id ON bid(auction_id);
 
+CREATE INDEX idx_auction_status_endtime ON auction(status, end_time);
 
 -- indexes
 

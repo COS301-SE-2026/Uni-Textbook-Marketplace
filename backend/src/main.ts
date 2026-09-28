@@ -1,4 +1,5 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
@@ -6,6 +7,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.use(cookieParser());
 
@@ -15,6 +25,7 @@ async function bootstrap() {
       'https://localhost:3001',
       'https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
       'https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io',
+      'https://www.unitextbookmarketplace.co.za',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],

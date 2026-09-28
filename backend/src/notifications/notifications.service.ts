@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from '../database/entities/notifications.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AdminEvent } from '../admin/events/admin.event';
 import { EditEvent } from '../listings/events/edit.event';
 import { MessageEvent } from '../messaging/events/message.event';
@@ -9,6 +9,44 @@ import { ReportEvent } from '../reports/events/report.events';
 import { User } from '../database/entities/users.entity';
 import { SavedSearchMatchEvent } from '../saved_search/events/saved-search-match.event';
 import { EMAIL_SERVICE, IEmailService } from '../email/email.interface';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+export interface AuctionEndedNotification {
+  sellerId: string | null;
+  bidderId: string | null;
+  listingId: string | null;
+  listingTitle: string;
+  outcome: 'SOLD' | 'RESERVE_NOT_MET' | 'NO_BIDS';
+  finalBid: number | null;
+}
+
+function getAuctionEndedMessage(
+  event: AuctionEndedNotification,
+  isSeller: boolean,
+): string {
+  if (isSeller) {
+    if (event.outcome === 'SOLD') {
+      return `Your auction for "${event.listingTitle}" ended with a successful sale, Message the winner.`;
+    }
+    if (event.outcome === 'RESERVE_NOT_MET') {
+      return `Your auction for "${event.listingTitle}" ended without a sale because the reserve price was not met, Message the highest bidder`;
+    }
+    return `Your auction for "${event.listingTitle}" ended without any bids.`;
+  }
+
+  if (event.outcome === 'SOLD') {
+    return `You won the auction for "${event.listingTitle}".Message the seller`;
+  }
+  return `You were the highest bidder for "${event.listingTitle}", but the reserve price was not met.Message the seller`;
+}
+
+function getAuctionCounterpartyId(
+  event: AuctionEndedNotification,
+  isSeller: boolean,
+): string | null {
+  if (!event.sellerId || !event.bidderId) return null;
+  return isSeller ? event.bidderId : event.sellerId;
+}
 
 @Injectable()
 export class NotificationsService {
@@ -21,7 +59,9 @@ export class NotificationsService {
 
     @Inject(EMAIL_SERVICE)
     private readonly emailService: IEmailService,
-  ) { }
+
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   //for notifying student of their listing
   async create(event: AdminEvent) {
@@ -32,7 +72,12 @@ export class NotificationsService {
       message_info: event.description,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.studentId,
+      notificationId: savedNotification.id,
+    });
 
     if (event.action == 'REJECT_LISTING') {
       await this.emailService.sendNotificationEmail(
@@ -45,7 +90,6 @@ export class NotificationsService {
         },
       );
     } else {
-
       await this.emailService.sendNotificationEmail(
         event.studentEmail,
         event.action,
@@ -54,7 +98,6 @@ export class NotificationsService {
           listingTitle: event.title,
         },
       );
-
     }
   }
 
@@ -65,7 +108,12 @@ export class NotificationsService {
       entity_id: { id: event.listingId },
       message_info: `New listing "${event.listingTitle}" matches your saved search!`,
     });
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.userId,
+      notificationId: savedNotification.id,
+    });
 
     await this.emailService.sendNotificationEmail(
       event.studentEmail,
@@ -75,6 +123,48 @@ export class NotificationsService {
         listingTitle: event.listingTitle,
       },
     );
+  }
+
+  async notifyAuctionEnded(event: AuctionEndedNotification) {
+    const recipientIds = [event.sellerId, event.bidderId].filter(
+      (id, index, ids): id is string =>
+        Boolean(id) && ids.indexOf(id) === index,
+    );
+    const recipients = recipientIds.length
+      ? await this.userRepo.find({ where: { id: In(recipientIds) } })
+      : [];
+
+    for (const recipient of recipients) {
+      const isSeller = recipient.id === event.sellerId;
+      const message = getAuctionEndedMessage(event, isSeller);
+      const counterpartyId = getAuctionCounterpartyId(event, isSeller);
+
+      const notification = this.notificationRepo.create({
+        user_id: { id: recipient.id },
+        notification_from: counterpartyId ? { id: counterpartyId } : undefined,
+        entity_type: 'AUCTION_ENDED',
+        entity_id: event.listingId ? { id: event.listingId } : undefined,
+        message_info: message,
+      });
+      const savedNotification = await this.notificationRepo.save(notification);
+
+      this.eventEmitter.emit('notification.created', {
+        userId: recipient.id,
+        notificationId: savedNotification.id,
+      });
+
+      await this.emailService.sendNotificationEmail(
+        recipient.email,
+        'AUCTION_ENDED',
+        {
+          recipientName: recipient.first_name,
+          listingTitle: event.listingTitle,
+          outcome: event.outcome,
+          finalBid: event.finalBid,
+          isSeller,
+        },
+      );
+    }
   }
 
   async mynotifications(userId: string, page: number = 1, limit: number = 5) {
@@ -91,6 +181,13 @@ export class NotificationsService {
     if (notifications.length === 0)
       throw new NotFoundException('No notifications found');
 
+    const unread = await this.notificationRepo.count({
+      where: {
+        user_id: { id: userId },
+        is_read: false,
+      },
+    });
+
     return {
       data: notifications,
       pagination: {
@@ -99,6 +196,7 @@ export class NotificationsService {
         limit,
         pages: Math.ceil(total / limit),
       },
+      unreadCount: unread,
     };
   }
 
@@ -138,7 +236,12 @@ export class NotificationsService {
       message_info: event.message,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.adminId,
+      notificationId: savedNotification.id,
+    });
   }
 
   async notifyStudentofMessage(event: MessageEvent) {
@@ -149,7 +252,12 @@ export class NotificationsService {
       message_info: event.messageInfo,
     });
 
-    await this.notificationRepo.save(noti);
+    const savedNotification = await this.notificationRepo.save(noti);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.userId,
+      notificationId: savedNotification.id,
+    });
 
     await this.emailService.sendNotificationEmail(
       event.studentEmail,
@@ -198,7 +306,14 @@ export class NotificationsService {
         }),
       );
 
-      await this.notificationRepo.save(notification);
+      const savedNotification = await this.notificationRepo.save(notification);
+
+      for (const notification of savedNotification) {
+        this.eventEmitter.emit('notification.created', {
+          userId: notification.user_id.id,
+          notificationId: notification.id,
+        });
+      }
 
       return;
     }
@@ -210,6 +325,11 @@ export class NotificationsService {
       message_info: event.message,
     });
 
-    await this.notificationRepo.save(notification);
+    const savedNotification = await this.notificationRepo.save(notification);
+
+    this.eventEmitter.emit('notification.created', {
+      userId: event.reporterId,
+      notificationId: savedNotification.id,
+    });
   }
 }

@@ -141,7 +141,6 @@ export class AdminService {
           matchDate: new Date(),
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     } catch (error) {
       const errorMessage =
@@ -285,6 +284,13 @@ export class AdminService {
         notes: `User ${user.email} was banned.`,
       }),
     );
+
+    this.eventEmitter.emit('user.banned', {
+      userId: user.id,
+      name: `${user.first_name} ${user.last_name}`,
+      studentEmail: user.email,
+      reason,
+    });
 
     return savedUser;
   }

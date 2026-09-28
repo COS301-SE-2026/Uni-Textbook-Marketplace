@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -23,17 +24,29 @@ import { Wishlist } from './database/entities/wishlist.entity';
 import { Notifications } from './database/entities/notifications.entity';
 import { SavedSearch } from './database/entities/saved_search.entity';
 import { Report } from './database/entities/report.entity';
-import {Case} from  './database/entities/case.entity'
+import { Case } from './database/entities/case.entity';
 import { AzureModule } from './azure/azure.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { ReportsModule } from './reports/reports.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { VisionModule } from './vision/vision.module';
+import { BundlesModule } from './bundles/bundles.module';
+import { ModuleBook } from './database/entities/module-book.entity';
+import { Auction } from './database/entities/auction.entity';
+import { Bid } from './database/entities/bid.entity';
+import { AuctionModule } from './auction/auction.module';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST ?? 'localhost',
+        port: Number(process.env.REDIS_PORT ?? 6379),
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -60,6 +73,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           SavedSearch,
           Report,
           Case,
+          ModuleBook,
+          Auction,
+          Bid,
         ],
         migrations: ['dist/database/migrations/*.js'],
         migrationsRun: true,
@@ -77,6 +93,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     MessagingModule,
     ReportsModule,
     CasesModule,
+    AuctionModule,
+    VisionModule,
+    BundlesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

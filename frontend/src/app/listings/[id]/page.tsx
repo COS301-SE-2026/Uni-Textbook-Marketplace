@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Listing } from '@/components/listings/listingCard'
 import Modal from '@/components/ui/Modal'
@@ -9,8 +10,10 @@ import Button from '@/components/ui/Button'
 import { Badge } from '@/components/ui'
 import { normalizeImage } from '@/lib/image'
 import api from '@/lib/api';
+import { getAuctionForListing, type Auction } from '@/lib/auction.api'
 import AccordionSection from '@/components/ui/AccordionSection'
 import { useMessaging } from '@/hooks/useMessaging'
+import { useAuth } from '@/context/AuthContext'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import '@/components/tutorials/tutorial.css'
@@ -64,6 +67,16 @@ function timeAgo(dateStr: string): string {
     return `${weeks} weeks ago`
 }
 
+function auctionDate(value: string | null): string {
+    if (!value) return 'Not available'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return 'Not available'
+    return new Intl.DateTimeFormat('en-ZA', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(date)
+}
+
 //Page 
 
 export default function ListingDetailPage() {
@@ -72,6 +85,7 @@ export default function ListingDetailPage() {
     const router = useRouter()
 
     const [listing, setListing] = useState<Listing | null>(null)
+    const [listingAuction, setListingAuction] = useState<Auction | null>(null)
     const [loading, setLoading] = useState(true)
     const [activeImage, setActiveImage] = useState(0)
     const [showMessageModal, setShowMessageModal] = useState(false)
@@ -84,7 +98,11 @@ export default function ListingDetailPage() {
         bookDetails: false,
         moduleDetails: false,
     })
-    const {startConversation} = useMessaging();
+    const { startConversation } = useMessaging();
+    const { user } = useAuth();
+    const sellerId = listing?.seller?.id?.trim();
+    const currentUserId = user?.id?.trim();
+    const isOwner = Boolean(sellerId && currentUserId && sellerId === currentUserId);
 
     // Fetch listing
 
@@ -103,10 +121,22 @@ export default function ListingDetailPage() {
     }, [id])
 
     useEffect(() => {
+        const fetchListingAuction = async () => {
+            try {
+                setListingAuction(await getAuctionForListing(id))
+            } catch (err) {
+                console.error('Error fetching listing auction:', err)
+            }
+        }
 
-        if(loading || !listing) return;
+        fetchListingAuction()
+    }, [id])
 
-        if(sessionStorage.getItem('tutorial_contact_seller') !== '1') return;
+    useEffect(() => {
+
+        if (loading || !listing || isOwner) return;
+
+        if (sessionStorage.getItem('tutorial_contact_seller') !== '1') return;
 
         sessionStorage.removeItem('tutorial_contact_seller')
 
@@ -123,7 +153,7 @@ export default function ListingDetailPage() {
             ]
         })
         tour.drive()
-    }, [loading,listing])
+    }, [loading, listing, isOwner])
 
     function onselect(section: SectionKey) {
         setOpenSection((prev) => ({ ...prev, [section]: !prev[section] }))
@@ -140,7 +170,7 @@ export default function ListingDetailPage() {
                     <div className="flex-1 flex flex-col gap-4">
                         <div className="h-6 bg-gray-200 rounded w-2/3" />
 
-                        
+
                         <div className="h-4 bg-gray-100 rounded w-1/3" />
 
                         <div className="h-8 bg-gray-200 rounded w-1/4 mt-4" />
@@ -169,7 +199,7 @@ export default function ListingDetailPage() {
     }
 
     return (
-        <div className="container-content py-8">
+        <div className="container-content px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">
 
             <Button
                 onClick={() => router.back()}
@@ -178,7 +208,7 @@ export default function ListingDetailPage() {
             >
 
                 <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform duration-200" />
-                Back 
+                Back
             </Button>
 
 
@@ -224,11 +254,10 @@ export default function ListingDetailPage() {
                                     type="button"
                                     key={i}
                                     onClick={() => setActiveImage(i)}
-                                    className={`relative w-14 h-14 rounded border-2 overflow-hidden transition-all duration-200 ${
-                                        activeImage === i
-                                            ? 'border-blue-600 shadow-md shadow-blue-200'
-                                            : 'border-transparent hover:border-gray-300'
-                                    }`}
+                                    className={`relative w-14 h-14 rounded border-2 overflow-hidden transition-all duration-200 ${activeImage === i
+                                        ? 'border-blue-600 shadow-md shadow-blue-200'
+                                        : 'border-transparent hover:border-gray-300'
+                                        }`}
                                 >
 
                                     <Image
@@ -261,6 +290,29 @@ export default function ListingDetailPage() {
                         <p className="text-2xl font-bold mt-4">
                             R {Number(listing.price).toFixed(2)}
                         </p>
+
+                        {listingAuction && (
+                            <div className="mt-5 rounded-lg border border-[#00B4D8]/40 bg-[#E8F9FC] p-4 dark:bg-[#003847]">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-sm font-semibold text-[#000f2b] dark:text-white">Auction available</h3>
+                                        <Badge variant={listingAuction.status === 'ACTIVE' ? 'active' : 'pending'}>
+                                            {listingAuction.status === 'ACTIVE' ? 'In progress' : 'Scheduled'}
+                                        </Badge>
+                                    </div>
+                                    <Link
+                                        href={`/auction/bid?auctionId=${listingAuction.id}`}
+                                        className="text-sm font-semibold text-[#006D8A] hover:underline dark:text-[#7DE3F2]"
+                                    >
+                                        View auction
+                                    </Link>
+                                </div>
+                                <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-600 sm:grid-cols-2 dark:text-gray-200">
+                                    <p><span className="font-semibold">Starts:</span> {auctionDate(listingAuction.start_time)}</p>
+                                    <p><span className="font-semibold">Ends:</span> {auctionDate(listingAuction.end_time)}</p>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="mt-6">
 
@@ -359,7 +411,7 @@ export default function ListingDetailPage() {
 
                 </div>
 
-                <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
+                <aside className="w-full shrink-0 lg:w-64 flex flex-col gap-4">
 
                     <div className="card p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
 
@@ -414,29 +466,31 @@ export default function ListingDetailPage() {
 
                     </div>
 
-                    <div className="flex gap-3 mt-8 flex-wrap">
+                    {!isOwner && (
+                        <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:flex sm:flex-wrap">
 
-                        <Button
-                            onClick={() => setShowMessageModal(true)}
-                            variant='primary'
-                            id='message-seller-btn'
-                        
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <Send size={16} />
-                            MESSAGE SELLER
-                        </Button>
+                            <Button
+                                onClick={() => setShowMessageModal(true)}
+                                variant='primary'
+                                id='message-seller-btn'
 
-                        <Button
-                            onClick={() => setShowReportModal(true)}
-                            variant="primary"
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <AlertTriangle size={16} />
-                            REPORT LISTING
-                        </Button>
+                                className="flex w-full items-center justify-center gap-2 cursor-pointer sm:w-auto"
+                            >
+                                <Send size={16} />
+                                MESSAGE SELLER
+                            </Button>
 
-                    </div>
+                            <Button
+                                onClick={() => setShowReportModal(true)}
+                                variant="primary"
+                                className="flex w-full items-center justify-center gap-2 cursor-pointer sm:w-auto"
+                            >
+                                <AlertTriangle size={16} />
+                                REPORT LISTING
+                            </Button>
+
+                        </div>
+                    )}
 
                 </aside>
 
@@ -526,12 +580,12 @@ export default function ListingDetailPage() {
 
                     </div>
 
-                    
-                    
+
+
                 )}
             </Modal>
 
-            
+
             <Modal
                 isOpen={showReportModal}
                 onClose={() => {
@@ -626,7 +680,7 @@ export default function ListingDetailPage() {
                     </div>
                 )}
             </Modal>
-            
+
 
         </div>
     )

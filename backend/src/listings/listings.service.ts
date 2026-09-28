@@ -20,6 +20,7 @@ import { Module as ModuleEntity } from '../database/entities/module.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
+import { Auction, AuctionStatus } from '../database/entities/auction.entity';
 
 const LISTING_STATUS_TRANSITIONS: Record<ListingsStatus, ListingsStatus[]> = {
   [ListingsStatus.AVAILABLE]: [
@@ -49,6 +50,9 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private readonly moduleRepo: Repository<ModuleEntity>,
+
+    @InjectRepository(Auction)
+    private readonly auctionRepo: Repository<Auction>,
 
     private readonly eventEmitter: EventEmitter2,
   ) {}
@@ -93,6 +97,7 @@ export class ListingsService {
       .createQueryBuilder('listing')
       .leftJoinAndSelect('listing.book', 'book')
       .leftJoinAndSelect('listing.module', 'module')
+      .leftJoin('module.university', 'university')
       .leftJoinAndSelect('listing.seller', 'seller')
       .where('listing.status = :status', { status: ListingStatus.APPROVED });
 
@@ -111,6 +116,11 @@ export class ListingsService {
       );
     }
     //optional query filters
+    if (query?.university) {
+      qb.andWhere('university.id = :university', {
+        university: query.university,
+      });
+    }
     if (query?.moduleCode) {
       qb.andWhere('module.code ILIKE :moduleCode', {
         moduleCode: `%${query.moduleCode}%`,
@@ -173,16 +183,15 @@ export class ListingsService {
       throw new BadRequestException('Invalid listing ID format');
     }
 
-    const listing = await this.listingRepo.findOne({
-      where: { id },
-      relations: [
-        'book',
-        'module',
-        'module.faculty',
-        'seller',
-        'seller.university',
-      ],
-    });
+    const listing = await this.listingRepo
+      .createQueryBuilder('listing')
+      .leftJoinAndSelect('listing.book', 'book')
+      .leftJoinAndSelect('listing.module', 'module')
+      .leftJoinAndSelect('module.faculty', 'faculty')
+      .leftJoinAndSelect('listing.seller', 'seller')
+      .leftJoinAndSelect('seller.university', 'university')
+      .where('listing.id = CAST(:id AS uuid)', { id })
+      .getOne();
 
     if (!listing) throw new NotFoundException('Listing not found');
 
@@ -232,13 +241,23 @@ export class ListingsService {
     return changes;
   }
 
-  async editlisting(dto: EditListingDto) {
+  async editlisting(userId: string, dto: EditListingDto) {
+    if (!this.isValidUUID(dto.id)) {
+      throw new BadRequestException('Invalid listing ID format');
+    }
+
     const listing = await this.listingRepo.findOne({
       where: { id: dto.id },
       relations: ['reviewer', 'seller', 'book', 'module'],
     });
 
     if (!listing) throw new NotFoundException('listing not found');
+
+    if (listing.seller.id !== userId) {
+      throw new ForbiddenException(
+        'Only the listing owner can edit this listing',
+      );
+    }
 
     if (!this.isValidUUID(listing.id)) {
       throw new BadRequestException('Invalid listing ID format');
@@ -259,7 +278,35 @@ export class ListingsService {
       this.eventEmitter.emit('listing.edit', event);
     }
 
-    Object.assign(listing, dto);
+    // Object.assign(listing, dto); - fix to copy only an explicit list of editable fields
+
+    if (dto.title !== undefined) {
+      listing.title = dto.title;
+    }
+
+    if (dto.price !== undefined) {
+      listing.price = dto.price;
+    }
+
+    if (dto.has_notes !== undefined) {
+      listing.has_notes = dto.has_notes;
+    }
+
+    if (dto.condition !== undefined) {
+      listing.condition = dto.condition;
+    }
+
+    if (dto.description !== undefined) {
+      listing.description = dto.description;
+    }
+
+    if (dto.annotation_level !== undefined) {
+      listing.annotation_level = dto.annotation_level;
+    }
+
+    if (dto.photo_urls !== undefined) {
+      listing.photo_urls = dto.photo_urls;
+    }
 
     return await this.listingRepo.save(listing);
   }
@@ -294,6 +341,24 @@ export class ListingsService {
 
     if (listing.listing_status === newStatus) {
       throw new BadRequestException(`Listing is already ${newStatus}`);
+    }
+
+    if (
+      newStatus === ListingsStatus.RESERVED ||
+      newStatus === ListingsStatus.SOLD
+    ) {
+      const activeAuction = await this.auctionRepo.findOne({
+        where: [
+          { listing_id: listingId, status: AuctionStatus.ACTIVE },
+          { listing_id: listingId, status: AuctionStatus.SCHEDULED },
+        ],
+      });
+
+      if (activeAuction) {
+        throw new BadRequestException(
+          'This listing cannot be reserved or sold while it has an active or scheduled auction',
+        );
+      }
     }
 
     const allowedNext =

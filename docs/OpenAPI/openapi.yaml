@@ -37,6 +37,8 @@ tags:
     description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
   - name: Profile
     description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+  - name: Vision
+    description: "Sprint 6 / Wow Factor 1, AI-Assisted Listing Creation. Owner: Tiego."
 
 components:
   securitySchemes:
@@ -107,7 +109,6 @@ components:
           type: string
           format: date-time
 
-    # (Gift): confirm this matches the final notifications table shape
     Notification:
       type: object
       properties:
@@ -143,8 +144,6 @@ components:
           type: string
           format: date-time
 
-    # (Josh): confirm field names against the actual reports table
-    # migration once committed.
     Report:
       type: object
       properties:
@@ -154,20 +153,23 @@ components:
         reporterId:
           type: string
           format: uuid
+          description: The ID of the user who submitted the report
         listingId:
           type: string
           format: uuid
+          description: The ID of the listing being reported
         reason:
           type: string
+          description: The reason for the report
         status:
           type: string
           enum: [PENDING, REVIEWED]
+          description: The current status of the report
         createdAt:
           type: string
           format: date-time
+          description: Timestamp of report creation
 
-    # (Neo): confirm field names against the actual cases table
-    # migration once committed.
     Case:
       type: object
       properties:
@@ -177,7 +179,7 @@ components:
         userId:
           type: string
           format: uui
-        #ban_id foreign key removed as there is no ban table to reference
+        
         appeal_message:
           type: string
         status:
@@ -269,6 +271,41 @@ components:
             totalPages:
               type: integer
               description: Total number of pages
+
+    MatchedBook:
+      type: object
+      description: >
+        The Book record the OCR text was fuzzy-matched against. Absent
+        (matchedBook is null on the parent response) when no confident
+        match was found.
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        edition:
+          type: integer
+        confidence:
+          type: number
+          format: float
+          description: Fuzzy-match confidence score (0 to 1) between the OCR text and this Book record.
+
+    ExtractTextResponse:
+      type: object
+      properties:
+        rawText:
+          type: string
+          description: Raw text lines returned by Azure AI Vision's Read API (Image Analysis 4.0), before fuzzy matching.
+        matchedBook:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/MatchedBook"
+          description: Best fuzzy match against the Book table, or null if nothing matched with enough confidence.
 
   responses:
     Unauthorized:
@@ -910,6 +947,48 @@ paths:
         "200":
           description: Deleted
 
+  /vision/extract-text:
+    post:
+      tags: [Vision]
+      summary: >
+        Runs Azure AI Vision OCR (Image Analysis 4.0 Read API) on a listing
+        photo already uploaded to Blob Storage via the existing /images/upload
+        flow, then fuzzy-matches the extracted text against the Book table.
+        Pre-fills CreateListingDto fields for the seller to review and edit,
+        never auto-submits a listing. Backend-mediated: the Azure Vision
+        endpoint and key are never exposed to the client. Background removal
+        and corner-crop detection are not part of this endpoint - they run
+        entirely client-side (frontend/src/utils/removeUniformBackground.ts).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [imageUrl]
+              properties:
+                imageUrl:
+                  type: string
+                  description: URL of the photo already uploaded via the existing /images/upload flow.
+      responses:
+        "200":
+          description: >
+            OCR text extracted. matchedBook is null if no confident match
+            was found - the frontend falls back to manual entry with the
+            photo kept and every field still editable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtractTextResponse"
+        "400":
+          description: Missing or invalid imageUrl
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
   /conversations:
     post:
       tags: [Conversations]
@@ -967,13 +1046,14 @@ paths:
         "201":
           description: Message sent
 
-  # (Josh): UC10 report submission + admin review.
   /reports:
     post:
       tags: [Reports]
       summary: A student submits a report against a listing.
-      # TODO (Josh): confirm request body against reports.dto.ts.
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -983,18 +1063,28 @@ paths:
                 listingId:
                   type: string
                   format: uuid
+                  description: The ID of the listing being reported
                 reason:
                   type: string
+                  description: The reason for the report
       responses:
         "201":
-          description: Report submitted
+          description: Report submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /admin/reports:
     get:
       tags: [Reports]
-      summary: Returns reports for admin review, paginated, filterable by status.
+      summary: Returns reports for admin review, paginated, filterable by status. 
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: status
@@ -1002,34 +1092,51 @@ paths:
         - in: query
           name: page
           schema: { type: integer }
+          description: Page number
         - in: query
           name: limit
-          schema: { type: integer }
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+          description: Number of reports returned per page.
       responses:
         "200":
-          description: Paginated reports
+          description: List of reports for admin review
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/reports/{id}/dismiss:
+  /admin/{id}/dismiss:
     patch:
       tags: [Reports]
       summary: Dismisses a report without banning the reported user.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
+          description: The ID of the report to dismiss
       responses:
         "200":
           description: Report dismissed
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
-  # (Josh): confirm the actual route/verb for the ban action once
-  # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
-  # banned_by, ban_reason set on the reported listing's seller) but not yet
-  # a confirmed endpoint path. Likely PATCH /admin/users/{id}/ban or similar.
   /admin/users/{id}/ban:
     patch:
       tags: [Reports]
@@ -1037,30 +1144,32 @@ paths:
         Bans the user who owns the reported listing. Writes an audit_log
         entry (action = BANNED) and triggers a ban-notice notification with
         appeal instructions via NotificationService.emit().
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                ban_reason:
+                reason:
                   type: string
+                  description: Reason for banning the user
       responses:
         "200":
           description: User banned
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-
-  # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
-  # the admin review + decide endpoint.
-
-  # Neo: UC10 appeal/case flow
-  # Updated to match CasesController implementation
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /cases:
     post:

@@ -30,7 +30,6 @@ export class CaseResponseDto {
   @ApiProperty({ nullable: true })
   deleted_at!: Date | null;
 
-  
   @ApiProperty({ type: () => User })
   user!: User;
 
@@ -45,7 +44,7 @@ export class CaseResponseDto {
     dto.created_at = entity.created_at;
     dto.updated_at = entity.updated_at;
     dto.deleted_at = entity.deleted_at;
-    dto.user = entity.user; 
+    dto.user = entity.user;
     return dto;
   }
 

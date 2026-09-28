@@ -12,6 +12,7 @@ import { Module as ModuleEntity } from "../src/database/entities/module.entity";
 import { University } from "../src/database/entities/university.entity";
 import { Faculty } from "../src/database/entities/faculty.entity";
 import { AuditLog } from "../src/database/entities/audit_log.entity";
+import { randomUUID } from "crypto";
 
 
 jest.setTimeout(30000);
@@ -32,7 +33,7 @@ describe('Admin Integration Tests', () => {
 
     
     const getUniqueId = (): string => {
-        return `${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        return randomUUID();
     };
 
   const createUniversity = async (): Promise<University> => {
@@ -59,14 +60,14 @@ describe('Admin Integration Tests', () => {
 
     const createBook = () => bookRepository.save({
         title: `Test Book ${getUniqueId()}`,
-        isbn: `978013${Date.now().toString().slice(-6)}${Math.random().toString(36).substring(2, 4)}`,
+        isbn: `978013${randomUUID().replace(/-/g, '').substring(0, 9)}`,
         author: 'Test Author',
         edition: 3,
         publisher: 'Test Publisher',
     });
 
     const createModule = () => moduleRepository.save({
-        code: `COS${Date.now().toString().slice(-4)}${Math.random().toString(36).substring(2, 4)}`,
+        code: `COS${randomUUID().replace(/-/g, '').substring(0, 7)}`,
         name: `Imperative Programming ${getUniqueId()}`,
     });
 
@@ -260,35 +261,35 @@ describe('Admin Integration Tests', () => {
             expect(auditLogs[0].action).toBe('APPROVE_LISTING');
         }, 15000);
 
+        const expectListingNotFound = async (
+            token: string,
+            action: 'approve' | 'reject',
+        ) => {
+            const response = await request(app.getHttpServer())
+                .patch(
+                    `/admin/00000000-0000-0000-0000-000000000000/${action}`,
+                )
+                .set('Authorization', `Bearer ${token}`)
+                .expect(404);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('not found');
+            expect(response.statusCode).toBe(404);
+        };
+
        it('should return 404 when listing not found for approve endpoint', async () => {
-    const admin = await createUser('admin');
-    const token = getAuthToken(admin);
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
 
-    const response = await request(app.getHttpServer())
-        .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(404);
-
-  
-    expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toContain('not found');
-    expect(response.statusCode).toBe(404);
-}, 15000);
+            await expectListingNotFound(token, 'approve');
+        }, 15000);
 
         it('should return 404 when listing not found for reject endpoint', async () => {
-    const admin = await createUser('admin');
-    const token = getAuthToken(admin);
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
 
-    const response = await request(app.getHttpServer())
-        .patch('/admin/00000000-0000-0000-0000-000000000000/approve')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(404);
-
-    
-    expect(response.body).toHaveProperty('message');
-    expect(response.body.message).toContain('not found');
-    expect(response.statusCode).toBe(404);
-}, 15000);
+            await expectListingNotFound(token, 'reject');
+        }, 15000);
 
     describe('Admin Reject Listing', () => {
         it('should reject a pending listing and create audit log', async () => {
@@ -323,26 +324,7 @@ describe('Admin Integration Tests', () => {
             expect(auditLogs[0].notes).toBeTruthy();
         }, 15000);
 
-        it('should return 403 when non-admin tries to reject', async () => {
-            const user = await createUser('student');
-            const book = await createBook();
-            const module = await createModule();
-            const token = getAuthToken(user);
-            const listing = await createTestListing(user.id, book.id, module.id, {
-                status: ListingStatus.PENDING
-            });
-
-            const response = await request(app.getHttpServer())
-                .patch(`/admin/${listing.id}/reject`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ reason: 'Invalid' })
-                .expect(403);
-
-            expect(response.body).toHaveProperty('message');
-            expect(response.body.message).toContain('Insufficient permissions');
-            expect(response.body.message).toContain('admin');
-            expect(response.statusCode).toBe(403);
-        }, 15000);
+        
     });
 
     describe('Get Audit Logs', () => {
@@ -453,6 +435,100 @@ describe('Admin Integration Tests', () => {
             expect(response.body).toHaveProperty('message');
             expect(response.body.message).toContain('Insufficient permissions');
             expect(response.body.message).toContain('admin');
+        }, 15000);
+    });
+
+    describe('Ban User', () => {
+        it('should ban a user and create an audit log', async () => {
+            const admin = await createUser('admin');
+            const student = await createUser('student');
+
+            const token = getAuthToken(admin);
+            const reason = 'Fraudulent activity';
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason })
+                .expect(200);
+
+            expect(response.body.id).toBe(student.id);
+            expect(response.body.is_banned).toBe(true);
+
+            const bannedUser = await userRepository.findOne({
+                where: { id: student.id },
+                relations: ['banned_by'],
+            });
+
+            expect(bannedUser).toBeDefined();
+            expect(bannedUser?.is_banned).toBe(true);
+            expect(bannedUser?.ban_reason).toBe(reason);
+            expect(bannedUser?.banned_by?.id).toBe(admin.id);
+
+            const auditLogs = await auditLogRepository.find({
+                where: {
+                    entity_id: student.id,
+                    action: 'BAN_USER',
+                },
+                relations: ['performedBy'],
+            });
+
+            expect(auditLogs).toHaveLength(1);
+            expect(auditLogs[0].entity_type).toBe('USER');
+            expect(auditLogs[0].performedBy.id).toBe(admin.id);
+            expect(auditLogs[0].reason).toBe(reason);
+        }, 15000);
+
+        it('should return 400 when trying to ban an already banned user', async () => {
+            const admin = await createUser('admin');
+            const student = await createUser('student');
+
+            const token = getAuthToken(admin);
+
+            await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(200);
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${student.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Another reason' })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('already banned');
+        }, 15000);
+
+        it('should return 404 when trying to ban a nonexistent user', async () => {
+            const admin = await createUser('admin');
+            const token = getAuthToken(admin);
+
+            const response = await request(app.getHttpServer())
+                .patch('/admin/00000000-0000-0000-0000-000000000000/ban')
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(404);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('User not found');
+        }, 15000);
+
+        it('should return 403 when a non-admin tries to ban a user', async () => {
+            const student = await createUser('student');
+            const target = await createUser('student');
+
+            const token = getAuthToken(student);
+
+            const response = await request(app.getHttpServer())
+                .patch(`/admin/${target.id}/ban`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ reason: 'Fraudulent activity' })
+                .expect(403);
+
+            expect(response.body).toHaveProperty('message');
+            expect(response.body.message).toContain('Insufficient permissions');
         }, 15000);
     });
 

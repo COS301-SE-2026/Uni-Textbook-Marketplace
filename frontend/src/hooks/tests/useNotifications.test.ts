@@ -10,6 +10,31 @@ const mockFetch = jest.fn();
 
 global.fetch = mockFetch as jest.Mock;
 
+class MockEventSource {
+  static instances: MockEventSource[] = [];
+  private readonly listeners = new Map<string, () => void>();
+
+  constructor(public readonly url: string) {
+    MockEventSource.instances.push(this);
+  }
+
+  addEventListener(type: string, listener: EventListener) {
+    this.listeners.set(type, listener as () => void);
+  }
+
+  removeEventListener(type: string) {
+    this.listeners.delete(type);
+  }
+
+  emit(type: string) {
+    this.listeners.get(type)?.();
+  }
+
+  close() { }
+}
+
+global.EventSource = MockEventSource as unknown as typeof EventSource;
+
 const mockNotifications: Notification[] = [
   {
     id: 'notif-1',
@@ -46,7 +71,8 @@ describe('useNotifications', () => {
 
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockFetch.mockReset();
+    MockEventSource.instances = [];
 
 
     process.env.NEXT_PUBLIC_API_URL = API_URL;
@@ -78,7 +104,7 @@ describe('useNotifications', () => {
       await waitForLoadingComplete(result);
 
 
-      
+
 
       expect(result.current.notifications).toEqual(mockNotifications);
 
@@ -123,14 +149,14 @@ describe('useNotifications', () => {
     it('handles paginated responses', async () => {
 
 
-      setup({ 
+      setup({
         items: mockNotifications,
         pagination: {
           total: 2,
           page: 1,
           limit: 5,
           pages: 1
-        }, 
+        },
       });
       const { result } = renderHook(() => useNotifications());
 
@@ -149,7 +175,7 @@ describe('useNotifications', () => {
       const { result } = renderHook(() => useNotifications());
 
       await waitForLoadingComplete(result);
-      
+
 
       expect(result.current.error).toBe('Network error');
     });
@@ -161,10 +187,10 @@ describe('useNotifications', () => {
 
 
       setup(mockNotifications);
-      
-       mockFetch.mockResolvedValueOnce({ 
-        ok: true, 
-        json: jest.fn().mockResolvedValue({}) 
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValue({})
       });
 
       const { result } = renderHook(() => useNotifications());
@@ -239,7 +265,7 @@ describe('useNotifications', () => {
         await result.current.deleteNotif('notif-1');
       });
 
-      
+
       expect(fetch).toHaveBeenCalledWith(
         `${API_URL}/notifications/notif-1/delete`,
         expect.objectContaining({ method: 'DELETE' })
@@ -288,40 +314,32 @@ describe('useNotifications', () => {
         await result.current.markRead('notif-1');
       });
 
-      
+
       expect(fetch).toHaveBeenCalledTimes(3);
     });
 
   });
 
-  describe('polling', () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-    
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    it('polls every 15 seconds', async () => {
+  describe('live updates', () => {
+    it('refreshes when an SSE notification event arrives', async () => {
       setup(mockNotifications);
       setup(mockNotifications);
 
       const { result } = renderHook(() => useNotifications());
-      
-      
+
+
       await waitForLoadingComplete(result);
 
 
 
       expect(fetch).toHaveBeenCalledTimes(1);
 
-      
+
       act(() => {
-        jest.advanceTimersByTime(15000);
+        MockEventSource.instances[0].emit('notification.created');
       });
 
-      
+
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledTimes(2);
       });
@@ -341,7 +359,7 @@ describe('useNotifications', () => {
 
       const { result } = renderHook(() => useNotifications());
 
-      
+
       await waitForLoadingComplete(result);
 
       expect(result.current.unreadCount).toBe(2);
