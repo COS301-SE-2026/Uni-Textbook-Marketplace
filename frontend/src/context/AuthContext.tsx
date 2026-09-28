@@ -117,7 +117,7 @@ export function AuthProvider({
     } catch {
       // Ignore
     } finally {
-      setUser(null);
+
       sessionStorage.removeItem('auth_user');
       router.push('/auth/login');
     }
