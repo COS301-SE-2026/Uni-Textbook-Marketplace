@@ -2,6 +2,9 @@
 
 import Card from '@/components/ui/Card';
 import { BundleResult } from '@/types/bundles';
+import { createConversation, sendMessage, } from '@/lib/messaging.api';
+import { useState } from 'react';
+import { Button } from '@/components/ui/Button';
 
 interface BundleResultsProps {
   result: BundleResult;
