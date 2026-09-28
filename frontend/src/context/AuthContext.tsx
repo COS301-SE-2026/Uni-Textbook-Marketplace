@@ -24,6 +24,7 @@ const PUBLIC_ROUTES = [
   '/help',
   '/brand',
   '/appeal',
+  'https://www2.agilebridge.co.za/our-company/',
 ];
 
 function isPublicRoute(pathname: string): boolean {

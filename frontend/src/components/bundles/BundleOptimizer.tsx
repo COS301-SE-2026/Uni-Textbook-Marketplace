@@ -46,17 +46,17 @@ export default function BundleOptimizer() {
 
     return (
         <div className="mx-auto max-w-6xl space-y-8">
-        <Card className="rounded-3xl border border-slate-700 bg-slate-950 p-6 shadow-2xl md:p-8">
+        <Card className="rounded-3xl border border-border bg-card p-6 shadow-2xl md:p-8">
             <div className="mb-8">
-            <div className="mb-3 inline-flex rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300">
+            <div className="mb-3 inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
                 Smart Bundle Optimizer
             </div>
 
-            <h1 className="text-3xl font-bold text-white md:text-4xl">
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">
                 Find the best way to buy your books
             </h1>
 
-            <p className="mt-3 max-w-2xl text-slate-400">
+            <p className="mt-3 max-w-2xl text-muted-foreground">
                 Select your modules and we&apos;ll find a combination
                 of sellers that covers your books while keeping the
                 overall cost and number of meetups low.
@@ -69,7 +69,7 @@ export default function BundleOptimizer() {
             />
 
             {error && (
-            <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-300">
                 {error}
             </div>
             )}
@@ -79,7 +79,7 @@ export default function BundleOptimizer() {
             variant="primary"
             onClick={handleOptimize}
             disabled={loading || selectedModules.length === 0}
-            className="mt-6 w-full rounded-xl bg-cyan-500 px-5 py-3 font-bold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-6 w-full rounded-xl px-5 py-3 font-bold transition disabled:cursor-not-allowed disabled:opacity-40"
             >
             {loading ? 'Finding the best bundle...' : 'Find Best Deal'}
             </Button>
