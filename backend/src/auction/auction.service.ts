@@ -17,7 +17,7 @@ import {
   ListingStatus,
   ListingsStatus,
 } from '../database/entities/listing.entity';
-import { User } from 'src/database/entities/users.entity';
+import { User } from '../database/entities/users.entity';
 import { db } from '../firebase/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 
