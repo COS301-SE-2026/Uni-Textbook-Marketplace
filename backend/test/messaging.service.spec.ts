@@ -14,7 +14,7 @@ jest.mock('../src/firebase/firebase-admin', () => ({
 
 import { db } from '../src/firebase/firebase-admin';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { emit } from 'process';
+import { MessagingGateway } from '../src/messaging/messaging.gateway';
 
 describe('MessagingService', () => {
     let service: MessagingService;
@@ -109,7 +109,13 @@ describe('MessagingService', () => {
                     useValue: {
                         emit: jest.fn()
                     }
-                }
+                },
+                {
+                    provide: MessagingGateway,
+                    useValue: {
+                        sendMessageToConversation: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 

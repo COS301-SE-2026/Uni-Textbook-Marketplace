@@ -84,6 +84,7 @@ describe('ListingsService', () => {
     leftJoin: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
+    getOne: jest.fn().mockResolvedValue(null),
     getMany: jest.fn().mockResolvedValue([]),
     getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
   });
@@ -421,16 +422,19 @@ describe('ListingsService', () => {
 
   describe('getListingById', () => {
     it('should return listing when valid ID is provided', async () => {
-      mockListingRepository.findOne.mockResolvedValue(mockListing);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getOne as jest.Mock).mockResolvedValue(mockListing);
 
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
 
-      expect(mockListingRepository.findOne).toHaveBeenCalledWith({
-        where: { id: validUuid },
-        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
-      });
+      expect(mockListingRepository.createQueryBuilder).toHaveBeenCalledWith('listing');
+      expect(qb.where).toHaveBeenCalledWith(
+        'listing.id = CAST(:id AS uuid)',
+        { id: validUuid },
+      );
+      expect(qb.getOne).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when ID is not a valid UUID', async () => {
@@ -444,7 +448,8 @@ describe('ListingsService', () => {
     });
 
     it('should throw NotFoundException when listing does not exist with valid UUID', async () => {
-      mockListingRepository.findOne.mockResolvedValue(null);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getOne as jest.Mock).mockResolvedValue(null);
 
       await expect(service.getListingById(validUuid)).rejects.toThrow(NotFoundException);
       await expect(service.getListingById(validUuid)).rejects.toThrow('Listing not found');

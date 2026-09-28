@@ -32,7 +32,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: sh -c "npm install && npm run start:dev"
+    command: sh -c "npm install && npm run build && node -r module-alias/register dist/main.js"
     ports:
       - "3001:3001"
     depends_on:

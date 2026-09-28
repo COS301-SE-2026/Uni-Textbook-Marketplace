@@ -111,7 +111,9 @@ export class CasesService {
       where: {
         status: 'pending',
       },
-
+      relations: {
+        user: true,
+      },
       order: {
         created_at: 'ASC',
       },
@@ -142,7 +144,9 @@ export class CasesService {
 
     const [cases, total] = await this.caseRepo.findAndCount({
       where,
-
+      relations: {
+        user: true,
+      },
       order: {
         created_at: 'DESC',
       },
@@ -170,6 +174,9 @@ export class CasesService {
   ): Promise<CaseResponseDto> {
     const caseEntity = await this.caseRepo.findOne({
       where: { id: caseId },
+      relations: {
+        user: true,
+      },
     });
 
     if (!caseEntity) {
