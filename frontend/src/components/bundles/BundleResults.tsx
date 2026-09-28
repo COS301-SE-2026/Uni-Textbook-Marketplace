@@ -17,6 +17,48 @@ export default function BundleResults({ result }: BundleResultsProps) {
         Number(result.naive.totalPrice) -
         Number(result.recommended.totalPrice);
 
+    const [messaging, setMessaging] = useState(false); 
+    const [messageStatus, setMessageStatus] = useState('');
+
+    const handleMessageSellers = async () => {
+        setMessaging(true);
+        setMessageStatus('');
+
+        try {
+            for (const group of result.recommended.sellerGroups) {
+                if (group.listings.length === 0) {
+                    continue;
+                }
+
+                const listing = group.listings[0];
+
+                const books = group.listings
+                    .map((listing) => listing.title)
+                    .join(', ');
+
+                const message = `Hello, I am interested in purchasing the following books from your listings: ${books}.`;
+
+                const conversationResponse = await createConversation(
+                    listing.id,
+                );
+
+                await sendMessage(
+                    conversationResponse.conversationId,
+                    message,
+                );
+            }
+
+            setMessageStatus('Messages sent successfully!');
+        } catch (error) {
+            setMessageStatus(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to send messages.',
+            );
+        } finally {
+            setMessaging(false);
+        }
+    };
     return (
         <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
@@ -123,27 +165,28 @@ export default function BundleResults({ result }: BundleResultsProps) {
             </h2>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-                <p className="text-sm text-muted-foreground">
-                Naive total
-                </p>
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                    Naive total
+                    </p>
 
-                <p className="text-xl font-bold text-foreground">
-                {money(result.naive.totalPrice)}
-                </p>
-            </div>
+                    <p className="text-xl font-bold text-foreground">
+                    {money(result.naive.totalPrice)}
+                    </p>
+                </div>
 
-            <div>
-                <p className="text-sm text-muted-foreground">
-                Sellers required
-                </p>
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                    Sellers required
+                    </p>
 
-                <p className="text-xl font-bold text-foreground">
-                {result.naive.sellerCount}
-                </p>
-            </div>
+                    <p className="text-xl font-bold text-foreground">
+                    {result.naive.sellerCount}
+                    </p>
+
+                </div>
             </div>
         </Card>
-        </div>
+    </div>
     );
 }
