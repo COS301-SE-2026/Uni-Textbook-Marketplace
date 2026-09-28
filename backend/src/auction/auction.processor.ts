@@ -1,7 +1,7 @@
 import { Processor, WorkerHost, InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue } from 'bullmq';
-import { Auction, AuctionStatus } from 'src/database/entities/auction.entity';
+import { Auction, AuctionStatus } from '../database/entities/auction.entity';
 import { Repository } from 'typeorm';
 import { Listing, ListingsStatus } from '../database/entities/listing.entity';
 import { db } from '../firebase/firebase-admin';
