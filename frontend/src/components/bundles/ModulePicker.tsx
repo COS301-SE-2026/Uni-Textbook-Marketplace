@@ -86,19 +86,19 @@ const API_URL =
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search modules e.g. COS212..."
-            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+            className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground outline-none transition focus:border-primary"
             />
 
             {search.trim() && (
-            <div className="absolute z-20 mt-2 max-h-64 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
+            <div className="absolute z-20 mt-2 max-h-64 w-full overflow-y-auto rounded-xl border border-border bg-popover shadow-2xl">
                 {loading && (
-                <div className="px-4 py-3 text-sm text-slate-400">
+                <div className="px-4 py-3 text-sm text-muted-foreground">
                     Searching...
                 </div>
                 )}
 
                 {!loading && results.length === 0 && (
-                <div className="px-4 py-3 text-sm text-slate-400">
+                <div className="px-4 py-3 text-sm text-muted-foreground">
                     No modules found.
                 </div>
                 )}
@@ -115,20 +115,20 @@ const API_URL =
                         type="button"
                         disabled={alreadySelected}
                         onClick={() => addModule(module)}
-                        className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         <div>
-                        <div className="font-semibold text-white">
+                        <div className="font-semibold text-foreground">
                             {module.code}
                         </div>
 
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-muted-foreground">
                             {module.name}
                         </div>
                         </div>
 
                         {alreadySelected && (
-                        <span className="text-xs text-cyan-400">
+                        <span className="text-xs text-primary">
                             Selected
                         </span>
                         )}
@@ -144,14 +144,14 @@ const API_URL =
             {selectedModules.map((module) => (
                 <div
                 key={module.id}
-                className="flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-sm text-cyan-200"
+                className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-foreground"
                 >
                 <span className="font-semibold">{module.code}</span>
 
                 <button
                     type="button"
                     onClick={() => removeModule(module.id)}
-                    className="text-cyan-300 transition hover:text-white"
+                    className="text-primary transition hover:text-primary/70"
                     aria-label={`Remove ${module.code}`}
                 >
                     ×
