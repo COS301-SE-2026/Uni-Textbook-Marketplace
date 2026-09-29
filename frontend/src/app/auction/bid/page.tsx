@@ -1,10 +1,9 @@
 "use client"
 
 import { Suspense, useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { doc, onSnapshot } from "firebase/firestore"
-import { ArrowLeft, CheckCircle2, Clock3, Gavel, Radio, ShieldCheck } from "lucide-react"
-import Link from "next/link"
+import { CheckCircle2, Clock3, Gavel, Radio, ShieldCheck } from "lucide-react"
 import ProtectedRoute from "@/components/auth/ProtectedRoute"
 import Input from "@/components/ui/Input"
 import { Badge, Button } from "@/components/ui"
@@ -116,14 +115,14 @@ function useLiveAuctionState(
 
     useEffect(() => {
         if (!auctionId) return
-        
+
         let active = true
         let historyRequest = 0
         const unsubscribe = onSnapshot(
             doc(db, "actions", auctionId),
             (snapshot) => {
                 if (!snapshot.exists()) return
-                console.log("auctionId:", auctionId, "project:", db.app.options.projectId, "exists:", snapshot.exists())
+
                 setLiveState(snapshot.data() as LiveAuctionState)
                 const requestId = ++historyRequest
                 refreshBidHistory(
@@ -194,6 +193,7 @@ function OwnerSummary({ highestBid, timeRemaining, acceptedBidCount, extensionCo
 
 function BidPageContent() {
 
+    const router = useRouter()
     const searchParams = useSearchParams()
     const auctionId = searchParams.get("auctionId")
     const [auction, setAuction] = useState<Auction | null>(null)
@@ -329,8 +329,34 @@ function BidPageContent() {
         <div className="min-h-[calc(100vh-4rem)] bg-background">
             <header className="bg-[#000f2b] px-5 py-6 text-white md:px-10">
                 <div className="mx-auto max-w-6xl">
-                    <Link href="/auction" className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-[#00B4D8]"><ArrowLeft size={16} /> Back to auctions</Link>
-                    <div className="mt-6 flex items-start gap-3"><Gavel className="mt-1 text-[#00B4D8]" /><div><div className="flex flex-wrap items-center gap-3"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00B4D8]">Auction</p><Badge variant={statusVariant}>{statusLabel}</Badge></div><h1 className="mt-1 text-2xl font-bold text-white md:text-3xl">{listing?.title ?? "Auction"}</h1><p className="mt-1 text-sm text-white/70">{listing?.book?.author ?? "Review this textbook auction"}</p></div></div>
+
+                    <Button
+                        type="button"
+                        value="outline"
+                        onClick={() => router.push('/auction')}
+                    >
+                        Back to auctions
+                    </Button>
+
+                    <div className="mt-6 flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00B4D8]">
+                                Auction
+                            </p>
+                            <h1 className="mt-1 text-2xl font-bold text-white md:text-3xl">
+                                {listing?.title ?? "Auction"}
+                            </h1>
+                            <p className="mt-1 text-sm text-white/70">{listing?.book?.author ?? "Review this textbook auction"}</p>
+
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-3">
+                            <Gavel className="mt-1 text-[#00B4D8]" />
+                            <Badge variant={statusVariant}>{statusLabel}</Badge>
+                        </div>
+
+                    </div>
                 </div>
             </header>
 

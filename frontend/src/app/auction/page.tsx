@@ -35,7 +35,7 @@ const EMPTY_FILTERS: AuctionFilters = {
     moduleCode: "",
     priceMin: "",
     priceMax: "",
-    sort: "ending",
+    sort: "newest",
 }
 
 function auctionAmount(auction: Auction) {
@@ -243,7 +243,7 @@ export default function AuctionPage() {
                                     </div>
                                     {!loading && <p className="mt-1 text-sm text-gray-500">{filteredAuctions.length} auction{filteredAuctions.length === 1 ? "" : "s"} match your filters</p>}
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-500"><Clock3 size={15} /> Ending soon is shown first</div>
+                                <div className="flex items-center gap-2 text-xs text-gray-500"><Clock3 size={15} /> Recetly added is shown first </div>
                             </div>
 
                             {loading && (

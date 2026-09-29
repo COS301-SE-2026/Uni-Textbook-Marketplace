@@ -159,7 +159,7 @@ export default function MyListingsPage() {
     const closeAuctionModal = () => {
         if (auctionSubmitting) return
         if (auctionSuccess) {
-            router.push('/auction?sort=newest')
+            router.push('/auction')
             return
         }
         setAuctionListing(null)
