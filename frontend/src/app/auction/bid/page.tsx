@@ -116,14 +116,14 @@ function useLiveAuctionState(
 
     useEffect(() => {
         if (!auctionId) return
-
+        
         let active = true
         let historyRequest = 0
         const unsubscribe = onSnapshot(
             doc(db, "actions", auctionId),
             (snapshot) => {
                 if (!snapshot.exists()) return
-
+                console.log("auctionId:", auctionId, "project:", db.app.options.projectId, "exists:", snapshot.exists())
                 setLiveState(snapshot.data() as LiveAuctionState)
                 const requestId = ++historyRequest
                 refreshBidHistory(
