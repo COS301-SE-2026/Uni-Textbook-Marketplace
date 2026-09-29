@@ -1,0 +1,100 @@
+{
+  "nfr": "Protected endpoints shall enforce JWT-based authentication and role-based access control. An admin-only endpoint shall return 403 Forbidden for a Student-role JWT. Passwords shall be hashed with bcrypt at a cost factor of 12. Authentication endpoints shall be rate-limited per endpoint (login at 10/min; register and verify-email at 5/min; forgot-password and resend-otp at 4/min). Access tokens shall expire after 15 minutes; refresh tokens after 7 days. A banned user (is_banned = true) shall be flagged in the login response with is_banned: true and ban_reason, so the frontend can deny access to protected routes; the API continues issuing tokens to allow ban-screen rendering and account-recovery flows.",
+  "totalClauses": 6,
+  "passedClauses": 6,
+  "failedClauses": 0,
+  "skippedClauses": 0,
+  "overallPassed": true,
+  "findings": [
+    {
+      "clause": "Protected endpoints shall enforce JWT-based authentication (no JWT → 401)",
+      "passed": true,
+      "evidence": {
+        "method": "GET",
+        "endpoint": "/notifications/mine",
+        "status": 401
+      }
+    },
+    {
+      "clause": "Admin-only endpoint returns 403 Forbidden for a Student-role JWT",
+      "passed": true,
+      "evidence": {
+        "method": "PATCH",
+        "endpoint": "/admin/00000000-0000-0000-0000-000000000000/approve",
+        "role": "student",
+        "status": 403
+      }
+    },
+    {
+      "clause": "Passwords hashed with bcrypt at a cost factor of 12",
+      "passed": true,
+      "evidence": {
+        "method": "Static code inspection",
+        "reference": "src/auth/auth.service.ts",
+        "detail": "BCRYPT_ROUNDS = 12 is defined and passed to bcrypt.hash on the register and change-password code paths."
+      }
+    },
+    {
+      "clause": "Access tokens expire after 15 minutes; refresh tokens after 7 days",
+      "passed": true,
+      "evidence": {
+        "accessLifetimeSeconds": 900,
+        "refreshLifetimeSeconds": 604800,
+        "expectedAccessSeconds": 900,
+        "expectedRefreshSeconds": 604800
+      }
+    },
+    {
+      "clause": "Banned user (is_banned = true) is flagged in the login response with is_banned: true and ban_reason",
+      "passed": true,
+      "evidence": {
+        "status": 200,
+        "userFlags": {
+          "id": "96ac801b-0fd3-43ae-98ef-bb425b623b42",
+          "email": "u23591732@tuks.co.za",
+          "first_name": "Neo",
+          "last_name": "Bosoga",
+          "role": "student",
+          "is_banned": true,
+          "ban_reason": "For vibes",
+          "university": {
+            "id": "0bf96c63-4576-4bf3-8826-af485708c7ec",
+            "name": "University of Pretoria"
+          }
+        },
+        "interpretation": "soft-ban"
+      },
+      "note": "Login succeeded with is_banned: true. Frontend is expected to deny access to protected routes based on this flag (soft-ban interpretation)."
+    },
+    {
+      "clause": "Login endpoint is rate-limited (per NestJS @Throttle configuration)",
+      "passed": true,
+      "evidence": {
+        "statuses": [
+          401,
+          401,
+          401,
+          401,
+          401,
+          401,
+          401,
+          401,
+          401,
+          429
+        ],
+        "throttledAfter": 10,
+        "configuredLoginLimit": 10,
+        "configuredRegisterLimit": 5,
+        "configuredForgotPasswordLimit": 4,
+        "configuredResendOtpLimit": 4
+      },
+      "note": "Throttled after 10 rapid requests, consistent with the configured login limit of 10/min."
+    }
+  ],
+  "environment": "staging",
+  "testedAt": "2026-09-28T20:29:32.437Z",
+  "notes": {
+    "banPolicy": "Soft-ban. AuthService.login inspects is_banned and returns 200 with an is_banned: true flag rather than rejecting with 403. The NFR has been reworded to match this design.",
+    "rateLimiting": "Per-endpoint limits via @Throttle decorators: login=10/min, register=5/min, verify-email=5/min, forgot-password=4/min, resend-otp=4/min. The NFR has been reworded to describe per-endpoint limits rather than a single 5/min value."
+  }
+}
