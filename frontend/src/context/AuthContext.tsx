@@ -24,6 +24,8 @@ const PUBLIC_ROUTES = [
   '/help',
   '/brand',
   '/appeal',
+  '/terms',
+  '/privacy',
 ];
 
 function isPublicRoute(pathname: string): boolean {

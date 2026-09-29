@@ -14,7 +14,9 @@ const PUBLIC_ROUTES = [
     '/auth/verify-email',
     '/appeal',
     '/brand',
-    '/help', 
+    '/help',
+    '/terms',
+    '/privacy', 
 ];
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
