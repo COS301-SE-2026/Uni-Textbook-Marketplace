@@ -47,5 +47,93 @@ const sections = [
 ];
 
 export default function TermsPage() {
-    
+  return (
+    <main
+      className="min-h-screen w-full flex justify-center px-4 py-12 md:py-16"
+      style={{ background: "#F5F5F5" }}
+    >
+      <div style={{ width: "100%", maxWidth: 720 }}>
+        <div className="flex flex-col items-center text-center mb-10">
+          <Logo className="w-14 h-auto mb-4" />
+          <h1
+            className="text-2xl md:text-3xl font-bold"
+            style={{ color: "#000f2b" }}
+          >
+            Terms of Service
+          </h1>
+          <p className="text-xs mt-2" style={{ color: "#4B4F58" }}>
+            Last updated: [1 October 2026] &middot; Capstone Project - for demonstration
+            purposes only
+          </p>
+        </div>
+
+        <div
+          className="rounded-lg p-6 md:p-10"
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid #dddddd",
+          }}
+        >
+          <p
+            className="text-sm leading-relaxed mb-8"
+            style={{ color: "#3a3a3a" }}
+          >
+            Welcome to NexusDev (&quot;we&quot;, &quot;us&quot;,
+            &quot;our&quot;). These Terms of Service (&quot;Terms&quot;)
+            govern your use of our platform, which connects verified
+            university students to buy, sell, and swap textbooks. By
+            creating an account, you agree to these Terms.
+          </p>
+
+          <div className="flex flex-col gap-6">
+            {sections.map((section) => (
+              <div key={section.title}>
+                <h2
+                  className="text-sm font-semibold mb-1.5"
+                  style={{ color: "#000f2b" }}
+                >
+                  {section.title}
+                </h2>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#3a3a3a" }}
+                >
+                  {section.body}
+                </p>
+              </div>
+            ))}
+
+            <div>
+              <h2
+                className="text-sm font-semibold mb-1.5"
+                style={{ color: "#000f2b" }}
+              >
+                11. Contact
+              </h2>
+              <p className="text-sm leading-relaxed" style={{ color: "#3a3a3a" }}>
+                Questions about these Terms can be sent to{" "}
+                <a
+                  href="mailto:nexusdev.cos301@gmail.com"
+                  style={{ color: "#006D8A" }}
+                >
+                  nexusdev.cos301@gmail.com
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <Link
+            href="/auth/register"
+            className="text-sm font-medium"
+            style={{ color: "#006D8A" }}
+          >
+            &larr; Back to Register
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
 }
