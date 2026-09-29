@@ -39,7 +39,7 @@ export async function optimizeBundle(
     };
     }
 
-    function buildSellerGroups(listings: any[]) {
+function buildSellerGroups(listings: any[]) {
     const groups = new Map<string, any>();
 
     for (const listing of listings) {
