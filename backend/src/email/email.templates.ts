@@ -54,7 +54,7 @@ export function auctionEndedTemplate(
     subject: sold
       ? `Auction ended: ${data.listingTitle} was sold`
       : `Auction ended: ${data.listingTitle}`,
-    text: `Hi ${data.recipientName}, ${result}`,
+    text: `Hi ${data.recipientName} ${result}`,
     bodyHtml: `
       <tr>
         <td style="padding:8px 30px 0 30px; font-family:'Montserrat',Helvetica, Arial, sans-serif; font-size:16px; line-height:1.6; color:#3a3a3a;">
