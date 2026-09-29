@@ -147,5 +147,16 @@ describe('optimizeBundle', () => {
         );
     });
 
+    it('should throw an error when the API request fails', async () => {
+        mockFetch.mockResolvedValue({
+            ok: false,
+            status: 500,
+            text: async () => 'Internal server error',
+        } as Response);
+
+        await expect(
+            optimizeBundle(['module-1']),
+        ).rejects.toThrow('Internal server error');
+    });
     
 });
