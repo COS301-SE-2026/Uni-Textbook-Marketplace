@@ -262,11 +262,13 @@ export class SavedSearchesService {
       }
     }
 
-    if (isProvided(filter.faculty_id)) {
-      if (!listing.module?.faculty?.id) {
+    const universityId = filter.university_id ?? filter.university;
+
+    if (isProvided(universityId)) {
+      if (!listing.module?.university?.id) {
         return false;
       }
-      if (listing.module.faculty.id !== filter.faculty_id!) {
+      if (listing.module.university.id !== universityId) {
         return false;
       }
     }
@@ -328,6 +330,7 @@ export class SavedSearchesService {
       'author',
       'isbn',
       'university_id',
+      'university',
       'faculty_id',
       'modules',
     ];
