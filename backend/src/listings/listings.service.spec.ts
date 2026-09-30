@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-
+import { ModuleBook } from '../database/entities/module-book.entity';
 import { ListingsService } from './listings.service';
 import { Listing, ListingStatus, ListingsStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
@@ -47,6 +47,15 @@ describe('ListingsService', () => {
     code: 'COS132',
     name: 'Imperative Programming',
   };
+
+  const mockModuleBookRepository = {
+  find: jest.fn(),
+  findOne: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  delete: jest.fn(),
+  createQueryBuilder: jest.fn(),
+};
 
   const validUuid = '123e4567-e89b-12d3-a456-426614174000';
   const validUuid2 = '223e4567-e89b-12d3-a456-426614174001';
@@ -138,6 +147,10 @@ describe('ListingsService', () => {
           provide: getRepositoryToken(ModuleEntity),
           useValue: mockModuleRepository,
         },
+        {
+      provide: getRepositoryToken(ModuleBook),       
+      useValue: mockModuleBookRepository,
+     },
         {
           provide: getRepositoryToken(Auction),
           useValue: mockAuctionRepository,
