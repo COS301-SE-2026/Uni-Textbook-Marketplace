@@ -84,7 +84,7 @@
 
 ## Project Description
 
-**A web-based marketplace where verified university students can buy and/or sell second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and edition, smart filters, privacy-first in-app messaging, a notification system and admin moderation.**
+**A web-based marketplace where verified university students can buy, sell and auction second-hand textbooks. Students register with a university email and OTP, then create structured listings (ISBN, edition, condition, annotation level, module code) that admins moderate before they go live. Buyers browse by module, faculty and edition, use smart filters and saved searches, keep a wishlist, and message sellers through privacy-first in-app chat. A notification system sends in-app and email alerts for filter matches, listing approvals, status changes and moderation outcomes. Sellers can mark listings as reserved or sold, and admins manage reports, bans, appeals and an audit log. Three standout features round it out: AI-assisted listing creation (OCR auto-fill and background removal with an adjustable crop), real-time auctions with anti-sniping, and a multi-book bundle optimizer that finds the cheapest combination of sellers for a student's modules. Exchanges are arranged as meetups, with no payment processing.**
 
 Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301 Software Engineering Capstone Project at the University of Pretoria.
 
@@ -181,9 +181,14 @@ Uni-Textbook-Marketplace/
 ├── .github/
 │   └── workflows/
 ├── backend/
+│   ├── database/
+│   │   └── schema/
 │   ├── scripts/
 │   ├── src/
 │   │   ├── admin/
+│   │   │   ├── dto/
+│   │   │   └── events/
+│   │   ├── auction/
 │   │   │   └── dto/
 │   │   ├── auth/
 │   │   │   ├── decorator/
@@ -192,6 +197,9 @@ Uni-Textbook-Marketplace/
 │   │   │   └── strategies/
 │   │   ├── azure/
 │   │   ├── books/
+│   │   │   └── dto/
+│   │   ├── bundles/
+│   │   ├── cases/
 │   │   │   └── dto/
 │   │   ├── database/
 │   │   │   ├── entities/
@@ -202,72 +210,104 @@ Uni-Textbook-Marketplace/
 │   │   ├── email/
 │   │   ├── firebase/
 │   │   ├── listings/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── messaging/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── modules/
 │   │   │   └── dto/
 │   │   ├── notifications/
+│   │   │   └── listeners/
+│   │   ├── reports/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── saved_search/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── shared/
+│   │   ├── vision/
+│   │   │   └── dto/
 │   │   └── wishlist/
 │   └── test/
-├── database/
-│   └── schema/
 ├── docs/
 │   ├── Demo_1/
 │   ├── Demo_2/
-│   └── images/
-├── frontend/
-│   ├── public/
-│   │   ├── books/
-│   │   └── images/
-│   └── src/
-│       ├── app/
-│       │   ├── admin/
-│       │   │   ├── log/
-│       │   │   └── review/
-│       │   ├── api/
-│       │   │   └── listings/
-│       │   │       └── [id]/
-│       │   ├── auth/
-│       │   │   ├── login/
-│       │   │   ├── otp/
-│       │   │   ├── register/
-│       │   │   ├── Registration/
-│       │   │   └── resetpassword/
-│       │   ├── brand/
-│       │   ├── help/
-│       │   ├── listings/
-│       │   │   ├── [id]/
-│       │   │   ├── create/
-│       │   │   └── mine/
-│       │   ├── messages/
-│       │   ├── saved-searches/
-│       │   ├── ui-test/
-│       │   └── wishlist/
-│       ├── components/
-│       │   ├── admin/
-│       │   │   ├── login/
-│       │   │   ├── register/
-│       │   │   └── resetpassword/
-│       │   ├── icons/
-│       │   ├── listings/
-│       │   │   └── tests/
-│       │   ├── messaging/
-│       │   ├── tests/
-│       │   ├── ui/
-│       │   │   └── tests/
-│       │   └── wishlist/
-│       ├── context/
-│       ├── hooks/
-│       ├── lib/
-│       │   └── mappers/
-│       ├── providers/
-│       ├── types/
-│       └── utils/
-└── messaging/
+│   ├── Demo_3/
+│   ├── Demo_4/
+│   ├── images/
+│   └── OpenAPI/
+└── frontend/
+    ├── cypress/
+    │   ├── e2e/
+    │   ├── fixtures/
+    │   └── support/
+    ├── public/
+    │   ├── books/
+    │   └── images/
+    └── src/
+        ├── app/
+        │   ├── admin/
+        │   │   ├── cases/
+        │   │   ├── log/
+        │   │   └── review/
+        │   ├── api/
+        │   │   └── listings/
+        │   │       └── [id]/
+        │   ├── appeal/
+        │   ├── auction/
+        │   │   └── bid/
+        │   ├── auth/
+        │   │   ├── login/
+        │   │   ├── otp/
+        │   │   ├── register/
+        │   │   ├── Registration/
+        │   │   └── resetpassword/
+        │   ├── brand/
+        │   ├── help/
+        │   ├── listings/
+        │   │   ├── [id]/
+        │   │   ├── create/
+        │   │   └── mine/
+        │   ├── messages/
+        │   ├── notifications/
+        │   ├── privacy/
+        │   ├── reading-list/
+        │   ├── saved-searches/
+        │   ├── settings/
+        │   ├── terms/
+        │   ├── ui-test/
+        │   └── wishlist/
+        ├── components/
+        │   ├── admin/
+        │   ├── auction/
+        │   ├── auth/
+        │   │   ├── login/
+        │   │   ├── register/
+        │   │   └── resetpassword/
+        │   ├── bundles/
+        │   ├── icons/
+        │   ├── listings/
+        │   │   └── tests/
+        │   ├── messaging/
+        │   ├── notifications/
+        │   │   └── tests/
+        │   ├── pagination/
+        │   ├── tests/
+        │   ├── tutorials/
+        │   ├── ui/
+        │   │   └── tests/
+        │   └── wishlist/
+        ├── context/
+        ├── hooks/
+        │   └── tests/
+        ├── lib/
+        │   ├── mappers/
+        │   └── tests/
+        ├── providers/
+        ├── types/
+        └── utils/
+            └── tests/
 ```
 
 </details>
@@ -443,8 +483,6 @@ npm run test:all
 
 ## Meet The Team: NexusDev
 
-![Team Members](docs/images/The_Team.png) 
-
 </div>
 
 <div align="center">
@@ -455,7 +493,7 @@ npm run test:all
     <table>
       <tr>
         <td align="center">
-          <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <img src="docs/images/team/tiego.jpeg" width="800" height="200" alt="Tiego Mokwena"/>
           <h2>Tiego Mokwena</h2>
           <h5>Team Lead  </br>+ </br>Project Manager  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
@@ -503,7 +541,7 @@ npm run test:all
           </h6>
         </td>
         <td align="center">
-          <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <img src="docs/images/team/gift.jpeg" width="800" height="200" alt="Gift Mohuba"/>
           <h2>Gift Mohuba</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/GiftMHB">
@@ -521,7 +559,7 @@ npm run test:all
     <table>
       <tr>
         <td align="center">
-          <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <img src="docs/images/team/josh.jpeg" width="400" height="200" alt="Josh Kretschmer"/>
           <h2>Josh Kretschmer</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/JoshKretschmer">
@@ -569,7 +607,7 @@ npm run test:all
           </h6>
         </td>
         <td align="center">
-          <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=200&background=00B4D8&color=000f2b&rounded=true&bold=true" width="200" style="border-radius: 50%"/>
+          <img src="docs/images/team/neo.jpeg" width="400" height="200" alt="Neo Bosoga"/>
           <h2>Neo Bosoga</h2>
           <h5>Data Engineer </br>+ </br>Test Engineer</h5>
           <a href="https://github.com/u23591732">

@@ -372,9 +372,6 @@ export default function LandingPage() {
                 <Link href="/auth/register" className="btn-primary nx-shine">
                   Get Started
                 </Link>
-                <Link href="/auth/login" className="inline-flex items-center gap-2 px-6 py-3.5 rounded border border-white/40 text-white font-semibold hover:bg-white/10 transition-colors">
-                  Log in
-                </Link>
               </div>
             </div>
 
