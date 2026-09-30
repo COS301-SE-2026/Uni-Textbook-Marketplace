@@ -17,18 +17,22 @@ export class ModuleService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async search(search: string, university: string) {
-    return this.moduleRepo
+  async search(search: string, university?: string) {
+    const query = this.moduleRepo
       .createQueryBuilder('module')
       .leftJoinAndSelect('module.university', 'university')
       .leftJoinAndSelect('module.faculty', 'faculty')
       .where('module.code ILIKE :search', {
         search: `%${search}%`,
-      })
-      .andWhere('university.name ILIKE :university', {
+      });
+
+    if (university) {
+      query.andWhere('university.name ILIKE :university', {
         university: `%${university}%`,
-      })
-      .getMany();
+      });
+    }
+
+    return query.getMany();
   }
 
   async getFaculties() {

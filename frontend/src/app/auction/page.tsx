@@ -129,7 +129,7 @@ export default function AuctionPage() {
         .filter((auction) => {
             const listing = auction.listing
             const moduleCode = listing?.module?.code ?? ""
-            const universityId = listing?.module?.university?.id ?? ""
+            const universityId = (listing?.module as { university?: { id?: string | number } } | undefined)?.university?.id?.toString() ?? ""
             const amount = auctionAmount(auction)
 
             return (

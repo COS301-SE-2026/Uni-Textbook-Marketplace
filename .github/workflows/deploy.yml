@@ -65,7 +65,7 @@ jobs:
               run: |
                if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                 echo "frontend_app=nexusdev-frontend" >> $GITHUB_OUTPUT
-                echo "api_url=api.unitextbookmarketplace.co.za/api" >> $GITHUB_OUTPUT
+                echo "api_url=https://api.unitextbookmarketplace.co.za/api" >> $GITHUB_OUTPUT
                else
                 echo "frontend_app=nexusdev-frontend-staging" >> $GITHUB_OUTPUT
                 echo "api_url=https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api" >> $GITHUB_OUTPUT
@@ -77,6 +77,12 @@ jobs:
                 --registry nexusdevtukscos301 \
                 --image nexusdev-frontend:${{ github.sha }} \
                 --build-arg NEXT_PUBLIC_API_URL=${{ steps.target.outputs.api_url }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ vars.NEXT_PUBLIC_FIREBASE_PROJECT_ID }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ vars.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} \
+                --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=${{ vars.NEXT_PUBLIC_FIREBASE_APP_ID }} \
                 ./frontend
 
             - name: Update Container App

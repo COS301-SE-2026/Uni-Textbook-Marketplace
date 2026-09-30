@@ -26,7 +26,7 @@ export class ModuleController {
   @Get()
   search(
     @Query('search') search: string,
-    @Query('university') university: string,
+    @Query('university') university?: string,
   ) {
     return this.moduleService.search(search, university);
   }

@@ -39,6 +39,8 @@ tags:
     description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
   - name: Vision
     description: "Sprint 6 / Wow Factor 1, AI-Assisted Listing Creation. Owner: Tiego."
+  - name: Bundles
+    description: Bundle optimisation for purchasing textbooks across multiple modules.
 
 components:
   securitySchemes:
@@ -1370,6 +1372,48 @@ paths:
           description: Forbidden - admin access required
         "404":
           description: Case not found
+
+  /bundles/optimize:
+    post:
+      tags: [Bundles]
+      summary: Optimizes textbook purchases across multiple modules.
+      description: >
+        Finds an optimized combination of listings for the supplied modules,
+        grouping listings by seller and comparing the result against purchasing
+        the cheapest individual option for each module.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - moduleIds
+              properties:
+                moduleIds:
+                  type: array
+                  description: UUIDs of the modules to include in the bundle.
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+
+      responses:
+        "200":
+          description: Optimized bundle and comparison with individual purchases.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BundleOptimizationResponse"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "500":
+          description: Bundle optimization failed.
 
 security:
   - bearerAuth: []

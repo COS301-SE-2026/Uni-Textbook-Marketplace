@@ -1,12 +1,13 @@
 import { Processor, WorkerHost, InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, Queue } from 'bullmq';
-import { Auction, AuctionStatus } from 'src/database/entities/auction.entity';
+import { Auction, AuctionStatus } from '../database/entities/auction.entity';
 import { Repository } from 'typeorm';
 import { Listing, ListingsStatus } from '../database/entities/listing.entity';
 import { db } from '../firebase/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { NotificationsService } from '../notifications/notifications.service';
+import { MessagingService } from '../messaging/messaging.service';
 
 type AuctionJobData = {
   auctionId: string;
@@ -23,6 +24,8 @@ export class AuctionProcessor extends WorkerHost {
 
     @InjectRepository(Listing)
     private readonly listingdb: Repository<Listing>,
+
+    private readonly messagingService: MessagingService,
 
     private readonly notificationsService: NotificationsService,
   ) {
@@ -83,8 +86,8 @@ export class AuctionProcessor extends WorkerHost {
 
     const reserveMet =
       auction.current_highest_bid != null &&
-      auction.current_highest_bid >=
-        (auction.reserve_price ?? auction.starting_price);
+      Number(auction.current_highest_bid) >=
+        Number(auction.reserve_price ?? auction.starting_price);
     let outcome: 'SOLD' | 'RESERVE_NOT_MET' | 'NO_BIDS';
     if (reserveMet) {
       outcome = 'SOLD';
@@ -128,10 +131,22 @@ export class AuctionProcessor extends WorkerHost {
       );
     }
 
+    const sellerId = auction.listing?.seller?.id ?? auction.seller_id ?? null;
+    const bidderId = auction.current_highest_bidder_id;
+    const listingId = auction.listing?.id ?? auction.listing_id;
+
+    if (sellerId && bidderId && listingId) {
+      await this.messagingService.ensureAuctionConversation(
+        listingId,
+        bidderId,
+        sellerId,
+      );
+    }
+
     await this.notificationsService.notifyAuctionEnded({
-      sellerId: auction.seller_id ?? auction.listing?.seller?.id ?? null,
-      bidderId: auction.current_highest_bidder_id,
-      listingId: auction.listing?.id ?? auction.listing_id,
+      sellerId,
+      bidderId,
+      listingId,
       listingTitle: auction.listing?.title ?? 'your textbook listing',
       outcome,
       finalBid: auction.current_highest_bid,

@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import ListingCard, { Listing } from '@/components/listings/listingCard'
 import Image from 'next/image'
-import { ChevronDown, Gavel, Package } from 'lucide-react'
+import { ChevronDown, Package, Info } from 'lucide-react'
 
 import { api } from '@/lib/api'
 import { updateListingStatus, ListingSaleStatus } from '@/lib/listings.api'
@@ -42,8 +43,31 @@ const TABS: { label: string; value: Tab }[] = [
 
 // Page 
 
+function ReserveInfo() {
+    return (
+        <span className="group relative inline-flex">
+            <button
+                type="button"
+                aria-label="What is a reserve price?"
+                aria-describedby="reserve-tooltip"
+                className="rounded-full text-gray-500 hover:text-[#00B4D8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00B4D8]"
+            >
+                <Info size={15} />
+            </button>
+            <span
+                id="reserve-tooltip"
+                role="tooltip"
+                className="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-md bg-[#000f2b] p-2 text-xs font-normal leading-5 text-white opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+            >
+                The minimum amount you&apos;re willing to accept. Bids below it can still be placed during the auction, but the book only sells at end time if the highest bid meets it. If left blank, the starting price is used.
+            </span>
+        </span>
+    )
+}
+
 export default function MyListingsPage() {
 
+    const router = useRouter()
 
     const [listings, setListings] = useState<Listing[]>([])
     const [loading, setLoading] = useState(true)
@@ -58,6 +82,7 @@ export default function MyListingsPage() {
     const [auctionForm, setAuctionForm] = useState<AuctionForm>(EMPTY_AUCTION_FORM)
     const [auctionSubmitting, setAuctionSubmitting] = useState(false)
     const [auctionError, setAuctionError] = useState<string | null>(null)
+    const [auctionSuccess, setAuctionSuccess] = useState<string | null>(null)
 
     // Fetch
 
@@ -128,12 +153,18 @@ export default function MyListingsPage() {
         setAuctionListing(listing)
         setAuctionForm(EMPTY_AUCTION_FORM)
         setAuctionError(null)
+        setAuctionSuccess(null)
     }
 
     const closeAuctionModal = () => {
         if (auctionSubmitting) return
+        if (auctionSuccess) {
+            router.push('/auction?sort=newest')
+            return
+        }
         setAuctionListing(null)
         setAuctionError(null)
+        setAuctionSuccess(null)
     }
 
     const handleAuctionFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,7 +203,7 @@ export default function MyListingsPage() {
                 throw new Error('The end time must be after the start time.')
             }
 
-            await createAuction({
+            const response = await createAuction({
                 listing_id: auctionListing.id,
                 starting_price: startingPrice,
                 reserve_price: reservePrice,
@@ -182,7 +213,7 @@ export default function MyListingsPage() {
                 end_time: endDate.toISOString(),
             })
 
-            closeAuctionModal()
+            setAuctionSuccess(response.message)
             await fetchMine()
         } catch (error) {
             const message = error && typeof error === 'object' && 'message' in error
@@ -307,7 +338,6 @@ export default function MyListingsPage() {
                                                         openAuctionModal(listing)
                                                     }}
                                                 >
-                                                    <Gavel size={15} />
                                                     Create auction
                                                 </button>
                                             )}
@@ -476,7 +506,6 @@ export default function MyListingsPage() {
                     <p className="text-sm text-red-600 mb-4">{statusError}</p>
                 )}
 
-
                 <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto">
                     {TABS.map(tab => (
                         <button
@@ -524,69 +553,88 @@ export default function MyListingsPage() {
                             Create an auction for <span className="font-semibold text-gray-900 dark:text-white">{auctionListing?.title}</span>.
                         </p>
 
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <Input
-                                id="auction-starting-price"
-                                name="startingPrice"
-                                type="number"
-                                value={auctionForm.startingPrice}
-                                onChange={handleAuctionFormChange}
-                                placeholder="Starting price"
-                                label="Starting price (R)"
-                            />
-                            <Input
-                                id="auction-reserve-price"
-                                name="reservePrice"
-                                type="number"
-                                value={auctionForm.reservePrice}
-                                onChange={handleAuctionFormChange}
-                                placeholder="Optional"
-                                label="Reserve price (R)"
-                            />
-                        </div>
-
-                        <fieldset>
-                            <legend className="form-label">Start time</legend>
-                            <div className="flex flex-wrap gap-4 text-sm">
-                                <label className="flex items-center gap-2">
-                                    <input type="radio" name="startMode" value="now" checked={auctionForm.startMode === 'now'} onChange={handleAuctionFormChange} />
-                                    <span>Start now</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                    <input type="radio" name="startMode" value="future" checked={auctionForm.startMode === 'future'} onChange={handleAuctionFormChange} />
-                                    <span>Schedule for later</span>
-                                </label>
+                        {auctionSuccess ? (
+                            <div aria-live="polite" className="space-y-4">
+                                <p className="text-sm">{auctionSuccess}</p>
+                                <div className="flex justify-end">
+                                    <Button type="button" variant="primary" onClick={closeAuctionModal}>Done</Button>
+                                </div>
                             </div>
-                        </fieldset>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
+                                    <Input
+                                        id="auction-starting-price"
+                                        name="startingPrice"
+                                        type="number"
+                                        value={auctionForm.startingPrice}
+                                        onChange={handleAuctionFormChange}
+                                        placeholder="Starting price"
+                                        label="Starting price (R)"
+                                    />
 
-                        {auctionForm.startMode === 'future' && (
-                            <Input
-                                id="auction-start-time"
-                                name="startTime"
-                                type="datetime-local"
-                                value={auctionForm.startTime}
-                                onChange={handleAuctionFormChange}
-                                label="Future start time"
-                            />
+                                    <div>
+                                        <div className='flex items-center gap-1.5'>
+                                            <label htmlFor='auction-reserve-price' className='form-label'>Reserve price (R)</label>
+                                            <ReserveInfo />
+                                        </div>
+
+                                        <Input
+                                            id="auction-reserve-price"
+                                            name="reservePrice"
+                                            type="number"
+                                            value={auctionForm.reservePrice}
+                                            onChange={handleAuctionFormChange}
+                                            placeholder="Optional"
+                                        />
+
+                                    </div>
+                                </div>
+
+                                <fieldset>
+                                    <legend className="form-label">Start time</legend>
+                                    <div className="flex flex-wrap gap-4 text-sm">
+                                        <label className="flex items-center gap-2">
+                                            <input type="radio" name="startMode" value="now" checked={auctionForm.startMode === 'now'} onChange={handleAuctionFormChange} />
+                                            <span>Start now</span>
+                                        </label>
+                                        <label className="flex items-center gap-2">
+                                            <input type="radio" name="startMode" value="future" checked={auctionForm.startMode === 'future'} onChange={handleAuctionFormChange} />
+                                            <span>Schedule for later</span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+
+                                {auctionForm.startMode === 'future' && (
+                                    <Input
+                                        id="auction-start-time"
+                                        name="startTime"
+                                        type="datetime-local"
+                                        value={auctionForm.startTime}
+                                        onChange={handleAuctionFormChange}
+                                        label="Future start time"
+                                    />
+                                )}
+
+                                <Input
+                                    id="auction-end-time"
+                                    name="endTime"
+                                    type="datetime-local"
+                                    value={auctionForm.endTime}
+                                    onChange={handleAuctionFormChange}
+                                    label="End time"
+                                />
+
+                                {auctionError && <p className="text-sm text-red-600">{auctionError}</p>}
+
+                                <div className="flex justify-end gap-2">
+                                    <Button type="button" variant="outline" onClick={closeAuctionModal} disabled={auctionSubmitting}>Cancel</Button>
+                                    <Button type="submit" variant="primary" disabled={auctionSubmitting}>
+                                        {auctionSubmitting ? 'Creating...' : 'Create auction'}
+                                    </Button>
+                                </div>
+                            </>
                         )}
-
-                        <Input
-                            id="auction-end-time"
-                            name="endTime"
-                            type="datetime-local"
-                            value={auctionForm.endTime}
-                            onChange={handleAuctionFormChange}
-                            label="End time"
-                        />
-
-                        {auctionError && <p className="text-sm text-red-600">{auctionError}</p>}
-
-                        <div className="flex justify-end gap-2">
-                            <Button type="button" variant="outline" onClick={closeAuctionModal} disabled={auctionSubmitting}>Cancel</Button>
-                            <Button type="submit" variant="primary" disabled={auctionSubmitting}>
-                                {auctionSubmitting ? 'Creating...' : 'Create auction'}
-                            </Button>
-                        </div>
                     </form>
                 </Modal>
             </div>

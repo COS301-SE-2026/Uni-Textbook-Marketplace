@@ -13,6 +13,8 @@ const RESTRICTED_ROUTES = [
     '/listings/create',
     '/messages',
     '/saved-searches',
+    '/auction',
+    '/reading-list',
     '/help',
     '/brand'
 ]

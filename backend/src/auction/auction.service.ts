@@ -17,7 +17,7 @@ import {
   ListingStatus,
   ListingsStatus,
 } from '../database/entities/listing.entity';
-import { User } from 'src/database/entities/users.entity';
+import { User } from '../database/entities/users.entity';
 import { db } from '../firebase/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 
@@ -246,7 +246,7 @@ export class AuctionService {
           : 'Anonymous',
         endTime: Timestamp.fromDate(result.auction.end_time!),
         extensionCount: result.auction.extension_count,
-      });
+      }, { merge: true });
     }
 
     return result;
