@@ -67,7 +67,7 @@ export class ModuleService {
     }
 
     const existing = await this.moduleRepo.findOne({
-      where: { code: dto.code },
+      where: { code: dto.code, university: { id: universityId } },
       relations: ['faculty', 'university'],
     });
 
@@ -85,7 +85,7 @@ export class ModuleService {
       code: dto.code,
       name: dto.name,
       faculty,
-      university: user?.university,
+      university: user?.university ?? { id: universityId },
       semester: dto.semester,
     });
 
@@ -102,7 +102,7 @@ export class ModuleService {
 
       if (isDuplicateKeyError) {
         const raceExisting = await this.moduleRepo.findOne({
-          where: { code: dto.code },
+          where: { code: dto.code, university: { id: universityId } },
           relations: ['faculty', 'university'],
         });
         if (raceExisting) {

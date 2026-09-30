@@ -43,7 +43,7 @@ describe('Footer', () => {
 
   it('renders all product links', () => {
     render(<Footer />)
-    expect(screen.getByText('Browse Listing')).toBeInTheDocument()
+    expect(screen.getByText('Browse Listings')).toBeInTheDocument()
     expect(screen.getByText('Sell a Textbook')).toBeInTheDocument()
 
     expect(screen.getByText('My Listings')).toBeInTheDocument()
