@@ -1,0 +1,22 @@
+{
+  "nfr": "Google Lighthouse Accessibility score ≥85 on every audited page; ≥90 on pages introduced from Demo 3 onward",
+  "measurementDate": "2026-09-29",
+  "lighthouseVersion": "12.x",
+  "device": "desktop",
+  "environment": "staging",
+  "pages": [
+    { "name": "Landing",          "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io",              "score": 94, "passes85": true, "passes90": true,  "isNewSinceDemo3": false },
+    { "name": "Create Listing",   "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/listings/create","score": 94, "passes85": true, "passes90": true,  "isNewSinceDemo3": false },
+    { "name": "In-App Messaging", "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/notifications", "score": 95, "passes85": true, "passes90": true,  "isNewSinceDemo3": false },
+    { "name": "Wishlist",         "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/wishlist",      "score": 96, "passes85": true, "passes90": true,  "isNewSinceDemo3": false },
+    { "name": "Listings Browse",  "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/listings",      "score": 89, "passes85": true, "passes90": false, "isNewSinceDemo3": false },
+    { "name": "Auction",          "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/auction",              "score": 96, "passes85": true, "passes90": true,  "isNewSinceDemo3": true },
+    { "name": "Audit Log",        "url": "https://nexusdev-frontend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/admin/audit-log","score": 85, "passes85": true, "passes90": false, "isNewSinceDemo3": false }
+  ],
+  "overallPassed": true,
+  "lowestScorer": {
+    "page": "Audit Log",
+    "score": 85,
+    "note": "Tracked as a follow-up item due to dense tabular content. Still above the 85 baseline."
+  }
+}

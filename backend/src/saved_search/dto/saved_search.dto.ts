@@ -63,6 +63,10 @@ export class SavedSearchFiltersDto {
 
   @IsOptional()
   @IsUUID()
+  university?: string;
+
+  @IsOptional()
+  @IsUUID()
   faculty_id?: string;
 
   @IsOptional()

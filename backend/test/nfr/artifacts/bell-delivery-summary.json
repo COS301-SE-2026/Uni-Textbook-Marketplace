@@ -1,0 +1,12 @@
+{
+  "nfr": "New-notification delivery via the bell icon shall reflect a triggering event within one polling interval (currently fixed at 15 seconds)",
+  "mechanism": "SSE (GET /notifications/stream)",
+  "thresholdMs": 2000,
+  "measuredMs": 995,
+  "passed": true,
+  "receiver": "u22496336@tuks.co.za",
+  "trigger": "u23545527@tuks.co.za",
+  "listingId": "e3321c17-7f89-4e75-9e06-7a074b85a7bc",
+  "testedAt": "2026-09-27T17:02:34.694Z",
+  "rawEventSample": "\nevent: notification.created\nid: 1387eb19-d894-4e18-bbfb-ed9917e659f9\ndata: {\"notificationId\":\"1387eb19-d894-4e18-bbfb-ed9917e659f9\"}\n\n"
+}
