@@ -62,3 +62,13 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 #services
 src/firebase/*.json
+
+# Playwright generated output
+playwright-report/
+test-results/
+*-report/
+*.trace.zip
+
+# NFR generated HTML reports (keep .json and .xml evidence)
+backend/test/nfr/**/artifacts/**/*.html
+backend/test/nfr/**/artifacts/**/*-report/

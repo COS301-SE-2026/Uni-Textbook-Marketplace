@@ -175,16 +175,7 @@ test.describe.serial('NFR: authentication & access control', () => {
   test('clause 6: banned user flagged and access-restricted on login', async ({
     request,
   }) => {
-    if (!BANNED.email) {
-      record({
-        clause:
-          'Banned user is flagged as banned (is_banned: true) in the login response',
-        passed: 'skipped',
-        evidence: { reason: 'BANNED_EMAIL not set in env' },
-      });
-      test.skip(true, 'BANNED_EMAIL not set');
-      return;
-    }
+    
 
     const res = await request.post(`${API_URL}/auth/login`, { data: BANNED });
     const body = await res.json().catch(() => ({}));
