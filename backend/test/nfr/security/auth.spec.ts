@@ -8,18 +8,18 @@ const API_URL = (
 ).replace(/\/+$/, '');
 
 const STUDENT = {
-  email: process.env.STUDENT_EMAIL ?? 'u22496336@tuks.co.za',
-  password: process.env.STUDENT_PASSWORD ?? 'Password123!',
+  email: process.env.STUDENT_EMAIL ?? '',
+  password: process.env.STUDENT_PASSWORD ?? '',
 };
 
 const ADMIN = {
-  email: process.env.ADMIN_EMAIL ?? 'u23545527@tuks.co.za',
-  password: process.env.ADMIN_PASSWORD ?? 'Password123',
+  email: process.env.ADMIN_EMAIL ?? '',
+  password: process.env.ADMIN_PASSWORD ?? '',
 };
 
 const BANNED = {
-  email: process.env.BANNED_EMAIL ?? 'u23591732@tuks.co.za',
-  password: process.env.BANNED_PASSWORD ?? 'Password123',
+  email: process.env.BANNED_EMAIL ?? '',
+  password: process.env.BANNED_PASSWORD ?? '',
 };
 
 const ADMIN_ENDPOINT = (id = '00000000-0000-0000-0000-000000000000') =>

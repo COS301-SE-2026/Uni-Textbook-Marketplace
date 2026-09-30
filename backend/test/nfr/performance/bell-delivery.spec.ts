@@ -7,12 +7,12 @@ const API_URL = (
 ).replace(/\/+$/, '');
 
 const RECEIVER = {
-  email: process.env.RECEIVER_EMAIL ?? 'u22496336@tuks.co.za',
-  password: process.env.RECEIVER_PASSWORD ?? 'Password123!',
+  email: process.env.RECEIVER_EMAIL ?? '',
+  password: process.env.RECEIVER_PASSWORD ?? '',
 };
 const TRIGGER = {
-  email: process.env.TRIGGER_EMAIL ?? 'u23545527@tuks.co.za',
-  password: process.env.TRIGGER_PASSWORD ?? 'Password123',
+  email: process.env.TRIGGER_EMAIL ?? '',
+  password: process.env.TRIGGER_PASSWORD ?? '',
 };
 
 const THRESHOLD_MS = Number(process.env.BELL_THRESHOLD_MS ?? 2000);

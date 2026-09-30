@@ -7,13 +7,13 @@ const API_URL = (
 ).replace(/\/+$/, '');
 
 const STUDENT = {
-  email: process.env.STUDENT_EMAIL ?? 'u22496336@tuks.co.za',
-  password: process.env.STUDENT_PASSWORD ?? 'Password123!',
+  email: process.env.STUDENT_EMAIL ?? '',
+  password: process.env.STUDENT_PASSWORD ?? '',
 };
 
 const ADMIN = {
-  email: process.env.ADMIN_EMAIL ?? 'u23545527@tuks.co.za',
-  password: process.env.ADMIN_PASSWORD ?? 'Password123',
+  email: process.env.ADMIN_EMAIL ?? '',
+  password: process.env.ADMIN_PASSWORD ?? '',
 };
 
 interface Finding {
@@ -134,8 +134,7 @@ test.describe.serial('NFR: core features available independently of Firestore', 
   test('reporting: report list returns non-5xx', async ({ request }) => {
     const { cookies } = await loginAndGetCookies(request, STUDENT);
 
-    // Adjust to your actual reports endpoint. Common: /reports/mine,
-    // /reports, /users/me/reports.
+   
     const path = process.env.REPORTS_PATH ?? '/reports/mine';
 
     const res = await request.get(`${API_URL}${path}`, {
@@ -163,8 +162,8 @@ test.describe.serial('NFR: core features available independently of Firestore', 
     // Verified independently under the Authentication NFR.
     // Re-run here as a baseline for reliability.
     const BANNED = {
-      email: process.env.BANNED_EMAIL ?? 'u23591732@tuks.co.za',
-      password: process.env.BANNED_PASSWORD ?? 'Password123',
+      email: process.env.BANNED_EMAIL ?? '',
+      password: process.env.BANNED_PASSWORD ?? '',
     };
 
     const res = await request.post(`${API_URL}/auth/login`, { data: BANNED });
@@ -206,7 +205,7 @@ test.describe.serial('NFR: core features available independently of Firestore', 
   });
 });
 
-// ── Artifact ──────────────────────────────────────────────────────────────
+// Artifact
 test.afterAll(async () => {
   mkdirSync('test/nfr/artifacts', { recursive: true });
 
