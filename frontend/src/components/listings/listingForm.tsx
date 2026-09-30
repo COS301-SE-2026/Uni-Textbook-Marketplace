@@ -384,51 +384,66 @@ export default function ListingForm({
                 {errors.images && <ErrorText>{errors.images}</ErrorText>}
 
                 {form.images.length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {form.images.map((image, index) => (
-                            <div key={index} className="relative group">
-                                <div className="relative h-32 w-full rounded border overflow-hidden">
-                                    <Image
-                                        src={URL.createObjectURL(image)}
-                                        alt={`preview-${index}`}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => onRemoveImage(index)}
-                                    aria-label={`Remove photo ${index + 1}`}
-                                    className="absolute top-0.5 right-0.5 flex h-11 w-11 items-center justify-center rounded-full text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
-                                >
-                                    <span
-                                        aria-hidden="true"
-                                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm leading-none"
-                                    >
-                                        ×
+                    <>
+                        {onReplaceImage && (
+                            <p className="text-xs text-gray-500">
+                                Tap <span className="font-semibold text-[#00B4D8]">Crop</span> on any photo to adjust its framing or remove its background.
+                            </p>
+                        )}
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {form.images.map((image, index) => (
+                                <div key={index} className="relative group">
+                                    <div className="relative h-32 w-full rounded border overflow-hidden">
+                                        <Image
+                                            src={URL.createObjectURL(image)}
+                                            alt={`preview-${index}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+
+                                    <span className="absolute top-1 left-1 bg-black/60 text-white text-xs px-2 py-0.5 rounded">
+                                        {index + 1}
                                     </span>
-                                </button>
-                                {onReplaceImage && (
+
                                     <button
                                         type="button"
-                                        onClick={() => openCrop(index)}
-                                        aria-label={`Crop photo ${index + 1}`}
-                                        className="absolute bottom-0.5 right-0.5 flex h-11 w-11 items-center justify-center text-white transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                                        onClick={() => onRemoveImage(index)}
+                                        aria-label={`Remove photo ${index + 1}`}
+                                        className="absolute top-1 right-1 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white text-sm leading-none shadow-md hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
                                     >
-                                        <span
-                                            aria-hidden="true"
-                                            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#00B4D8] text-xs leading-none"
-                                        >
-                                            ✂
-                                        </span>
+                                        ×
                                     </button>
-                                )}
-                                <span className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
-                                    {index + 1}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+
+                                    {onReplaceImage && (
+                                        <button
+                                            type="button"
+                                            onClick={() => openCrop(index)}
+                                            aria-label={`Crop photo ${index + 1}`}
+                                            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-[4px] border border-[#00B4D8] bg-white px-3 py-2 text-xs font-semibold text-[#00B4D8] transition-colors hover:bg-[#00B4D8] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00B4D8] min-h-[44px]"
+                                        >
+                                            <svg
+                                                className="h-3.5 w-3.5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 4h4v4H4V4zm12 12h4v4h-4v-4z"
+                                                />
+                                            </svg>
+                                            Crop
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 )}
 
                 <p className="text-xs text-gray-400">

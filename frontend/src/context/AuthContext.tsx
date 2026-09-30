@@ -24,7 +24,8 @@ const PUBLIC_ROUTES = [
   '/help',
   '/brand',
   '/appeal',
-  'https://www2.agilebridge.co.za/our-company/',
+  '/terms',
+  '/privacy',
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -117,7 +118,7 @@ export function AuthProvider({
     } catch {
       // Ignore
     } finally {
-      setUser(null);
+
       sessionStorage.removeItem('auth_user');
       router.push('/auth/login');
     }

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {
   CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
-  MessageCircle, Microscope, MessageSquare, Mail
+  MessageCircle, Microscope, MessageSquare, Mail, ChevronDown, ScanLine, Gavel, Boxes, ArrowRight
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
@@ -41,6 +41,92 @@ const PLATFORM_STEPS = [
   },
 ];
 
+const WOW_FACTORS = [
+  {
+    key: 'scan',
+    icon: <ScanLine className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
+    title: 'Snap the cover, skip the typing',
+    desc: 'Photograph a textbook and our AI reads the title, author and ISBN. Crop and clean up the photo before you post.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex items-center justify-center gap-6 overflow-hidden">
+        <div className="relative w-24 h-32 rounded bg-white/10 border border-white/20 p-3 flex flex-col gap-2">
+          <div className="h-2 w-3/4 rounded bg-white/40" />
+          <div className="h-2 w-1/2 rounded bg-white/25" />
+          <div className="mt-auto h-2 w-2/3 rounded bg-[#00B4D8]/60" />
+          <div className="nx-scan absolute inset-x-[-10px] h-0.5 bg-[#00B4D8] shadow-[0_0_14px_#00B4D8]" />
+        </div>
+        <div className="flex flex-col gap-2 text-xs font-semibold">
+          {['Title', 'Author', 'ISBN'].map((f, i) => (
+            <span
+              key={f}
+              className="nx-field rounded-full bg-[#00B4D8] px-3 py-1 text-[#000f2b]"
+              style={{ '--d': `${i * 0.35}s` } as React.CSSProperties}
+            >
+              {f}
+            </span>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    key: 'auction',
+    icon: <Gavel className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
+    title: 'Bid on books in real time',
+    desc: 'Sellers can list a book as a live auction. Watch bids come in and win the book you need at a price you set.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex flex-col items-center justify-center gap-2">
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+          <span className="nx-pulse h-2 w-2 rounded-full bg-emerald-400" />
+          Live auction
+        </span>
+        <span className="relative h-12 w-32 text-center text-4xl font-extrabold text-[#00B4D8]">
+          {['R480', 'R500', 'R520'].map((v, i) => (
+            <span
+              key={v}
+              className="nx-tick absolute inset-0"
+              style={{ '--d': `${i * 1.5}s` } as React.CSSProperties}
+            >
+              {v}
+            </span>
+          ))}
+        </span>
+        <span className="text-white/70 text-xs">Highest bid</span>
+        <span className="mt-1 h-1 w-40 overflow-hidden rounded-full bg-white/15">
+          <span className="nx-drain block h-full w-full bg-[#00B4D8]" />
+        </span>
+      </div>
+    ),
+  },
+  {
+    key: 'bundle',
+    icon: <Boxes className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
+    title: 'Build your whole semester list',
+    desc: 'Add every book on your module list and we work out the cheapest way to buy them together.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex flex-col items-center justify-end gap-3 pb-8 overflow-hidden">
+        <div className="flex items-end gap-2">
+          {[
+            ['bg-[#00B4D8]', 'h-24'],
+            ['bg-white/85', 'h-28'],
+            ['bg-[#006D8A]', 'h-20'],
+            ['bg-white/50', 'h-24'],
+          ].map(([c, h], i) => (
+            <div
+              key={i}
+              className={`nx-spine w-9 rounded-sm ${c} ${h}`}
+              style={{ '--i': i } as React.CSSProperties}
+            />
+          ))}
+        </div>
+        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+          Best combined price
+        </span>
+      </div>
+    ),
+  },
+];
+
 const CAMPUS_SECURITY = [
   {
     icon: <Mail className="w-5 h-5 text-white" />,
@@ -48,7 +134,7 @@ const CAMPUS_SECURITY = [
     desc: 'You can only register with a student email address, which locks out scammers and external commericial spammers.',
   },
   {
-    icon: <MessageSquare className="w-h h-5 text-white" />,
+    icon: <MessageSquare className="w-5 h-5 text-white" />,
     title: 'In-app Handshakes',
     desc: 'Chat safely directly inside our system so you do not have to share personal phone number or WhatsApp out to strangers.',
 
@@ -183,132 +269,66 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       university: { name: '' }
     },
   },
-  {
-    id: '5',
-    title: 'The C Programming Language',
-    price: 280,
-    condition: 'fair',
-    annotation_level: 'heavy',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/c-programming.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 2,
-      author: 'Brian W. Kernighan',
-      isbn: '978-0131103627',
-      title: 'The C Programming Language',
-      publisher: ''
-    },
-    module: {
-      code: 'COS132',
-      name: 'EBIT',
-      semester: 1,
-    },
-    seller: {
-      first_name: 'David',
-      last_name: 'Wilson',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '6',
-    title: 'Computer Networking: A Top-Down Approach',
-    price: 490,
-    condition: 'new',
-    annotation_level: 'none',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/networking.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 7,
-      author: 'James F. Kurose',
-      isbn: '978-0133594140',
-      title: 'Computer Networking: A Top-Down Approach',
-      publisher: ''
-    },
-    module: {
-      code: 'COS216',
-      name: 'EBIT',
-      semester: 1
-    },
-    seller: {
-      first_name: 'Novuka',
-      last_name: 'Mtembu',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '7',
-    title: 'Designing Data-Intensive Applications',
-    price: 520,
-    condition: 'good',
-    annotation_level: 'light',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/data-intensive.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 1,
-      author: 'Martin Kleppmann',
-      isbn: '978-1492056355',
-      title: 'Designing Data-Intensive Applications',
-      publisher: ''
-    },
-    module: {
-      code: 'COS341',
-      name: 'EBIT',
-      semester: 2,
-    },
-    seller: {
-      first_name: 'Teboho',
-      last_name: 'Modise',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '8',
-    title: 'Introduction to Probability',
-    price: 380,
-    condition: 'good',
-    annotation_level: 'heavy',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/probability.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 2,
-      author: 'Dimitri Bertsekas',
-      isbn: '978-0199535569',
-      title: 'Introduction to Probability',
-      publisher: '',
-    },
-    module: {
-      code: 'WTW152',
-      name: 'Natural Sciences',
-      semester: 2,
-    },
-    seller: {
-      first_name: 'Chuku',
-      last_name: 'Obioha',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
 
 ];
+
+const NX_CSS = `
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+#how-it-works { scroll-margin-top: 4rem; }
+
+@keyframes nx-word   { from { opacity: 0; transform: translateY(28px) scale(.97); filter: blur(9px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes nx-fade   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes nx-rise   { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes nx-glow   { 0%, 100% { opacity: .35; transform: scale(1); } 50% { opacity: .65; transform: scale(1.15); } }
+@keyframes nx-cue    { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+@keyframes nx-cue-ring { 0% { transform: translate(-50%, 0) scale(1); opacity: .7; } 100% { transform: translate(-50%, 0) scale(1.6); opacity: 0; } }
+@keyframes nx-wheel  { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
+@keyframes nx-march  { to { background-position: 16px 0; } }
+@keyframes nx-ring   { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(1.75); opacity: 0; } }
+@keyframes nx-shine  { 0% { transform: translateX(-160%) skewX(-20deg); } 60%, 100% { transform: translateX(420%) skewX(-20deg); } }
+@keyframes nx-scan   { 0%, 100% { top: 10%; } 50% { top: 86%; } }
+@keyframes nx-field  { 0%, 15% { opacity: .25; } 35%, 80% { opacity: 1; } 100% { opacity: .25; } }
+@keyframes nx-tick   { 0%, 30% { opacity: 1; } 33.4%, 100% { opacity: 0; } }
+@keyframes nx-drain  { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes nx-spine  { 0% { transform: translateY(70px); opacity: 0; } 20%, 80% { transform: none; opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
+@keyframes nx-pulse  { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.6); } }
+
+.nx-word  { display: inline-block; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
+.nx-fade  { animation: nx-fade .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
+.nx-glow  { animation: nx-glow 7s ease-in-out infinite; }
+.nx-cue   { animation: nx-cue 2.2s ease-in-out infinite; }
+.nx-cue:hover { animation-play-state: paused; }
+.nx-cue-ring { position: absolute; left: 50%; bottom: 0; width: 44px; height: 44px; border-radius: 9999px; border: 2px solid #00B4D8; pointer-events: none; animation: nx-cue-ring 2.4s ease-out infinite; }
+.nx-cue-ring.delay { animation-delay: 1.2s; }
+.nx-wheel { animation: nx-wheel 1.8s ease-in-out infinite; }
+.nx-march { height: 2px; background-image: repeating-linear-gradient(90deg, #00B4D8 0 8px, transparent 8px 16px); background-size: 16px 2px; animation: nx-march 1s linear infinite; }
+.nx-ring  { animation: nx-ring 2.4s ease-out infinite; animation-delay: var(--d, 0s); }
+.nx-shine { position: relative; overflow: hidden; }
+.nx-shine::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 35%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: nx-shine 3.6s ease-in-out infinite; }
+
+.nx-card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.nx-card:hover { transform: translateY(-6px); border-color: #00B4D8; box-shadow: 0 16px 40px -14px rgba(0, 180, 216, .5); }
+
+.nx-scan  { animation: nx-scan 3.2s ease-in-out infinite; }
+.nx-field { animation: nx-field 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.nx-tick  { opacity: 0; animation: nx-tick 4.5s linear infinite; animation-delay: var(--d, 0s); }
+.nx-drain { transform-origin: left; animation: nx-drain 4.5s linear infinite; }
+.nx-spine { animation: nx-spine 5s ease-in-out infinite; animation-delay: calc(var(--i) * .3s); }
+.nx-pulse { animation: nx-pulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-word, .nx-fade, .nx-glow, .nx-cue, .nx-cue-ring, .nx-wheel, .nx-march, .nx-ring, .nx-shine::after,
+  .nx-scan, .nx-field, .nx-drain, .nx-spine, .nx-pulse { animation: none; }
+  .nx-tick:first-child { opacity: 1; }
+  .nx-card:hover { transform: none; }
+}
+`
 
 export default function LandingPage() {
   return (
     <>
+      <style>{NX_CSS}</style>
+
       {/* Hero section */}
       <section className="relative min-h-[100svh] md:min-h-screen w-full bg-[#000f2b] flex items-center overflow-hidden pt-[40px]">
         {/* Background Image */}
@@ -332,38 +352,34 @@ export default function LandingPage() {
             {/* LEFT text + buttons */}
             <div className="max-w-lg">
               <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
-                Made for Students,{' '}
-                <span className="text-[#00B4D8]">by Students</span>
+                {'Made for Students, '.split(' ').map((word, i) => (
+                  <span key={i} className="nx-word" style={{ '--i': i } as React.CSSProperties}>
+                    {word}{' '}
+                  </span>
+                ))}
+                <span className="text-[#00B4D8]">
+                  {'by Students'.split(' ').map((word, i) => (
+                    <span key={i} className="nx-word" style={{ '--i': i + 4 } as React.CSSProperties}>
+                      {word}{i === 0 ? ' ' : ''}
+                    </span>
+                  ))}
+                </span>
               </h1>
-              <p className="text-white/80 text-xl md:text-2xl mt-4">
+              <p className="nx-fade text-white/80 text-xl md:text-2xl mt-4" style={{ '--d': '.65s' } as React.CSSProperties}>
                 Buy or sell textbooks with students from your university
               </p>
-              <div className="flex gap-3 mt-8">
-                <Link href="/auth/register" className="btn-primary">
+              <div className="nx-fade flex gap-3 mt-8" style={{ '--d': '.85s' } as React.CSSProperties}>
+                <Link href="/auth/register" className="btn-primary nx-shine">
                   Get Started
                 </Link>
-
-
+                <Link href="/auth/login" className="inline-flex items-center gap-2 px-6 py-3.5 rounded border border-white/40 text-white font-semibold hover:bg-white/10 transition-colors">
+                  Log in
+                </Link>
               </div>
             </div>
 
             {/* RIGHT feature cards */}
             <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
-
-              {/* Partnership 
-              <div className="flex items-center gap-5 mt-4">
-                <span className="text-white text-xl uppercase tracking-wider">
-                  In collaboration with
-                </span>
-
-                <Image
-                  src="/Agile-Bridge-logo-white-2.png"
-                  alt="Agile Bridge"
-                  width={250}
-                  height={200}
-                  className="w-auto h-auto"
-                />
-              </div>*/}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
@@ -388,44 +404,60 @@ export default function LandingPage() {
           </div>
 
         </div>
+
+        
+        <a
+          href="#how-it-works"
+          aria-label="Scroll down to how it works"
+          className="nx-cue absolute bottom-8 left-1/2 z-30 flex flex-col items-center gap-2 text-white/85 hover:text-white transition-colors"
+        >
+          <span className="text-xs font-semibold tracking-wider uppercase">Scroll to explore</span>
+          <span className="relative flex h-11 w-7 justify-center rounded-full border-2 border-white/60 pt-2">
+            <span className="nx-wheel h-2 w-1 rounded-full bg-[#00B4D8]" />
+          </span>
+          <ChevronDown size={16} className="text-[#00B4D8]" />
+          <span className="nx-cue-ring" aria-hidden="true" />
+          <span className="nx-cue-ring delay" aria-hidden="true" />
+        </a>
       </section>
 
       {/* How it works */}
-      <section className="py-24 bg-white border-b border-slate-100">
+      <section id="how-it-works" className="py-24 bg-background border-b border-border">
         <div className="container-content">
 
           <div className="text-center mb-16">
 
-            <span className="text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
+            <span className="text-[#006D8A] dark:text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
             </span>
 
-            <p className="text-slate-500 mt-4 max-w-xl mx-auto text-xl leading-relaxed">
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-xl leading-relaxed">
               Buy and sell used textbooks with other students on campus in three steps.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-slate-100" />
+            <div className="nx-march hidden md:block absolute top-12 left-[15%] right-[15%]" />
 
             {PLATFORM_STEPS.map((item, idx) => (
               <ScrollAnimation key={idx} delay={idx * 650}>
 
                 <div className="relative flex flex-col items-center text-center px-4">
-                  <div className="relative z-15 w-20 h-20 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center mb-5 shadow-sm">
+                  <div className="relative z-15 w-20 h-20 rounded-full bg-muted border border-border flex items-center justify-center mb-5 shadow-sm">
 
+                    <span className="nx-ring absolute inset-0 rounded-full border-2 border-[#00B4D8]" style={{ '--d': `${idx * 0.6}s` } as React.CSSProperties} aria-hidden="true" />
                     {item.icon}
-                    <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-white shadow-sm">
+                    <span className="absolute -top-2 -right-6 w-10 h-10 rounded-full bg-[#00B4D8] text-white text-[10px] font-extrabold flex items-center justify-center border-2 border-background shadow-sm">
                       {item.num}
 
                     </span>
                   </div>
-                  {/* Content */}
-                  <h3 className="text-base font-bold text-[#000f2b] mb-2 tracking-tight">
+                  
+                  <h3 className="text-base font-bold text-foreground mb-2 tracking-tight">
                     {item.title}
                   </h3>
 
-                  <p className="text-slate-500 text-lg max-w-[240px] leading-relaxed">
+                  <p className="text-muted-foreground text-lg max-w-[240px] leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -439,16 +471,16 @@ export default function LandingPage() {
 
       {/* Find a variety of textbooks */}
       <ScrollAnimation delay={550}>
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-background">
 
           <div className="container-content">
             <div className="text-center mb-14">
 
-              <h2 className="text-3xl md:text-4xl fint-extrabold text-[#000f2b] tracking tight">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
               </h2>
 
-              <p className="text-gray-500 mt-2 max-w-md mx-auto text-lg">
+              <p className="text-muted-foreground mt-2 max-w-md mx-auto text-lg">
                 Search by title, author, ISBN or even directly for your faculty module codes.
               </p>
 
@@ -459,14 +491,64 @@ export default function LandingPage() {
                 <ScrollAnimation key={idx} delay={idx * 500}>
                   <div key={idx}
 
-                    className="flex flex-col items-center justify-center p-6 bg-slate-50/80 rounded-2xl border border-slate-100 shadow-sm">
+                    className="nx-card flex flex-col items-center justify-center p-6 bg-card rounded-2xl border border-border shadow-sm">
                     <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                       {fac.icon}
                     </div>
-                    <span className="text-xs font-bold text-[#000f2b] text-center px-2">
+                    <span className="text-xs font-bold text-foreground text-center px-2">
                       {fac.name}
                     </span>
                   </div>
+                </ScrollAnimation>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollAnimation>
+
+      
+      <ScrollAnimation delay={600}>
+        <section className="py-24 bg-muted">
+          <div className="container-content">
+            <div className="text-center mb-14">
+              <span className="text-[#006D8A] dark:text-[#00B4D8] font-bold text-sm tracking-wider uppercase bg-[#00B4D8]/10 px-4 py-2 rounded-full inline-block">
+                More than a notice board
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mt-4">
+                Smart tools built into the platform
+              </h2>
+              <p className="text-muted-foreground mt-3 max-w-xl mx-auto text-lg leading-relaxed">
+                Whether you are listing one book or buying a whole semester worth, these features save you time.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {WOW_FACTORS.map((factor, idx) => (
+                <ScrollAnimation key={factor.key} delay={idx * 400}>
+                  <article className="nx-card h-full flex flex-col rounded-2xl bg-card border border-border overflow-hidden">
+                    <div className="relative h-48" aria-hidden="true">
+                      {factor.preview}
+                    </div>
+                    <div className="p-6 flex flex-col gap-3 flex-1">
+                      <div className="flex items-center gap-3">
+                        <span className="w-10 h-10 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center shrink-0">
+                          {factor.icon}
+                        </span>
+                        <h3 className="text-lg font-bold text-foreground leading-tight">
+                          {factor.title}
+                        </h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed text-sm flex-1">
+                        {factor.desc}
+                      </p>
+                      <Link
+                        href="/listings"
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#006D8A] dark:text-[#5CD5EE] hover:underline underline-offset-4 mt-1"
+                      >
+                        See it in action <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </article>
                 </ScrollAnimation>
               ))}
             </div>
@@ -503,7 +585,7 @@ export default function LandingPage() {
                           <h4 className="text-white font-bold text-sm">
                             {item.title}
                           </h4>
-                          <p className="text-white font-bold text-sm">
+                          <p className="text-white/85 text-sm mt-1">
                             {item.desc}
                           </p>
                         </div>
@@ -530,14 +612,14 @@ export default function LandingPage() {
         </section>
       </ScrollAnimation>
 
-      {/* Featured Books */}
+      
       <ScrollAnimation delay={400}>
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-background">
           <div className="container-content">
 
             <div className="flex items-center justify-between mb-8">
 
-              <h2 className="text-2xl md:text-3xl font-extrabold text-[#000f2b] tracking-wide">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-wide">
                 A SAMPLE OF OUR INTERFACE
               </h2>
             </div>
@@ -553,7 +635,7 @@ export default function LandingPage() {
 
       {/* Call To Action */}
       <ScrollAnimation delay={450}>
-        <section className="py-24 bg-slate-50">
+        <section className="py-24 bg-muted">
 
           <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -571,10 +653,10 @@ export default function LandingPage() {
               </div>
 
               <div className="px-2">
-                <span className="text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
+                <span className="text-[#006D8A] dark:text-[#00B4D8] font-bold text-xs tracking-wider uppercase bg-[#00B4D8]/10 px-3 py-1 rounded-full inline-block mb-4">
                   Get Started
                 </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-[#000f2b] tracking-tight leading-tight">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
                   Ready to find your textbooks or sell a few?
                 </h2>
 

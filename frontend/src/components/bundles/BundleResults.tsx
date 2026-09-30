@@ -2,6 +2,9 @@
 
 import Card from '@/components/ui/Card';
 import { BundleResult } from '@/types/bundles';
+import { createConversation, sendMessage, } from '@/lib/messaging.api';
+import { useState } from 'react';
+import { Button } from '@/components/ui/Button';
 
 interface BundleResultsProps {
   result: BundleResult;
@@ -14,6 +17,73 @@ export default function BundleResults({ result }: BundleResultsProps) {
         Number(result.naive.totalPrice) -
         Number(result.recommended.totalPrice);
 
+    const [messaging, setMessaging] = useState(false); 
+    const [messageStatus, setMessageStatus] = useState('');
+
+    const handleMessageSellers = async () => {
+        setMessaging(true);
+        setMessageStatus('');
+
+        try {
+            let messagesSent = 0;
+            let skipped = 0;
+            for (const group of result.recommended.sellerGroups) {
+                if (group.listings.length === 0) {
+                    continue;
+                }
+
+                const listing = group.listings[0];
+
+                const books = group.listings
+                    .map((listing) => listing.title)
+                    .join(', ');
+
+                const message = `Hello, I am interested in purchasing the following books from your listings: ${books}.`;
+
+                try{
+                    const conversationResponse = await createConversation(
+                        listing.id,
+                    );
+
+                    await sendMessage(
+                        conversationResponse.conversationId,
+                        message,
+                    );
+                    messagesSent++;
+                } catch (error) {
+                if (
+                    error instanceof Error &&
+                    error.message.includes(
+                        'cannot start a conversation with yourself',
+                    )
+                    ) {
+                        skipped++;
+                        continue;
+                    }
+
+                    throw error;
+                }
+                
+            }
+            if (skipped > 0) {
+                setMessageStatus(
+                    `Sent messages to ${messagesSent} seller(s). Skipped ${skipped} seller(s) because you cannot message yourself.`,
+                );
+            } else {
+                setMessageStatus(
+                    `Sent messages to ${messagesSent} seller(s).`,
+                );
+            }
+        } catch (error) {
+            setMessageStatus(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to send messages. Please note you should not be attempting to message yourself.',
+            );
+        } finally {
+            setMessaging(false);
+        }
+    };
     return (
         <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
@@ -120,27 +190,45 @@ export default function BundleResults({ result }: BundleResultsProps) {
             </h2>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-                <p className="text-sm text-muted-foreground">
-                Naive total
-                </p>
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                    Naive total
+                    </p>
 
-                <p className="text-xl font-bold text-foreground">
-                {money(result.naive.totalPrice)}
-                </p>
-            </div>
+                    <p className="text-xl font-bold text-foreground">
+                    {money(result.naive.totalPrice)}
+                    </p>
+                </div>
 
-            <div>
-                <p className="text-sm text-muted-foreground">
-                Sellers required
-                </p>
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                    Sellers required
+                    </p>
 
-                <p className="text-xl font-bold text-foreground">
-                {result.naive.sellerCount}
-                </p>
-            </div>
+                    <p className="text-xl font-bold text-foreground">
+                    {result.naive.sellerCount}
+                    </p>
+
+                </div>
             </div>
         </Card>
+            <div className="flex justify-end">
+                <Button
+                    type="button"
+                    variant="primary"
+                    onClick={handleMessageSellers}
+                    disabled={messaging}
+                    className="rounded-xl px-5 py-3 font-bold transition disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                    {messaging ? 'Contacting sellers...' : 'Message Sellers'}
+                </Button>
+            </div>
+
+            {messageStatus && (
+                <p className="text-sm text-muted-foreground">
+                    {messageStatus}
+                </p>
+            )}
         </div>
     );
 }

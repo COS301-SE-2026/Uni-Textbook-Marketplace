@@ -246,7 +246,7 @@ export class AuctionService {
           : 'Anonymous',
         endTime: Timestamp.fromDate(result.auction.end_time!),
         extensionCount: result.auction.extension_count,
-      });
+      }, { merge: true });
     }
 
     return result;

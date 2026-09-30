@@ -25,7 +25,7 @@ export class MailtrapEmailProvider implements IEmailService {
   constructor(private readonly config: ConfigService) {
 
     this.isTestEnvironment = this.config.get<string>('NODE_ENV') === 'test';
-    this.rateLimitMs = Number(this.config.get<string>('MAIL_RATE_LIMIT_MS') || 5000);
+    this.rateLimitMs = Number(this.config.get<string>('MAIL_RATE_LIMIT_MS') || 10000);
 
     if (this.isTestEnvironment) {
       this.logger.log('Test environment detected - email sending disabled');
