@@ -48,17 +48,6 @@ export class ModuleService {
   }
 
   async create(userId: string, dto: CreateModuleDto): Promise<ModuleEntity> {
-    const existing = await this.moduleRepo.findOne({
-      where: {
-        code: dto.code,
-      },
-      relations: ['faculty', 'university'],
-    });
-
-    if (existing) {
-      return existing;
-    }
-
     const user = await this.userRepo.findOne({
       where: { id: userId },
       relations: ['university'],
@@ -69,43 +58,73 @@ export class ModuleService {
       throw new Error('User university not found');
     }
 
-    if (!dto.faculty_id) {
-      throw new Error('Faculty ID is required');
+    const faculty = dto.faculty_id
+      ? await this.facultyRepo.findOne({ where: { id: dto.faculty_id } })
+      : null;
+
+    if (dto.faculty_id && !faculty) {
+      throw new NotFoundException('faculty not found');
     }
 
-    const faculty = await this.facultyRepo.findOne({
-      where: { id: dto.faculty_id },
+    const existing = await this.moduleRepo.findOne({
+      where: { code: dto.code, university: { id: universityId } },
+      relations: ['faculty', 'university'],
     });
 
+    if (existing) {
+      return this.moduleRepo.save(
+        this.applySubmittedDetails(existing, dto, faculty),
+      );
+    }
+
     if (!faculty) {
-      throw new NotFoundException('faculty not found');
+      throw new Error('Faculty ID is required');
     }
 
     const module = this.moduleRepo.create({
       code: dto.code,
       name: dto.name,
       faculty,
-      university: user?.university,
+      university: user?.university ?? { id: universityId },
       semester: dto.semester,
     });
 
     try {
       return await this.moduleRepo.save(module);
     } catch (error) {
+      const databaseError = error as QueryFailedError & {
+        code?: string;
+        driverError?: { code?: string };
+      };
       const isDuplicateKeyError =
         error instanceof QueryFailedError &&
-        (error as QueryFailedError & { code?: string }).code === '23505';
+        (databaseError.code ?? databaseError.driverError?.code) === '23505';
 
       if (isDuplicateKeyError) {
         const raceExisting = await this.moduleRepo.findOne({
-          where: { code: dto.code },
+          where: { code: dto.code, university: { id: universityId } },
           relations: ['faculty', 'university'],
         });
-        if (raceExisting) return raceExisting;
+        if (raceExisting) {
+          return this.moduleRepo.save(
+            this.applySubmittedDetails(raceExisting, dto, faculty),
+          );
+        }
       }
 
       throw error;
     }
+  }
+
+  private applySubmittedDetails(
+    module: ModuleEntity,
+    dto: CreateModuleDto,
+    faculty: Faculty | null,
+  ): ModuleEntity {
+    module.name = dto.name;
+    if (faculty) module.faculty = faculty;
+    module.semester = dto.semester;
+    return module;
   }
 
   async findAll(): Promise<ModuleEntity[]> {

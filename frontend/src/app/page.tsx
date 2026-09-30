@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {
   CheckCircle, Shield, DollarSign, BookOpen, Laptop, Briefcase, Scale, Stethoscope, UserPlus, Search as SearchIcon,
-  MessageCircle, Microscope, MessageSquare, Mail, ChevronDown, ScanLine, Gavel, Boxes
+  MessageCircle, Microscope, MessageSquare, Mail, ChevronDown, ScanLine, Gavel, Boxes, ArrowRight
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Image from 'next/image'
@@ -43,19 +43,87 @@ const PLATFORM_STEPS = [
 
 const WOW_FACTORS = [
   {
+    key: 'scan',
     icon: <ScanLine className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
     title: 'Snap the cover, skip the typing',
-    desc: 'Photograph a textbook and our AI fills in the title, author and ISBN. Crop and clean up the photo before you post.',
+    desc: 'Photograph a textbook and our AI reads the title, author and ISBN. Crop and clean up the photo before you post.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex items-center justify-center gap-6 overflow-hidden">
+        <div className="relative w-24 h-32 rounded bg-white/10 border border-white/20 p-3 flex flex-col gap-2">
+          <div className="h-2 w-3/4 rounded bg-white/40" />
+          <div className="h-2 w-1/2 rounded bg-white/25" />
+          <div className="mt-auto h-2 w-2/3 rounded bg-[#00B4D8]/60" />
+          <div className="nx-scan absolute inset-x-[-10px] h-0.5 bg-[#00B4D8] shadow-[0_0_14px_#00B4D8]" />
+        </div>
+        <div className="flex flex-col gap-2 text-xs font-semibold">
+          {['Title', 'Author', 'ISBN'].map((f, i) => (
+            <span
+              key={f}
+              className="nx-field rounded-full bg-[#00B4D8] px-3 py-1 text-[#000f2b]"
+              style={{ '--d': `${i * 0.35}s` } as React.CSSProperties}
+            >
+              {f}
+            </span>
+          ))}
+        </div>
+      </div>
+    ),
   },
   {
+    key: 'auction',
     icon: <Gavel className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
     title: 'Bid on books in real time',
     desc: 'Sellers can list a book as a live auction. Watch bids come in and win the book you need at a price you set.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex flex-col items-center justify-center gap-2">
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+          <span className="nx-pulse h-2 w-2 rounded-full bg-emerald-400" />
+          Live auction
+        </span>
+        <span className="relative h-12 w-32 text-center text-4xl font-extrabold text-[#00B4D8]">
+          {['R480', 'R500', 'R520'].map((v, i) => (
+            <span
+              key={v}
+              className="nx-tick absolute inset-0"
+              style={{ '--d': `${i * 1.5}s` } as React.CSSProperties}
+            >
+              {v}
+            </span>
+          ))}
+        </span>
+        <span className="text-white/70 text-xs">Highest bid</span>
+        <span className="mt-1 h-1 w-40 overflow-hidden rounded-full bg-white/15">
+          <span className="nx-drain block h-full w-full bg-[#00B4D8]" />
+        </span>
+      </div>
+    ),
   },
   {
+    key: 'bundle',
     icon: <Boxes className="w-5 h-5 text-[#006D8A] dark:text-[#00B4D8]" />,
     title: 'Build your whole semester list',
     desc: 'Add every book on your module list and we work out the cheapest way to buy them together.',
+    preview: (
+      <div className="relative h-full w-full bg-[#000f2b] flex flex-col items-center justify-end gap-3 pb-8 overflow-hidden">
+        <div className="flex items-end gap-2">
+          {[
+            ['bg-[#00B4D8]', 'h-24'],
+            ['bg-white/85', 'h-28'],
+            ['bg-[#006D8A]', 'h-20'],
+            ['bg-white/50', 'h-24'],
+          ].map(([c, h], i) => (
+            <div
+              key={i}
+              className={`nx-spine w-9 rounded-sm ${c} ${h}`}
+              style={{ '--i': i } as React.CSSProperties}
+            />
+          ))}
+        </div>
+        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white">
+          Best combined price
+        </span>
+      </div>
+    ),
   },
 ];
 
@@ -201,126 +269,6 @@ const MOCK_FEATURED_BOOKS: Listing[] = [
       university: { name: '' }
     },
   },
-  {
-    id: '5',
-    title: 'The C Programming Language',
-    price: 280,
-    condition: 'fair',
-    annotation_level: 'heavy',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/c-programming.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 2,
-      author: 'Brian W. Kernighan',
-      isbn: '978-0131103627',
-      title: 'The C Programming Language',
-      publisher: ''
-    },
-    module: {
-      code: 'COS132',
-      name: 'EBIT',
-      semester: 1,
-    },
-    seller: {
-      first_name: 'David',
-      last_name: 'Wilson',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '6',
-    title: 'Computer Networking: A Top-Down Approach',
-    price: 490,
-    condition: 'new',
-    annotation_level: 'none',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/networking.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 7,
-      author: 'James F. Kurose',
-      isbn: '978-0133594140',
-      title: 'Computer Networking: A Top-Down Approach',
-      publisher: ''
-    },
-    module: {
-      code: 'COS216',
-      name: 'EBIT',
-      semester: 1
-    },
-    seller: {
-      first_name: 'Novuka',
-      last_name: 'Mtembu',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '7',
-    title: 'Designing Data-Intensive Applications',
-    price: 520,
-    condition: 'good',
-    annotation_level: 'light',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/data-intensive.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 1,
-      author: 'Martin Kleppmann',
-      isbn: '978-1492056355',
-      title: 'Designing Data-Intensive Applications',
-      publisher: ''
-    },
-    module: {
-      code: 'COS341',
-      name: 'EBIT',
-      semester: 2,
-    },
-    seller: {
-      first_name: 'Teboho',
-      last_name: 'Modise',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
-  {
-    id: '8',
-    title: 'Introduction to Probability',
-    price: 380,
-    condition: 'good',
-    annotation_level: 'heavy',
-    status: 'APPROVED',
-    listing_status: 'AVAILABLE',
-    photo_urls: ['/books/probability.jpg'],
-    created_at: new Date().toISOString(),
-    description: '',
-    book: {
-      edition: 2,
-      author: 'Dimitri Bertsekas',
-      isbn: '978-0199535569',
-      title: 'Introduction to Probability',
-      publisher: '',
-    },
-    module: {
-      code: 'WTW152',
-      name: 'Natural Sciences',
-      semester: 2,
-    },
-    seller: {
-      first_name: 'Chuku',
-      last_name: 'Obioha',
-      is_verified: true,
-      university: { name: '' }
-    },
-  },
 
 ];
 
@@ -338,6 +286,12 @@ const NX_CSS = `
 @keyframes nx-march  { to { background-position: 16px 0; } }
 @keyframes nx-ring   { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(1.75); opacity: 0; } }
 @keyframes nx-shine  { 0% { transform: translateX(-160%) skewX(-20deg); } 60%, 100% { transform: translateX(420%) skewX(-20deg); } }
+@keyframes nx-scan   { 0%, 100% { top: 10%; } 50% { top: 86%; } }
+@keyframes nx-field  { 0%, 15% { opacity: .25; } 35%, 80% { opacity: 1; } 100% { opacity: .25; } }
+@keyframes nx-tick   { 0%, 30% { opacity: 1; } 33.4%, 100% { opacity: 0; } }
+@keyframes nx-drain  { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes nx-spine  { 0% { transform: translateY(70px); opacity: 0; } 20%, 80% { transform: none; opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
+@keyframes nx-pulse  { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.6); } }
 
 .nx-word  { display: inline-block; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
 .nx-fade  { animation: nx-fade .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
@@ -355,8 +309,17 @@ const NX_CSS = `
 .nx-card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .nx-card:hover { transform: translateY(-6px); border-color: #00B4D8; box-shadow: 0 16px 40px -14px rgba(0, 180, 216, .5); }
 
+.nx-scan  { animation: nx-scan 3.2s ease-in-out infinite; }
+.nx-field { animation: nx-field 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.nx-tick  { opacity: 0; animation: nx-tick 4.5s linear infinite; animation-delay: var(--d, 0s); }
+.nx-drain { transform-origin: left; animation: nx-drain 4.5s linear infinite; }
+.nx-spine { animation: nx-spine 5s ease-in-out infinite; animation-delay: calc(var(--i) * .3s); }
+.nx-pulse { animation: nx-pulse 1.6s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .nx-word, .nx-fade, .nx-glow, .nx-cue, .nx-cue-ring, .nx-wheel, .nx-march, .nx-ring, .nx-shine::after { animation: none; }
+  .nx-word, .nx-fade, .nx-glow, .nx-cue, .nx-cue-ring, .nx-wheel, .nx-march, .nx-ring, .nx-shine::after,
+  .nx-scan, .nx-field, .nx-drain, .nx-spine, .nx-pulse { animation: none; }
+  .nx-tick:first-child { opacity: 1; }
   .nx-card:hover { transform: none; }
 }
 `
@@ -559,17 +522,32 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {WOW_FACTORS.map((factor, idx) => (
-                <ScrollAnimation key={idx} delay={idx * 500}>
-                  <article className="nx-card h-full rounded-2xl bg-card border border-border p-6">
-                    <div className="w-10 h-10 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center mb-4">
-                      {factor.icon}
+                <ScrollAnimation key={factor.key} delay={idx * 400}>
+                  <article className="nx-card h-full flex flex-col rounded-2xl bg-card border border-border overflow-hidden">
+                    <div className="relative h-48" aria-hidden="true">
+                      {factor.preview}
                     </div>
-                    <h3 className="text-lg font-bold text-foreground">{factor.title}</h3>
-                    <p className="text-muted-foreground mt-2 leading-relaxed text-sm">
-                      {factor.desc}
-                    </p>
+                    <div className="p-6 flex flex-col gap-3 flex-1">
+                      <div className="flex items-center gap-3">
+                        <span className="w-10 h-10 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center shrink-0">
+                          {factor.icon}
+                        </span>
+                        <h3 className="text-lg font-bold text-foreground leading-tight">
+                          {factor.title}
+                        </h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed text-sm flex-1">
+                        {factor.desc}
+                      </p>
+                      <Link
+                        href="/listings"
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#006D8A] dark:text-[#5CD5EE] hover:underline underline-offset-4 mt-1"
+                      >
+                        See it in action <ArrowRight size={14} />
+                      </Link>
+                    </div>
                   </article>
                 </ScrollAnimation>
               ))}

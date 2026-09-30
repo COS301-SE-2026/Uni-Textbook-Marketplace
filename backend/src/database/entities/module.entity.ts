@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 
 import { University } from './university.entity';
@@ -12,14 +13,12 @@ import { Faculty } from './faculty.entity';
 import { ModuleBook } from './module-book.entity';
 
 @Entity('modules')
+@Unique('UQ_modules_code_university', ['code', 'university'])
 export class Module {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({
-    unique: true,
-    length: 20,
-  })
+  @Column({ length: 20 })
   code!: string;
 
   @Column()

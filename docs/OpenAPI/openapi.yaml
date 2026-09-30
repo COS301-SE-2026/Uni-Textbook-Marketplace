@@ -21,9 +21,13 @@ servers:
     description: Local development
 
 tags:
+  - name: Health
   - name: Auth
   - name: Listings
   - name: Admin
+  - name: Auctions
+  - name: Books
+  - name: Bundles
   - name: Modules
   - name: SavedSearches
   - name: Wishlist
@@ -180,7 +184,7 @@ components:
           format: uuid
         userId:
           type: string
-          format: uui
+          format: uuid
         
         appeal_message:
           type: string
@@ -304,6 +308,7 @@ components:
           type: string
           description: Raw text lines returned by Azure AI Vision's Read API (Image Analysis 4.0), before fuzzy matching.
         matchedBook:
+          type: object
           nullable: true
           allOf:
             - $ref: "#/components/schemas/MatchedBook"
@@ -328,10 +333,48 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: The request is invalid or could not be processed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
 
 paths:
+  /:
+    get:
+      operationId: getHealth
+      tags: [Health]
+      summary: Returns the API welcome message.
+      security: []
+      responses:
+        "200":
+          description: API is responding
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /notifications/stream:
+    get:
+      operationId: streamNotifications
+      tags: [Notifications]
+      summary: Streams live notifications for the authenticated user.
+      responses:
+        "200":
+          description: Server-sent notification events
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /notifications/mine:
     get:
+      operationId: getMyNotifications
       tags: [Notifications]
       summary: Returns the logged-in user's notifications, paginated.
       parameters:
@@ -367,6 +410,7 @@ paths:
 
   /notifications/{id}/read:
     patch:
+      operationId: markNotificationRead
       tags: [Notifications]
       summary: Marks a single notification as read.
       parameters:
@@ -389,6 +433,7 @@ paths:
 
   /notifications/read-all:
     patch:
+      operationId: markAllNotificationsRead
       tags: [Notifications]
       summary: Marks all of the logged-in user's notifications as read.
       responses:
@@ -406,6 +451,7 @@ paths:
 
   /notifications/{id}/delete:
     delete:
+      operationId: deleteNotification
       tags: [Notifications]
       summary: Deletes a notification belonging to the logged-in user.
       parameters:
@@ -428,6 +474,7 @@ paths:
 
   /auth/register:
     post:
+      operationId: registerStudent
       tags: [Auth]
       summary: Starts student registration. Checks the email domain and sends the OTP.
       security: []
@@ -465,10 +512,11 @@ paths:
         "409":
           description: Email address is already registered
 
-  /auth/verify-otp:
+  /auth/verify-email:
     post:
+      operationId: verifyEmail
       tags: [Auth]
-      summary: Checks the 6-digit OTP sent to the student's email.
+      summary: Verifies the 6-digit code sent to the student's email.
       security: []
       requestBody:
         required: true
@@ -476,12 +524,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, otp]
+              required: [email, code]
               properties:
                 email:
                   type: string
-                otp:
+                code:
                   type: string
+                  minLength: 6
+                  maxLength: 6
       responses:
         "200":
           description: Email verified successfully
@@ -501,6 +551,7 @@ paths:
 
   /auth/login:
     post:
+      operationId: login
       tags: [Auth]
       summary: Logs in a verified student and hands back a signed JWT (cookie).
       security: []
@@ -525,10 +576,11 @@ paths:
         "403":
           description: Account exists but email is not verified
 
-  /auth/set-password:
+  /auth/resend-otp:
     post:
+      operationId: resendOtp
       tags: [Auth]
-      summary: Sets the student's password once OTP verification is done.
+      summary: Resends the email verification code.
       security: []
       requestBody:
         required: true
@@ -536,30 +588,42 @@ paths:
           application/json:
             schema:
               type: object
-              required: [userId, password, confirmPassword]
+              required: [email]
               properties:
-                userId:
-                  type: string
-                  format: uuid
-                password:
-                  type: string
-                confirmPassword:
+                email:
                   type: string
       responses:
         "200":
-          description: Password set successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  accessToken:
-                    type: string
+          description: Verification code resent
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auth/forgot-password:
+    post:
+      operationId: requestPasswordReset
+      tags: [Auth]
+      summary: Starts the password recovery flow.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Password recovery request accepted
+        "400":
+          description: Invalid request
 
   /auth/me:
     get:
+      operationId: getMyProfile
       tags: [Auth]
       summary: Returns the logged-in user's profile.
       responses:
@@ -567,48 +631,128 @@ paths:
           description: The current user's profile
         "401":
           $ref: "#/components/responses/Unauthorized"
+    patch:
+      operationId: updateMyProfile
+      tags: [Auth]
+      summary: Updates the logged-in user's profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                last_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        "200":
+          description: Profile updated
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    delete:
+      operationId: deactivateMyAccount
+      tags: [Auth]
+      summary: Deactivates the logged-in user's account and clears session cookies.
+      responses:
+        "200":
+          description: Account deactivated
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/me/password:
+    patch:
+      operationId: changeMyPassword
+      tags: [Auth]
+      summary: Changes the logged-in user's password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password, confirm_password]
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+                confirm_password:
+                  type: string
+      responses:
+        "200":
+          description: Password changed
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /auth/logout:
     post:
+      operationId: logout
       tags: [Auth]
       summary: Clears the session cookie.
       responses:
         "200":
           description: Logged out
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /auth/universities:
     get:
+      operationId: getUniversities
       tags: [Auth]
       summary: Lists supported universities, for the registration dropdown.
       security: []
       responses:
         "200":
           description: List of universities
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /auth/refresh:
     post:
+      operationId: refreshSession
       tags: [Auth]
       summary: Gets a new access token using a refresh token.
       security: []
       responses:
         "200":
           description: New access token issued
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /listings:
     post:
+      operationId: createListing
       tags: [Listings]
       summary: Creates a new textbook listing. Created with status = PENDING.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: CreateListingDto fields for the listing to submit.
       responses:
         "201":
           description: Listing created
         "400":
           description: Validation error
     get:
+      operationId: listApprovedListings
       tags: [Listings]
       summary: Returns all APPROVED listings, with pagination and filters.
       parameters:
         - in: query
-          name: moduleId
+          name: university
+          schema: { type: string }
+        - in: query
+          name: moduleCode
           schema: { type: string }
         - in: query
           name: faculty
@@ -617,20 +761,20 @@ paths:
           name: condition
           schema: { type: string }
         - in: query
-          name: minPrice
+          name: annotationLevel
+          schema: { type: string }
+        - in: query
+          name: priceMin
           schema: { type: number }
         - in: query
-          name: maxPrice
+          name: priceMax
           schema: { type: number }
         - in: query
           name: edition
           schema: { type: integer }
         - in: query
-          name: page
-          schema: { type: integer }
-        - in: query
-          name: limit
-          schema: { type: integer }
+          name: search
+          schema: { type: string }
       responses:
         "200":
           description: Paginated approved listings
@@ -639,21 +783,29 @@ paths:
               schema:
                 type: object
                 properties:
-                  items:
+                  listings:
                     type: array
                     items:
                       $ref: "#/components/schemas/Listing"
+                  total:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /listings/mine:
     get:
+      operationId: getMyListings
       tags: [Listings]
       summary: Returns all of the logged-in student's own listings (PENDING, APPROVED, REJECTED).
       responses:
         "200":
           description: The student's own listings
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /listings/{id}:
     get:
+      operationId: getListingById
       tags: [Listings]
       summary: Returns the full detail object for one listing.
       parameters:
@@ -673,6 +825,7 @@ paths:
 
   /listings/editlist:
     patch:
+      operationId: editListing
       tags: [Listings]
       summary: Edits an existing listing owned by the student. Only PENDING/REJECTED.
       requestBody:
@@ -698,6 +851,7 @@ paths:
 
   /listings/{id}/status:
     patch:
+      operationId: updateListingStatus
       tags: [Listings]
       summary: >
         Updates a listing's status. Extended in Sprint 5 to accept RESERVED
@@ -715,11 +869,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [status]
+              required: [listing_status]
               properties:
-                status:
+                listing_status:
                   type: string
-                  enum: [RESERVED, SOLD]
+                  enum: [AVAILABLE, RESERVED, SOLD, WITHDRAWN]
       responses:
         "200":
           description: Status updated, audit_log entry written
@@ -730,6 +884,7 @@ paths:
 
   /listings/admin/all:
     get:
+      operationId: getAllListingsForAdmin
       tags: [Admin]
       summary: Returns all listings, admin only.
       responses:
@@ -738,8 +893,9 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/listings/{id}/approve:
+  /admin/{id}/approve:
     patch:
+      operationId: approveListing
       tags: [Admin]
       summary: Approves a pending listing. Sets status APPROVED, writes audit log.
       parameters:
@@ -753,8 +909,9 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/listings/{id}/reject:
+  /admin/{id}/reject:
     patch:
+      operationId: rejectListing
       tags: [Admin]
       summary: Rejects a pending listing. Sets status REJECTED, writes audit log.
       parameters:
@@ -778,12 +935,16 @@ paths:
 
   /modules:
     post:
+      operationId: createModule
       tags: [Modules]
       summary: Creates a module linked to the textbook being sold.
       responses:
         "201":
           description: Module created
+        "400":
+          $ref: "#/components/responses/BadRequest"
     get:
+      operationId: searchModules
       tags: [Modules]
       summary: Search-as-you-type module code lookup, extended with smart filters.
       parameters:
@@ -797,17 +958,23 @@ paths:
       responses:
         "200":
           description: Matching modules
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /modules/faculties:
     get:
+      operationId: listFaculties
       tags: [Modules]
       summary: Returns faculty names and ids.
       responses:
         "200":
           description: Faculties
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /saved-searches:
     post:
+      operationId: createSavedSearch
       tags: [SavedSearches]
       summary: Saves a search as JSON filter_json.
       requestBody:
@@ -821,41 +988,102 @@ paths:
       responses:
         "201":
           description: Saved search created
-
-  /saved-searches/me:
+        "400":
+          $ref: "#/components/responses/BadRequest"
     get:
+      operationId: getAllSavedSearches
+      tags: [SavedSearches]
+      summary: Returns all saved searches (admin only).
+      responses:
+        "200":
+          description: All saved searches
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /saved-searches/mine:
+    get:
+      operationId: getMySavedSearches
       tags: [SavedSearches]
       summary: Returns the saved searches belonging to the logged-in student.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
       responses:
         "200":
           description: The student's saved searches
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
-  /saved-searches/id:
+  /saved-searches/{id}:
     get:
+      operationId: getSavedSearchById
       tags: [SavedSearches]
       summary: Returns one saved search by id.
       parameters:
-        - in: query
+        - in: path
           name: id
           required: true
-          schema: { type: string }
+          schema: { type: string, format: uuid }
       responses:
         "200":
           description: The saved search
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
+      operationId: deleteSavedSearch
       tags: [SavedSearches]
       summary: Deletes a saved search by id.
       parameters:
-        - in: query
+        - in: path
           name: id
           required: true
-          schema: { type: string }
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /saved-searches/me:
+    get:
+      operationId: getSavedSearchUserInfo
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's basic identity details.
       responses:
         "200":
-          description: Deleted
+          description: User ID, email, role, and name
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /saved-searches/me/email:
+    get:
+      operationId: getSavedSearchUserEmail
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's email address.
+      responses:
+        "200":
+          description: User email
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /saved-searches/me/role:
+    get:
+      operationId: getSavedSearchUserRole
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's role.
+      responses:
+        "200":
+          description: User role
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /wishlist/{listingId}:
     post:
+      operationId: addListingToWishlist
       tags: [Wishlist]
       summary: Adds a listing to the logged-in student's wishlist.
       parameters:
@@ -866,7 +1094,10 @@ paths:
       responses:
         "201":
           description: Added to wishlist
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     delete:
+      operationId: removeListingFromWishlist
       tags: [Wishlist]
       summary: Removes a listing from the logged-in student's wishlist.
       parameters:
@@ -877,17 +1108,220 @@ paths:
       responses:
         "200":
           description: Removed from wishlist
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /wishlist/mine:
     get:
+      operationId: getMyWishlist
       tags: [Wishlist]
       summary: Returns the logged-in student's wishlisted listings.
       responses:
         "200":
           description: Wishlisted listings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /wishlist/mywishlist:
+    get:
+      operationId: getMyWishlistLegacy
+      tags: [Wishlist]
+      summary: Returns the logged-in student's wishlist using the legacy response shape.
+      responses:
+        "200":
+          description: Wishlisted listings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /books:
+    post:
+      operationId: createBook
+      tags: [Books]
+      summary: Creates a book record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                isbn:
+                  type: string
+                edition:
+                  type: integer
+      responses:
+        "201":
+          description: Book created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /bundles/optimize:
+    post:
+      operationId: optimizeBundle
+      tags: [Bundles]
+      summary: Optimizes a bundle for the supplied module IDs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [moduleIds]
+              properties:
+                moduleIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        "200":
+          description: Optimized bundle result
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auction:
+    get:
+      operationId: getAuctions
+      tags: [Auctions]
+      summary: Returns available auctions.
+      responses:
+        "200":
+          description: Auctions
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createAuction
+      tags: [Auctions]
+      summary: Creates an auction for an approved listing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listing_id, starting_price, end_time]
+              properties:
+                listing_id:
+                  type: string
+                  format: uuid
+                starting_price:
+                  type: number
+                  minimum: 0
+                reserve_price:
+                  type: number
+                  minimum: 0
+                start_time:
+                  type: string
+                  format: date-time
+                end_time:
+                  type: string
+                  format: date-time
+      responses:
+        "201":
+          description: Auction created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auction/listing/{listingId}:
+    get:
+      operationId: getAuctionForListing
+      tags: [Auctions]
+      summary: Gets the active or scheduled auction for a listing.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Auction for the listing
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auction/{id}:
+    get:
+      operationId: getAuctionById
+      tags: [Auctions]
+      summary: Returns the current state of one auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Auction details
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auction/{id}/bids:
+    get:
+      operationId: getAuctionBidHistory
+      tags: [Auctions]
+      summary: Returns paginated bid history for an auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Paginated bid history
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auction/{id}/bid:
+    post:
+      operationId: placeAuctionBid
+      tags: [Auctions]
+      summary: Places a bid on an auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount:
+                  type: number
+                  minimum: 0
+                  exclusiveMinimum: true
+      responses:
+        "201":
+          description: Bid placed
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /images/test:
+    get:
+      operationId: testImageService
+      tags: [Images]
+      summary: Checks whether the image controller is online.
+      responses:
+        "200":
+          description: Image service status
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /admin/audit-log:
     get:
+      operationId: getAuditLog
       tags: [Admin]
       summary: Returns audit log entries for admin review.
       parameters:
@@ -917,6 +1351,7 @@ paths:
 
   /admin/emails:
     get:
+      operationId: getAdminEmails
       tags: [Admin]
       summary: Returns a list of admin emails, used for filters.
       responses:
@@ -927,30 +1362,65 @@ paths:
 
   /images/upload:
     post:
+      operationId: uploadListingImages
       tags: [Images]
       summary: Uploads a listing image to Azure Blob Storage through the backend.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [images]
+              properties:
+                images:
+                  type: array
+                  maxItems: 5
+                  items:
+                    type: string
+                    format: binary
       responses:
         "201":
           description: Image uploaded
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /images/list:
     get:
+      operationId: listImages
       tags: [Images]
       summary: Lists uploaded images for a listing.
       responses:
         "200":
           description: Image list
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /images/delete:
     delete:
+      operationId: deleteImage
       tags: [Images]
       summary: Deletes an uploaded listing image from Blob Storage.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
       responses:
         "200":
           description: Deleted
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /vision/extract-text:
     post:
+      operationId: extractTextFromImage
       tags: [Vision]
       summary: >
         Runs Azure AI Vision OCR (Image Analysis 4.0 Read API) on a listing
@@ -993,6 +1463,7 @@ paths:
 
   /conversations:
     post:
+      operationId: createConversation
       tags: [Conversations]
       summary: Creates or fetches a conversation for a listing.
       requestBody:
@@ -1007,17 +1478,23 @@ paths:
       responses:
         "201":
           description: Conversation created or fetched
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /conversations/mine:
-    post:
+    get:
+      operationId: getMyConversations
       tags: [Conversations]
       summary: Gets all conversations for the logged-in user.
       responses:
         "200":
           description: The user's conversations
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /conversations/{id}/messages:
     get:
+      operationId: getConversationMessages
       tags: [Conversations]
       summary: Gets all messages in a conversation.
       parameters:
@@ -1028,7 +1505,10 @@ paths:
       responses:
         "200":
           description: Messages in the conversation
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
+      operationId: sendConversationMessage
       tags: [Conversations]
       summary: Sends a message in a conversation.
       parameters:
@@ -1047,9 +1527,12 @@ paths:
       responses:
         "201":
           description: Message sent
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /reports:
     post:
+      operationId: createReport
       tags: [Reports]
       summary: A student submits a report against a listing.
       security:
@@ -1083,6 +1566,7 @@ paths:
 
   /admin/reports:
     get:
+      operationId: getReportsForAdmin
       tags: [Reports]
       summary: Returns reports for admin review, paginated, filterable by status. 
       security:
@@ -1117,8 +1601,31 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/{id}/dismiss:
+  /admin/reports/{id}:
+    get:
+      operationId: getReportById
+      tags: [Reports]
+      summary: Returns one report for admin review.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/reports/{id}/dismiss:
     patch:
+      operationId: dismissReport
       tags: [Reports]
       summary: Dismisses a report without banning the reported user.
       security:
@@ -1139,8 +1646,9 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /admin/users/{id}/ban:
+  /admin/{id}/ban:
     patch:
+      operationId: banUser
       tags: [Reports]
       summary: >
         Bans the user who owns the reported listing. Writes an audit_log
@@ -1175,6 +1683,7 @@ paths:
 
   /cases:
     post:
+      operationId: createAppeal
       tags: [Cases]
       summary: Submit an appeal as a banned user
       description: Only users with is_banned = true can submit appeals. Users cannot have multiple pending appeals.
@@ -1209,6 +1718,7 @@ paths:
 
   /cases/mine:
     get:
+      operationId: getMyCases
       tags: [Cases]
       summary: Get all cases for the authenticated user
       description: Returns all cases submitted by the current user
@@ -1228,6 +1738,7 @@ paths:
 
   /cases/{id}:
     get:
+      operationId: getCaseById
       tags: [Cases]
       summary: Get a specific case by ID
       description: Users can only access their own cases
@@ -1255,6 +1766,7 @@ paths:
 
   /cases/admin/pending:
     get:
+      operationId: getPendingCases
       tags: [Cases]
       summary: ADMIN ONLY - Get all pending cases
       description: Returns all cases with status = pending for admin review
@@ -1276,6 +1788,7 @@ paths:
 
   /cases/admin:
     get:
+      operationId: getAllCases
       tags: [Cases]
       summary: ADMIN ONLY - Get all cases with pagination
       description: Returns all cases with pagination for admin dashboard
@@ -1322,6 +1835,7 @@ paths:
 
   /cases/{id}/review:
     patch:
+      operationId: reviewCase
       tags: [Cases]
       summary: ADMIN ONLY - Review a case (decide endpoint)
       description: >
