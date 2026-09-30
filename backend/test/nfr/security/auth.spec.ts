@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { writeFileSync, mkdirSync } from 'fs';
-
-
-const API_URL = (
-  process.env.API_URL ??
-  'https://nexusdev-backend-staging.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/api'
-).replace(/\/+$/, '');
+import {
+  API_URL,
+  createCollector,
+  loginAs,
+  writeArtifact,
+} from '.././shared/nfr-helpers';
 
 const STUDENT = {
   email: process.env.STUDENT_EMAIL ?? '',
@@ -25,36 +24,11 @@ const BANNED = {
 const ADMIN_ENDPOINT = (id = '00000000-0000-0000-0000-000000000000') =>
   `/admin/${id}/approve`;
 
-interface Finding {
-  clause: string;
-  passed: boolean | 'skipped';
-  evidence: unknown;
-  note?: string;
-}
-
-const findings: Finding[] = [];
-const record = (f: Finding) => {
-  findings.push(f);
-  const status =
-    f.passed === 'skipped' ? 'SKIP' : f.passed ? 'PASS' : 'FAIL';
-  console.log(`[NFR] ${status} — ${f.clause}`);
-};
-
-const loginAs = async (
-  request: any,
-  creds: { email: string; password: string },
-) => {
-  const res = await request.post(`${API_URL}/auth/login`, { data: creds });
-  const cookies = res
-    .headersArray()
-    .filter((h: any) => h.name.toLowerCase() === 'set-cookie')
-    .map((h: any) => h.value.split(';')[0])
-    .join('; ');
-  return { res, cookies };
-};
+const { findings, record } = createCollector();
 
 test.describe.serial('NFR: authentication & access control', () => {
-  // Clause 1: protected endpoints require JWT 
+
+  // Clause 1: protected endpoints require JWT
   test('clause 1: protected endpoint without JWT returns 401', async ({
     request,
   }) => {
@@ -73,7 +47,7 @@ test.describe.serial('NFR: authentication & access control', () => {
     expect(res.status()).toBe(401);
   });
 
-  // Clause 2: RBAC — admin endpoint blocks student JWT 
+  // Clause 2: RBAC — admin endpoint blocks student JWT
   test('clause 2: student JWT on admin endpoint returns 403', async ({
     request,
   }) => {
@@ -114,7 +88,7 @@ test.describe.serial('NFR: authentication & access control', () => {
     expect(true).toBe(true);
   });
 
-  //Clause 5: token expiry (access 15m, refresh 7d) 
+  //  Clause 5: token expiry (access 15m, refresh 7d)
   test('clause 5: access token expires in 15m, refresh in 7d', async ({
     request,
   }) => {
@@ -171,12 +145,10 @@ test.describe.serial('NFR: authentication & access control', () => {
     expect(passed).toBe(true);
   });
 
-  //  Clause 6: banned user flagged on login (soft-ban) 
+  //  Clause 6: banned user flagged on login (soft-ban)
   test('clause 6: banned user flagged and access-restricted on login', async ({
     request,
   }) => {
-    
-
     const res = await request.post(`${API_URL}/auth/login`, { data: BANNED });
     const body = await res.json().catch(() => ({}));
 
@@ -184,7 +156,8 @@ test.describe.serial('NFR: authentication & access control', () => {
     const flaggedBanned =
       res.status() === 200 && body?.user?.is_banned === true;
 
-  
+    // Hard-ban: login is refused outright. Accepted as an alternative if
+    // the team later decides to reject at the auth layer.
     const rejected = res.status() === 403;
 
     const passed = flaggedBanned || rejected;
@@ -206,7 +179,7 @@ test.describe.serial('NFR: authentication & access control', () => {
     expect(passed).toBe(true);
   });
 
-  // Clause 4 (LAST): login rate-limited per @Throttle config
+  // Clause 4 (LAST): login rate-limited per @Throttle config 
   test('clause 4: login rate-limited per endpoint configuration', async ({
     request,
   }) => {
@@ -247,15 +220,13 @@ test.describe.serial('NFR: authentication & access control', () => {
   });
 });
 
-// After all clauses, write the artifact 
+//After all clauses, write the artifact 
 test.afterAll(async () => {
-  mkdirSync('test/nfr/artifacts', { recursive: true });
-
   const passed = findings.filter((f) => f.passed === true).length;
   const failed = findings.filter((f) => f.passed === false).length;
   const skipped = findings.filter((f) => f.passed === 'skipped').length;
 
-  const artifact = {
+  writeArtifact('security-summary.json', {
     nfr:
       'Protected endpoints shall enforce JWT-based authentication and role-based access control. An admin-only endpoint shall return 403 Forbidden for a Student-role JWT. Passwords shall be hashed with bcrypt at a cost factor of 12. Authentication endpoints shall be rate-limited per endpoint (login at 10/min; register and verify-email at 5/min; forgot-password and resend-otp at 4/min). Access tokens shall expire after 15 minutes; refresh tokens after 7 days. A banned user (is_banned = true) shall be flagged in the login response with is_banned: true and ban_reason, so the frontend can deny access to protected routes; the API continues issuing tokens to allow ban-screen rendering and account-recovery flows.',
     totalClauses: findings.length,
@@ -272,12 +243,7 @@ test.afterAll(async () => {
       rateLimiting:
         'Per-endpoint limits via @Throttle decorators: login=10/min, register=5/min, verify-email=5/min, forgot-password=4/min, resend-otp=4/min. The NFR has been reworded to describe per-endpoint limits rather than a single 5/min value.',
     },
-  };
-
-  writeFileSync(
-    'test/nfr/artifacts/security-summary.json',
-    JSON.stringify(artifact, null, 2),
-  );
+  });
 
   console.log(
     `[NFR] security: ${passed} passed, ${failed} failed, ${skipped} skipped`,
