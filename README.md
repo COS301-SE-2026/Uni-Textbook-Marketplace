@@ -32,7 +32,7 @@
 ---
 </br>
 <p align="center">
-  <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
+  <a href="https://www.unitextbookmarketplace.co.za/">
     <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
     Explore Our Web-App Here
   </a>
