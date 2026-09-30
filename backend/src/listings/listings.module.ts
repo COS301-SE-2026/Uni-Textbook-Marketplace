@@ -8,6 +8,7 @@ import { Listing } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
+import {ModuleBook} from '../database/entities/module-book.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SavedSearchesModule } from '../saved_search/saved_search.module';
@@ -21,6 +22,7 @@ import { Auction } from '../database/entities/auction.entity';
       User,
       Book,
       ModuleEntity,
+      ModuleBook,
       AuditLog,
       Auction,
     ]),

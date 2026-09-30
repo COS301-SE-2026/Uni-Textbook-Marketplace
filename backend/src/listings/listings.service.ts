@@ -17,6 +17,7 @@ import {
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
+import { ModuleBook } from '../database/entities/module-book.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { ListingFiltersDto } from './dto/listingFilter.dto';
 import { EditListingDto } from './dto/editListing.dtos';
@@ -50,6 +51,9 @@ export class ListingsService {
 
     @InjectRepository(ModuleEntity)
     private readonly moduleRepo: Repository<ModuleEntity>,
+
+    @InjectRepository(ModuleBook)
+    private readonly moduleBookRepo: Repository<ModuleBook>,
 
     @InjectRepository(Auction)
     private readonly auctionRepo: Repository<Auction>,
@@ -87,6 +91,24 @@ export class ListingsService {
     );
 
     const savedListing = await this.listingRepo.save(listing);
+
+    if (module) {
+      const existingModuleBook = await this.moduleBookRepo.findOne({
+        where: {
+          module: { id: module.id },
+          book: { id: book.id },
+        },
+      });
+
+      if (!existingModuleBook) {
+        const moduleBook = this.moduleBookRepo.create({
+          module,
+          book,
+        });
+
+        await this.moduleBookRepo.save(moduleBook);
+      }
+    }
 
     return savedListing;
   }

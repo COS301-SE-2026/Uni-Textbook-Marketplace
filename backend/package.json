@@ -121,6 +121,10 @@
     ],
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
+    "testPathIgnorePatterns": [
+    "/node_modules/",
+    "<rootDir>/test/nfr/"
+  ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

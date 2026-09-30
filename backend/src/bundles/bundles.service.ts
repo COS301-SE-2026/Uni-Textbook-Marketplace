@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ModuleBook } from '../database/entities/module-book.entity';
 import { Listing, ListingStatus } from '../database/entities/listing.entity';
@@ -16,16 +16,14 @@ export class BundlesService {
   ) {}
 
   async optimizeBundle(moduleIds: string[]) {
-    if (moduleIds.length === 0) {
-      throw new Error('At least one module must be selected');
+    const uniqueModuleIds = [...new Set(moduleIds ?? [])];
+
+    if (uniqueModuleIds.length === 0) {
+      throw new BadRequestException('At least one module must be selected');
     }
 
     const moduleBooks = await this.moduleBookRepository.find({
-      where: moduleIds.map((moduleId) => ({
-        module: {
-          id: moduleId,
-        },
-      })),
+      where: { module: { id: In(uniqueModuleIds) } },
       relations: ['book', 'module'],
     });
 
@@ -37,13 +35,17 @@ export class BundlesService {
 
     const requiredBookIds = [...requiredBooks.keys()];
 
+    // An empty In([]) or where: [] can match everything, so never query
+    // listings when there is nothing required.
+    if (requiredBookIds.length === 0) {
+      return this.emptyResult();
+    }
+
     const approvedListings = await this.listingRepository.find({
-      where: requiredBookIds.map((bookId) => ({
-        book: {
-          id: bookId,
-        },
+      where: {
+        book: { id: In(requiredBookIds) },
         status: ListingStatus.APPROVED,
-      })),
+      },
       relations: ['book', 'seller'],
     });
 
@@ -60,10 +62,71 @@ export class BundlesService {
     );
 
     return {
-      requiredBooks: [...requiredBooks.values()],
-      approvedListings,
-      optimizedBundle,
-      cheapestIndividualOption,
+      requiredBooks: [...requiredBooks.values()].map((mb) => ({
+        id: mb.book.id,
+        title: mb.book.title,
+        author: mb.book.author,
+        edition: mb.book.edition,
+        isbn: mb.book.isbn,
+        moduleId: mb.module?.id,
+      })),
+      approvedListings: approvedListings.map((l) => this.toPublicListing(l)),
+      optimizedBundle: this.toPublicBundle(optimizedBundle),
+      cheapestIndividualOption: this.toPublicBundle(cheapestIndividualOption),
+    };
+  }
+
+  private emptyResult() {
+    const emptyBundle = {
+      listings: [],
+      sellerIds: [] as string[],
+      totalPrice: 0,
+      booksCovered: 0,
+    };
+
+    return {
+      requiredBooks: [],
+      approvedListings: [],
+      optimizedBundle: { ...emptyBundle },
+      cheapestIndividualOption: { ...emptyBundle },
+    };
+  }
+
+  // Only expose what the results page needs. Never return raw seller
+  // entities (email, ban fields, etc.).
+  private toPublicListing(listing: Listing) {
+    const lastInitial = listing.seller.last_name?.charAt(0) ?? '';
+
+    return {
+      id: listing.id,
+      title: listing.title,
+      price: Number(listing.price),
+      condition: listing.condition,
+      book: {
+        id: listing.book.id,
+        title: listing.book.title,
+        author: listing.book.author,
+        edition: listing.book.edition,
+        isbn: listing.book.isbn,
+      },
+      seller: {
+        id: listing.seller.id,
+        name: `${listing.seller.first_name} ${lastInitial}.`.trim(),
+      },
+    };
+  }
+
+  private toPublicBundle(bundle: {
+    listings: Listing[];
+    sellerIds: string[];
+    totalPrice: number;
+    booksCovered: number;
+  }) {
+    return {
+      listings: bundle.listings.map((l) => this.toPublicListing(l)),
+      sellerIds: bundle.sellerIds,
+      totalPrice: bundle.totalPrice,
+      booksCovered: bundle.booksCovered,
     };
   }
 
