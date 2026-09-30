@@ -273,6 +273,15 @@ export class SavedSearchesService {
       }
     }
 
+    if (isProvided(filter.faculty_id)) {
+      if (!listing.module?.faculty?.id) {
+        return false;
+      }
+      if (listing.module.faculty.id !== filter.faculty_id!) {
+        return false;
+      }
+    }
+
     return true;
   }
   // Find all users with saved searches that match a new listing
