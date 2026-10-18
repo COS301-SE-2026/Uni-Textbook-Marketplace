@@ -450,11 +450,11 @@ export default function ResetPassword() {
     return (
         <main className="auth-bg min-h-screen flex items-center justify-center px-4 py-8">
 
-            <Card className="card w-3/5 max-w-3xl flex overflow-hidden min-w-0 shadow-2xl p-0">
+            <Card className="card w-full max-w-3xl flex flex-col md:w-3/5 md:flex-row overflow-hidden min-w-0 shadow-2xl p-0">
                 
                 
                 
-                <div className="card-glossy-grey w-1/2 shrink-0 flex flex-col items-center justify-center p-12 relative min-h-[450px]">
+                <div className="card-glossy-grey w-full shrink-0 flex flex-col items-center justify-center p-6 sm:p-8 md:w-1/2 md:p-12 relative md:min-h-[450px]">
                     
                     
                     <div 
@@ -478,7 +478,7 @@ export default function ResetPassword() {
                         
                         
                         <div 
-                            className="relative mb-6 p-4 rounded-2xl"
+                            className="relative mb-4 p-3 md:mb-6 md:p-4 rounded-2xl"
                             style={{
                                 background: 'rgba(255, 255, 255, 0.06)',
                                 backdropFilter: 'blur(10px)',
@@ -486,7 +486,7 @@ export default function ResetPassword() {
                                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
                             }}
                         >
-                            <Logo className="w-20 h-auto" />
+                            <Logo className="w-14 h-auto sm:w-16 md:w-20" />
                             
                             
                             <div 
@@ -499,7 +499,7 @@ export default function ResetPassword() {
                         
                         
                         <h1 
-                            className="text-3xl font-bold tracking-wide mb-2"
+                            className="text-2xl font-bold tracking-wide mb-2 md:text-3xl"
                             style={{
                                 color: '#1a1a2e',
                                 textShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
@@ -509,7 +509,7 @@ export default function ResetPassword() {
                         </h1>
 
                         <h1 
-                            className="text-3xl font-bold tracking-wide mb-6"
+                            className="text-2xl font-bold tracking-wide mb-4 md:mb-6 md:text-3xl"
                             style={{
                                 color: '#00B4D8',
                                 textShadow: '0 2px 20px rgba(0, 180, 216, 0.2)',
@@ -539,7 +539,7 @@ export default function ResetPassword() {
                         </p>
 
                         
-                        <div className="mt-8 space-y-2.3 w-full max-w-xs">
+                        <div className="mt-5 space-y-2.5 w-full max-w-xs md:mt-8">
                             {[
                                 { text: 'Reset Your Password' },
                                 { text: 'Secure Your Account' },
@@ -572,7 +572,7 @@ export default function ResetPassword() {
                         
                         
                         <div 
-                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-32 h-0.5"
+                            className="absolute bottom-12 left-1/2 hidden -translate-x-1/2 w-32 h-0.5 md:block"
                             style={{
                                 background: 'linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.3), transparent)',
                             }}
@@ -582,10 +582,9 @@ export default function ResetPassword() {
                 </div>
                 
                 
-                <div className="w-1/2 flex items-center justify-center min-w-0 overflow-x-hidden overflow-y-auto py-10 relative" style={{
+                <div className="relative flex w-full min-w-0 items-center justify-center overflow-x-hidden overflow-y-auto py-8 md:w-1/2 md:py-10 md:border-l md:border-white/5" style={{
                     background: 'rgba(255, 255, 255, 0.03)',
                     backdropFilter: 'blur(5px)',
-                    borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
                 }}>
                     
                     <div 
