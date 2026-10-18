@@ -293,7 +293,7 @@ const NX_CSS = `
 @keyframes nx-spine  { 0% { transform: translateY(70px); opacity: 0; } 20%, 80% { transform: none; opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
 @keyframes nx-pulse  { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.6); } }
 
-.nx-word  { display: inline-block; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
+.nx-word  { display: inline-block; margin-right: .2em; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
 .nx-fade  { animation: nx-fade .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
 .nx-glow  { animation: nx-glow 7s ease-in-out infinite; }
 .nx-cue   { animation: nx-cue 2.2s ease-in-out infinite; }
@@ -352,15 +352,15 @@ export default function LandingPage() {
             {/* LEFT text + buttons */}
             <div className="max-w-lg">
               <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
-                {'Made for Students, '.split(' ').map((word, i) => (
+                {'Made for Students,'.split(' ').map((word, i) => (
                   <span key={i} className="nx-word" style={{ '--i': i } as React.CSSProperties}>
-                    {word}{' '}
+                    {word}
                   </span>
                 ))}
                 <span className="text-[#00B4D8]">
                   {'by Students'.split(' ').map((word, i) => (
                     <span key={i} className="nx-word" style={{ '--i': i + 4 } as React.CSSProperties}>
-                      {word}{i === 0 ? ' ' : ''}
+                      {word}
                     </span>
                   ))}
                 </span>
