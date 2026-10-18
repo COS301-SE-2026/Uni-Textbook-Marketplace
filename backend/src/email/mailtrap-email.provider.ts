@@ -15,7 +15,6 @@ import { wrapEmailPage } from './wrapper';
 
 @Injectable()
 export class MailtrapEmailProvider implements IEmailService {
-
   private readonly transporter: Transporter;
   private readonly logger = new Logger(MailtrapEmailProvider.name);
   private readonly isTestEnvironment: boolean;
@@ -23,9 +22,10 @@ export class MailtrapEmailProvider implements IEmailService {
   private readonly rateLimitMs: number;
 
   constructor(private readonly config: ConfigService) {
-
     this.isTestEnvironment = this.config.get<string>('NODE_ENV') === 'test';
-    this.rateLimitMs = Number(this.config.get<string>('MAIL_RATE_LIMIT_MS') || 10000);
+    this.rateLimitMs = Number(
+      this.config.get<string>('MAIL_RATE_LIMIT_MS') || 10000,
+    );
 
     if (this.isTestEnvironment) {
       this.logger.log('Test environment detected - email sending disabled');
@@ -71,13 +71,10 @@ export class MailtrapEmailProvider implements IEmailService {
   }
 
   private delay(ms: number): Promise<void> {
-
     return new Promise((resolve) => setTimeout(resolve, ms));
-
   }
 
   private enqueueEmail<T>(sendFn: () => Promise<T>): Promise<T> {
-
     const result = this.sendQueue.then(() => sendFn());
     this.sendQueue = result
       .then(() => undefined)
@@ -98,7 +95,6 @@ export class MailtrapEmailProvider implements IEmailService {
       throw new Error('Email sender address not configured');
     }
     try {
-
       await this.enqueueEmail(() =>
         this.transporter.sendMail({
           from: this.config.getOrThrow<string>('MAIL_FROM'),
@@ -255,7 +251,6 @@ export class MailtrapEmailProvider implements IEmailService {
     const content = template(data);
 
     try {
-
       await this.enqueueEmail(() =>
         this.transporter.sendMail({
           from: fromEmail,
@@ -264,7 +259,7 @@ export class MailtrapEmailProvider implements IEmailService {
           text: content.text,
           html: wrapEmailPage(content.bodyHtml),
         }),
-      )
+      );
     } catch (error) {
       this.logger.error(`Failed to send notification email to ${to}`, error);
       throw new Error('Could not send notification email');
