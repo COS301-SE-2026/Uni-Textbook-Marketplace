@@ -140,7 +140,6 @@ export class AdminService {
             'New Listing Available that matches your saved search',
           matchDate: new Date(),
         });
-
       }
     } catch (error) {
       const errorMessage =

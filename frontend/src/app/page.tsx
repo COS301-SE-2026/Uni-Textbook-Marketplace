@@ -293,7 +293,7 @@ const NX_CSS = `
 @keyframes nx-spine  { 0% { transform: translateY(70px); opacity: 0; } 20%, 80% { transform: none; opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
 @keyframes nx-pulse  { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.6); } }
 
-.nx-word  { display: inline-block; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
+.nx-word  { display: inline-block; margin-right: .2em; animation: nx-word .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .1s + .15s); }
 .nx-fade  { animation: nx-fade .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
 .nx-glow  { animation: nx-glow 7s ease-in-out infinite; }
 .nx-cue   { animation: nx-cue 2.2s ease-in-out infinite; }
@@ -344,23 +344,23 @@ export default function LandingPage() {
         </div>
 
 
-        <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#000f2b]/90 via-[#000f2b]/40 to-transparent" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#000f2b]/90 via-[#000f2b]/65 to-[#000f2b]/35 sm:bg-gradient-to-r sm:from-[#000f2b]/90 sm:via-[#000f2b]/40 sm:to-transparent" />
 
         <div className="container-content relative z-20 w-full py-10 md:py-16">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10 md:gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10 lg:gap-12">
 
             {/* LEFT text + buttons */}
-            <div className="max-w-lg">
+            <div className="max-w-lg text-center lg:text-left">
               <h1 className="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl">
-                {'Made for Students, '.split(' ').map((word, i) => (
+                {'Made for Students,'.split(' ').map((word, i) => (
                   <span key={i} className="nx-word" style={{ '--i': i } as React.CSSProperties}>
-                    {word}{' '}
+                    {word}
                   </span>
                 ))}
                 <span className="text-[#00B4D8]">
                   {'by Students'.split(' ').map((word, i) => (
                     <span key={i} className="nx-word" style={{ '--i': i + 4 } as React.CSSProperties}>
-                      {word}{i === 0 ? ' ' : ''}
+                      {word}
                     </span>
                   ))}
                 </span>
@@ -368,17 +368,17 @@ export default function LandingPage() {
               <p className="nx-fade text-white/80 text-xl md:text-2xl mt-4" style={{ '--d': '.65s' } as React.CSSProperties}>
                 Buy or sell textbooks with students from your university
               </p>
-              <div className="nx-fade flex gap-3 mt-8" style={{ '--d': '.85s' } as React.CSSProperties}>
-                <Link href="/auth/register" className="btn-primary nx-shine">
+              <div className="nx-fade flex justify-center lg:justify-start gap-3 mt-8" style={{ '--d': '.85s' } as React.CSSProperties}>
+                <Link href="/auth/register" className="btn-primary nx-shine w-full sm:w-auto">
                   Get Started
                 </Link>
               </div>
             </div>
 
             {/* RIGHT feature cards */}
-            <div className="flex flex-col items-center gap-6 md:max-w-xl w-full">
+            <div className="flex flex-col items-center gap-6 lg:max-w-xl w-full">
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 w-full">
                 <Card variant="glass" className="flex flex-col items-center text-center gap-2 p-5">
                   <CheckCircle size={28} className="text-[#00B4D8]" />
                   <p className="text-white text-sm font-semibold">Verified Students</p>
@@ -406,7 +406,7 @@ export default function LandingPage() {
         <a
           href="#how-it-works"
           aria-label="Scroll down to how it works"
-          className="nx-cue absolute bottom-8 left-1/2 z-30 flex flex-col items-center gap-2 text-white/85 hover:text-white transition-colors"
+          className="nx-cue hidden sm:flex absolute bottom-8 left-1/2 z-30 flex-col items-center gap-2 text-white/85 hover:text-white transition-colors"
         >
           <span className="text-xs font-semibold tracking-wider uppercase">Scroll to explore</span>
           <span className="relative flex h-11 w-7 justify-center rounded-full border-2 border-white/60 pt-2">
@@ -419,10 +419,10 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="py-24 bg-background border-b border-border">
+      <section id="how-it-works" className="py-16 md:py-24 bg-background border-b border-border">
         <div className="container-content">
 
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 md:mb-16">
 
             <span className="text-[#006D8A] dark:text-[#00B4D8] font-bold text-xl tracking-wider uppercase bg-[#00B4D8]/10 px-5 py-3 rounded-full">
               How it works
@@ -468,10 +468,10 @@ export default function LandingPage() {
 
       {/* Find a variety of textbooks */}
       <ScrollAnimation delay={550}>
-        <section className="py-20 bg-background">
+        <section className="py-14 md:py-20 bg-background">
 
           <div className="container-content">
-            <div className="text-center mb-14">
+            <div className="text-center mb-10 md:mb-14">
 
               <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
                 FIND TEXTBOOKS FOR YOUR EXACT MODULES
@@ -483,12 +483,12 @@ export default function LandingPage() {
 
             </div>
             {/* Faculty Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-2">
+            <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto pt-2">
               {UNIVERSITY_FACULTIES.map((fac, idx) => (
                 <ScrollAnimation key={idx} delay={idx * 500}>
                   <div key={idx}
 
-                    className="nx-card flex flex-col items-center justify-center p-6 bg-card rounded-2xl border border-border shadow-sm">
+                    className="nx-card flex flex-col items-center justify-center p-4 sm:p-6 bg-card rounded-2xl border border-border shadow-sm">
                     <div className="w-14 h-14 rounded-full bg-[#00B4D8]/10 flex items-center justify-center mb-4">
                       {fac.icon}
                     </div>
@@ -505,9 +505,9 @@ export default function LandingPage() {
 
       
       <ScrollAnimation delay={600}>
-        <section className="py-24 bg-muted">
+        <section className="py-16 md:py-24 bg-muted">
           <div className="container-content">
-            <div className="text-center mb-14">
+            <div className="text-center mb-10 md:mb-14">
               <span className="text-[#006D8A] dark:text-[#00B4D8] font-bold text-sm tracking-wider uppercase bg-[#00B4D8]/10 px-4 py-2 rounded-full inline-block">
                 More than a notice board
               </span>
@@ -555,7 +555,7 @@ export default function LandingPage() {
 
       {/* Trust & Safety */}
       <ScrollAnimation delay={700}>
-        <section className="py-20 bg-[#00B4D8]">
+        <section className="py-14 md:py-20 bg-[#00B4D8]">
           <div className="container-content">
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -593,7 +593,7 @@ export default function LandingPage() {
                 </div>
 
               </div>
-              <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+              <div className="relative w-full h-64 sm:h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
                 <video src="/in-app-chat.mp4"
                   autoPlay
                   loop
@@ -632,12 +632,12 @@ export default function LandingPage() {
 
       {/* Call To Action */}
       <ScrollAnimation delay={450}>
-        <section className="py-24 bg-muted">
+        <section className="py-16 md:py-24 bg-muted">
 
           <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-              <div className="relative w-full h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
+              <div className="relative w-full h-64 sm:h-80 lg:h-[480px] rounded-2xl overflow-hidden shadow-xl bg-slate-100">
                 <video src="/Woman_Reading.mp4"
                   autoPlay
                   loop

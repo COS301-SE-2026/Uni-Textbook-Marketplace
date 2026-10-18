@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ModuleCodeUniquePerUniversity1790800000000
-  implements MigrationInterface
-{
+export class ModuleCodeUniquePerUniversity1790800000000 implements MigrationInterface {
   name = 'ModuleCodeUniquePerUniversity1790800000000';
 
   async up(queryRunner: QueryRunner): Promise<void> {

@@ -239,14 +239,17 @@ export class AuctionService {
         },
       });
 
-      await db.doc(`actions/${auctionId}`).set({
-        currentHighestBid: result.auction.current_highest_bid,
-        currentHighestBidderName: bidder
-          ? `${bidder.first_name} ${bidder.last_name}`.trim()
-          : 'Anonymous',
-        endTime: Timestamp.fromDate(result.auction.end_time!),
-        extensionCount: result.auction.extension_count,
-      }, { merge: true });
+      await db.doc(`actions/${auctionId}`).set(
+        {
+          currentHighestBid: result.auction.current_highest_bid,
+          currentHighestBidderName: bidder
+            ? `${bidder.first_name} ${bidder.last_name}`.trim()
+            : 'Anonymous',
+          endTime: Timestamp.fromDate(result.auction.end_time!),
+          extensionCount: result.auction.extension_count,
+        },
+        { merge: true },
+      );
     }
 
     return result;
