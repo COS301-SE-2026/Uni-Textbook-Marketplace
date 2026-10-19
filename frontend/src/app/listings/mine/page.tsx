@@ -538,6 +538,7 @@ export default function MyListingsPage() {
                 {selectedListingId && (
                     <EditPage
                         onClick={closeEditPanel}
+                        onSaved={closeEditPanel}
                         PanelStatus={EditPanel}
                         listingId={selectedListingId}
                     />

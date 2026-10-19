@@ -7,7 +7,6 @@ import { getMyListings, uploadImages, editListing, type EditListingData } from "
 import { Button, Modal } from "../ui";
 import Fields from "@/components/ui/Fields"
 import Image from "next/image";
-import { useRouter } from 'next/navigation'
 import CornerCropEditor from "@/components/listings/CornerCropEditor"
 import { dataUrlToFile } from "@/utils/dataUrlToFile"
 
@@ -24,7 +23,8 @@ type SectionKey = (typeof SECTIONS)[number]["key"];
 type OpenSection = Record<SectionKey, boolean>;
 
 type ListingFormEditProps = {
-    listingId: string
+    listingId: string;
+    onSaved: () => void;
 }
 
 type CropTarget =
@@ -32,9 +32,8 @@ type CropTarget =
     | { kind: "new"; index: number }
     | null
 
-export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
+export default function ListingFormEdit({ listingId, onSaved }: ListingFormEditProps) {
 
-    const router = useRouter()
     const [form, setForm] = useState<ListingFormData | null>(null);
     const [original, setOriginal] = useState<ListingFormData | null>(null);
 
@@ -146,7 +145,13 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
         const fieldName = name as keyof ListingFormData;
 
 
-        setForm((prev) => (prev ? { ...prev, [fieldName]: value } : prev));
+        setForm((prev) => {
+            if (!prev) return prev;
+            if (fieldName === "has_notes") {
+                return { ...prev, has_notes: value === "true" };
+            }
+            return { ...prev, [fieldName]: value };
+        });
         setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     }
 
@@ -247,7 +252,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
         if (original.annotationLevel !== current.annotationLevel) diff.annotation_level = current.annotationLevel as EditListingData['annotation_level'];
         if (original.price !== current.price) diff.price = Number(current.price);
         if (original.description !== current.description) diff.description = current.description;
-        if (original.has_notes !== current.has_notes) diff.has_notes = Boolean(current.has_notes)
+        if (original.has_notes !== current.has_notes) diff.has_notes = current.has_notes;
 
         return diff;
     }
@@ -460,7 +465,7 @@ export default function ListingFormEdit({ listingId }: ListingFormEditProps) {
                 title="Updated Successfully!!"
                 onClose={() => {
                     setSuccess(false);
-                    router.push('/listings/mine');
+                    onSaved();
                 }}
             >
                 <p>
