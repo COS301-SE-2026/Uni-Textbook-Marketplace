@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -16,26 +16,28 @@
 </p>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-light.svg" />
-    <img src="./docs/images/logo-dark.svg" alt="Uni Textbook Marketplace Logo" width="1020" />
-  </picture>
+  <img src="./docs/images/header-banner.svg" alt="Uni Textbook Marketplace" width="100%" />
 </p>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=00E5FF&center=true&vCenter=true&width=500&lines=Made+for+Students%2C+by+Students" alt="Typing animation" />
 </p>
 
+<p align="center">
+  <a href="https://www.unitextbookmarketplace.co.za/"><img src="https://img.shields.io/badge/LIVE%20APP-Explore%20Now-00B4D8?style=for-the-badge&logo=rocket&logoColor=white" alt="Live app"/></a>
+  <a href="#documentation"><img src="https://img.shields.io/badge/DOCS-Read%20Them-1F497D?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation"/></a>
+  <a href="#getting-started"><img src="https://img.shields.io/badge/SETUP-Run%20Locally-00B4D8?style=for-the-badge&logo=docker&logoColor=white" alt="Getting started"/></a>
+  <a href="#meet-the-team-nexusdev"><img src="https://img.shields.io/badge/TEAM-NexusDev-1F497D?style=for-the-badge&logo=github&logoColor=white" alt="Team"/></a>
+</p>
+
 </div>
 
----
-</br>
 <p align="center">
-  <a href="https://www.unitextbookmarketplace.co.za/">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
-    Explore Our Web-App Here
-  </a>
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
@@ -55,7 +57,11 @@
 </h2>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -79,7 +85,7 @@
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -93,7 +99,41 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/star-four-points.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## How It Works
+
+<img src="./docs/images/how-it-works.svg" alt="How it works: register, list, discover, meet up" width="100%" />
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/sitemap.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## Architecture at a Glance
+
+<a href="./docs/images/architecture-diagram.png">
+  <img src="./docs/images/architecture.svg" alt="Animated layered architecture diagram: client browser, web UI, controllers, bounded domain modules, repository and relational database, and external services for jobs, real-time messaging, vision/OCR, blob storage and email" width="100%" />
+</a>
+
+<sub>Animated data flow. Click the diagram for the static high-resolution version. Full detail lives in the Software Architecture Specifications linked in the Documentation section below.</sub>
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -129,7 +169,7 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
@@ -163,10 +203,8 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 </div>
 
----
-
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -317,7 +355,7 @@ Uni-Textbook-Marketplace/
 
 
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -416,7 +454,7 @@ cp frontend/.env.example frontend/.env.local
 ```
 
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -442,7 +480,7 @@ All changes go through a **Pull Request** with at least one review before mergin
 
 <p align="center">
 
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -477,7 +515,11 @@ npm run test:all
 ```
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -538,7 +580,7 @@ npm run test:all
             <li>API security</li>
             <li>Integration between frontend and backend</li>
             <li>Notification system (event-driven alerts across approvals, messages, and listing changes)</li>
-            <li>Module-scoped discussion feature, letting students post and answer threaded questions tied to specific course modules, with no schema change needed for arbitrarily deep threads</li>
+            <li>Real-time auctions feature, allowing sellers to convert an approved listing into a time-boxed auction with live bidding, concurrency-safe bid resolution, an anti-sniping extension window, and automatic close with winner determination</li>
           </ul>
           </h6>
         </td>
@@ -627,7 +669,7 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -647,7 +689,7 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
@@ -657,5 +699,9 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>

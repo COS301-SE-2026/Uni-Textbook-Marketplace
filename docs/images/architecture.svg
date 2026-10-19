@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 1040" width="1200" height="1040" role="img" aria-label="Layered architecture: browser, web UI, controllers, bounded domain modules, repository and database, external services">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A1F3D"/><stop offset="1" stop-color="#112F57"/></linearGradient>
+<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#CFE9F7"/></marker>
+<marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#00B4D8"/></marker>
+<filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<style>
+text{font-family:Montserrat,'Segoe UI',Arial,sans-serif}
+.lay{fill:#FFFFFF;fill-opacity:.03;stroke:#7FDFF5;stroke-opacity:.25;stroke-width:1.5}
+.ll{font-size:14px;font-weight:700;fill:#7FDFF5}
+.bx rect,.bx path,.bx ellipse{fill:#0F2D52;stroke:#00B4D8;stroke-width:1.8;transition:fill .2s}
+.bx text{font-size:13.5px;fill:#fff;text-anchor:middle;pointer-events:none}
+.bx:hover rect,.bx:hover path,.bx:hover ellipse{fill:#1C5A8E}
+.ex rect,.ex path,.ex ellipse{fill:#143B6B;stroke:#7C5CFF;stroke-width:2;transition:fill .2s}
+.ex:hover rect,.ex:hover path,.ex:hover ellipse{fill:#2A4F96}
+.ex text{font-size:13.5px;fill:#fff;text-anchor:middle;pointer-events:none}
+.ln{stroke:#CFE9F7;stroke-opacity:.85;stroke-width:2;fill:none}
+.bl{stroke:#00B4D8;stroke-width:2.5;fill:none;stroke-dasharray:9 7;animation:fl 1s linear infinite}
+.rt{stroke:#00E5FF;stroke-width:2.5;fill:none;stroke-dasharray:9 7;animation:fl 1.2s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-16}}
+.pl{fill:#0A1F3D;fill-opacity:.92}
+.pt{font-size:11.5px;fill:#CFE9F7;text-anchor:middle}
+</style>
+</defs>
+<rect width="1200" height="1040" rx="22" fill="url(#bg)"/>
+<rect class="lay" x="8" y="70" width="1172" height="100" rx="12"><animate attributeName="stroke-opacity" values=".25;1;.25;.25" keyTimes="0;.08;.2;1" dur="10s" begin="0s" repeatCount="indefinite"/></rect>
+<text class="ll" x="24" y="94">GUI / Presentation Layer</text>
+<rect class="lay" x="8" y="190" width="1172" height="100" rx="12"><animate attributeName="stroke-opacity" values=".25;1;.25;.25" keyTimes="0;.08;.2;1" dur="10s" begin="2s" repeatCount="indefinite"/></rect>
+<text class="ll" x="24" y="214">Controller / API Layer</text>
+<rect class="lay" x="8" y="310" width="1172" height="265" rx="12"><animate attributeName="stroke-opacity" values=".25;1;.25;.25" keyTimes="0;.08;.2;1" dur="10s" begin="4s" repeatCount="indefinite"/></rect>
+<text class="ll" x="24" y="334">Business Objects Layer (domain modules + audit log, bounded, no cross-injection)</text>
+<rect class="lay" x="8" y="595" width="1172" height="175" rx="12"><animate attributeName="stroke-opacity" values=".25;1;.25;.25" keyTimes="0;.08;.2;1" dur="10s" begin="6s" repeatCount="indefinite"/></rect>
+<text class="ll" x="24" y="619">Data Persistence Layer</text>
+<rect class="lay" x="8" y="790" width="1172" height="220" rx="12"><animate attributeName="stroke-opacity" values=".25;1;.25;.25" keyTimes="0;.08;.2;1" dur="10s" begin="8s" repeatCount="indefinite"/></rect>
+<text class="ll" x="1166" y="814" text-anchor="end">External Layer</text>
+<g class="bx"><title>Students and admins use the web app in a browser</title><rect x="520" y="10" width="160" height="40" rx="6"/><text x="600.0" y="35.0">Client Browser</text></g>
+<path class="ln" d="M600 50V105" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>Next.js + React + Tailwind frontend</title><rect x="490" y="105" width="220" height="50" rx="6"/><text x="600.0" y="135.0">Web UI Components</text></g>
+<path class="ln" d="M600 155V215" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<rect class="pl" x="602" y="173" width="122" height="18" rx="9"/><text class="pt" x="663" y="186">HTTPS, credentialed</text>
+<g class="bx"><title>NestJS controllers: routing, guards and DTO validation</title><rect x="480" y="215" width="240" height="50" rx="6"/><text x="600.0" y="245.0">Workflows / Controllers</text></g>
+<path class="ln" d="M600 265V435" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<path class="ln" d="M120 435H1176M236 545H1176M1176 435V545"/>
+<g class="bx"><title>Immutable record of every moderation action</title><rect x="40" y="350" width="160" height="60" rx="6"/><text x="120.0" y="377.0">Audit Log</text><text x="120.0" y="393.0">Module</text></g>
+<path class="ln" d="M120 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Save listings for later and follow status changes</title><rect x="232" y="350" width="160" height="60" rx="6"/><text x="312.0" y="377.0">Wishlist</text><text x="312.0" y="393.0">Module</text></g>
+<path class="ln" d="M312 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Filter listings and save searches for alerts</title><rect x="424" y="350" width="160" height="60" rx="6"/><text x="504.0" y="377.0">Smart Filter + Saved</text><text x="504.0" y="393.0">Search Module</text></g>
+<path class="ln" d="M504 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Faculty and module catalogue with search-as-you-type</title><rect x="616" y="350" width="160" height="60" rx="6"/><text x="696.0" y="377.0">Course Module</text><text x="696.0" y="393.0">Catalogue</text></g>
+<path class="ln" d="M696 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Listing review, reports, bans and appeals</title><rect x="808" y="350" width="160" height="60" rx="6"/><text x="888.0" y="377.0">Moderation</text><text x="888.0" y="393.0">Module</text></g>
+<path class="ln" d="M888 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Cheapest combination of sellers across a student's modules</title><rect x="1000" y="350" width="160" height="60" rx="6"/><text x="1080.0" y="377.0">Bundle</text><text x="1080.0" y="393.0">Module</text></g>
+<path class="ln" d="M1080 410V435" marker-start="url(#ar)"/>
+<g class="bx"><title>Real-time auctions with anti-sniping</title><rect x="156" y="460" width="160" height="60" rx="6"/><text x="236.0" y="495.0">Auction</text></g>
+<path class="ln" d="M236 435V460M236 520V545" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>OCR auto-fill and background removal</title><rect x="348" y="460" width="160" height="60" rx="6"/><text x="428.0" y="495.0">Vision Module</text></g>
+<path class="ln" d="M428 435V460M428 520V545" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>Listing CRUD, search, edit and status</title><rect x="540" y="460" width="160" height="60" rx="6"/><text x="620.0" y="495.0">Listings Module</text></g>
+<path class="ln" d="M620 435V460M620 520V545" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>In-app and email alerts</title><rect x="732" y="460" width="160" height="60" rx="6"/><text x="812.0" y="495.0">Notifications Module</text></g>
+<path class="ln" d="M812 435V460M812 520V545" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>JWT auth, OTP verification and roles</title><rect x="924" y="460" width="160" height="60" rx="6"/><text x="1004.0" y="495.0">Auth Module</text></g>
+<path class="ln" d="M1004 435V460M1004 520V545" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<path class="ln" d="M1100 545V620" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>TypeORM repositories: services never write raw SQL</title><rect x="1030" y="620" width="140" height="50" rx="6"/><text x="1100.0" y="642.0">Repository /</text><text x="1100.0" y="658.0">Data Access</text></g>
+<path class="ln" d="M1100 670V696" marker-start="url(#ar)" marker-end="url(#ar)"/>
+<g class="bx"><title>PostgreSQL on Azure</title><path d="M1032 710v34a68 11 0 0 0 136 0v-34"/><ellipse cx="1100" cy="710" rx="68" ry="11"/><text x="1100" y="738">Relational Database</text></g>
+<g class="ex"><title>Scheduled jobs such as auction closing</title><rect x="40" y="895" width="150" height="65" rx="6"/><text x="115.0" y="924.5">Job Queue /</text><text x="115.0" y="940.5">Scheduler Store</text></g>
+<g class="ex"><title>Firebase Firestore for chat and live bids</title><rect x="205" y="895" width="150" height="65" rx="6"/><text x="280.0" y="924.5">Messaging /</text><text x="280.0" y="940.5">Real-time Service</text></g>
+<g class="ex"><title>Azure AI Vision</title><rect x="370" y="895" width="150" height="65" rx="6"/><text x="445.0" y="924.5">Vision / OCR</text><text x="445.0" y="940.5">Service</text></g>
+<g class="ex"><title>Azure Blob Storage</title><path d="M535 912v32a70 11 0 0 0 140 0v-32"/><ellipse cx="605" cy="912" rx="70" ry="11"/><text x="605" y="940">Blob image Storage</text></g>
+<g class="ex"><title>Mailtrap SMTP for OTP and notification email</title><rect x="700" y="895" width="340" height="65" rx="6"/><text x="870.0" y="932.5">Email Provider</text></g>
+<path id="f1" class="bl" d="M214 520C214 700 115 700 115 895" marker-end="url(#ab)"/>
+<path id="f2" class="bl" d="M280 520V895" marker-end="url(#ab)"/>
+<path id="f3" class="bl" d="M428 520C428 700 445 700 445 895" marker-end="url(#ab)"/>
+<path id="f4" class="bl" d="M620 520C620 700 605 700 605 895" marker-end="url(#ab)"/>
+<path id="f5" class="bl" d="M812 520C812 700 800 700 800 895" marker-end="url(#ab)"/>
+<path id="f6" class="bl" d="M1004 520C1004 700 940 700 940 895" marker-end="url(#ab)"/>
+<rect class="pl" x="114.0" y="691" width="100" height="18" rx="9"/><text class="pt" x="164" y="704">scheduled jobs</text>
+<rect class="pl" x="225.0" y="731" width="110" height="18" rx="9"/><text class="pt" x="280" y="744">live bid updates</text>
+<rect class="pl" x="387.0" y="691" width="98" height="18" rx="9"/><text class="pt" x="436" y="704">text extraction</text>
+<rect class="pl" x="536.0" y="691" width="152" height="18" rx="9"/><text class="pt" x="612" y="704">backend-mediated upload</text>
+<rect class="pl" x="750.0" y="691" width="112" height="18" rx="9"/><text class="pt" x="806" y="704">notification email</text>
+<rect class="pl" x="928.0" y="691" width="88" height="18" rx="9"/><text class="pt" x="972" y="704">OTP dispatch</text>
+<path id="rt" class="rt" d="M710 130H1192V1024H280V964" marker-end="url(#ab)"/>
+<rect class="pl" x="560" y="1006" width="240" height="20" rx="10"/><text class="pt" x="680" y="1020">direct client connection (real-time)</text>
+<circle r="5" fill="#00E5FF" filter="url(#glow)"><animateMotion dur="5s" begin="0s" repeatCount="indefinite" path="M600 50V435H120V410"/></circle>
+<circle r="5" fill="#00E5FF" filter="url(#glow)"><animateMotion dur="5.5s" begin="1.2s" repeatCount="indefinite" path="M600 50V435H1080V410"/></circle>
+<circle r="5" fill="#00E5FF" filter="url(#glow)"><animateMotion dur="5s" begin="2.4s" repeatCount="indefinite" path="M600 50V435H236V460"/></circle>
+<circle r="5" fill="#00E5FF" filter="url(#glow)"><animateMotion dur="5.5s" begin="3.6s" repeatCount="indefinite" path="M600 50V435H1004V460"/></circle>
+<circle r="5" fill="#7C5CFF" filter="url(#glow)"><animateMotion dur="5s" begin="0.6s" repeatCount="indefinite" path="M428 520V545H1100V698"/></circle>
+<circle r="5" fill="#7C5CFF" filter="url(#glow)"><animateMotion dur="6s" begin="2.2s" repeatCount="indefinite" path="M120 410V435H1176V545H1100V620"/></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="4s" begin="0.0s" repeatCount="indefinite"><mpath xlink:href="#f1"/></animateMotion></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="5s" begin="0.7s" repeatCount="indefinite"><mpath xlink:href="#f2"/></animateMotion></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="6s" begin="1.4s" repeatCount="indefinite"><mpath xlink:href="#f3"/></animateMotion></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="4s" begin="2.0999999999999996s" repeatCount="indefinite"><mpath xlink:href="#f4"/></animateMotion></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="5s" begin="2.8s" repeatCount="indefinite"><mpath xlink:href="#f5"/></animateMotion></circle>
+<circle r="5" fill="#FFFFFF" filter="url(#glow)"><animateMotion dur="6s" begin="3.5s" repeatCount="indefinite"><mpath xlink:href="#f6"/></animateMotion></circle>
+<circle r="5" fill="#00E5FF" filter="url(#glow)"><animateMotion dur="9s" begin="0.5s" repeatCount="indefinite"><mpath xlink:href="#rt"/></animateMotion></circle>
+</svg>
