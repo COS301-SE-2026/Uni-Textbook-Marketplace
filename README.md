@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -16,26 +16,28 @@
 </p>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/images/logo-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="./docs/images/logo-light.svg" />
-    <img src="./docs/images/logo-dark.svg" alt="Uni Textbook Marketplace Logo" width="1020" />
-  </picture>
+  <img src="./docs/images/header-banner.svg" alt="Uni Textbook Marketplace" width="100%" />
 </p>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=00E5FF&center=true&vCenter=true&width=500&lines=Made+for+Students%2C+by+Students" alt="Typing animation" />
 </p>
 
+<p align="center">
+  <a href="https://www.unitextbookmarketplace.co.za/"><img src="https://img.shields.io/badge/LIVE%20APP-Explore%20Now-00B4D8?style=for-the-badge&logo=rocket&logoColor=white" alt="Live app"/></a>
+  <a href="#documentation"><img src="https://img.shields.io/badge/DOCS-Read%20Them-1F497D?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation"/></a>
+  <a href="#getting-started"><img src="https://img.shields.io/badge/SETUP-Run%20Locally-00B4D8?style=for-the-badge&logo=docker&logoColor=white" alt="Getting started"/></a>
+  <a href="#meet-the-team-nexusdev"><img src="https://img.shields.io/badge/TEAM-NexusDev-1F497D?style=for-the-badge&logo=github&logoColor=white" alt="Team"/></a>
+</p>
+
 </div>
 
----
-</br>
 <p align="center">
-  <a href="https://www.unitextbookmarketplace.co.za/">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
-    Explore Our Web-App Here
-  </a>
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <h2 align="center">Presented by <strong>NexusDev</strong><br />
@@ -55,7 +57,11 @@
 </h2>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -65,8 +71,10 @@
 [![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=codecov&logoColor=white&color=00B4D8)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
 [![Build](https://img.shields.io/github/actions/workflow/status/COS301-SE-2026/Uni-Textbook-Marketplace/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-00B4D8?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
+[![Open Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues?q=is%3Aissue+is%3Aclosed)
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
+[![Closed Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls?q=is%3Apr+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
 [![Uptime](https://img.shields.io/uptimerobot/ratio/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
 [![Uptime](https://img.shields.io/uptimerobot/status/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
@@ -77,7 +85,7 @@
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -91,7 +99,41 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/star-four-points.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## How It Works
+
+<img src="./docs/images/how-it-works.svg" alt="How it works: register, list, discover, meet up" width="100%" />
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/sitemap.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## Architecture at a Glance
+
+<a href="./docs/images/architecture-diagram.png">
+  <img src="./docs/images/architecture.svg" alt="Animated layered architecture diagram: client browser, web UI, controllers, bounded domain modules, repository and relational database, and external services for jobs, real-time messaging, vision/OCR, blob storage and email" width="100%" />
+</a>
+
+<sub>Animated data flow. Click the diagram for the static high-resolution version. Full detail lives in the Software Architecture Specifications linked in the Documentation section below.</sub>
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -127,26 +169,26 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
   <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
   <h2 align="center">Documentation</h2>
 
-### DEMO 4 (Latest Documentation)
+### PROJECT DAY
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Requirements_Specifications.pdf) |
-|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Architecture_Specifications.pdf) |
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Software_Requirements_Specifications.pdf) |
+|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Software_Architecture_Specifications.pdf) |
 |  OpenAPI | [API Service Contracts](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/OpenAPI/openapi.yaml) |
-|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Coding_Standards.pdf) |
-|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Testing_Policy.pdf) |
-|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/User_Manual.pdf) |
+|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Coding_Standards.pdf) |
+|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Testing_Policy.pdf) |
+|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/User_Manual.pdf) |
 |  Brand Style Guide (On our Web) | [View Brand Style Guide](https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/brand) |
-|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Brand_Style_Guide.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Design_Specifications.pdf) |
+|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Brand_Style_Guide.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Design_Specifications.pdf) |
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
 | **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
@@ -154,17 +196,15 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ---
 
-| | Demo 1 | Demo 2 | Demo 3 |
-|---|---|---|---|
-| **Documentation** | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |
-| **Demo Recording** | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |
+| | Demo 1 | Demo 2 | Demo 3 | Demo 4 |
+|---|---|---|---|---|
+| **Documentation** | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |<img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Design_Specifications.pdf) |
+| **Demo Recording** | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |<img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1OxS2wwU-8Q06R_OvD_LYTw668SgXQD83?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_4_Slides.pdf) |
 
 </div>
 
----
-
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -315,7 +355,7 @@ Uni-Textbook-Marketplace/
 
 
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -414,7 +454,7 @@ cp frontend/.env.example frontend/.env.local
 ```
 
 <p align="center">
-  <img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -440,7 +480,7 @@ All changes go through a **Pull Request** with at least one review before mergin
 
 <p align="center">
 
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -475,7 +515,11 @@ npm run test:all
 ```
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
@@ -497,11 +541,12 @@ npm run test:all
           <h2>Tiego Mokwena</h2>
           <h5>Team Lead  </br>+ </br>Project Manager  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:tl21thebe@gmail.com"><img src="https://img.shields.io/badge/Email-tl21thebe%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email tl21thebe@gmail.com"></a>
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
@@ -536,7 +581,7 @@ npm run test:all
             <li>API security</li>
             <li>Integration between frontend and backend</li>
             <li>Notification system (event-driven alerts across approvals, messages, and listing changes)</li>
-            <li>Module-scoped discussion feature, letting students post and answer threaded questions tied to specific course modules, with no schema change needed for arbitrarily deep threads</li>
+            <li>Real-time auctions feature, allowing sellers to convert an approved listing into a time-boxed auction with live bidding, concurrency-safe bid resolution, an anti-sniping extension window, and automatic close with winner determination</li>
           </ul>
           </h6>
         </td>
@@ -545,11 +590,12 @@ npm run test:all
           <h2>Gift Mohuba</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/GiftMHB">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/gift-mohuba-67097b23b/">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:g.mohubagift@gmail.com"><img src="https://img.shields.io/badge/Email-g.mohubagift%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email g.mohubagift@gmail.com"></a>
         </td>
       </tr>
     </table>
@@ -563,11 +609,12 @@ npm run test:all
           <h2>Josh Kretschmer</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/JoshKretschmer">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:jekretschmer2003@gmail.com"><img src="https://img.shields.io/badge/Email-jekretschmer2003%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email jekretschmer2003@gmail.com"></a>
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
@@ -611,11 +658,12 @@ npm run test:all
           <h2>Neo Bosoga</h2>
           <h5>Data Engineer </br>+ </br>Test Engineer</h5>
           <a href="https://github.com/u23591732">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/neo-bosoga-67167227a/">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:u23591732@tuks.co.za"><img src="https://img.shields.io/badge/Email-u23591732%40tuks.co.za-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email u23591732@tuks.co.za"></a>
         </td>
       </tr>
     </table>
@@ -625,7 +673,7 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -645,7 +693,7 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
@@ -655,5 +703,9 @@ npm run test:all
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
