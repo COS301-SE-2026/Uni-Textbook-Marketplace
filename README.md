@@ -541,11 +541,12 @@ npm run test:all
           <h2>Tiego Mokwena</h2>
           <h5>Team Lead  </br>+ </br>Project Manager  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:tl21thebe@gmail.com"><img src="https://img.shields.io/badge/Email-tl21thebe%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email tl21thebe@gmail.com"></a>
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
@@ -589,11 +590,12 @@ npm run test:all
           <h2>Gift Mohuba</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/GiftMHB">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/gift-mohuba-67097b23b/">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:g.mohubagift@gmail.com"><img src="https://img.shields.io/badge/Email-g.mohubagift%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email g.mohubagift@gmail.com"></a>
         </td>
       </tr>
     </table>
@@ -607,11 +609,12 @@ npm run test:all
           <h2>Josh Kretschmer</h2>
           <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
           <a href="https://github.com/JoshKretschmer">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:jekretschmer2003@gmail.com"><img src="https://img.shields.io/badge/Email-jekretschmer2003%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email jekretschmer2003@gmail.com"></a>
         </td>
         <td align="left" colspan="2">
           <h4>Bio:</h4>
@@ -655,11 +658,12 @@ npm run test:all
           <h2>Neo Bosoga</h2>
           <h5>Data Engineer </br>+ </br>Test Engineer</h5>
           <a href="https://github.com/u23591732">
-            <img src="https://img.shields.io/badge/GitHub-D3D3D3?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
           <a href="https://www.linkedin.com/in/neo-bosoga-67167227a/">
             <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
           </a>
+          <a href="mailto:u23591732@tuks.co.za"><img src="https://img.shields.io/badge/Email-u23591732%40tuks.co.za-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email u23591732@tuks.co.za"></a>
         </td>
       </tr>
     </table>
