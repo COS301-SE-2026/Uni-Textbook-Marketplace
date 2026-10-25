@@ -169,6 +169,10 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 </div>
 
 <p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
   <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
@@ -353,6 +357,9 @@ Uni-Textbook-Marketplace/
 </details>
 </br>
 
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
 
 <p align="center">
   <img src="./docs/images/divider.svg" alt="divider" width="100%" />
@@ -539,7 +546,7 @@ npm run test:all
         <td align="center">
           <img src="docs/images/team/tiego.jpeg" width="800" height="200" alt="Tiego Mokwena"/>
           <h2>Tiego Mokwena</h2>
-          <h5>Team Lead  </br>+ </br>Project Manager  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
+          <h5>Team Lead  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
           <a href="https://github.com/tl21thebe">
             <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
           </a>
