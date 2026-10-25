@@ -40,7 +40,7 @@
   <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
-<h2 align="center">Presented by <strong>NexusDev</strong><br />
+<h2 align="center">Built by <strong>NexusDev</strong><br />
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/NexusDevLOGO_2.png" />
   <source media="(prefers-color-scheme: light)" srcset="./docs/images/_NexusDev_LOGO.png" />
@@ -705,7 +705,7 @@ npm run test:all
 
 <div align = "center">
 
-*© 2026 NexusDev - University of Pretoria COS 301 Capstone Project*
+*Built by Team NexusDev*
 
 </div>
 
@@ -713,6 +713,20 @@ npm run test:all
 <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
+<div align = "center">
+
+*© 2026 NexusDev - University of Pretoria COS 301 Capstone Project*
+
+</div>
+
 <p align="center">
   <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
+
+<div align = "center">
+
+<a href="https://hits.sh/github.com/COS301-SE-2026/Uni-Textbook-Marketplace/">
+  <img src="https://hits.sh/github.com/COS301-SE-2026/Uni-Textbook-Marketplace.svg?style=for-the-badge&label=Repo%20Views&color=00B4D8&labelColor=0A1F3D" alt="Repo views"/>
+</a>
+
+</div>
