@@ -1,37 +1,67 @@
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
 <p align="center">
-    <img src="./docs/images/Textbook.gif" alt="Uni Textbook Marketplace Logo" width="200" height="200" /><br/>
-    <img src="./docs/images/Uni_Textbook_Marketplace_Logo_2.png" alt="Uni Textbook Marketplace Wordmark" width="250" height="250" />
-    <br/>
-    <img src="./docs/images/Uni_Textbook.png" alt="Uni Textbook Word" width="40%" />
-    <img src="./docs/images/Marketplace.png" alt="Marketplace Word" width="40%" />
+  <img src="docs/images/textbook_cyan.gif" width="27%" align="center"/>
 </p>
 
-<h2 align="center">Made for Students, by Students</h2>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/images/students-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="./docs/images/students-light.svg" />
+    <img src="./docs/images/students-dark.svg" alt="Students collaborating illustration" width="200" />
+  </picture>
+</p>
+
+<p align="center">
+  <img src="./docs/images/header-banner.svg" alt="Uni Textbook Marketplace" width="100%" />
+</p>
+
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=00E5FF&center=true&vCenter=true&width=500&lines=Made+for+Students%2C+by+Students" alt="Typing animation" />
+</p>
+
+<p align="center">
+  <a href="https://www.unitextbookmarketplace.co.za/"><img src="https://img.shields.io/badge/LIVE%20APP-Explore%20Now-00B4D8?style=for-the-badge&logo=rocket&logoColor=white" alt="Live app"/></a>
+  <a href="#documentation"><img src="https://img.shields.io/badge/DOCS-Read%20Them-1F497D?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Documentation"/></a>
+  <a href="#getting-started"><img src="https://img.shields.io/badge/SETUP-Run%20Locally-00B4D8?style=for-the-badge&logo=docker&logoColor=white" alt="Getting started"/></a>
+  <a href="#meet-the-team-nexusdev"><img src="https://img.shields.io/badge/TEAM-NexusDev-1F497D?style=for-the-badge&logo=github&logoColor=white" alt="Team"/></a>
+</p>
 
 </div>
 
 <p align="center">
-  <a href="https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/">
-    <img src="https://cdn.simpleicons.org/rocket/00B4D8" width="28" height="28" valign="middle"/>
-    Explore Here
-  </a>
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
-<h2 align="center">Presented by <strong>NexusDev</strong><br />
-<img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="25%">
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<h2 align="center">Built by <strong>NexusDev</strong><br />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/NexusDevLOGO_2.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/_NexusDev_LOGO.png" />
+  <img src="./docs/images/NexusDevLOGO_2.png" alt="NexusDev Logo" width="22%">
+</picture>
 </h2>
 
 <h2 align="center">In Collaboration with <strong>Agile Bridge</strong><br/>
-<img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/images/Agile-Bridge-logo-white-2.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/images/Agile_bridge_logo_.png" />
+  <img src="./docs/images/Agile-Bridge-logo-white-2.png" alt="Agile Bridge Logo" width="25%" />
+</picture>
 </h2>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
@@ -41,10 +71,13 @@
 [![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=codecov&logoColor=white&color=00B4D8)](https://codecov.io/gh/COS301-SE-2026/Uni-Textbook-Marketplace)
 [![Build](https://img.shields.io/github/actions/workflow/status/COS301-SE-2026/Uni-Textbook-Marketplace/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-00B4D8?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
+[![Open Issues](https://img.shields.io/github/issues/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/issues?q=is%3Aissue+is%3Aclosed)
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls)
+[![Closed Pull Requests](https://img.shields.io/github/issues-pr-closed/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/pulls?q=is%3Apr+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/COS301-SE-2026/Uni-Textbook-Marketplace?style=for-the-badge&logo=github&logoColor=white&color=00B4D8)](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/graphs/contributors)
-[![Uptime](https://img.shields.io/uptimerobot/status/YOUR_MONITOR_KEY?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
+[![Uptime](https://img.shields.io/uptimerobot/ratio/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
+[![Uptime](https://img.shields.io/uptimerobot/status/m803622535-89f3c14ec4a812e29abd5c11?style=for-the-badge&logo=uptimerobot&logoColor=white&color=00B4D8)](https://dashboard.uptimerobot.com/monitors/803622535)
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
@@ -52,72 +85,114 @@
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align="center">
 
 ## Project Description
 
-**A web-based marketplace where verified university students can buy, sell, or swap second-hand textbooks. The platform features university email verification, structured listings with ISBN, edition, condition and module code, module-aware browsing by faculty and semester, smart filters, and privacy-first in-app messaging.**
+**A web-based marketplace where verified university students can buy, sell and auction second-hand textbooks. Students register with a university email and OTP, then create structured listings (ISBN, edition, condition, annotation level, module code) that admins moderate before they go live. Buyers browse by module, faculty and edition, use smart filters and saved searches, keep a wishlist, and message sellers through privacy-first in-app chat. A notification system sends in-app and email alerts for filter matches, listing approvals, status changes and moderation outcomes. Sellers can mark listings as reserved or sold, and admins manage reports, bans, appeals and an audit log. Three standout features round it out: AI-assisted listing creation (OCR auto-fill and background removal with an adjustable crop), real-time auctions with anti-sniping, and a multi-book bundle optimizer that finds the cheapest combination of sellers for a student's modules. Exchanges are arranged as meetups, with no payment processing.**
 
 Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301 Software Engineering Capstone Project at the University of Pretoria.
 
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/star-four-points.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## How It Works
+
+<img src="./docs/images/how-it-works.svg" alt="How it works: register, list, discover, meet up" width="100%" />
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/sitemap.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
+## Architecture at a Glance
+
+<a href="./docs/images/architecture-diagram.png">
+  <img src="./docs/images/architecture.svg" alt="Animated layered architecture diagram: client browser, web UI, controllers, bounded domain modules, repository and relational database, and external services for jobs, real-time messaging, vision/OCR, blob storage and email" width="100%" />
+</a>
+
+<sub>Animated data flow. Click the diagram for the static high-resolution version. Full detail lives in the Software Architecture Specifications linked in the Documentation section below.</sub>
+
+</div>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
 <div align="center">
     <img src="https://cdn.simpleicons.org/stackshare/00B4D8" width="28" height="28" valign="middle"/>
-<h2 align="center">Tech Stack</h2>
+<h2 align="center">Tech Stack: The Foundation Behind It All</h2>
+<p align="center"><sub>Every layer chosen to ship fast without breaking under real students.</sub></p>
 
-<h3 align="center">Frontend: Considered User Experiences</h3>
+<h3 align="center">Frontend: Where Students Meet the Product</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=react,tailwindcss,figma,typescript,nextjs" />
 </p>
 
-<h3 align="center">Backend: Stable Foundation</h3>
+<h3 align="center"> Backend: The Engine Room</h3>
 <p align="center">
-<img src="https://skillicons.dev/icons?i=nestjs,postgres,typescript,firebase" /><br>
+<img src="https://skillicons.dev/icons?i=nestjs,postgres,typescript,firebase" />
 </p>
 
-<h3 align="center">DevOps: Business-Smart Delivery</h3>
+<h3 align="center">DevOps: Shipping Without Drama</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=githubactions,docker,azure" />
 </p>
 
-<h3 align="center">Testing: For Smooth System Assurance</h3>
+<h3 align="center"> Testing: Trust, Then Verify</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=jest,cypress" />
 </p>
 
-<h3 align="center">Project Management: Via Modern Tech</h3>
+<h3 align="center"> Project Management: Staying in Sync</h3>
 <p align="center">
 <img src="https://skillicons.dev/icons?i=github,notion,discord" />
+<img src="https://cdn.simpleicons.org/overleaf/47A141" width="48" height="48" />
 </p>
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
   <img src="https://cdn.simpleicons.org/readthedocs/00B4D8" width="28" height="28" valign="middle"/>
   <h2 align="center">Documentation</h2>
 
-### DEMO 2 (Latest Documentation)
+### PROJECT DAY
 
 | Document | Link |
 |---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf) |
-|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf) |
-|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf) |
-|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf) |
-|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf) |
-|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf) |
-|  Design Specifications (Design and Wireframes) | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) |
+|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Software_Requirements_Specifications.pdf) |
+|  Software Architecture Specifications (SAS) | [View SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Software_Architecture_Specifications.pdf) |
+|  OpenAPI | [API Service Contracts](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/OpenAPI/openapi.yaml) |
+|  Coding Standards | [View Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Coding_Standards.pdf) |
+|  Testing Policy | [View Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Testing_Policy.pdf) |
+|  User Manual | [View User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/User_Manual.pdf) |
+|  Brand Style Guide (On our Web) | [View Brand Style Guide](https://nexusdev-frontend.whitesand-df72b78b.southafricanorth.azurecontainerapps.io/brand) |
+|  Brand Style Guide (Document) | [View Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Brand_Style_Guide.pdf) |
+|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Project_Day/Design_Specifications.pdf) |
 |  GitHub Project Board | [View Sprint Board](https://github.com/orgs/COS301-SE-2026/projects/64/views/1) |
 |  Issue Tracker | [GitHub Issues](../../issues) |
 | **Team Collaboration** | [View Group Framework](https://www.notion.so/NexusDev-Project-Management-23862d935436809280d1db1d5c14d0e4?source=copy_link) |
@@ -125,34 +200,22 @@ Built for [Agile Bridge](https://www2.agilebridge.co.za/) as part of the COS 301
 
 ---
 
-### DEMO 1
-
-| Document | Link |
-|---|---|
-|  Software Requirements Specifications (SRS) | [View SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf) |
-|  Design Specifications | [View Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) |
+| | Demo 1 | Demo 2 | Demo 3 | Demo 4 |
+|---|---|---|---|---|
+| **Documentation** | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/Design_Specifications.pdf) | <img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/Design_Specifications.pdf) |<img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SRS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Requirements_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[SAS](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Software_Architecture_Specifications.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Coding Standards](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Coding_Standards.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Testing Policy](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Testing_Policy.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[User Manual](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/User_Manual.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Brand Style Guide](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Brand_Style_Guide.pdf)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Design Specifications](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_4/Design_Specifications.pdf) |
+| **Demo Recording** | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_2/NexusDev_Demo_2_Slides.pdf) | <img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1BZxnrHA9spy1miY-c8HXX5PQ4f2y5X9R?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_3_Slides.pdf) |<img src="https://cdn.simpleicons.org/googledrive/00B4D8" width="20"/><br>[Video](https://drive.google.com/drive/folders/1OxS2wwU-8Q06R_OvD_LYTw668SgXQD83?usp=sharing)<br><br><img src="https://api.iconify.design/vscode-icons/file-type-pdf2.svg" width="20"/><br>[Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_3/NexusDev_Demo_4_Slides.pdf) |
 
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
-<h2 align="center">Demo Video </h2>
 <div align="center">
-
-| Demo Video | Documentation |
-| --- | --- |
-| [Demo 2 Video](https://drive.google.com/drive/folders/1HxUgxsm1RWdTQWn8Jg9vQ6Qaxyj8BgDd?usp=sharing) | [Demo 2 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_2_Slides.pdf) |
-| [Demo 1 Video](https://drive.google.com/drive/folders/1cTNSV7w1Je5HW7CunI29ZCjxfokRvUN_?usp=sharing) | [Demo 1 Slides](https://github.com/COS301-SE-2026/Uni-Textbook-Marketplace/blob/main/docs/Demo_1/NexusDev_Demo_1_Slides.pdf) |
-
-</div>
-
-<p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
-</p>
+    <img src="https://api.iconify.design/mdi/folder-open.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Project Structure
+</div>
 
 <details>
 <summary>Click to expand</summary>
@@ -162,9 +225,14 @@ Uni-Textbook-Marketplace/
 ├── .github/
 │   └── workflows/
 ├── backend/
+│   ├── database/
+│   │   └── schema/
 │   ├── scripts/
 │   ├── src/
 │   │   ├── admin/
+│   │   │   ├── dto/
+│   │   │   └── events/
+│   │   ├── auction/
 │   │   │   └── dto/
 │   │   ├── auth/
 │   │   │   ├── decorator/
@@ -173,6 +241,9 @@ Uni-Textbook-Marketplace/
 │   │   │   └── strategies/
 │   │   ├── azure/
 │   │   ├── books/
+│   │   │   └── dto/
+│   │   ├── bundles/
+│   │   ├── cases/
 │   │   │   └── dto/
 │   │   ├── database/
 │   │   │   ├── entities/
@@ -183,84 +254,130 @@ Uni-Textbook-Marketplace/
 │   │   ├── email/
 │   │   ├── firebase/
 │   │   ├── listings/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── messaging/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── modules/
 │   │   │   └── dto/
 │   │   ├── notifications/
+│   │   │   └── listeners/
+│   │   ├── reports/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── saved_search/
-│   │   │   └── dto/
+│   │   │   ├── dto/
+│   │   │   └── events/
 │   │   ├── shared/
+│   │   ├── vision/
+│   │   │   └── dto/
 │   │   └── wishlist/
 │   └── test/
-├── database/
-│   └── schema/
 ├── docs/
 │   ├── Demo_1/
 │   ├── Demo_2/
-│   └── images/
-├── frontend/
-│   ├── public/
-│   │   ├── books/
-│   │   └── images/
-│   └── src/
-│       ├── app/
-│       │   ├── admin/
-│       │   │   ├── log/
-│       │   │   └── review/
-│       │   ├── api/
-│       │   │   └── listings/
-│       │   │       └── [id]/
-│       │   ├── auth/
-│       │   │   ├── login/
-│       │   │   ├── otp/
-│       │   │   ├── register/
-│       │   │   ├── Registration/
-│       │   │   └── resetpassword/
-│       │   ├── brand/
-│       │   ├── help/
-│       │   ├── listings/
-│       │   │   ├── [id]/
-│       │   │   ├── create/
-│       │   │   └── mine/
-│       │   ├── messages/
-│       │   ├── saved-searches/
-│       │   ├── ui-test/
-│       │   └── wishlist/
-│       ├── components/
-│       │   ├── admin/
-│       │   │   ├── login/
-│       │   │   ├── register/
-│       │   │   └── resetpassword/
-│       │   ├── icons/
-│       │   ├── listings/
-│       │   │   └── tests/
-│       │   ├── messaging/
-│       │   ├── tests/
-│       │   ├── ui/
-│       │   │   └── tests/
-│       │   └── wishlist/
-│       ├── context/
-│       ├── hooks/
-│       ├── lib/
-│       │   └── mappers/
-│       ├── providers/
-│       ├── types/
-│       └── utils/
-└── messaging/
+│   ├── Demo_3/
+│   ├── Demo_4/
+│   ├── images/
+│   └── OpenAPI/
+└── frontend/
+    ├── cypress/
+    │   ├── e2e/
+    │   ├── fixtures/
+    │   └── support/
+    ├── public/
+    │   ├── books/
+    │   └── images/
+    └── src/
+        ├── app/
+        │   ├── admin/
+        │   │   ├── cases/
+        │   │   ├── log/
+        │   │   └── review/
+        │   ├── api/
+        │   │   └── listings/
+        │   │       └── [id]/
+        │   ├── appeal/
+        │   ├── auction/
+        │   │   └── bid/
+        │   ├── auth/
+        │   │   ├── login/
+        │   │   ├── otp/
+        │   │   ├── register/
+        │   │   ├── Registration/
+        │   │   └── resetpassword/
+        │   ├── brand/
+        │   ├── help/
+        │   ├── listings/
+        │   │   ├── [id]/
+        │   │   ├── create/
+        │   │   └── mine/
+        │   ├── messages/
+        │   ├── notifications/
+        │   ├── privacy/
+        │   ├── reading-list/
+        │   ├── saved-searches/
+        │   ├── settings/
+        │   ├── terms/
+        │   ├── ui-test/
+        │   └── wishlist/
+        ├── components/
+        │   ├── admin/
+        │   ├── auction/
+        │   ├── auth/
+        │   │   ├── login/
+        │   │   ├── register/
+        │   │   └── resetpassword/
+        │   ├── bundles/
+        │   ├── icons/
+        │   ├── listings/
+        │   │   └── tests/
+        │   ├── messaging/
+        │   ├── notifications/
+        │   │   └── tests/
+        │   ├── pagination/
+        │   ├── tests/
+        │   ├── tutorials/
+        │   ├── ui/
+        │   │   └── tests/
+        │   └── wishlist/
+        ├── context/
+        ├── hooks/
+        │   └── tests/
+        ├── lib/
+        │   ├── mappers/
+        │   └── tests/
+        ├── providers/
+        ├── types/
+        └── utils/
+            └── tests/
 ```
 
 </details>
+</br>
+
+<p align="center">
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align="center">
+    <img src="https://api.iconify.design/mdi/rocket-launch.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Getting Started
+</div>
 
 ### Prerequisites
-
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 - Docker (for local PostgreSQL)
 - Git (system-installed - no GUI clients)
+
+---
 
 ### Installation
 
@@ -271,7 +388,21 @@ cd Uni-Textbook-Marketplace
 
 # Install all dependencies from root (installs both frontend and backend)
 npm install
+
+# Build the Container and Environment
+docker compose up --build
+
+# Move to backend
+cd backend
+
+# Install the seeding dependencies
+npm install ts-node
+
+# Run the Seed data into the database from Docker
+docker exec -it nexusdev_backend npx ts-node src/database/seeds/seed-runner.ts
 ```
+
+---
 
 ### Running locally
 
@@ -286,6 +417,40 @@ npm run backend
 npm run frontend
 ```
 
+---
+
+### Logging into the web-app (Running Locally)
+
+<details>
+<summary>Click to expand</summary>
+
+Student credentials from seed data:
+
+Login (Email):
+```bash
+student1@tuks.co.za
+```
+
+Password:
+```bash
+Password123
+```
+
+---
+
+Admin credentials from seed data:
+
+Login (Email):
+```bash
+admin1@tuks.co.za
+```
+
+Password:
+```bash
+Admin123
+```
+</details>
+
 ### Environment variables
 
 Copy the example env files and fill in the values:
@@ -296,10 +461,14 @@ cp frontend/.env.example frontend/.env.local
 ```
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
+<div align="center">
+    <img src="https://api.iconify.design/mdi/source-branch.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
 ## Branching Strategy
+</div>
 
 We follow **GitHub Flow**:
 
@@ -317,10 +486,17 @@ All changes go through a **Pull Request** with at least one review before mergin
 > See [CONTRIBUTING.md](./CONTRIBUTING.md) for full branching rules and commit conventions.
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
+<div align="center">
+    <img src="https://api.iconify.design/mdi/test-tube.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
+
 ## Testing
+</div>
+
+<div align = "center">
 
 | Layer | Framework |
 |---|---|
@@ -328,6 +504,8 @@ All changes go through a **Pull Request** with at least one review before mergin
 | Backend integration tests | Jest + Supertest |
 | Frontend component tests | Jest + React Testing Library |
 | End-to-end tests | Cypress |
+
+</div>
 
 ```bash
 # Run backend tests
@@ -344,50 +522,174 @@ npm run test:all
 ```
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
-
-## Architecture Overview
-
-The system follows a **modular monolith** architecture for core features with an **external messaging microservice**:
-
-- **Frontend** : Next.js (React) responsive web app
-- **Backend** : NestJS modular monolith (Auth, Listings, Moderation, Modules)
-- **Database** : Azure Database for PostgreSQL
-- **Messaging** : Firebase Firestore real-time chat (external microservice)
-- **Hosting** : Azure Static Web Apps + Azure App Service
-- **CI/CD** : GitHub Actions
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
 
-<div align = "center">
+<div align="center">
+    <img src="https://api.iconify.design/mdi/account-group.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
-## Meet The Team
-
-![Team Members](docs/images/The_Team.png) 
+## Meet The Team: NexusDev
 
 </div>
 
 <div align="center">
 
-| Photo | Team Member | Role | Contributions | Connect |
-|:---:|---|---|---|:---:|
-| <img src="https://ui-avatars.com/api/?name=Tiego+Mokwena&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Tiego Mokwena"/> | **Tiego Mokwena** | Project Manager + UI Engineer + DevOps | Sprint planning, client communication, milestone tracking, frontend UI development (Next.js), CI/CD pipeline (GitHub Actions), Azure deployment, and QA strategy. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/tl21thebe)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tiego%20Mokwena-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3) |
-| <img src="https://ui-avatars.com/api/?name=Josh+Kretschmer&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Josh Kretschmer"/> | **Josh Kretschmer** | Services Engineer 1 + Integration Engineer 1 | Backend API development (NestJS), real-time messaging microservice (Socket.io/Firebase), integration between frontend and backend, Docker environment setup. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/JoshKretschmer)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Josh%20Kretschmer-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/josh-kretsch-754804401) |
-| <img src="https://ui-avatars.com/api/?name=Gift+Mohuba&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Gift Mohuba"/> | **Gift Mohuba** | Services Engineer 2 + Integration Engineer 2 | Backend API development, user authentication (JWT), university email verification, API security, integration between frontend and backend. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/GiftMHB)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Gift%20Mohuba-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gift-mohuba-67097b23b/) |
-| <img src="https://ui-avatars.com/api/?name=Neo+Bosoga&size=120&background=00B4D8&color=000f2b&rounded=true&bold=true" width="80" height="80" alt="Neo Bosoga"/> | **Neo Bosoga** | Data Engineer + Test Engineer | PostgreSQL database design and management, complex queries, database indexing, seed data, unit tests, and integration tests. | [<img src="https://cdn.simpleicons.org/github/00B4D8" width="26" height="26" alt="GitHub"/>](https://github.com/u23591732)<br/>[![LinkedIn](https://img.shields.io/badge/LinkedIn-Neo%20Bosoga-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/neo-bosoga-67167227a/) |
+<table>
+  <!-- Tiego -->
+  <tr>
+    <table>
+      <tr>
+        <td align="center">
+          <img src="docs/images/team/tiego.jpeg" width="800" height="200" alt="Tiego Mokwena"/>
+          <h2>Tiego Mokwena</h2>
+          <h5>Team Lead  </br>+ </br>UI Engineer </br>+ </br>DevOps Engineer</h5>
+          <a href="https://github.com/tl21thebe">
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/tiego-leroy-t-mokwena-5273413b3">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+          <a href="mailto:tl21thebe@gmail.com"><img src="https://img.shields.io/badge/Email-tl21thebe%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email tl21thebe@gmail.com"></a>
+        </td>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h5>I'm a final-year BSc Computer Science student at the University of Pretoria with a background in Biological Sciences, which has shaped my interest in fusing Biology and Software Engineering. I'm drawn to computational solutions for problems in Biology, Health, and BioTech, and I bring hands-on experience in Software Development, Database Systems, Human-Computer Interaction, and Bioinformatics/Computational Biology, applying algorithmic thinking to biological data. Beyond this niche, I'm equally comfortable building multi-purpose software, from full-stack web applications to database-driven systems and enjoy tackling problems across domains, not just BioTech.</h5>
+          <h4>Project Contributions:</h4>
+          <h6>
+          <ul>
+            <li>Sprint planning, client communication, and milestone tracking</li>
+            <li>Frontend UI development (Next.js, Tailwind) and the notification centre UI</li>
+            <li>CI/CD pipeline (GitHub Actions, Cypress end-to-end testing)</li>
+            <li>Azure deployment and infrastructure (Container Apps, Blob Storage, custom domain configuration)</li>
+            <li>QA strategy</li>
+            <li>Computer-vision-assisted listing creation flow (automatic text extraction and photo background removal with user-adjustable cropping) built on Azure AI Vision</li>
+          </ul>
+          </h6>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Gift -->
+  <tr>
+    <table>
+      <tr>
+      <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h5>I am a final year Computer Science with interest in software development and technology. I enjoy building and working on software projects, solving problems, and exploring how different technologies can be used to create practical solutions. I am naturally curious and enjoy learning new concepts, experimenting with different approaches, and understanding how things work rather than simply knowing how to use them. Through my studies and personal projects, I have developed a strong foundation in software development and a desire to continuously improve my skills. I am looking forward to gaining more practical experience, taking on new challenges, and growing into a well rounded software developer.</h5>
+          <h4>Project Contributions:</h4>
+          <h6>
+          <ul>
+            <li>Backend API development</li>
+            <li>User authentication (JWT) and university email OTP verification</li>
+            <li>API security</li>
+            <li>Integration between frontend and backend</li>
+            <li>Notification system (event-driven alerts across approvals, messages, and listing changes)</li>
+            <li>Real-time auctions feature, allowing sellers to convert an approved listing into a time-boxed auction with live bidding, concurrency-safe bid resolution, an anti-sniping extension window, and automatic close with winner determination</li>
+          </ul>
+          </h6>
+        </td>
+        <td align="center">
+          <img src="docs/images/team/gift.jpeg" width="800" height="200" alt="Gift Mohuba"/>
+          <h2>Gift Mohuba</h2>
+          <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
+          <a href="https://github.com/GiftMHB">
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/gift-mohuba-67097b23b/">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+          <a href="mailto:g.mohubagift@gmail.com"><img src="https://img.shields.io/badge/Email-g.mohubagift%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email g.mohubagift@gmail.com"></a>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Josh -->
+  <tr>
+    <table>
+      <tr>
+        <td align="center">
+          <img src="docs/images/team/josh.jpeg" width="400" height="200" alt="Josh Kretschmer"/>
+          <h2>Josh Kretschmer</h2>
+          <h5>Services Engineer </br>+ </br>Integration Engineer</h5>
+          <a href="https://github.com/JoshKretschmer">
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/josh-kretsch-754804401">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+          <a href="mailto:jekretschmer2003@gmail.com"><img src="https://img.shields.io/badge/Email-jekretschmer2003%40gmail.com-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email jekretschmer2003@gmail.com"></a>
+        </td>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h5>I'm a final year Information knowledge systems: data science student. The logical side of programming has always been a strong intrigue of mine and Cyber Security and the associated challenges with ensuring the safety (or finding flaws) within systems are the two areas I've enjoyed most throughout my time at university. Stats and maths always came more quickly to me than the software development side of life, but I always appreciate solving a problem or building a project to completion.</h5>
+          <h4>Project Contributions:</h4>
+          <h6>
+          <ul>
+            <li>Backend API development (NestJS)</li>
+            <li>Real-time messaging microservice (Firebase Firestore)</li>
+            <li>Integration between frontend and backend</li>
+            <li>Reporting, ban, and appeal moderation workflow (student reports, admin review, ban enforcement, appeal case review)</li>
+            <li>Docker environment setup</li>
+            <li>Seller-facing interface for the multi-book bundle price optimizer</li>
+          </ul>
+          </h6>
+        </td>
+      </tr>
+    </table>
+  </tr>
+  <!-- Neo -->
+  <tr>
+    <table>
+      <tr>
+        <td align="left" colspan="2">
+          <h4>Bio:</h4>
+          <h5>Final-year BSc Information and Knowledge Systems student at the University of Pretoria, passionate about software engineering, data engineering and cybersecurity. I enjoy building backend systems, designing and maintaining PostgreSQL databases, working with APIs, and making software more reliable through unit and integration testing.</h5>
+          <h4>Project Contributions:</h4>
+          <h6>
+          <ul>
+            <li>PostgreSQL database design and management, complex queries, indexing, and seed data</li>
+            <li>Unit and integration testing</li>
+            <li>Non-functional requirement testing lead (load testing with k6, accessibility auditing with axe-core)</li>
+            <li>Saved-search alert matching logic</li>
+            <li>Appeal case review backend</li>
+            <li>Greedy optimization algorithm behind the multi-book bundle price recommender</li>
+          </ul>
+          </h6>
+        </td>
+        <td align="center">
+          <img src="docs/images/team/neo.jpeg" width="400" height="200" alt="Neo Bosoga"/>
+          <h2>Neo Bosoga</h2>
+          <h5>Data Engineer </br>+ </br>Test Engineer</h5>
+          <a href="https://github.com/u23591732">
+            <img src="https://img.shields.io/badge/GitHub-0A0A0A?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+          </a>
+          <a href="https://www.linkedin.com/in/neo-bosoga-67167227a/">
+            <img src="https://img.shields.io/badge/LinkedIn-00B4D8?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+          </a>
+          <a href="mailto:u23591732@tuks.co.za"><img src="https://img.shields.io/badge/Email-u23591732%40tuks.co.za-8A2BE2?style=for-the-badge&logo=gmail&logoColor=white" alt="Email u23591732@tuks.co.za"></a>
+        </td>
+      </tr>
+    </table>
+  </tr>
+</table>
 
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
-<div align = "center">
+<div align="center">
+    <img src="https://api.iconify.design/mdi/email-outline.svg?color=%2300B4D8" width="28" height="28" valign="middle"/>
 
 ## Contact
+</div>
+
+<div align = "center">
 
 | | |
 |---|---|
@@ -398,7 +700,17 @@ The system follows a **modular monolith** architecture for core features with an
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
+</p>
+
+<div align = "center">
+
+*Built by Team NexusDev*
+
+</div>
+
+<p align="center">
+<img src="./docs/images/divider.svg" alt="divider" width="100%" />
 </p>
 
 <div align = "center">
@@ -408,5 +720,13 @@ The system follows a **modular monolith** architecture for core features with an
 </div>
 
 <p align="center">
-<img src="./docs/images/cyanBar.jpeg" alt="divider" width="100%" />
+  <img src="./docs/images/cyanBar.jpeg" alt="Cyan Bar Divider" width="100%" />
 </p>
+
+<div align = "center">
+
+<a href="https://hits.sh/github.com/COS301-SE-2026/Uni-Textbook-Marketplace/">
+  <img src="https://hits.sh/github.com/COS301-SE-2026/Uni-Textbook-Marketplace.svg?style=for-the-badge&label=Repo%20Views&color=00B4D8&labelColor=0A1F3D" alt="Repo views"/>
+</a>
+
+</div>

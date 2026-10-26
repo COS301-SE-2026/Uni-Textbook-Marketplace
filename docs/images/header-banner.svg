@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="Uni Textbook Marketplace banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A1F3D"/>
+      <stop offset="0.55" stop-color="#1F497D"/>
+      <stop offset="1" stop-color="#00B4D8"/>
+    </linearGradient>
+    <linearGradient id="wave1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#00E5FF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#00B4D8" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="wave2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.02"/>
+    </linearGradient>
+    <clipPath id="round"><rect width="1200" height="320" rx="24"/></clipPath>
+    <g id="book">
+      <rect width="46" height="60" rx="5" fill="#FFFFFF" fill-opacity="0.16" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2"/>
+      <rect x="7" width="4" height="60" fill="#FFFFFF" fill-opacity="0.45"/>
+      <rect x="17" y="14" width="22" height="3" rx="1.5" fill="#FFFFFF" fill-opacity="0.55"/>
+      <rect x="17" y="23" width="16" height="3" rx="1.5" fill="#FFFFFF" fill-opacity="0.4"/>
+    </g>
+  </defs>
+
+  <g clip-path="url(#round)">
+    <rect width="1200" height="320" fill="url(#bg)"/>
+
+    <!-- glow orbs -->
+    <circle cx="1020" cy="70" r="150" fill="#00E5FF" fill-opacity="0.12">
+      <animate attributeName="r" values="150;175;150" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="260" r="120" fill="#FFFFFF" fill-opacity="0.07">
+      <animate attributeName="r" values="120;100;120" dur="9s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- floating books -->
+    <g transform="translate(70 60) rotate(-12)"><g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -14;0 0" dur="5s" repeatCount="indefinite"/>
+      <use href="#book"/></g></g>
+    <g transform="translate(130 205) rotate(8)"><g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -10;0 0" dur="6.5s" repeatCount="indefinite"/>
+      <use href="#book" transform="scale(0.8)"/></g></g>
+    <g transform="translate(930 40) rotate(14)"><g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -16;0 0" dur="5.5s" repeatCount="indefinite"/>
+      <use href="#book"/></g></g>
+    <g transform="translate(1090 120) rotate(-8)"><g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -12;0 0" dur="7s" repeatCount="indefinite"/>
+      <use href="#book" transform="scale(0.75)"/></g></g>
+    <g transform="translate(1010 190) rotate(6)"><g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -9;0 0" dur="6s" repeatCount="indefinite"/>
+      <use href="#book" transform="scale(0.6)"/></g></g>
+
+    <!-- title -->
+    <!-- logo-dark (mark + wordmark), scaled up -->
+    <g transform="translate(207 30) scale(2.4)">
+      <g transform="translate(12, 26)" stroke="#00E5FF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 14v28" />
+        <path d="M6 36c-2 0-4-2-4-4V6c0-2 2-4 4-4h10c4 0 8 3.2 8 8 0-4.8 4-8 8-8h10c2 0 4 2 4 4v26c0 2-2 4-4 4h-12c-3.2 0-6 2.6-6 6 0-3.4-2.8-6-6-6z" />
+      </g>
+      <text x="76" y="42" font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-size="15" font-weight="600" letter-spacing="3" fill="#00E5FF">UNI TEXTBOOK</text>
+      <text x="76" y="72" font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="0.5" fill="#FFFFFF">MARKETPLACE</text>
+    </g>
+    <text x="600" y="240" text-anchor="middle" font-family="'Fira Code','Courier New',monospace" font-size="20" fill="#CFF6FF">Made for Students, by Students</text>
+    <rect x="520" y="256" width="160" height="4" rx="2" fill="#00E5FF">
+      <animate attributeName="width" values="40;160;40" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="x" values="580;520;580" dur="4s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- waves -->
+    <g>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="-1200 0" dur="14s" repeatCount="indefinite"/>
+      <path d="M0 270 Q150 240 300 270 T600 270 T900 270 T1200 270 T1500 270 T1800 270 T2100 270 T2400 270 V320 H0 Z" fill="url(#wave1)"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" from="-1200 0" to="0 0" dur="20s" repeatCount="indefinite"/>
+      <path d="M0 288 Q150 262 300 288 T600 288 T900 288 T1200 288 T1500 288 T1800 288 T2100 288 T2400 288 V320 H0 Z" fill="url(#wave2)"/>
+    </g>
+  </g>
+</svg>

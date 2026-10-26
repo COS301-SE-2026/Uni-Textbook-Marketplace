@@ -2,6 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { INestApplication } from '@nestjs/common';
 
+jest.mock('../src/firebase/firebase-admin', () => ({
+  db: {
+    collection: jest.fn(),
+  },
+}));
+
 import { TestModule } from './test.module';
 import { CasesService } from '../src/cases/cases.service';
 import { AdminService } from '../src/admin/admin.service';

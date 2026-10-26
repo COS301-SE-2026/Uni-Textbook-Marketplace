@@ -192,7 +192,7 @@ function NotificationsContent() {
 
                 <div>
 
-                    <h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>
+                    {/*<h1 className="text-3xl font-bold text-[var(--foreground)]">Notifications</h1>*/}
                     {unreadCount > 0 && (
                         <p className="mt-1 text-sm text-[#4B4F58] dark:text-gray-400">
                             {unreadCount} unread

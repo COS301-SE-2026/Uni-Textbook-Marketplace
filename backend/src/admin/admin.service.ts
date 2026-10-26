@@ -42,8 +42,8 @@ export class AdminService {
     action: 'APPROVE_LISTING' | 'REJECT_LISTING',
     reason?: string,
   ) {
-    const { savedlisting, listing, event } =
-      await this.entityManager.transaction(async (manager) => {
+    const { savedlisting, listing } = await this.entityManager.transaction(
+      async (manager) => {
         const listingRepository = manager.getRepository(Listing);
         const auditLogRepository = manager.getRepository(AuditLog);
         const userRepository = manager.getRepository(User);
@@ -99,9 +99,8 @@ export class AdminService {
         this.eventEmitter.emit('listing.reviewed', event);
 
         return { savedlisting, listing, event };
-      });
-
-    this.eventEmitter.emit('listing.reviewed', event);
+      },
+    );
 
     if (action == 'APPROVE_LISTING') {
       this.checkSavedSearchMatches(listing).catch((error: unknown) => {
@@ -147,8 +146,6 @@ export class AdminService {
             'New Listing Available that matches your saved search',
           matchDate: new Date(),
         });
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     } catch (error) {
       const errorMessage =
@@ -292,6 +289,13 @@ export class AdminService {
         notes: `User ${user.email} was banned.`,
       }),
     );
+
+    this.eventEmitter.emit('user.banned', {
+      userId: user.id,
+      name: `${user.first_name} ${user.last_name}`,
+      studentEmail: user.email,
+      reason,
+    });
 
     return savedUser;
   }

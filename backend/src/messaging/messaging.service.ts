@@ -13,6 +13,7 @@ import { ConversationResponseDto } from './dto/conversation-response.dto';
 import { User } from '../database/entities/users.entity';
 import { MessageEvent } from './events/message.event';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MessagingGateway } from './messaging.gateway';
 
 interface ConversationData {
   buyerId: string;
@@ -41,7 +42,45 @@ export class MessagingService {
     private readonly usersRepository: Repository<User>,
 
     private readonly eventEmitter: EventEmitter2,
+
+    private readonly messagingGateway: MessagingGateway,
   ) {}
+
+  async ensureAuctionConversation(
+    listingId: string,
+    buyerId: string,
+    sellerId: string,
+  ): Promise<boolean> {
+    if (buyerId === sellerId) return false;
+
+    const listing = await this.listingsRepository.findOne({
+      where: { id: listingId },
+      relations: ['seller'],
+    });
+    if (listing?.seller?.id !== sellerId) return false;
+
+    const existingConversation = await db
+      .collection('conversations')
+      .where('buyerId', '==', buyerId)
+      .where('sellerId', '==', sellerId)
+      .where('listingId', '==', listingId)
+      .limit(1)
+      .get();
+
+    if (!existingConversation.empty) return true;
+
+    const now = Timestamp.now();
+    await db.collection('conversations').add({
+      buyerId,
+      sellerId,
+      listingId,
+      createdAt: now,
+      updatedAt: now,
+      lastMessage: null,
+      lastSenderId: null,
+    });
+    return true;
+  }
 
   async createConversation(buyerId: string, listingId: string) {
     const listing = await this.listingsRepository.findOne({
@@ -260,18 +299,37 @@ export class MessagingService {
       );
     }
 
-    const messageRef = await conversationRef.collection('messages').add({
+    const sentAt = Timestamp.now();
+
+    const messageData: MessageData = {
       senderId: userId,
       text,
-      sentAt: Timestamp.now(),
+      sentAt,
       read: false,
-    });
+    };
+
+    const messageRef = await conversationRef
+      .collection('messages')
+      .add(messageData);
 
     await conversationRef.update({
-      updatedAt: new Date(),
+      updatedAt: sentAt,
       lastMessage: text,
       lastSenderId: userId,
     });
+
+    const newMessage = {
+      id: messageRef.id,
+      senderId: userId,
+      text,
+      sentAt: {
+        _seconds: sentAt.seconds,
+        _nanoseconds: sentAt.nanoseconds,
+      },
+      read: false,
+    };
+
+    this.messagingGateway.sendMessageToConversation(conversationId, newMessage);
 
     return {
       messageId: messageRef.id,

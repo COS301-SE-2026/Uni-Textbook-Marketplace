@@ -2,12 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-
+import { ModuleBook } from '../database/entities/module-book.entity';
 import { ListingsService } from './listings.service';
 import { Listing, ListingStatus, ListingsStatus } from '../database/entities/listing.entity';
 import { User } from '../database/entities/users.entity';
 import { Book } from '../database/entities/book.entity';
 import { Module as ModuleEntity } from '../database/entities/module.entity';
+import { Auction } from '../database/entities/auction.entity';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { SavedSearchesService } from '../saved_search/saved_search.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -47,6 +48,15 @@ describe('ListingsService', () => {
     name: 'Imperative Programming',
   };
 
+  const mockModuleBookRepository = {
+  find: jest.fn(),
+  findOne: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  delete: jest.fn(),
+  createQueryBuilder: jest.fn(),
+};
+
   const validUuid = '123e4567-e89b-12d3-a456-426614174000';
   const validUuid2 = '223e4567-e89b-12d3-a456-426614174001';
 
@@ -80,8 +90,10 @@ describe('ListingsService', () => {
 
   const createQueryBuilderMock = () => ({
     leftJoinAndSelect: jest.fn().mockReturnThis(),
+    leftJoin: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
+    getOne: jest.fn().mockResolvedValue(null),
     getMany: jest.fn().mockResolvedValue([]),
     getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
   });
@@ -107,6 +119,10 @@ describe('ListingsService', () => {
     findOneBy: jest.fn(),
   };
 
+  const mockAuctionRepository = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -130,6 +146,14 @@ describe('ListingsService', () => {
         {
           provide: getRepositoryToken(ModuleEntity),
           useValue: mockModuleRepository,
+        },
+        {
+      provide: getRepositoryToken(ModuleBook),       
+      useValue: mockModuleBookRepository,
+     },
+        {
+          provide: getRepositoryToken(Auction),
+          useValue: mockAuctionRepository,
         },
         {
           provide: SavedSearchesService,
@@ -356,6 +380,18 @@ describe('ListingsService', () => {
 
       expect(qb.andWhere).not.toHaveBeenCalled();
     });
+
+    it('should filter by university', async () => {
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getManyAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      await service.getAllApproved({ university: 'university-1' });
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'university.id = :university',
+        { university: 'university-1' },
+      );
+    });
   });
 
   describe('getMyListings', () => {
@@ -399,16 +435,19 @@ describe('ListingsService', () => {
 
   describe('getListingById', () => {
     it('should return listing when valid ID is provided', async () => {
-      mockListingRepository.findOne.mockResolvedValue(mockListing);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getOne as jest.Mock).mockResolvedValue(mockListing);
 
       const result = await service.getListingById(validUuid);
 
       expect(result).toEqual(mockListing);
 
-      expect(mockListingRepository.findOne).toHaveBeenCalledWith({
-        where: { id: validUuid },
-        relations: ['book', 'module', 'module.faculty', 'seller', 'seller.university'],
-      });
+      expect(mockListingRepository.createQueryBuilder).toHaveBeenCalledWith('listing');
+      expect(qb.where).toHaveBeenCalledWith(
+        'listing.id = CAST(:id AS uuid)',
+        { id: validUuid },
+      );
+      expect(qb.getOne).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when ID is not a valid UUID', async () => {
@@ -422,7 +461,8 @@ describe('ListingsService', () => {
     });
 
     it('should throw NotFoundException when listing does not exist with valid UUID', async () => {
-      mockListingRepository.findOne.mockResolvedValue(null);
+      const qb = mockListingRepository.createQueryBuilder();
+      (qb.getOne as jest.Mock).mockResolvedValue(null);
 
       await expect(service.getListingById(validUuid)).rejects.toThrow(NotFoundException);
       await expect(service.getListingById(validUuid)).rejects.toThrow('Listing not found');

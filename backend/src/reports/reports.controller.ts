@@ -31,5 +31,4 @@ export class ReportsController {
     return this.reportsService.create(userId, createReportDto);
   }
   //moved the GETter and GET ID to admin
-  
 }

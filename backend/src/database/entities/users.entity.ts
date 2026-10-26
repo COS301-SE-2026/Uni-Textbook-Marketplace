@@ -14,6 +14,7 @@ import { University } from './university.entity';
 import { Listing } from './listing.entity';
 import { Faculty } from './faculty.entity';
 import { Report } from './report.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -23,6 +24,7 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
+  @Exclude()
   @Column()
   password_hash!: string;
 

@@ -9,6 +9,8 @@ import { NotificationDropdown } from "./NotificationDropdown";
 export function NotificationBell() {
 
     const [isOpen, setIsOpen] = useState(false);
+
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     
@@ -36,6 +38,8 @@ export function NotificationBell() {
 
     return (
         <div ref={containerRef} className="relative">
+
+        
             <button type="button"
                     aria-label={
                         unreadCount > 0

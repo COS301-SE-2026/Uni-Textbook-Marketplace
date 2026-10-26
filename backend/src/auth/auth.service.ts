@@ -4,7 +4,6 @@ import {
   UnauthorizedException,
   Inject,
   ConflictException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -137,6 +136,7 @@ export class AuthService {
       where: {
         email: email,
       },
+      relations: { university: true },
     });
 
     if (!userResult) {
@@ -161,7 +161,10 @@ export class AuthService {
         is_verified: true,
         is_banned: true,
         ban_reason: true,
+        first_name: true,
+        last_name: true,
       },
+      relations: { university: true },
       where: {
         email,
         deleted_at: IsNull(),
@@ -177,32 +180,65 @@ export class AuthService {
       user.password_hash,
     );
 
-    if (user.is_banned) {
-      throw new ForbiddenException(
-        `Your account has been banned. Reason: ${
-          user.ban_reason ?? 'No reason provided.'
-        }`,
-      );
-    }
-
     if (!passwordValid) {
       throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    if (user.is_banned) {
+      const tokens = this.issueTokens({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          role: user.role,
+          is_banned: true,
+          ban_reason: user.ban_reason ?? 'No reason provided.',
+          university: user.university
+            ? { id: user.university.id, name: user.university.name }
+            : null,
+        },
+      };
     }
 
     if (!user.is_verified) {
       const otp = await this.otpService.createOtp(dto.email);
       await this.emailService.sendOtp(dto.email, otp);
-
       throw new UnauthorizedException(
         'Email not verified. A new verification code has been sent.',
       );
     }
 
-    return this.issueTokens({
+    const tokens = this.issueTokens({
       id: user.id,
       email: user.email,
       role: user.role,
     });
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        is_banned: false,
+        ban_reason: null,
+        university: user.university
+          ? { id: user.university.id, name: user.university.name }
+          : null,
+      },
+    };
   }
 
   private issueTokens(user: { id: string; email: string; role: string }) {
@@ -284,10 +320,18 @@ export class AuthService {
         first_name: true,
         last_name: true,
         role: true,
+        is_banned: true,
+        ban_reason: true,
+        banned_at: true,
+        university: {
+          id: true,
+          name: true,
+        },
       },
       where: {
         id: userId,
       },
+      relations: { university: true },
     });
 
     if (!result) {

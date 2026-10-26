@@ -1,10 +1,24 @@
-import { render, screen, fireEvent } from '@/test-utils';
+import { render, screen, fireEvent, waitFor } from '@/test-utils';
 import ListingCard from '../listingCard';
 import { useRouter } from 'next/navigation';
+import { save, remove } from '@/lib/wishlist.api';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
     usePathname: jest.fn(() => '/'),
+}));
+
+jest.mock('@/lib/wishlist.api', () => ({
+    save: jest.fn(),
+    remove: jest.fn(),
+}));
+
+jest.mock('next/image', () => ({
+    __esModule: true,
+    default: (props: Record<string, unknown>) => {
+        const { fill, ...rest } = props as { fill?: boolean };
+        return <img {...(rest as React.ImgHTMLAttributes<HTMLImageElement>)} />;
+    },
 }));
 
 const mockListing = {
@@ -48,6 +62,8 @@ describe('ListingCard', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+        (save as jest.Mock).mockResolvedValue(undefined);
+        (remove as jest.Mock).mockResolvedValue(undefined);
     });
 
     it('renders listing title and price', () => {
@@ -58,13 +74,12 @@ describe('ListingCard', () => {
 
     it('renders edition and module code', () => {
         render(<ListingCard listing={mockListing} />);
-        expect(screen.getByText(/2 Edition/)).toBeInTheDocument();
+        expect(screen.getByText(/2nd Edition/)).toBeInTheDocument();
         expect(screen.getByText(/COS301/)).toBeInTheDocument();
     });
 
     it('renders condition badge', () => {
         render(<ListingCard listing={mockListing} />);
-        
         expect(screen.getByText('Good')).toBeInTheDocument();
     });
 
@@ -72,7 +87,6 @@ describe('ListingCard', () => {
         render(<ListingCard listing={mockListing} />);
         expect(screen.getByText(/John/)).toBeInTheDocument();
         expect(screen.getByText(/Doe/)).toBeInTheDocument();
-        
         expect(screen.getByText(/Verified/)).toBeInTheDocument();
     });
 
@@ -87,10 +101,9 @@ describe('ListingCard', () => {
     it('shows pending badge when showStatus is true and status is PENDING', () => {
         const pendingListing = { ...mockListing, status: 'PENDING' as const };
         render(<ListingCard listing={pendingListing} showStatus={true} />);
-        
+
         const pendingBadge = screen.getByText('Pending');
         expect(pendingBadge).toBeInTheDocument();
-       
         expect(pendingBadge).toHaveClass('badge-pending');
     });
 
@@ -108,8 +121,8 @@ describe('ListingCard', () => {
     });
 
     it('shows reserved badge when listing_status is RESERVED and status is APPROVED', () => {
-        const reservedListing = { 
-            ...mockListing, 
+        const reservedListing = {
+            ...mockListing,
             listing_status: 'RESERVED' as const,
             status: 'APPROVED' as const,
         };
@@ -118,8 +131,8 @@ describe('ListingCard', () => {
     });
 
     it('shows sold badge when listing_status is SOLD and status is APPROVED', () => {
-        const soldListing = { 
-            ...mockListing, 
+        const soldListing = {
+            ...mockListing,
             listing_status: 'SOLD' as const,
             status: 'APPROVED' as const,
         };
@@ -147,18 +160,72 @@ describe('ListingCard', () => {
         const likeButton = screen.getByRole('button', { name: /like/i });
         expect(likeButton).toBeInTheDocument();
         fireEvent.click(likeButton);
-        
         expect(likeButton).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('renders different condition badges correctly', () => {
         const conditions: Array<'new' | 'good' | 'fair' | 'poor'> = ['new', 'good', 'fair', 'poor'];
         const conditionLabels = ['New', 'Good', 'Fair', 'Poor'];
-        
+
         conditions.forEach((condition, index) => {
             const listing = { ...mockListing, condition };
             render(<ListingCard listing={listing} />);
             expect(screen.getByText(conditionLabels[index])).toBeInTheDocument();
         });
+    });
+
+    it.each([
+        [1, '1st'], [2, '2nd'], [3, '3rd'], [4, '4th'],
+        [11, '11th'], [12, '12th'], [13, '13th'],
+        [21, '21st'], [22, '22nd'], [23, '23rd'],
+    ])('renders edition %i as %s', (edition, label) => {
+        const listing = { ...mockListing, book: { ...mockListing.book, edition } };
+        render(<ListingCard listing={listing} />);
+        expect(screen.getByText(new RegExp(`${label} Edition`))).toBeInTheDocument();
+    });
+
+    it('converts ./ prefixed photo urls to root-relative', () => {
+        const listing = { ...mockListing, photo_urls: ['./images/cover.jpg'] };
+        render(<ListingCard listing={listing} />);
+        expect(screen.getByAltText('Test Book')).toHaveAttribute('src', '/images/cover.jpg');
+    });
+
+    it('passes through absolute http photo urls', () => {
+        const listing = { ...mockListing, photo_urls: ['https://cdn/x.jpg'] };
+        render(<ListingCard listing={listing} />);
+        expect(screen.getByAltText('Test Book')).toHaveAttribute('src', 'https://cdn/x.jpg');
+    });
+
+    it('calls save and dispatches wishlist:changed when liking', async () => {
+        const spy = jest.spyOn(window, 'dispatchEvent');
+        render(<ListingCard listing={mockListing} />);
+        fireEvent.click(screen.getByRole('button', { name: /like/i }));
+        await waitFor(() => expect(save).toHaveBeenCalledWith('123'));
+        expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'wishlist:changed' }),
+        );
+    });
+
+    it('calls remove when unliking', async () => {
+        render(<ListingCard listing={mockListing} isLiked />);
+        fireEvent.click(screen.getByRole('button', { name: /like/i }));
+        await waitFor(() => expect(remove).toHaveBeenCalledWith('123'));
+    });
+
+    it('rolls back the like state when the API fails', async () => {
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        (save as jest.Mock).mockRejectedValueOnce(new Error('boom'));
+        render(<ListingCard listing={mockListing} />);
+        const btn = screen.getByRole('button', { name: /like/i });
+        fireEvent.click(btn);
+        await waitFor(() =>
+            expect(btn).toHaveAttribute('aria-pressed', 'false'),
+        );
+    });
+
+    it('hides the seller row when seller is absent', () => {
+        const listing = { ...mockListing, seller: undefined };
+        render(<ListingCard listing={listing} />);
+        expect(screen.queryByText(/John/)).not.toBeInTheDocument();
     });
 });

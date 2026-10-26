@@ -24,7 +24,12 @@ export default function MessagesMobile() {
         send,
     } = useMessaging();
 
-    const [chatOpen, setChatOpen] = useState(false);
+    const [closedConversationId, setClosedConversationId] =
+        useState<string | null>(null);
+    const chatOpen = Boolean(
+        selectedConversation &&
+        selectedConversation.conversationId !== closedConversationId,
+    );
 
     let conversationContent;
 
@@ -59,8 +64,8 @@ export default function MessagesMobile() {
                 conversations={conversations}
                 selectedConversationId={selectedConversation?.conversationId}
                 onSelectConversation={(conversation) => {
-                    selectConversation(conversation);
-                    setChatOpen(true);
+                    setClosedConversationId(null);
+                    void selectConversation(conversation);
                 }}
             />
         );
@@ -126,13 +131,17 @@ export default function MessagesMobile() {
     }
 
     return (
-        <main className="flex h-screen flex-col bg-gray-50 dark:bg-[#0a0f1a]">
-            
-            <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 flex-shrink-0">
+        <main className="flex h-[calc(100dvh-70px)] min-h-0 flex-col overflow-hidden bg-gray-50 dark:bg-[#0a0f1a]">
+
+            <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a] px-4 py-3 flex items-center gap-3 shrink-0">
 
                 <button
                     type="button"
-                    onClick={() => setChatOpen(false)}
+                    onClick={() =>
+                        setClosedConversationId(
+                            selectedConversation?.conversationId ?? null,
+                        )
+                    }
                     className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1e293b] transition-colors cursor-pointer text-[#000f2b] dark:text-white"
                     aria-label="Back to conversations"
                 >
@@ -148,16 +157,16 @@ export default function MessagesMobile() {
                     />
                 </div>
 
-                
+
             </div>
 
-            
-            <div className="flex-1 overflow-hidden dark:text-white">
+
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden dark:text-white">
                 {chatContent}
             </div>
 
             <MessageInput onSend={send} />
-            
+
         </main>
     );
 }

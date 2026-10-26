@@ -1,0 +1,7608 @@
+{
+  "modules": [
+    {
+      "module": "BAC 200",
+      "textbooks": [
+        {
+          "title": "Gripping GAAP",
+          "authors": "Cathrynne Service",
+          "edition": "2022/23",
+          "isbn13": "9780639009582",
+          "evidence": "UP official"
+        },
+        {
+          "title": "GAAP: Graded Questions",
+          "authors": "C.L. Service & D.L. Kolitz",
+          "edition": "2022/23",
+          "isbn13": "9780639009605",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BAC 201",
+      "textbooks": [
+        {
+          "title": "Not verified",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "BEL 200",
+      "textbooks": [
+        {
+          "title": "SILKE: South African Income Tax",
+          "authors": "Stiglingh, Koekemoer, Van Heerden, Wilcocks & Van der Zwan",
+          "edition": "2022",
+          "isbn13": "9780639013978",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BEL 300",
+      "textbooks": [
+        {
+          "title": "SILKE: South African Income Tax",
+          "authors": null,
+          "edition": "2022",
+          "isbn13": "9780639013978",
+          "evidence": "UP official"
+        },
+        {
+          "title": "SAICA Student Handbook Vol. 3",
+          "authors": null,
+          "edition": "2021/22",
+          "isbn13": "9780639014050",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BSR 410",
+      "textbooks": [
+        {
+          "title": "Management Accounting",
+          "authors": "Seal, Rohde, Garrison & Noreen",
+          "edition": "6th, 2019",
+          "isbn13": "9780077185534",
+          "evidence": "UP official list"
+        }
+      ]
+    },
+    {
+      "module": "BDO 121",
+      "textbooks": [
+        {
+          "title": "Introduction to Work Psychology",
+          "authors": "Botha, Kiley & Werner",
+          "edition": "3rd, 2021",
+          "isbn13": "9780190754938",
+          "evidence": "2023/24 UP study guide"
+        }
+      ]
+    },
+    {
+      "module": "BDO 214",
+      "textbooks": [
+        {
+          "title": "Organisational Behaviour: Managing People in Organisations",
+          "authors": "Griffin, Phillips, Gully & Carrim",
+          "edition": "1st SA, 2019",
+          "isbn13": "9781473759145",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BDO 224",
+      "textbooks": [
+        {
+          "title": "Organisational Behaviour: Managing People in Organisations",
+          "authors": "Griffin, Phillips, Gully & Carrim",
+          "edition": "1st SA, 2019",
+          "isbn13": "9781473759145",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BDO 272",
+      "textbooks": [
+        {
+          "title": "Introduction to Psychological Assessment in the South African Context",
+          "authors": "Foxcroft & Roodt",
+          "edition": "5th, 2018",
+          "isbn13": "9780190418595",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BDO 319",
+      "textbooks": [
+        {
+          "title": "Human Resource Management in South Africa",
+          "authors": "Wärnich, Carrell et al.",
+          "edition": "6th, 2018",
+          "isbn13": "9781473751125",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BDO 372",
+      "textbooks": [
+        {
+          "title": "The Principles and Practice of Psychological Assessment",
+          "authors": "Moerdyk",
+          "edition": "2nd, 2015",
+          "isbn13": "978186221133",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "BDO 373",
+      "textbooks": [
+        {
+          "title": "Research at Grass Roots",
+          "authors": "Fouché, Strydom & Roestenburg",
+          "edition": "5th, 2021",
+          "isbn13": "9780627038211",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "ABV 320",
+      "textbooks": [
+        {
+          "title": "Labour Relations: A Southern African Perspective",
+          "authors": "Sonia Bendix",
+          "edition": "8th, 2022",
+          "isbn13": "9781485131571",
+          "evidence": "2025 study guide"
+        }
+      ]
+    },
+    {
+      "module": "EKN 110",
+      "textbooks": [
+        {
+          "title": "Economics: Second Southern African Edition",
+          "authors": "Van Rensburg, McConnell & Brue",
+          "edition": "2nd SA",
+          "isbn13": "9780077169671",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "EKN 120",
+      "textbooks": [
+        {
+          "title": "Economics: Second Southern African Edition",
+          "authors": "Van Rensburg, McConnell & Brue",
+          "edition": "2nd SA",
+          "isbn13": "9780077169671",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "EKN 315",
+      "textbooks": [
+        {
+          "title": "Economic Development",
+          "authors": "Todaro & Smith",
+          "edition": "Older guides: 11th/13th",
+          "isbn13": "9780138013882",
+          "evidence": "older"
+        }
+      ]
+    },
+    {
+      "module": "EKN 320",
+      "textbooks": [
+        {
+          "title": "Economic Indicators",
+          "authors": "Philip Mohr",
+          "edition": "6th, 2019",
+          "isbn13": "9780627037689",
+          "evidence": "2025"
+        }
+      ]
+    },
+    {
+      "module": "FBS 110",
+      "textbooks": [
+        {
+          "title": "Basic Accounting for Non-Accountants",
+          "authors": "Cloete & Marimuthu",
+          "edition": "4th revised",
+          "isbn13": "9780627038907",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "FBS 210",
+      "textbooks": [
+        {
+          "title": "Financial Management",
+          "authors": "Correia, Flynn, Uliana, Wormald & Dillon",
+          "edition": null,
+          "isbn13": "9781485129578",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "FBS 212",
+      "textbooks": [
+        {
+          "title": "Principles of Managerial Finance: Global and Southern African Perspectives",
+          "authors": "Gitman et al.",
+          "edition": "2nd, 2014",
+          "isbn13": "9781775788874",
+          "evidence": "UP official"
+        },
+        {
+          "title": "Principles of Managerial Finance: Global and Southern African Perspectives",
+          "authors": null,
+          "edition": "3rd, 2022",
+          "isbn13": "9781485718871EP",
+          "evidence": "2025 UP course fact sheet"
+        }
+      ]
+    },
+    {
+      "module": "FBS 320",
+      "textbooks": [
+        {
+          "title": "Principles of Managerial Finance: Global and Southern African Perspective",
+          "authors": null,
+          "edition": "2nd",
+          "isbn13": "9781775788874",
+          "evidence": "UP official"
+        }
+      ]
+    },
+    {
+      "module": "INF 214",
+      "textbooks": [
+        {
+          "title": "Database Principles: Fundamentals of Design, Implementation, & Management",
+          "authors": "Coronel, Morris, Crocket & Blewett",
+          "edition": "3rd ed., 2020",
+          "isbn13": "9781473768055 (online) / 9781473768048 (hard copy)",
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "OBS 211",
+      "textbooks": [
+        {
+          "title": "Exploring Creativity and Innovation",
+          "authors": "Antonites",
+          "edition": "2nd",
+          "isbn13": "9780627037863",
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "OBS 212",
+      "textbooks": [
+        {
+          "title": "Small Business Management – Launching and Growing Entrepreneurial Ventures, SA edition",
+          "authors": null,
+          "edition": null,
+          "isbn13": "9781473734487",
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "OBS 326",
+      "textbooks": [
+        {
+          "title": "Supply Chain Management",
+          "authors": "Stock & Manrodt",
+          "edition": "2020",
+          "isbn13": "9781447020431",
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "STK 353",
+      "textbooks": [
+        {
+          "title": "An Introduction to Statistical Learning: With Applications in R",
+          "authors": "James et al.",
+          "edition": "2nd, 2023",
+          "isbn13": "9783031387852",
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "module": "COS 110",
+      "textbooks": [
+        {
+          "title": "Absolute C++",
+          "authors": "Walter Savitch",
+          "edition": "6th Global",
+          "isbn13": "9781292098593",
+          "status": "🟢"
+        },
+        {
+          "title": "Core Java, Volume I",
+          "authors": "Cay S. Horstmann",
+          "edition": "12th",
+          "isbn13": "9780137673629",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 122",
+      "textbooks": [
+        {
+          "title": "Operating Systems: Internals and Design Principles",
+          "authors": "William Stallings",
+          "edition": "9th Global",
+          "isbn13": "9781292214290",
+          "status": "🟢"
+        },
+        {
+          "title": "Core Java, Volume I",
+          "authors": "Cay S. Horstmann",
+          "edition": "12th",
+          "isbn13": "9780137673629",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 132",
+      "textbooks": [
+        {
+          "title": "Absolute C++",
+          "authors": "Walter Savitch",
+          "edition": "6th Global",
+          "isbn13": "9781292098593",
+          "status": "🔵"
+        },
+        {
+          "title": "Core Java, Volume I",
+          "authors": "Cay S. Horstmann",
+          "edition": "12th",
+          "isbn13": "9780137673629",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 151",
+      "textbooks": [
+        {
+          "title": "Java: How to Program",
+          "authors": "Deitel & Deitel",
+          "edition": "11th",
+          "isbn13": "9780134707070",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 210",
+      "textbooks": [
+        {
+          "title": "Introduction to the Theory of Computation",
+          "authors": "Michael Sipser",
+          "edition": "3rd",
+          "isbn13": "9781133187790",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 212",
+      "textbooks": [
+        {
+          "title": "Data Structures and Algorithms in Java",
+          "authors": "Adam Drozdek",
+          "edition": "4th, 2013",
+          "isbn13": "9789814392785",
+          "status": "🔵"
+        }
+      ]
+    },
+    {
+      "module": "COS 214",
+      "textbooks": [
+        {
+          "title": "Object-Oriented Software Engineering",
+          "authors": "David C. Kung",
+          "edition": "International, 2013",
+          "isbn13": "9781259080791",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 216",
+      "textbooks": [
+        {
+          "title": "Computer Networks",
+          "authors": "Andrew S. Tanenbaum & David Wetherall",
+          "edition": "5th",
+          "isbn13": "9780132126953",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 221",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Database Systems",
+          "authors": "Ramez Elmasri & Shamkant Navathe",
+          "edition": "7th, 2016",
+          "isbn13": "9781292097619",
+          "status": "🟢"
+        }
+      ]
+    },
+    {
+      "module": "COS 226",
+      "textbooks": [
+        {
+          "title": "Foundations of Multithreaded, Parallel, and Distributed Programming",
+          "authors": "Gregory Andrews",
+          "edition": "2000",
+          "isbn13": "9780201357523",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 284",
+      "textbooks": [
+        {
+          "title": "Computer Organization and Architecture",
+          "authors": "William Stallings",
+          "edition": "11th",
+          "isbn13": "9781292459925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 301",
+      "textbooks": [
+        {
+          "title": "Object-Oriented Software Engineering",
+          "authors": "David C. Kung",
+          "edition": "International edition, 2013",
+          "isbn13": "9781259080791",
+          "status": "🔵"
+        }
+      ]
+    },
+    {
+      "module": "COS 314",
+      "textbooks": [
+        {
+          "title": "Artificial Intelligence: A Modern Approach",
+          "authors": "Russell & Norvig",
+          "edition": "4th",
+          "isbn13": "9780134610993",
+          "status": "🔵"
+        }
+      ]
+    },
+    {
+      "module": "COS 326",
+      "textbooks": [
+        {
+          "title": "Modern Operating Systems",
+          "authors": "Andrew S. Tanenbaum",
+          "edition": "4th",
+          "isbn13": "9780133591620",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 330",
+      "textbooks": [
+        {
+          "title": "Compilers: Principles, Techniques, and Tools",
+          "authors": "Alfred V. Aho et al.",
+          "edition": "2nd",
+          "isbn13": "9780321486813",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 332",
+      "textbooks": [
+        {
+          "title": "Algorithms",
+          "authors": "Robert Sedgewick & Kevin Wayne",
+          "edition": "4th",
+          "isbn13": "9780321573513",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 333",
+      "textbooks": [
+        {
+          "title": "Effective Java",
+          "authors": "Joshua Bloch",
+          "edition": "3rd",
+          "isbn13": "9780134685991",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 341",
+      "textbooks": [
+        {
+          "title": "Compilers",
+          "authors": "Aho, Lam, Sethi & Ullman",
+          "edition": "2nd",
+          "isbn13": "9780321486813",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "COS 344",
+      "textbooks": [
+        {
+          "title": "Software Engineering",
+          "authors": "Ian Sommerville",
+          "edition": "10th",
+          "isbn13": "9780133943030",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EMR 201",
+      "textbooks": [
+        {
+          "title": "Management Information Systems",
+          "authors": "Kenneth C. Laudon & Jane P. Laudon",
+          "edition": "17th",
+          "isbn13": "9780136971795",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 310",
+      "textbooks": [
+        {
+          "title": "Interaction Design: Beyond Human-Computer Interaction",
+          "authors": "Yvonne Rogers, Helen Sharp & Jennifer Preece",
+          "edition": "6th, 2023",
+          "isbn13": "9781119901099",
+          "status": "🟢"
+        }
+      ]
+    },
+    {
+      "module": "INL 110",
+      "textbooks": [
+        {
+          "title": "Foundations of Library and Information Science",
+          "authors": "R. E. Rubin",
+          "edition": "4th",
+          "isbn13": "9780838911204",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 120",
+      "textbooks": [
+        {
+          "title": "Foundations of Library and Information Science",
+          "authors": "R. E. Rubin",
+          "edition": "4th",
+          "isbn13": "9780838911204",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 130",
+      "textbooks": [
+        {
+          "title": "Dictionary for Library and Information Science",
+          "authors": "Reitz",
+          "edition": "2nd",
+          "isbn13": "9781591580751",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 140",
+      "textbooks": [
+        {
+          "title": "Dictionary for Library and Information Science",
+          "authors": "Reitz",
+          "edition": "2nd",
+          "isbn13": "9781591580751",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 210",
+      "textbooks": [
+        {
+          "title": "Assessing Information Needs",
+          "authors": "David Nicholas",
+          "edition": "2000",
+          "isbn13": "9781856043324",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 240",
+      "textbooks": [
+        {
+          "title": "Assessing Information Needs",
+          "authors": "David Nicholas",
+          "edition": "2000",
+          "isbn13": "9781856043324",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 260",
+      "textbooks": [
+        {
+          "title": "Sense-Making Methodology Reader",
+          "authors": "Brenda Dervin et al.",
+          "edition": "2003",
+          "isbn13": "9781572735964",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 270",
+      "textbooks": [
+        {
+          "title": "Sense-Making Methodology Reader",
+          "authors": "Brenda Dervin et al.",
+          "edition": "2003",
+          "isbn13": "9781572735964",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 310",
+      "textbooks": [
+        {
+          "title": "Information and Society",
+          "authors": "Michael Buckland",
+          "edition": "2017",
+          "isbn13": "9780262529252",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 320",
+      "textbooks": [
+        {
+          "title": "Information and Society",
+          "authors": "Michael Buckland",
+          "edition": "2017",
+          "isbn13": "9780262529252",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 340",
+      "textbooks": [
+        {
+          "title": "The Seven Faces of Information Literacy",
+          "authors": "Christine Bruce",
+          "edition": "1997",
+          "isbn13": "9781856045519",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 360",
+      "textbooks": [
+        {
+          "title": "The Seven Faces of Information Literacy",
+          "authors": "Christine Bruce",
+          "edition": "1997",
+          "isbn13": "9781856045519",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 370",
+      "textbooks": [
+        {
+          "title": "Introduction to Information Science",
+          "authors": "David Bawden & Lyn Robinson",
+          "edition": "2012",
+          "isbn13": "9781856048102",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "INL 380",
+      "textbooks": [
+        {
+          "title": "Introduction to Information Science",
+          "authors": "David Bawden & Lyn Robinson",
+          "edition": "2012",
+          "isbn13": "9781856048102",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 110",
+      "textbooks": [
+        {
+          "title": "The Non-Designer's Design Book",
+          "authors": "Robin Williams",
+          "edition": "4th",
+          "isbn13": "9780133966152",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 120",
+      "textbooks": [
+        {
+          "title": "The Non-Designer's Design Book",
+          "authors": "Robin Williams",
+          "edition": "4th",
+          "isbn13": "9780133966152",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 210",
+      "textbooks": [
+        {
+          "title": "The Elements of User Experience",
+          "authors": "Jesse James Garrett",
+          "edition": "2nd",
+          "isbn13": "9780321683687",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 220",
+      "textbooks": [
+        {
+          "title": "The Elements of User Experience",
+          "authors": "Jesse James Garrett",
+          "edition": "2nd",
+          "isbn13": "9780321683687",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 211",
+      "textbooks": [
+        {
+          "title": "The Design of Everyday Things",
+          "authors": "Don Norman",
+          "edition": "Revised/Expanded",
+          "isbn13": "9780465050659",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 300",
+      "textbooks": [
+        {
+          "title": "HTML & CSS: Design and Build Websites",
+          "authors": "Jon Duckett",
+          "edition": "2014",
+          "isbn13": "9781118008188",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IMY 320",
+      "textbooks": [
+        {
+          "title": "HTML & CSS: Design and Build Websites",
+          "authors": "Jon Duckett",
+          "edition": "2014",
+          "isbn13": "9781118008188",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ISB 101",
+      "textbooks": [
+        {
+          "title": "Don't Make Me Think, Revisited",
+          "authors": "Steve Krug",
+          "edition": "3rd",
+          "isbn13": "9780321965516",
+          "status": null
+        },
+        {
+          "title": "The Design of Everyday Things",
+          "authors": "Don Norman",
+          "edition": "Revised/Expanded",
+          "isbn13": "9780465050659",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ISB 201",
+      "textbooks": [
+        {
+          "title": "Don't Make Me Think, Revisited",
+          "authors": "Steve Krug",
+          "edition": "3rd",
+          "isbn13": "9780321965516",
+          "status": null
+        },
+        {
+          "title": "The Design of Everyday Things",
+          "authors": "Don Norman",
+          "edition": "Revised/Expanded",
+          "isbn13": "9780465050659",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 112",
+      "textbooks": [
+        {
+          "title": "Educational Psychology",
+          "authors": "Woolfolk",
+          "edition": "14th",
+          "isbn13": "9780132615111",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 122",
+      "textbooks": [
+        {
+          "title": "Educational Psychology",
+          "authors": "Woolfolk",
+          "edition": "14th",
+          "isbn13": "9780132615111",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 212",
+      "textbooks": [
+        {
+          "title": "Educational Psychology",
+          "authors": "Anita Woolfolk",
+          "edition": "14th",
+          "isbn13": "9780132615111",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 222",
+      "textbooks": [
+        {
+          "title": "Educational Psychology",
+          "authors": "Anita Woolfolk",
+          "edition": "14th",
+          "isbn13": "9780132615111",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 312",
+      "textbooks": [
+        {
+          "title": "Educational Research",
+          "authors": "John W. Creswell",
+          "edition": "6th",
+          "isbn13": "9780134519360",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPV 322",
+      "textbooks": [
+        {
+          "title": "Educational Research",
+          "authors": "John W. Creswell",
+          "edition": "6th",
+          "isbn13": "9780134519360",
+          "status": null
+        },
+        {
+          "title": "Philosophy of Education",
+          "authors": "Nel Noddings",
+          "edition": "4th",
+          "isbn13": "9780813343859",
+          "status": null
+        },
+        {
+          "title": "Preparing Teachers for a Changing World",
+          "authors": "Linda Darling-Hammond et al.",
+          "edition": "2005",
+          "isbn13": "9780787972294",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BAN 313",
+      "textbooks": [
+        {
+          "title": "Quantitative Analysis for Management",
+          "authors": "Render et al.",
+          "edition": "13th",
+          "isbn13": "9780134543160",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BID 320",
+      "textbooks": [
+        {
+          "title": "Introduction to Statistical Quality Control",
+          "authors": "Montgomery",
+          "edition": "8th",
+          "isbn13": "9781119723082",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BIE 420",
+      "textbooks": [
+        {
+          "title": "Engineering Economy",
+          "authors": "Blank & Tarquin",
+          "edition": "8th",
+          "isbn13": "9780073523439",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BON 410",
+      "textbooks": [
+        {
+          "title": "Production and Operations Analysis",
+          "authors": "Nahmias & Cheng",
+          "edition": "7th",
+          "isbn13": "9781259258492",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOZ 312",
+      "textbooks": [
+        {
+          "title": "Operations Management",
+          "authors": "Heizer, Render & Munson",
+          "edition": "13th",
+          "isbn13": "9780135208748",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BPY 310",
+      "textbooks": [
+        {
+          "title": "Methods, Standards, and Work Design",
+          "authors": "Niebel & Freivalds",
+          "edition": "13th",
+          "isbn13": "9780073376318",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BPZ 321",
+      "textbooks": [
+        {
+          "title": "Design and Analysis of Experiments",
+          "authors": "Montgomery",
+          "edition": "10th",
+          "isbn13": "9781119722108",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BSS 310",
+      "textbooks": [
+        {
+          "title": "System Engineering Management",
+          "authors": "Blanchard",
+          "edition": "5th",
+          "isbn13": "9781118210664",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MIA 320",
+      "textbooks": [
+        {
+          "title": "How to Solve It",
+          "authors": "George Pólya",
+          "edition": "2nd",
+          "isbn13": "9780691164076",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EBN 111",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Electric Circuits",
+          "authors": "Alexander & Sadiku",
+          "edition": "7th",
+          "isbn13": "9781260226409",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EBN 122",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Electric Circuits",
+          "authors": "Alexander & Sadiku",
+          "edition": "7th",
+          "isbn13": "9781260226409",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EIR 211",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Electric Circuits",
+          "authors": "Alexander & Sadiku",
+          "edition": "7th",
+          "isbn13": "9781260226409",
+          "status": null
+        },
+        {
+          "title": "Electrical Engineering: Principles and Applications",
+          "authors": "Hambley",
+          "edition": "7th",
+          "isbn13": "9780134484142",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EIR 221",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Electric Circuits",
+          "authors": "Alexander & Sadiku",
+          "edition": "7th",
+          "isbn13": "9781260226409",
+          "status": null
+        },
+        {
+          "title": "Electrical Engineering: Principles and Applications",
+          "authors": "Hambley",
+          "edition": "7th",
+          "isbn13": "9780134484142",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ELI 220",
+      "textbooks": [
+        {
+          "title": "Electric Circuits",
+          "authors": "Nilsson & Riedel",
+          "edition": "11th",
+          "isbn13": "9780134746962",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ELX 311",
+      "textbooks": [
+        {
+          "title": "Electric Machinery Fundamentals",
+          "authors": "Chapman",
+          "edition": "5th",
+          "isbn13": "9780073529547",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ENE 310",
+      "textbooks": [
+        {
+          "title": "Microelectronic Circuits",
+          "authors": "Sedra & Smith",
+          "edition": "8th",
+          "isbn13": "9780190853464",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EKK 320",
+      "textbooks": [
+        {
+          "title": "Power Electronics",
+          "authors": "Mohan, Undeland & Robbins",
+          "edition": "3rd",
+          "isbn13": "9780471226932",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EKK 410",
+      "textbooks": [
+        {
+          "title": "Power Electronics",
+          "authors": "Mohan, Undeland & Robbins",
+          "edition": "3rd",
+          "isbn13": "9780471226932",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EME 310",
+      "textbooks": [
+        {
+          "title": "Introduction to Electromagnetic Compatibility",
+          "authors": "Clayton R. Paul",
+          "edition": "2nd",
+          "isbn13": "9780471755000",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EMZ 310",
+      "textbooks": [
+        {
+          "title": "Introduction to Electrodynamics",
+          "authors": "David J. Griffiths",
+          "edition": "4th",
+          "isbn13": "9781108420419",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EMZ 320",
+      "textbooks": [
+        {
+          "title": "Introduction to Electrodynamics",
+          "authors": "David J. Griffiths",
+          "edition": "4th",
+          "isbn13": "9781108420419",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EWE 320",
+      "textbooks": [
+        {
+          "title": "Algorithms for VLSI Design Automation",
+          "authors": "Gerez",
+          "edition": "1999",
+          "isbn13": "9780471970014",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ELO 320",
+      "textbooks": [
+        {
+          "title": "Introduction to Electric Circuits",
+          "authors": "R. C. Dorf & J. A. Svoboda",
+          "edition": "9th",
+          "isbn13": "9781118067130",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EIW 121",
+      "textbooks": [
+        {
+          "title": "Computer Organization and Design RISC-V Edition",
+          "authors": "Patterson & Hennessy",
+          "edition": "2nd",
+          "isbn13": "9780128203316",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EIW 221",
+      "textbooks": [
+        {
+          "title": "Computer Organization and Design RISC-V Edition",
+          "authors": "Patterson & Hennessy",
+          "edition": "2nd",
+          "isbn13": "9780128203316",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ERS 220",
+      "textbooks": [
+        {
+          "title": "Modern Operating Systems",
+          "authors": "Tanenbaum & Bos",
+          "edition": "4th",
+          "isbn13": "9780133591620",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ERD 320",
+      "textbooks": [
+        {
+          "title": "Computer Networking: A Top-Down Approach",
+          "authors": "Kurose & Ross",
+          "edition": "8th",
+          "isbn13": "9780136681557",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EMK 310",
+      "textbooks": [
+        {
+          "title": "Digital Design and Computer Architecture",
+          "authors": "Harris & Harris",
+          "edition": "2nd",
+          "isbn13": "9780123944245",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EAS 410",
+      "textbooks": [
+        {
+          "title": "Computer Organization and Architecture",
+          "authors": "Stallings",
+          "edition": "11th",
+          "isbn13": "9781292459925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EAI 320",
+      "textbooks": [
+        {
+          "title": "Artificial Intelligence: A Modern Approach",
+          "authors": "Russell & Norvig",
+          "edition": "4th",
+          "isbn13": "9780134610993",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EBB 320",
+      "textbooks": [
+        {
+          "title": "Digital Design",
+          "authors": "Mano & Ciletti",
+          "edition": "6th",
+          "isbn13": "9780134549897",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EHN 410",
+      "textbooks": [
+        {
+          "title": "Computer Networks",
+          "authors": "Tanenbaum & Wetherall",
+          "edition": "5th",
+          "isbn13": "9780132126953",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EBI 410",
+      "textbooks": [
+        {
+          "title": "Introduction to Biomedical Engineering",
+          "authors": "John Enderle & Joseph Bronzino",
+          "edition": "3rd",
+          "isbn13": "9780123749796",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EPR 404",
+      "textbooks": [
+        {
+          "title": "Medical Instrumentation: Application and Design",
+          "authors": "Webster",
+          "edition": "4th",
+          "isbn13": "9781118478897",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MGC 110",
+      "textbooks": [
+        {
+          "title": "Engineering Mechanics: Statics",
+          "authors": "Hibbeler",
+          "edition": "15th",
+          "isbn13": "9780137514706",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MSD 210",
+      "textbooks": [
+        {
+          "title": "Engineering Mechanics: Dynamics",
+          "authors": "Hibbeler",
+          "edition": "15th",
+          "isbn13": "9780137550926",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MTV 310",
+      "textbooks": [
+        {
+          "title": "Thermodynamics: An Engineering Approach",
+          "authors": "Çengel & Boles",
+          "edition": "9th",
+          "isbn13": "9781259822674",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MTV 410",
+      "textbooks": [
+        {
+          "title": "Thermodynamics: An Engineering Approach",
+          "authors": "Çengel & Boles",
+          "edition": "9th",
+          "isbn13": "9781259822674",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MVS 311",
+      "textbooks": [
+        {
+          "title": "Fox, McDonald's Introduction to Fluid Mechanics",
+          "authors": "Fox, McDonald",
+          "edition": "9th",
+          "isbn13": "9781119721030",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MOW 217",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister & Rethwisch",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MOW 312",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister & Rethwisch",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MOX 410",
+      "textbooks": [
+        {
+          "title": "Mechanical Engineering Design",
+          "authors": "Shigley",
+          "edition": "11th",
+          "isbn13": "9780073398204",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MOO 420",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Heat and Mass Transfer",
+          "authors": "Incropera et al.",
+          "edition": "8th",
+          "isbn13": "9781119353881",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MHM 420",
+      "textbooks": [
+        {
+          "title": "Shigley's Mechanical Engineering Design",
+          "authors": "Budynas & Nisbett",
+          "edition": "11th",
+          "isbn13": "9780073398204",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MII 420",
+      "textbooks": [
+        {
+          "title": "Maintenance Fundamentals",
+          "authors": "Mobley",
+          "edition": "2nd",
+          "isbn13": "9780750677981",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MKM 411",
+      "textbooks": [
+        {
+          "title": "Manufacturing Engineering and Technology",
+          "authors": "Kalpakjian & Schmid",
+          "edition": "7th",
+          "isbn13": "9780133128749",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MLV 420",
+      "textbooks": [
+        {
+          "title": "Aircraft Performance and Design",
+          "authors": "Anderson",
+          "edition": "1999",
+          "isbn13": "9780070019713",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBB 410",
+      "textbooks": [
+        {
+          "title": "Machine Design: An Integrated Approach",
+          "authors": "Norton",
+          "edition": "6th",
+          "isbn13": "9780133356717",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MKI 420",
+      "textbooks": [
+        {
+          "title": "Automation, Production Systems, and Computer-Integrated Manufacturing",
+          "authors": "Groover",
+          "edition": "5th",
+          "isbn13": "9780134605460",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIR 113",
+      "textbooks": [
+        {
+          "title": "Elementary Principles of Chemical Processes",
+          "authors": "Felder, Rousseau & Bullard",
+          "edition": "4th",
+          "isbn13": "9781119622613",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIR 123",
+      "textbooks": [
+        {
+          "title": "Elementary Principles of Chemical Processes",
+          "authors": "Felder, Rousseau & Bullard",
+          "edition": "4th",
+          "isbn13": "9781119622613",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIR 211",
+      "textbooks": [
+        {
+          "title": "Basic Principles and Calculations in Chemical Engineering",
+          "authors": "Himmelblau & Riggs",
+          "edition": "8th",
+          "isbn13": "9780132346603",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIR 310",
+      "textbooks": [
+        {
+          "title": "Transport Phenomena",
+          "authors": "Bird, Stewart & Lightfoot",
+          "edition": "2nd",
+          "isbn13": "9780470115398",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIM 211",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CIO 320",
+      "textbooks": [
+        {
+          "title": "Chemical Engineering, Volume 1",
+          "authors": "Coulson & Richardson",
+          "edition": "6th",
+          "isbn13": "9780750644446",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CBI 310",
+      "textbooks": [
+        {
+          "title": "Chemical Reaction Engineering",
+          "authors": "Levenspiel",
+          "edition": "3rd",
+          "isbn13": "9780471254244",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CKN 321",
+      "textbooks": [
+        {
+          "title": "Transport Processes and Separation Process Principles",
+          "authors": "Geankoplis",
+          "edition": "4th",
+          "isbn13": "9780131013674",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CLB 321",
+      "textbooks": [
+        {
+          "title": "Unit Operations of Chemical Engineering",
+          "authors": "McCabe, Smith & Harriott",
+          "edition": "7th",
+          "isbn13": "9780072848236",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMO 310",
+      "textbooks": [
+        {
+          "title": "Perry's Chemical Engineers' Handbook",
+          "authors": "Perry & Green",
+          "edition": "9th",
+          "isbn13": "9780071422949",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CPA 410",
+      "textbooks": [
+        {
+          "title": "Chemical Engineering Design",
+          "authors": "Towler & Sinnott",
+          "edition": "3rd",
+          "isbn13": "9780081025994",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CPJ 421",
+      "textbooks": [
+        {
+          "title": "Elements of Chemical Reaction Engineering",
+          "authors": "Fogler",
+          "edition": "6th",
+          "isbn13": "9780133887518",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CPR 420",
+      "textbooks": [
+        {
+          "title": "Chemical Engineering, Vol. 6",
+          "authors": "Coulson & Richardson",
+          "edition": "4th",
+          "isbn13": "9780750644446",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMC 113",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister & Rethwisch",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMC 123",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister & Rethwisch",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMC 223",
+      "textbooks": [
+        {
+          "title": "Materials Science and Engineering",
+          "authors": "Callister & Rethwisch",
+          "edition": "10th",
+          "isbn13": "9781119722851",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMC 313",
+      "textbooks": [
+        {
+          "title": "Physical Metallurgy Principles",
+          "authors": "Reed-Hill & Abbaschian",
+          "edition": "4th",
+          "isbn13": "9780534933723",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMM 320",
+      "textbooks": [
+        {
+          "title": "Materials Selection in Mechanical Design",
+          "authors": "Ashby",
+          "edition": "5th",
+          "isbn13": "9780081005996",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMP 310",
+      "textbooks": [
+        {
+          "title": "Phase Transformations in Metals and Alloys",
+          "authors": "Porter, Easterling & Sherif",
+          "edition": "3rd",
+          "isbn13": "9781498738767",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NMP 411",
+      "textbooks": [
+        {
+          "title": "Physical Metallurgy Principles",
+          "authors": "Reed-Hill",
+          "edition": "4th",
+          "isbn13": "9780534933723",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NPW 411",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTC 210",
+      "textbooks": [
+        {
+          "title": "The Science and Engineering of Materials",
+          "authors": "Askeland & Wright",
+          "edition": "7th",
+          "isbn13": "9780357446110",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTV 310",
+      "textbooks": [
+        {
+          "title": "Mechanical Metallurgy",
+          "authors": "Dieter",
+          "edition": "3rd",
+          "isbn13": "9780071004063",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NHM 322",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NHM 412",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NKR 410",
+      "textbooks": [
+        {
+          "title": "Handbook of Extractive Metallurgy",
+          "authors": "Habashi",
+          "edition": "1997",
+          "isbn13": "9783527292473",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMI 210",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMY 121",
+      "textbooks": [
+        {
+          "title": "Introductory Mining Engineering",
+          "authors": "Hartman & Mutmansky",
+          "edition": "2nd",
+          "isbn13": "9780471348511",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMY 220",
+      "textbooks": [
+        {
+          "title": "Open Pit Mine Planning and Design",
+          "authors": "Hustrulid, Kuchta & Martin",
+          "edition": "3rd",
+          "isbn13": "9781498737760",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMY 320",
+      "textbooks": [
+        {
+          "title": "Open Pit Mine Planning and Design",
+          "authors": "Hustrulid, Kuchta & Martin",
+          "edition": "3rd",
+          "isbn13": "9781498737760",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMY 410",
+      "textbooks": [
+        {
+          "title": "Open Pit Mine Planning and Design",
+          "authors": "Hustrulid et al.",
+          "edition": "3rd",
+          "isbn13": "9781498737760",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMY 423",
+      "textbooks": [
+        {
+          "title": "Open Pit Mine Planning and Design",
+          "authors": "Hustrulid et al.",
+          "edition": "3rd",
+          "isbn13": "9781498737760",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMZ 422",
+      "textbooks": [
+        {
+          "title": "Underground Excavations in Rock",
+          "authors": "Hoek & Brown",
+          "edition": "1980",
+          "isbn13": "9780850661253",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PMW 410",
+      "textbooks": [
+        {
+          "title": "The Economic Definition of Ore",
+          "authors": "Lane",
+          "edition": "1988",
+          "isbn13": "9780521351936",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PEE 321",
+      "textbooks": [
+        {
+          "title": "Mine Ventilation and Air Conditioning",
+          "authors": "Hartman",
+          "edition": "3rd",
+          "isbn13": "9780471105054",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PEE 410",
+      "textbooks": [
+        {
+          "title": "Mine Ventilation and Air Conditioning",
+          "authors": "Hartman",
+          "edition": "3rd",
+          "isbn13": "9780471105054",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PPY 220",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PPY 320",
+      "textbooks": [
+        {
+          "title": "Wills' Mineral Processing Technology",
+          "authors": "Wills & Finch",
+          "edition": "8th",
+          "isbn13": "9780750644504",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PNB 300",
+      "textbooks": [
+        {
+          "title": "Subsurface Ventilation and Environmental Engineering",
+          "authors": "C. J. McPherson",
+          "edition": "2012",
+          "isbn13": "9789400755642",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SKE 110",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SKE 220",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHC 220",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHC 310",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHC 321",
+      "textbooks": [
+        {
+          "title": "Design of Reinforced Concrete",
+          "authors": "McCormac & Brown",
+          "edition": "10th",
+          "isbn13": "9781119722493",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHC 410",
+      "textbooks": [
+        {
+          "title": "Design of Reinforced Concrete",
+          "authors": "McCormac & Brown",
+          "edition": "10th",
+          "isbn13": "9781119722493",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SBM 321",
+      "textbooks": [
+        {
+          "title": "Materials for Civil and Construction Engineers",
+          "authors": "Mamlouk & Zaniewski",
+          "edition": "4th",
+          "isbn13": "9780134325460",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SBZ 321",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SBZ 420",
+      "textbooks": [
+        {
+          "title": "Structural Analysis",
+          "authors": "Hibbeler",
+          "edition": "10th",
+          "isbn13": "9780134610672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SCA 420",
+      "textbooks": [
+        {
+          "title": "Principles of Foundation Engineering",
+          "authors": "Das",
+          "edition": "9th",
+          "isbn13": "9780357420387",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SDO 420",
+      "textbooks": [
+        {
+          "title": "Engineering Fluid Mechanics",
+          "authors": "Cengage",
+          "edition": null,
+          "isbn13": "9781119723577",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SEV 421",
+      "textbooks": [
+        {
+          "title": "Introduction to Environmental Engineering and Science",
+          "authors": "Masters & Ela",
+          "edition": "3rd",
+          "isbn13": "9780131481930",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SGM 221",
+      "textbooks": [
+        {
+          "title": "Principles of Geotechnical Engineering",
+          "authors": "Das",
+          "edition": "10th",
+          "isbn13": "9780357430386",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SGM 323",
+      "textbooks": [
+        {
+          "title": "Principles of Geotechnical Engineering",
+          "authors": "Das",
+          "edition": "10th",
+          "isbn13": "9780357430386",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SIE 310",
+      "textbooks": [
+        {
+          "title": "Engineering Economy",
+          "authors": "Blank & Tarquin",
+          "edition": "8th",
+          "isbn13": "9780073523439",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SVC 412",
+      "textbooks": [
+        {
+          "title": "Water Resources Engineering",
+          "authors": "Mays",
+          "edition": "3rd",
+          "isbn13": "9781118138070",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PSC 321",
+      "textbooks": [
+        {
+          "title": "Engineering Mechanics: Statics",
+          "authors": "Hibbeler",
+          "edition": "15th",
+          "isbn13": "9780137514706",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "JCP 201",
+      "textbooks": []
+    },
+    {
+      "module": "JCP 202",
+      "textbooks": []
+    },
+    {
+      "module": "JCP 203",
+      "textbooks": []
+    },
+    {
+      "module": "BGG 121",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOU 111",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BWT 110",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BWT 220",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BWT 310",
+      "textbooks": [
+        {
+          "title": "Barry's Introduction to Construction of Buildings",
+          "authors": null,
+          "edition": "4th",
+          "isbn13": "9781118337217",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BWT 320",
+      "textbooks": [
+        {
+          "title": "Barry's Introduction to Construction of Buildings",
+          "authors": null,
+          "edition": "4th",
+          "isbn13": "9781118337217",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GBD 112",
+      "textbooks": [
+        {
+          "title": "Willis's Practice and Procedure for the Quantity Surveyor",
+          "authors": "Ashworth, Hogg & Higgs",
+          "edition": "13th",
+          "isbn13": "9781119977552",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GBD 122",
+      "textbooks": [
+        {
+          "title": "Willis's Practice and Procedure for the Quantity Surveyor",
+          "authors": "Ashworth, Hogg & Higgs",
+          "edition": "13th",
+          "isbn13": "9781119977552",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GBD 211",
+      "textbooks": [
+        {
+          "title": "Quantity Surveying Practice",
+          "authors": "Seeley",
+          "edition": "13th",
+          "isbn13": "9780230216718",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GBD 221",
+      "textbooks": [
+        {
+          "title": "Quantity Surveying Practice",
+          "authors": "Seeley",
+          "edition": "13th",
+          "isbn13": "9780230216718",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GBD 311",
+      "textbooks": [
+        {
+          "title": "Willis's Elements of Quantity Surveying",
+          "authors": null,
+          "edition": "13th",
+          "isbn13": "9781119977552",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KBS 310",
+      "textbooks": [
+        {
+          "title": "Construction Project Management",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KBS 320",
+      "textbooks": [
+        {
+          "title": "Construction Project Management",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KKR 322",
+      "textbooks": [
+        {
+          "title": "Building Quantities Explained",
+          "authors": "Seeley",
+          "edition": "5th",
+          "isbn13": "9780230220319",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KON 111",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KON 220",
+      "textbooks": [
+        {
+          "title": "Building Construction Handbook",
+          "authors": "Chudley & Greeno",
+          "edition": "12th",
+          "isbn13": "9781032003689",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KON 300",
+      "textbooks": [
+        {
+          "title": "Modern Construction Management",
+          "authors": "Harris & McCaffer",
+          "edition": "8th",
+          "isbn13": "9781119215852",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KSH 201",
+      "textbooks": [
+        {
+          "title": "Construction Technology",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KSH 300",
+      "textbooks": [
+        {
+          "title": "Construction Technology",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BHU 320",
+      "textbooks": [
+        {
+          "title": "Construction Management references",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OKU 100",
+      "textbooks": [
+        {
+          "title": "Architecture: Form, Space, and Order",
+          "authors": "Francis D. K. Ching",
+          "edition": "4th",
+          "isbn13": "9781118745083",
+          "status": null
+        },
+        {
+          "title": "Architectural Graphics",
+          "authors": "Francis D. K. Ching",
+          "edition": "6th",
+          "isbn13": "9781118879360",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OKU 300",
+      "textbooks": [
+        {
+          "title": "Architecture: Form, Space, and Order",
+          "authors": "Francis D. K. Ching",
+          "edition": "4th",
+          "isbn13": "9781118745083",
+          "status": null
+        },
+        {
+          "title": "Architectural Graphics",
+          "authors": "Francis D. K. Ching",
+          "edition": "6th",
+          "isbn13": "9781118879360",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OML 110",
+      "textbooks": [
+        {
+          "title": "Building Construction Illustrated",
+          "authors": "Ching",
+          "edition": "6th",
+          "isbn13": "9781119583082",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OML 220",
+      "textbooks": [
+        {
+          "title": "Building Construction Illustrated",
+          "authors": "Ching",
+          "edition": "6th",
+          "isbn13": "9781119583082",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OMG 310",
+      "textbooks": [
+        {
+          "title": "A Visual Dictionary of Architecture",
+          "authors": "Ching",
+          "edition": "3rd",
+          "isbn13": "9781119312736",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OMG 320",
+      "textbooks": [
+        {
+          "title": "A Visual Dictionary of Architecture",
+          "authors": "Ching",
+          "edition": "3rd",
+          "isbn13": "9781119312736",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ONT 100",
+      "textbooks": [
+        {
+          "title": "Architecture: Form, Space, and Order",
+          "authors": "Ching",
+          "edition": "4th",
+          "isbn13": "9781118745083",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ONT 300",
+      "textbooks": [
+        {
+          "title": "Architecture: Form, Space, and Order",
+          "authors": "Ching",
+          "edition": "4th",
+          "isbn13": "9781118745083",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ONT 200",
+      "textbooks": [
+        {
+          "title": "Architecture: Form, Space, and Order",
+          "authors": "Ching",
+          "edition": "4th",
+          "isbn13": "9781118745083",
+          "status": null
+        },
+        {
+          "title": "Analysing Architecture",
+          "authors": "Simon Unwin",
+          "edition": "5th",
+          "isbn13": "9781032213188",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TRP 110",
+      "textbooks": [
+        {
+          "title": "Urban Planning and Real Estate Development",
+          "authors": "John Ratcliffe, Michael Stubbs & Miles Keeping",
+          "edition": "3rd",
+          "isbn13": "9780415688050",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TRP 320",
+      "textbooks": [
+        {
+          "title": "Urban and Regional Planning",
+          "authors": "Peter Hall & Mark Tewdwr-Jones",
+          "edition": "6th",
+          "isbn13": "9780415666850",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPA 210",
+      "textbooks": [
+        {
+          "title": "Collaborative Planning",
+          "authors": "Healey",
+          "edition": "2nd",
+          "isbn13": "9780774806937",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPD 210",
+      "textbooks": [
+        {
+          "title": "Contemporary Urban Planning",
+          "authors": "Levy",
+          "edition": "11th",
+          "isbn13": "9781138696303",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPD 220",
+      "textbooks": [
+        {
+          "title": "Contemporary Urban Planning",
+          "authors": "Levy",
+          "edition": "11th",
+          "isbn13": "9781138696303",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPH 110",
+      "textbooks": [
+        {
+          "title": "Cities in Civilization",
+          "authors": "Peter Hall",
+          "edition": "2001",
+          "isbn13": "9780297816245",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPH 120",
+      "textbooks": [
+        {
+          "title": "Cities in Civilization",
+          "authors": "Peter Hall",
+          "edition": "2001",
+          "isbn13": "9780297816245",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPI 451",
+      "textbooks": [
+        {
+          "title": "Collaborative Planning",
+          "authors": "Patsy Healey",
+          "edition": "2nd",
+          "isbn13": "9780774806937",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPI 454",
+      "textbooks": [
+        {
+          "title": "Collaborative Planning",
+          "authors": "Patsy Healey",
+          "edition": "2nd",
+          "isbn13": "9780774806937",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPS 322",
+      "textbooks": [
+        {
+          "title": "The Image of the City",
+          "authors": "Kevin Lynch",
+          "edition": "1960",
+          "isbn13": "9780262620017",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TPW 310",
+      "textbooks": [
+        {
+          "title": "The Death and Life of Great American Cities",
+          "authors": "Jane Jacobs",
+          "edition": "1961",
+          "isbn13": "9780679741954",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "AGR 361",
+      "textbooks": [
+        {
+          "title": "Principles of Agronomy for Sustainable Agriculture",
+          "authors": "Francisco J. Villalobos & Elias Fereres",
+          "edition": "2nd, 2024",
+          "isbn13": "9783031691492",
+          "status": null
+        },
+        {
+          "title": "Cropping Systems",
+          "authors": "David E. Clay, Sharon A. Clay & others",
+          "edition": null,
+          "isbn13": "9780891183523",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "AGR 410",
+      "textbooks": [
+        {
+          "title": "Principles of Agronomy for Sustainable Agriculture",
+          "authors": "Francisco J. Villalobos & Elias Fereres",
+          "edition": "2nd, 2024",
+          "isbn13": "9783031691492",
+          "status": null
+        },
+        {
+          "title": "Cropping Systems",
+          "authors": "David E. Clay, Sharon A. Clay & others",
+          "edition": null,
+          "isbn13": "9780891183523",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "APS 461",
+      "textbooks": [
+        {
+          "title": "Dirt: The Erosion of Civilizations",
+          "authors": "David R. Montgomery",
+          "edition": "Revised, 2012",
+          "isbn13": "9780520272904",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ARD 485",
+      "textbooks": [
+        {
+          "title": "Farming Systems and Poverty",
+          "authors": "John Dixon et al.",
+          "edition": "2001",
+          "isbn13": "9789251046270",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PPK 251",
+      "textbooks": [
+        {
+          "title": "Crop Ecology",
+          "authors": "David J. Connor, Robert S. Loomis & Kenneth G. Cassman",
+          "edition": "2011",
+          "isbn13": "9780521146549",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "DAF 210",
+      "textbooks": [
+        {
+          "title": "Anatomy and Physiology of Farm Animals",
+          "authors": "Frandson, Wilke & Fails",
+          "edition": "8th",
+          "isbn13": "9780813813925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "DAF 220",
+      "textbooks": [
+        {
+          "title": "Anatomy and Physiology of Farm Animals",
+          "authors": "Frandson, Wilke & Fails",
+          "edition": "8th",
+          "isbn13": "9780813813925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "DFS 311",
+      "textbooks": [
+        {
+          "title": "Cunningham's Textbook of Veterinary Physiology",
+          "authors": "Cunningham & Klein",
+          "edition": "6th",
+          "isbn13": "9780323676721",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "DFS 320",
+      "textbooks": [
+        {
+          "title": "Cunningham's Textbook of Veterinary Physiology",
+          "authors": "Cunningham & Klein",
+          "edition": "6th",
+          "isbn13": "9780323676721",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BMN 420",
+      "textbooks": [
+        {
+          "title": "Nutritional Ecology of the Ruminant",
+          "authors": "Peter J. Van Soest",
+          "edition": "2nd",
+          "isbn13": "9780801427725",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "DMN 410",
+      "textbooks": [
+        {
+          "title": "Nutritional Ecology of the Ruminant",
+          "authors": "Peter J. Van Soest",
+          "edition": "2nd",
+          "isbn13": "9780801427725",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KVK 420",
+      "textbooks": [
+        {
+          "title": "The Ruminant Animal: Digestive Physiology and Nutrition",
+          "authors": "D. C. Church",
+          "edition": null,
+          "isbn13": "9780881337974",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "LFT 420",
+      "textbooks": [
+        {
+          "title": "Livestock Feeds and Feeding",
+          "authors": "D. C. Church",
+          "edition": "3rd",
+          "isbn13": "9780130101905",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PVK 420",
+      "textbooks": [
+        {
+          "title": "Livestock Feeds and Feeding",
+          "authors": "D. C. Church",
+          "edition": "3rd",
+          "isbn13": "9780130101905",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RPL 310",
+      "textbooks": [
+        {
+          "title": "Animal Production",
+          "authors": "R. D. S. Grossman",
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RPL 320",
+      "textbooks": [
+        {
+          "title": "Animal Production",
+          "authors": "R. D. S. Grossman",
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TLR 320",
+      "textbooks": [
+        {
+          "title": "Introduction to Quantitative Genetics",
+          "authors": "Nicholas & Smith",
+          "edition": "4th",
+          "isbn13": "9781405130240",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TLR 411",
+      "textbooks": [
+        {
+          "title": "Introduction to Quantitative Genetics",
+          "authors": "Nicholas & Smith",
+          "edition": "4th",
+          "isbn13": "9781405130240",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VKU 224",
+      "textbooks": [
+        {
+          "title": "Anatomy and Physiology of Farm Animals",
+          "authors": "Frandson, Wilke & Fails",
+          "edition": "8th",
+          "isbn13": "9780813813925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VKU 250",
+      "textbooks": [
+        {
+          "title": "Anatomy and Physiology of Farm Animals",
+          "authors": "Frandson, Wilke & Fails",
+          "edition": "8th",
+          "isbn13": "9780813813925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VKU 260",
+      "textbooks": [
+        {
+          "title": "Anatomy and Physiology of Farm Animals",
+          "authors": "Frandson, Wilke & Fails",
+          "edition": "8th",
+          "isbn13": "9780813813925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VGE 310",
+      "textbooks": [
+        {
+          "title": "Understanding Animal Breeding",
+          "authors": "Bourdon",
+          "edition": "2nd",
+          "isbn13": "9780130976398",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VGE 320",
+      "textbooks": [
+        {
+          "title": "Understanding Animal Breeding",
+          "authors": "Bourdon",
+          "edition": "2nd",
+          "isbn13": "9780130976398",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VGE 411",
+      "textbooks": [
+        {
+          "title": "Understanding Animal Breeding",
+          "authors": "Bourdon",
+          "edition": "2nd",
+          "isbn13": "9780130976398",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 251",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 262",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 351",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 363",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 462",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 463",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PLG 490",
+      "textbooks": [
+        {
+          "title": "Plant Pathology",
+          "authors": "George N. Agrios",
+          "edition": "5th",
+          "isbn13": "9780120445653",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GKD 250",
+      "textbooks": [
+        {
+          "title": "The Nature and Properties of Soils",
+          "authors": "Brady & Weil",
+          "edition": "15th",
+          "isbn13": "9780132279383",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GKD 320",
+      "textbooks": [
+        {
+          "title": "The Nature and Properties of Soils",
+          "authors": "Brady & Weil",
+          "edition": "15th",
+          "isbn13": "9780132279383",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GKD 350",
+      "textbooks": [
+        {
+          "title": "The Nature and Properties of Soils",
+          "authors": "Brady & Weil",
+          "edition": "15th",
+          "isbn13": "9780132279383",
+          "status": null
+        },
+        {
+          "title": "Introduction to Environmental Soil Physics",
+          "authors": "Daniel Hillel",
+          "edition": "2003",
+          "isbn13": "9780123486554",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GKD 420",
+      "textbooks": [
+        {
+          "title": "The Nature and Properties of Soils",
+          "authors": "Brady & Weil",
+          "edition": "15th",
+          "isbn13": "9780132279383",
+          "status": null
+        },
+        {
+          "title": "Introduction to Environmental Soil Physics",
+          "authors": "Daniel Hillel",
+          "edition": "2003",
+          "isbn13": "9780123486554",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PGW 350",
+      "textbooks": [
+        {
+          "title": "Principles of Soil Management",
+          "authors": "Rattan Lal",
+          "edition": null,
+          "isbn13": "9780824704224",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PGW 400",
+      "textbooks": [
+        {
+          "title": "Principles of Soil Management",
+          "authors": "Rattan Lal",
+          "edition": null,
+          "isbn13": "9780824704224",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WDE 213",
+      "textbooks": [
+        {
+          "title": "Tropical Grasses",
+          "authors": "Robert M. Moore et al.",
+          "edition": null,
+          "isbn13": "9780851983425",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WDE 310",
+      "textbooks": [
+        {
+          "title": "Tropical Grasses",
+          "authors": "Robert M. Moore et al.",
+          "edition": null,
+          "isbn13": "9780851983425",
+          "status": null
+        },
+        {
+          "title": "An Introduction to Grassland and Grassland Products",
+          "authors": "R. J. McIlroy",
+          "edition": null,
+          "isbn13": "9780851990898",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WDE 320",
+      "textbooks": [
+        {
+          "title": "Tropical Grasses",
+          "authors": "Robert M. Moore et al.",
+          "edition": null,
+          "isbn13": "9780851983425",
+          "status": null
+        },
+        {
+          "title": "An Introduction to Grassland and Grassland Products",
+          "authors": "R. J. McIlroy",
+          "edition": null,
+          "isbn13": "9780851990898",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WDE 450",
+      "textbooks": [
+        {
+          "title": "Grass: Its Production and Utilization",
+          "authors": "A. Hopkins",
+          "edition": "3rd",
+          "isbn13": "9780632051472",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "HSC 351",
+      "textbooks": [
+        {
+          "title": "Plant Propagation: Principles and Practices",
+          "authors": "Hartmann et al.",
+          "edition": "9th",
+          "isbn13": "9780134480893",
+          "status": null
+        },
+        {
+          "title": "Horticulture: Principles and Practices",
+          "authors": "Peter McMahon",
+          "edition": null,
+          "isbn13": "9781842861074",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "HSC 420",
+      "textbooks": [
+        {
+          "title": "Plant Propagation: Principles and Practices",
+          "authors": "Hartmann et al.",
+          "edition": "9th",
+          "isbn13": "9780134480893",
+          "status": null
+        },
+        {
+          "title": "Horticulture: Principles and Practices",
+          "authors": "Peter McMahon",
+          "edition": null,
+          "isbn13": "9781842861074",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "HSC 490",
+      "textbooks": [
+        {
+          "title": "Horticulture: Principles and Practices",
+          "authors": "George Acquaah",
+          "edition": "5th",
+          "isbn13": "9780132414449",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OBG 111",
+      "textbooks": [
+        {
+          "title": "Plant Propagation: Principles and Practices",
+          "authors": "Hartmann et al.",
+          "edition": "9th",
+          "isbn13": "9780134480893",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 250",
+      "textbooks": [
+        {
+          "title": "Introduction to Food Engineering",
+          "authors": "R. Paul Singh & Dennis R. Heldman",
+          "edition": "5th",
+          "isbn13": "9780123985309",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 260",
+      "textbooks": [
+        {
+          "title": "Introduction to Food Engineering",
+          "authors": "R. Paul Singh & Dennis R. Heldman",
+          "edition": "5th",
+          "isbn13": "9780123985309",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 350",
+      "textbooks": [
+        {
+          "title": "Fennema's Food Chemistry",
+          "authors": "Owen R. Fennema / Damodaran, Parkin & Fennema",
+          "edition": "5th",
+          "isbn13": "9780824723454",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 353",
+      "textbooks": [
+        {
+          "title": "Fennema's Food Chemistry",
+          "authors": "Owen R. Fennema / Damodaran, Parkin & Fennema",
+          "edition": "5th",
+          "isbn13": "9780824723454",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 360",
+      "textbooks": [
+        {
+          "title": "Food Science",
+          "authors": "Potter & Hotchkiss",
+          "edition": "5th",
+          "isbn13": "9780834212657",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 362",
+      "textbooks": [
+        {
+          "title": "Food Science",
+          "authors": "Potter & Hotchkiss",
+          "edition": "5th",
+          "isbn13": "9780834212657",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 400",
+      "textbooks": [
+        {
+          "title": "Essentials of Food Science",
+          "authors": "Vaclavik & Christian",
+          "edition": "4th",
+          "isbn13": "9781441917884",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FST 412",
+      "textbooks": [
+        {
+          "title": "Essentials of Food Science",
+          "authors": "Vaclavik & Christian",
+          "edition": "4th",
+          "isbn13": "9781441917884",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 262",
+      "textbooks": [
+        {
+          "title": "Food Microbiology",
+          "authors": "Frazier & Westhoff",
+          "edition": "5th",
+          "isbn13": "9781259062513",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 251",
+      "textbooks": [
+        {
+          "title": "Lehninger Principles of Biochemistry",
+          "authors": "Nelson & Cox",
+          "edition": "8th",
+          "isbn13": "9781319228002",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 252",
+      "textbooks": [
+        {
+          "title": "Lehninger Principles of Biochemistry",
+          "authors": "Nelson & Cox",
+          "edition": "8th",
+          "isbn13": "9781319228002",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 257",
+      "textbooks": [
+        {
+          "title": "Biochemistry",
+          "authors": "Berg, Tymoczko, Gatto & Stryer",
+          "edition": "9th",
+          "isbn13": "9781319114671",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 261",
+      "textbooks": [
+        {
+          "title": "Biochemistry",
+          "authors": "Berg, Tymoczko, Gatto & Stryer",
+          "edition": "9th",
+          "isbn13": "9781319114671",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 356",
+      "textbooks": [
+        {
+          "title": "Lehninger Principles of Biochemistry",
+          "authors": "Nelson & Cox",
+          "edition": "8th",
+          "isbn13": "9781319228002",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 357",
+      "textbooks": [
+        {
+          "title": "Lehninger Principles of Biochemistry",
+          "authors": "Nelson & Cox",
+          "edition": "8th",
+          "isbn13": "9781319228002",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 367",
+      "textbooks": [
+        {
+          "title": "Biochemistry",
+          "authors": "Berg et al.",
+          "edition": "9th",
+          "isbn13": "9781319114671",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BCM 368",
+      "textbooks": [
+        {
+          "title": "Biochemistry",
+          "authors": "Berg et al.",
+          "edition": "9th",
+          "isbn13": "9781319114671",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 161",
+      "textbooks": [
+        {
+          "title": "Genetics: A Conceptual Approach",
+          "authors": "Benjamin A. Pierce",
+          "edition": "7th",
+          "isbn13": "9781319337505",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 251",
+      "textbooks": [
+        {
+          "title": "Genetics: A Conceptual Approach",
+          "authors": "Pierce",
+          "edition": "7th",
+          "isbn13": "9781319337505",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 261",
+      "textbooks": [
+        {
+          "title": "An Introduction to Genetic Analysis",
+          "authors": "Griffiths et al.",
+          "edition": "12th",
+          "isbn13": "9781319116040",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 351",
+      "textbooks": [
+        {
+          "title": "Genetics: A Conceptual Approach",
+          "authors": "Pierce",
+          "edition": "7th",
+          "isbn13": "9781319337505",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 354",
+      "textbooks": [
+        {
+          "title": "Genetics: A Conceptual Approach",
+          "authors": "Pierce",
+          "edition": "7th",
+          "isbn13": "9781319337505",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 367",
+      "textbooks": [
+        {
+          "title": "An Introduction to Genetic Analysis",
+          "authors": "Griffiths et al.",
+          "edition": "12th",
+          "isbn13": "9781319116040",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GTS 368",
+      "textbooks": [
+        {
+          "title": "An Introduction to Genetic Analysis",
+          "authors": "Griffiths et al.",
+          "edition": "12th",
+          "isbn13": "9781319116040",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 161",
+      "textbooks": [
+        {
+          "title": "Prescott's Microbiology",
+          "authors": "Willey, Sherwood & Woolverton",
+          "edition": "11th",
+          "isbn13": "9781260211881",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 251",
+      "textbooks": [
+        {
+          "title": "Brock Biology of Microorganisms",
+          "authors": "Madigan et al.",
+          "edition": "16th",
+          "isbn13": "9780135860712",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 261",
+      "textbooks": [
+        {
+          "title": "Brock Biology of Microorganisms",
+          "authors": "Madigan et al.",
+          "edition": "16th",
+          "isbn13": "9780135860712",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 351",
+      "textbooks": [
+        {
+          "title": "Prescott's Microbiology",
+          "authors": null,
+          "edition": "11th",
+          "isbn13": "9781260211881",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 355",
+      "textbooks": [
+        {
+          "title": "Prescott's Microbiology",
+          "authors": null,
+          "edition": "11th",
+          "isbn13": "9781260211881",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 364",
+      "textbooks": [
+        {
+          "title": "Brock Biology of Microorganisms",
+          "authors": "Madigan et al.",
+          "edition": "16th",
+          "isbn13": "9780135860712",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MBY 365",
+      "textbooks": [
+        {
+          "title": "Brock Biology of Microorganisms",
+          "authors": "Madigan et al.",
+          "edition": "16th",
+          "isbn13": "9780135860712",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 161",
+      "textbooks": [
+        {
+          "title": "Campbell Biology",
+          "authors": "Urry et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 251",
+      "textbooks": [
+        {
+          "title": "Biology of Plants",
+          "authors": "Peter H. Raven et al.",
+          "edition": "8th",
+          "isbn13": "9781429239612",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 261",
+      "textbooks": [
+        {
+          "title": "Plant Physiology and Development",
+          "authors": "Lincoln Taiz et al.",
+          "edition": "7th",
+          "isbn13": "9781605357454",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 356",
+      "textbooks": [
+        {
+          "title": "Plant Physiology and Development",
+          "authors": "Taiz et al.",
+          "edition": "7th",
+          "isbn13": "9781605357454",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 358",
+      "textbooks": [
+        {
+          "title": "Plant Systematics",
+          "authors": "Michael G. Simpson",
+          "edition": "3rd",
+          "isbn13": "9780128126288",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 365",
+      "textbooks": [
+        {
+          "title": "Biology of Plants",
+          "authors": "Raven et al.",
+          "edition": "8th",
+          "isbn13": "9781429239612",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BOT 366",
+      "textbooks": [
+        {
+          "title": "Biology of Plants",
+          "authors": "Raven et al.",
+          "edition": "8th",
+          "isbn13": "9781429239612",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BTC 361",
+      "textbooks": [
+        {
+          "title": "Principles of Gene Manipulation and Genomics",
+          "authors": "Primrose & Twyman",
+          "edition": "7th",
+          "isbn13": "9781119974329",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 161",
+      "textbooks": [
+        {
+          "title": "Animal Diversity",
+          "authors": "Hickman et al.",
+          "edition": "9th",
+          "isbn13": "9781266442438",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 251",
+      "textbooks": [
+        {
+          "title": "Integrated Principles of Zoology",
+          "authors": "Hickman et al.",
+          "edition": "19th",
+          "isbn13": "9781266263293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 261",
+      "textbooks": [
+        {
+          "title": "Integrated Principles of Zoology",
+          "authors": "Hickman et al.",
+          "edition": "19th",
+          "isbn13": "9781266263293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 351",
+      "textbooks": [
+        {
+          "title": "Integrated Principles of Zoology",
+          "authors": "Hickman et al.",
+          "edition": "19th",
+          "isbn13": "9781266263293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 355",
+      "textbooks": [
+        {
+          "title": "Integrated Principles of Zoology",
+          "authors": "Hickman et al.",
+          "edition": "19th",
+          "isbn13": "9781266263293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 363",
+      "textbooks": [
+        {
+          "title": "Biology",
+          "authors": "Campbell et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ZEN 365",
+      "textbooks": [
+        {
+          "title": "Biology",
+          "authors": "Campbell et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 211",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 212",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 221",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 222",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 322",
+      "textbooks": [
+        {
+          "title": "Textbook of Medical Physiology",
+          "authors": "Guyton & Hall",
+          "edition": "14th",
+          "isbn13": "9780323672801",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 327",
+      "textbooks": [
+        {
+          "title": "Textbook of Medical Physiology",
+          "authors": "Guyton & Hall",
+          "edition": "14th",
+          "isbn13": "9780323672801",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 330",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FLG 332",
+      "textbooks": [
+        {
+          "title": "Human Physiology: An Integrated Approach",
+          "authors": "Silverthorn",
+          "edition": "9th",
+          "isbn13": "9780135314456",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 121",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake, Vogl & Mitchell",
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 122",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake, Vogl & Mitchell",
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 126",
+      "textbooks": [
+        {
+          "title": "Wheater's Functional Histology",
+          "authors": "Young, O'Dowd & Woodford",
+          "edition": "7th",
+          "isbn13": "9780702083397",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 214",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake et al.",
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 215",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake et al.",
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 226",
+      "textbooks": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore, Dalley & Agur",
+          "edition": "9th",
+          "isbn13": "9781975171521",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 247",
+      "textbooks": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore, Dalley & Agur",
+          "edition": "9th",
+          "isbn13": "9781975171521",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 315",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": null,
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 316",
+      "textbooks": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": null,
+          "edition": "5th",
+          "isbn13": "9780323934237",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 324",
+      "textbooks": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore et al.",
+          "edition": "9th",
+          "isbn13": "9781975171521",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ANA 347",
+      "textbooks": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore et al.",
+          "edition": "9th",
+          "isbn13": "9781975171521",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 114",
+      "textbooks": [
+        {
+          "title": "University Physics with Modern Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th Global",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 124",
+      "textbooks": [
+        {
+          "title": "University Physics with Modern Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th Global",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 131",
+      "textbooks": [
+        {
+          "title": "University Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 137",
+      "textbooks": [
+        {
+          "title": "University Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 147",
+      "textbooks": [
+        {
+          "title": "University Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 210",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Physics",
+          "authors": "Halliday, Resnick & Walker",
+          "edition": "12th",
+          "isbn13": "9781119455641",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 255",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Physics",
+          "authors": "Halliday, Resnick & Walker",
+          "edition": "12th",
+          "isbn13": "9781119455641",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 263",
+      "textbooks": [
+        {
+          "title": "Physics for Scientists and Engineers",
+          "authors": "Tipler & Mosca",
+          "edition": "6th",
+          "isbn13": "9781429201243",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 300",
+      "textbooks": [
+        {
+          "title": "Physics for Scientists and Engineers",
+          "authors": "Tipler & Mosca",
+          "edition": "6th",
+          "isbn13": "9781429201243",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 310",
+      "textbooks": [
+        {
+          "title": "Introduction to Electrodynamics",
+          "authors": "Griffiths",
+          "edition": "4th",
+          "isbn13": "9781108420419",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 353",
+      "textbooks": [
+        {
+          "title": "Introduction to Electrodynamics",
+          "authors": "Griffiths",
+          "edition": "4th",
+          "isbn13": "9781108420419",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 356",
+      "textbooks": [
+        {
+          "title": "Classical Mechanics",
+          "authors": "Taylor",
+          "edition": "2005",
+          "isbn13": "9781891389221",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 363",
+      "textbooks": [
+        {
+          "title": "Classical Mechanics",
+          "authors": "Taylor",
+          "edition": "2005",
+          "isbn13": "9781891389221",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PHY 364",
+      "textbooks": [
+        {
+          "title": "Classical Mechanics",
+          "authors": "Taylor",
+          "edition": "2005",
+          "isbn13": "9781891389221",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FSK 116",
+      "textbooks": [
+        {
+          "title": "University Physics with Modern Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FSK 176",
+      "textbooks": [
+        {
+          "title": "University Physics with Modern Physics",
+          "authors": "Young & Freedman",
+          "edition": "15th",
+          "isbn13": "9781292314730",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CHM 171",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CHM 172",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CHM 181",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CHM 215",
+      "textbooks": [
+        {
+          "title": "Organic Chemistry",
+          "authors": "Solomons, Fryhle & Snyder",
+          "edition": "13th",
+          "isbn13": "9781119248977",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CHM 226",
+      "textbooks": [
+        {
+          "title": "Organic Chemistry",
+          "authors": "Solomons, Fryhle & Snyder",
+          "edition": "13th",
+          "isbn13": "9781119248977",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 117",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 127",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 137",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 147",
+      "textbooks": [
+        {
+          "title": "Chemistry: The Central Science",
+          "authors": "Brown et al.",
+          "edition": "14th",
+          "isbn13": "9780134414232",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 151",
+      "textbooks": [
+        {
+          "title": "Physical Chemistry",
+          "authors": "Atkins & de Paula",
+          "edition": "11th",
+          "isbn13": "9780198769866",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 282",
+      "textbooks": [
+        {
+          "title": "Organic Chemistry",
+          "authors": "Clayden, Greeves & Warren",
+          "edition": "2nd",
+          "isbn13": "9780199270293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 285",
+      "textbooks": [
+        {
+          "title": "Organic Chemistry",
+          "authors": "Clayden, Greeves & Warren",
+          "edition": "2nd",
+          "isbn13": "9780199270293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 283",
+      "textbooks": [
+        {
+          "title": "Principles of Instrumental Analysis",
+          "authors": "Skoog, Holler & Crouch",
+          "edition": "7th",
+          "isbn13": "9781305577213",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 383",
+      "textbooks": [
+        {
+          "title": "Principles of Instrumental Analysis",
+          "authors": "Skoog, Holler & Crouch",
+          "edition": "7th",
+          "isbn13": "9781305577213",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CMY 385",
+      "textbooks": [
+        {
+          "title": "Physical Chemistry",
+          "authors": "Atkins & de Paula",
+          "edition": "11th",
+          "isbn13": "9780198769866",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 114",
+      "textbooks": [
+        {
+          "title": "Calculus: Early Transcendentals",
+          "authors": "Stewart",
+          "edition": "9th",
+          "isbn13": "9781337613927",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 124",
+      "textbooks": [
+        {
+          "title": "Calculus: Early Transcendentals",
+          "authors": "Stewart",
+          "edition": "9th",
+          "isbn13": "9781337613927",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 115",
+      "textbooks": [
+        {
+          "title": "Thomas' Calculus",
+          "authors": "Thomas, Weir & Hass",
+          "edition": "15th",
+          "isbn13": "9780137559756",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 125",
+      "textbooks": [
+        {
+          "title": "Thomas' Calculus",
+          "authors": "Thomas, Weir & Hass",
+          "edition": "15th",
+          "isbn13": "9780137559756",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 153",
+      "textbooks": [
+        {
+          "title": "Introduction to Linear Algebra",
+          "authors": "Strang",
+          "edition": "5th",
+          "isbn13": "9780980232776",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 163",
+      "textbooks": [
+        {
+          "title": "Introduction to Linear Algebra",
+          "authors": "Strang",
+          "edition": "5th",
+          "isbn13": "9780980232776",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 211",
+      "textbooks": [
+        {
+          "title": "Calculus",
+          "authors": "Stewart",
+          "edition": "9th",
+          "isbn13": "9781337613927",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 221",
+      "textbooks": [
+        {
+          "title": "Calculus",
+          "authors": "Stewart",
+          "edition": "9th",
+          "isbn13": "9781337613927",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 218",
+      "textbooks": [
+        {
+          "title": "Linear Algebra and Its Applications",
+          "authors": "Lay, Lay & McDonald",
+          "edition": "6th",
+          "isbn13": "9780321982384",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 228",
+      "textbooks": [
+        {
+          "title": "Linear Algebra and Its Applications",
+          "authors": "Lay, Lay & McDonald",
+          "edition": "6th",
+          "isbn13": "9780321982384",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 255",
+      "textbooks": [
+        {
+          "title": "Discrete Mathematics and Its Applications",
+          "authors": "Rosen",
+          "edition": "8th",
+          "isbn13": "9780073383095",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 265",
+      "textbooks": [
+        {
+          "title": "Discrete Mathematics and Its Applications",
+          "authors": "Rosen",
+          "edition": "8th",
+          "isbn13": "9780073383095",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 285",
+      "textbooks": [
+        {
+          "title": "Data Structures and Algorithms in Java",
+          "authors": "Drozdek",
+          "edition": "4th",
+          "isbn13": "9789814392785",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 301",
+      "textbooks": [
+        {
+          "title": "Understanding Analysis",
+          "authors": "Abbott",
+          "edition": "2nd",
+          "isbn13": "9781493927111",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 310",
+      "textbooks": [
+        {
+          "title": "Understanding Analysis",
+          "authors": "Abbott",
+          "edition": "2nd",
+          "isbn13": "9781493927111",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 320",
+      "textbooks": [
+        {
+          "title": "A First Course in Probability",
+          "authors": "Ross",
+          "edition": "10th",
+          "isbn13": "9780134753119",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 330",
+      "textbooks": [
+        {
+          "title": "A First Course in Probability",
+          "authors": "Ross",
+          "edition": "10th",
+          "isbn13": "9780134753119",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 340",
+      "textbooks": [
+        {
+          "title": "Elementary Differential Equations and Boundary Value Problems",
+          "authors": "Boyce & DiPrima",
+          "edition": "11th",
+          "isbn13": "9781119444222",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 350",
+      "textbooks": [
+        {
+          "title": "Elementary Differential Equations and Boundary Value Problems",
+          "authors": "Boyce & DiPrima",
+          "edition": "11th",
+          "isbn13": "9781119444222",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 354",
+      "textbooks": [
+        {
+          "title": "Options, Futures, and Other Derivatives",
+          "authors": "Hull",
+          "edition": "11th",
+          "isbn13": "9780136939979",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 364",
+      "textbooks": [
+        {
+          "title": "Options, Futures, and Other Derivatives",
+          "authors": "Hull",
+          "edition": "11th",
+          "isbn13": "9780136939979",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 381",
+      "textbooks": [
+        {
+          "title": "Principles of Mathematical Analysis",
+          "authors": "Rudin",
+          "edition": "3rd",
+          "isbn13": "9780070542358",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WTW 389",
+      "textbooks": [
+        {
+          "title": "Principles of Mathematical Analysis",
+          "authors": "Rudin",
+          "edition": "3rd",
+          "isbn13": "9780070542358",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 111",
+      "textbooks": [
+        {
+          "title": "A First Course in Probability",
+          "authors": "Ross",
+          "edition": "10th",
+          "isbn13": "9780134753119",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 121",
+      "textbooks": [
+        {
+          "title": "A First Course in Probability",
+          "authors": "Ross",
+          "edition": "10th",
+          "isbn13": "9780134753119",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 211",
+      "textbooks": [
+        {
+          "title": "The Theory of Interest",
+          "authors": "Kellison",
+          "edition": "3rd",
+          "isbn13": "9780071128193",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 221",
+      "textbooks": [
+        {
+          "title": "The Theory of Interest",
+          "authors": "Kellison",
+          "edition": "3rd",
+          "isbn13": "9780071128193",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 282",
+      "textbooks": [
+        {
+          "title": "Mathematics of Investment and Credit",
+          "authors": "Broverman",
+          "edition": "6th",
+          "isbn13": "9781479276925",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 353",
+      "textbooks": [
+        {
+          "title": "Derivatives Markets",
+          "authors": "McDonald",
+          "edition": "3rd",
+          "isbn13": "9780321543080",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "IAS 382",
+      "textbooks": [
+        {
+          "title": "Derivatives Markets",
+          "authors": "McDonald",
+          "edition": "3rd",
+          "isbn13": "9780321543080",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 156",
+      "textbooks": [
+        {
+          "title": "Human Geography",
+          "authors": "Knox & Marston",
+          "edition": "7th",
+          "isbn13": "9780132435734",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 166",
+      "textbooks": [
+        {
+          "title": "Human Geography",
+          "authors": "Knox & Marston",
+          "edition": "7th",
+          "isbn13": "9780132435734",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 168",
+      "textbooks": [
+        {
+          "title": "Human Geography",
+          "authors": "Knox & Marston",
+          "edition": "7th",
+          "isbn13": "9780132435734",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 201",
+      "textbooks": [
+        {
+          "title": "Geosystems",
+          "authors": "Christopherson & Birkeland",
+          "edition": "10th",
+          "isbn13": "9780134894626",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 252",
+      "textbooks": [
+        {
+          "title": "Geosystems",
+          "authors": "Christopherson & Birkeland",
+          "edition": "10th",
+          "isbn13": "9780134894626",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 265",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Geomorphology",
+          "authors": "Huggett & Shuttleworth",
+          "edition": "5th",
+          "isbn13": "9781032169637",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 283",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Geomorphology",
+          "authors": "Huggett & Shuttleworth",
+          "edition": "5th",
+          "isbn13": "9781032169637",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 301",
+      "textbooks": [
+        {
+          "title": "Introducing Physical Geography",
+          "authors": "Strahler",
+          "edition": "6th",
+          "isbn13": "9781119632919",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 361",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Geomorphology",
+          "authors": "Huggett & Shuttleworth",
+          "edition": "5th",
+          "isbn13": "9781032169637",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 363",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Geomorphology",
+          "authors": "Huggett & Shuttleworth",
+          "edition": "5th",
+          "isbn13": "9781032169637",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GGY 383",
+      "textbooks": [
+        {
+          "title": "Introduction to Geography",
+          "authors": "Getis, Getis & Fellmann",
+          "edition": "15th",
+          "isbn13": "9781260711592",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GIS 220",
+      "textbooks": [
+        {
+          "title": "Geographic Information Science and Systems",
+          "authors": "Longley et al.",
+          "edition": "4th",
+          "isbn13": "9781118676950",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GIS 221",
+      "textbooks": [
+        {
+          "title": "Geographic Information Science and Systems",
+          "authors": "Longley et al.",
+          "edition": "4th",
+          "isbn13": "9781118676950",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GIS 310",
+      "textbooks": [
+        {
+          "title": "GIS Fundamentals",
+          "authors": "Bolstad",
+          "edition": "6th",
+          "isbn13": "9780986819951",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GIS 311",
+      "textbooks": [
+        {
+          "title": "GIS Fundamentals",
+          "authors": "Bolstad",
+          "edition": "6th",
+          "isbn13": "9780986819951",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GIS 320",
+      "textbooks": [
+        {
+          "title": "Remote Sensing and Image Interpretation",
+          "authors": "Lillesand, Kiefer & Chipman",
+          "edition": "7th",
+          "isbn13": "9781118343289",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMA 220",
+      "textbooks": [
+        {
+          "title": "Geographic Information Analysis",
+          "authors": "O'Sullivan & Unwin",
+          "edition": "2nd",
+          "isbn13": "9780470288581",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMA 320",
+      "textbooks": [
+        {
+          "title": "Geographic Information Analysis",
+          "authors": "O'Sullivan & Unwin",
+          "edition": "2nd",
+          "isbn13": "9780470288581",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMC 110",
+      "textbooks": [
+        {
+          "title": "Thematic Cartography and Geovisualization",
+          "authors": "Slocum et al.",
+          "edition": "3rd",
+          "isbn13": "9780132298346",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMC 310",
+      "textbooks": [
+        {
+          "title": "Thematic Cartography and Geovisualization",
+          "authors": "Slocum et al.",
+          "edition": "3rd",
+          "isbn13": "9780132298346",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GMT 320",
+      "textbooks": [
+        {
+          "title": "Geographic Information Science and Systems",
+          "authors": "Longley et al.",
+          "edition": "4th",
+          "isbn13": "9781118676950",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SUR 220",
+      "textbooks": [
+        {
+          "title": "Elementary Surveying",
+          "authors": "Ghilani & Wolf",
+          "edition": "15th",
+          "isbn13": "9780134603736",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 155",
+      "textbooks": [
+        {
+          "title": "Earth: An Introduction to Physical Geology",
+          "authors": "Tarbuck, Lutgens & Tasa",
+          "edition": "13th",
+          "isbn13": "9780135190066",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 163",
+      "textbooks": [
+        {
+          "title": "Earth: An Introduction to Physical Geology",
+          "authors": "Tarbuck, Lutgens & Tasa",
+          "edition": "13th",
+          "isbn13": "9780135190066",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 253",
+      "textbooks": [
+        {
+          "title": "Essentials of Geology",
+          "authors": "Marshak",
+          "edition": "6th",
+          "isbn13": "9780393420123",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 256",
+      "textbooks": [
+        {
+          "title": "Essentials of Geology",
+          "authors": "Marshak",
+          "edition": "6th",
+          "isbn13": "9780393420123",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 263",
+      "textbooks": [
+        {
+          "title": "Principles of Igneous and Metamorphic Petrology",
+          "authors": "Winter",
+          "edition": "2nd",
+          "isbn13": "9780132403429",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 266",
+      "textbooks": [
+        {
+          "title": "Principles of Igneous and Metamorphic Petrology",
+          "authors": "Winter",
+          "edition": "2nd",
+          "isbn13": "9780132403429",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 352",
+      "textbooks": [
+        {
+          "title": "Understanding Earth",
+          "authors": "Press & Siever",
+          "edition": "6th",
+          "isbn13": "9781429255209",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 367",
+      "textbooks": [
+        {
+          "title": "Structural Geology",
+          "authors": "Fossen",
+          "edition": "2nd",
+          "isbn13": "9781107608351",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "GLY 372",
+      "textbooks": [
+        {
+          "title": "Structural Geology",
+          "authors": "Fossen",
+          "edition": "2nd",
+          "isbn13": "9781107608351",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 155",
+      "textbooks": [
+        {
+          "title": "Meteorology Today",
+          "authors": "Ahrens",
+          "edition": "13th",
+          "isbn13": "9780357452074",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 254",
+      "textbooks": [
+        {
+          "title": "Meteorology Today",
+          "authors": "Ahrens",
+          "edition": "13th",
+          "isbn13": "9780357452074",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 261",
+      "textbooks": [
+        {
+          "title": "Atmospheric Science",
+          "authors": "Wallace & Hobbs",
+          "edition": "2nd",
+          "isbn13": "9780127329512",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 263",
+      "textbooks": [
+        {
+          "title": "Atmospheric Science",
+          "authors": "Wallace & Hobbs",
+          "edition": "2nd",
+          "isbn13": "9780127329512",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 265",
+      "textbooks": [
+        {
+          "title": "An Introduction to Boundary Layer Meteorology",
+          "authors": "Stull",
+          "edition": "1988",
+          "isbn13": "9789027727695",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 315",
+      "textbooks": [
+        {
+          "title": "An Introduction to Dynamic Meteorology",
+          "authors": "Holton & Hakim",
+          "edition": "5th",
+          "isbn13": "9780123848666",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 316",
+      "textbooks": [
+        {
+          "title": "An Introduction to Dynamic Meteorology",
+          "authors": "Holton & Hakim",
+          "edition": "5th",
+          "isbn13": "9780123848666",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "WKD 370",
+      "textbooks": [
+        {
+          "title": "Atmospheric Science",
+          "authors": "Wallace & Hobbs",
+          "edition": "2nd",
+          "isbn13": "9780127329512",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ENV 101",
+      "textbooks": [
+        {
+          "title": "Principles of Environmental Science",
+          "authors": "Cunningham & Cunningham",
+          "edition": "10th",
+          "isbn13": "9781260721997",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ENV 201",
+      "textbooks": [
+        {
+          "title": "Environmental Science",
+          "authors": "Miller & Spoolman",
+          "edition": "17th",
+          "isbn13": "9780357459366",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "ENV 301",
+      "textbooks": [
+        {
+          "title": "Environmental Science: Toward a Sustainable Future",
+          "authors": "Wright & Boorse",
+          "edition": "14th",
+          "isbn13": "9780134013897",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "LKM 450",
+      "textbooks": [
+        {
+          "title": "Fundamentals of Ecology",
+          "authors": "Odum & Barrett",
+          "edition": "5th",
+          "isbn13": "9780534420666",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FNH 121",
+      "textbooks": [
+        {
+          "title": "Understanding Nutrition",
+          "authors": "Whitney & Rolfes",
+          "edition": "16th",
+          "isbn13": "9780357721293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FNH 321",
+      "textbooks": [
+        {
+          "title": "Understanding Nutrition",
+          "authors": "Whitney & Rolfes",
+          "edition": "16th",
+          "isbn13": "9780357721293",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FNH 400",
+      "textbooks": [
+        {
+          "title": "Krause's Food & the Nutrition Care Process",
+          "authors": "Mahan & Raymond",
+          "edition": "16th",
+          "isbn13": "9780323810258",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "FNH 420",
+      "textbooks": [
+        {
+          "title": "Krause's Food & the Nutrition Care Process",
+          "authors": "Mahan & Raymond",
+          "edition": "16th",
+          "isbn13": "9780323810258",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTA 314",
+      "textbooks": [
+        {
+          "title": "Advanced Nutrition and Human Metabolism",
+          "authors": "Gropper & Smith",
+          "edition": "7th",
+          "isbn13": "9780357721903",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDG 310",
+      "textbooks": [
+        {
+          "title": "Consumer Behaviour",
+          "authors": "Sutherland",
+          "edition": "3rd",
+          "isbn13": "9781473757284",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDG 320",
+      "textbooks": [
+        {
+          "title": "Consumer Behaviour",
+          "authors": "Sutherland",
+          "edition": "3rd",
+          "isbn13": "9781473757284",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VVW 364",
+      "textbooks": [
+        {
+          "title": "Consumer Behavior",
+          "authors": "Solomon",
+          "edition": "13th",
+          "isbn13": "9780135225691",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 111",
+      "textbooks": [
+        {
+          "title": "Professional Cooking",
+          "authors": "Wayne Gisslen",
+          "edition": "9th",
+          "isbn13": "9781119418216",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 121",
+      "textbooks": [
+        {
+          "title": "Professional Cooking",
+          "authors": "Wayne Gisslen",
+          "edition": "9th",
+          "isbn13": "9781119418216",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 210",
+      "textbooks": [
+        {
+          "title": "Professional Cooking",
+          "authors": "Gisslen",
+          "edition": "9th",
+          "isbn13": "9781119418216",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 221",
+      "textbooks": [
+        {
+          "title": "Professional Cooking",
+          "authors": "Gisslen",
+          "edition": "9th",
+          "isbn13": "9781119418216",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 300",
+      "textbooks": [
+        {
+          "title": "On Food and Cooking",
+          "authors": "McGee",
+          "edition": "Revised",
+          "isbn13": "9780684800011",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 320",
+      "textbooks": [
+        {
+          "title": "On Food and Cooking",
+          "authors": "McGee",
+          "edition": "Revised",
+          "isbn13": "9780684800011",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 350",
+      "textbooks": [
+        {
+          "title": "On Cooking: A Textbook of Culinary Fundamentals",
+          "authors": "Labensky et al.",
+          "edition": "6th",
+          "isbn13": "9780134872773",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDS 427",
+      "textbooks": [
+        {
+          "title": "On Cooking: A Textbook of Culinary Fundamentals",
+          "authors": "Labensky et al.",
+          "edition": "6th",
+          "isbn13": "9780134872773",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDB 321",
+      "textbooks": [
+        {
+          "title": "Introduction to Culinary Arts",
+          "authors": "Barrows",
+          "edition": null,
+          "isbn13": "9780135044445",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VDB 420",
+      "textbooks": [
+        {
+          "title": "Introduction to Culinary Arts",
+          "authors": "Barrows",
+          "edition": null,
+          "isbn13": "9780135044445",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VHM 410",
+      "textbooks": [
+        {
+          "title": "Introduction to Hospitality",
+          "authors": "Walker",
+          "edition": "8th",
+          "isbn13": "9780133762762",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KTP 403",
+      "textbooks": [
+        {
+          "title": "Marketing for Hospitality and Tourism",
+          "authors": "Kotler, Bowen & Makens",
+          "edition": "8th",
+          "isbn13": "9780134151922",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OPI 400",
+      "textbooks": [
+        {
+          "title": "Service Marketing",
+          "authors": "Payne",
+          "edition": "4th",
+          "isbn13": "9780131010082",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLD 210",
+      "textbooks": [
+        {
+          "title": "The Dynamics of Fashion",
+          "authors": "Elaine Stone",
+          "edition": "5th",
+          "isbn13": "9781501315541",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLD 222",
+      "textbooks": [
+        {
+          "title": "The Dynamics of Fashion",
+          "authors": "Elaine Stone",
+          "edition": "5th",
+          "isbn13": "9781501315541",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLD 311",
+      "textbooks": [
+        {
+          "title": "Fashion: From Concept to Consumer",
+          "authors": "Frings",
+          "edition": "9th",
+          "isbn13": "9780132541011",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLD 410",
+      "textbooks": [
+        {
+          "title": "Fashion: From Concept to Consumer",
+          "authors": "Frings",
+          "edition": "9th",
+          "isbn13": "9780132541011",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLD 420",
+      "textbooks": [
+        {
+          "title": "Fashion: From Concept to Consumer",
+          "authors": "Frings",
+          "edition": "9th",
+          "isbn13": "9780132541011",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 110",
+      "textbooks": [
+        {
+          "title": "Fashion Marketing",
+          "authors": "Easey",
+          "edition": "4th",
+          "isbn13": "9781405150630",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 120",
+      "textbooks": [
+        {
+          "title": "Fashion Marketing",
+          "authors": "Easey",
+          "edition": "4th",
+          "isbn13": "9781405150630",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 212",
+      "textbooks": [
+        {
+          "title": "Fashion Buying",
+          "authors": "Jackson & Shaw",
+          "edition": "2nd",
+          "isbn13": "9780230244537",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 221",
+      "textbooks": [
+        {
+          "title": "Fashion Buying",
+          "authors": "Jackson & Shaw",
+          "edition": "2nd",
+          "isbn13": "9780230244537",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 321",
+      "textbooks": [
+        {
+          "title": "Fashion Retailing",
+          "authors": "Easey",
+          "edition": null,
+          "isbn13": "9781405150647",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "KLR 411",
+      "textbooks": [
+        {
+          "title": "Fashion Retailing",
+          "authors": "Easey",
+          "edition": null,
+          "isbn13": "9781405150647",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TKS 212",
+      "textbooks": [
+        {
+          "title": "Textiles",
+          "authors": "Sara Kadolph",
+          "edition": "12th",
+          "isbn13": "9780132623281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TKS 222",
+      "textbooks": [
+        {
+          "title": "Textiles",
+          "authors": "Sara Kadolph",
+          "edition": "12th",
+          "isbn13": "9780132623281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TKS 411",
+      "textbooks": [
+        {
+          "title": "Textiles and Fashion",
+          "authors": "Sinclair",
+          "edition": "2nd",
+          "isbn13": "9780081014607",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "TKS 422",
+      "textbooks": [
+        {
+          "title": "Textiles and Fashion",
+          "authors": "Sinclair",
+          "edition": "2nd",
+          "isbn13": "9780081014607",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EST 121",
+      "textbooks": [
+        {
+          "title": "The Art of Aesthetics / introductory aesthetics texts",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "EST 320",
+      "textbooks": [
+        {
+          "title": "Aesthetics: Product, Consumer and Environment",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VBF 222",
+      "textbooks": [
+        {
+          "title": "Fashion Retailing / visual merchandising texts",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BIO 137",
+      "textbooks": [
+        {
+          "title": "Biology",
+          "authors": "Campbell et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BIO 147",
+      "textbooks": [
+        {
+          "title": "Biology",
+          "authors": "Campbell et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "MLB 111",
+      "textbooks": [
+        {
+          "title": "Biology",
+          "authors": "Campbell et al.",
+          "edition": "12th",
+          "isbn13": "9780135988046",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SCI 154",
+      "textbooks": [
+        {
+          "title": "Cosmic Perspective",
+          "authors": "Bennett et al.",
+          "edition": "10th",
+          "isbn13": "9780134874363",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BAM 133",
+      "textbooks": [
+        {
+          "title": "Calculus: Early Transcendentals",
+          "authors": "Stewart",
+          "edition": "9th",
+          "isbn13": "9781337613927",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "STC 137",
+      "textbooks": [
+        {
+          "title": "Introduction to the Practice of Statistics",
+          "authors": "Moore, McCabe & Craig",
+          "edition": "9th",
+          "isbn13": "9781319244408",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "STC 147",
+      "textbooks": [
+        {
+          "title": "Introduction to the Practice of Statistics",
+          "authors": "Moore, McCabe & Craig",
+          "edition": "9th",
+          "isbn13": "9781319244408",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "STC 152",
+      "textbooks": [
+        {
+          "title": "Elementary Statistics",
+          "authors": "Triola",
+          "edition": "14th",
+          "isbn13": "9780134461991",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "UPO 102",
+      "textbooks": []
+    },
+    {
+      "module": "VBR 400",
+      "textbooks": [
+        {
+          "title": "The Craft of Research",
+          "authors": "Booth, Colomb & Williams",
+          "edition": "4th",
+          "isbn13": "9780226239736",
+          "status": null
+        },
+        {
+          "title": "Research Design",
+          "authors": "Creswell & Creswell",
+          "edition": "6th",
+          "isbn13": "9781544393982",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "VKU 400",
+      "textbooks": [
+        {
+          "title": "The Craft of Research",
+          "authors": "Booth, Colomb & Williams",
+          "edition": "4th",
+          "isbn13": "9780226239736",
+          "status": null
+        },
+        {
+          "title": "Research Design",
+          "authors": "Creswell & Creswell",
+          "edition": "6th",
+          "isbn13": "9781544393982",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SLK 110",
+      "textbooks": [
+        {
+          "title": "Psychology: Themes and Variations: A South African Perspective",
+          "authors": "Wayne Weiten et al.",
+          "edition": "4th (South African)",
+          "isbn13": "9781473780323",
+          "status": "🟢"
+        }
+      ]
+    },
+    {
+      "module": "SLK 120",
+      "textbooks": [
+        {
+          "title": "Psychology: Themes and Variations: A South African Perspective",
+          "authors": "Wayne Weiten et al.",
+          "edition": "4th (South African)",
+          "isbn13": "9781473780323",
+          "status": "🟢"
+        }
+      ]
+    },
+    {
+      "module": "SLK 210",
+      "textbooks": [
+        {
+          "title": "Human Development for Students in South Africa (or the two-volume Child & Adolescent + Adult Development & Ageing set)",
+          "authors": "Dap Louw & Anet Louw",
+          "edition": "2nd",
+          "isbn13": "9780868868561",
+          "status": "🟢"
+        }
+      ]
+    },
+    {
+      "module": "SLK 220",
+      "textbooks": [
+        {
+          "title": "No single public prescribed textbook confirmed; notes + selected readings common",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": "⚪"
+        }
+      ]
+    },
+    {
+      "module": "SLK 310",
+      "textbooks": [
+        {
+          "title": "No single public prescribed textbook confirmed; notes + selected readings common",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": "⚪"
+        }
+      ]
+    },
+    {
+      "module": "SLK 320",
+      "textbooks": [
+        {
+          "title": "No single public prescribed textbook confirmed; notes + selected readings common",
+          "authors": null,
+          "edition": null,
+          "isbn13": null,
+          "status": "⚪"
+        }
+      ]
+    },
+    {
+      "module": "BER 210",
+      "textbooks": [
+        {
+          "title": "Business Law (LexisNexis)",
+          "authors": "C.J. Nagel et al.",
+          "edition": "6th (widely used in recent notes)",
+          "isbn13": "9780639008936",
+          "status": "🟢"
+        },
+        {
+          "title": "Business Law / Commercial Law (LexisNexis)",
+          "authors": "Nagel et al.",
+          "edition": "6th",
+          "isbn13": "9780639008929 (Business Law) / 9780639008905 (Commercial Law)",
+          "status": null
+        },
+        {
+          "title": "Nagel’s Business Law / Commercial Law",
+          "authors": "Nagel et al.",
+          "edition": "7th (2024)",
+          "isbn13": "9781776177189 (Business Law) / 9781776177196 (Commercial Law)",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "JUR 110",
+      "textbooks": [
+        {
+          "title": "Introduction to Law and Legal Skills in South Africa",
+          "authors": "Madlingozi & Field (Eds)",
+          "edition": "2nd (Oxford University Press, 2021)",
+          "isbn13": "9780190748111",
+          "status": "🟢"
+        },
+        {
+          "title": "Beginner’s Guide for Law Students",
+          "authors": "Kleyn, Viljoen, Zitzke & Madi",
+          "edition": "5th (Juta, 2019)",
+          "isbn13": "9781485128342",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "BER 220",
+      "textbooks": [
+        {
+          "title": "Often specific SA commercial-law or constitutional-law texts + statutes; study guides dominate public sources",
+          "authors": null,
+          "edition": "Varies",
+          "isbn13": null,
+          "status": "🟡 / ⚪"
+        }
+      ]
+    },
+    {
+      "module": "ISR 310",
+      "textbooks": [
+        {
+          "title": "Business Law / Commercial Law (LexisNexis)",
+          "authors": "Nagel et al.",
+          "edition": "6th",
+          "isbn13": "9780639008929 (Business Law) / 9780639008905 (Commercial Law)",
+          "status": null
+        },
+        {
+          "title": "Nagel’s Business Law / Commercial Law",
+          "authors": "Nagel et al.",
+          "edition": "7th (2024)",
+          "isbn13": "9781776177189 (Business Law) / 9781776177196 (Commercial Law)",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PVR 420",
+      "textbooks": [
+        {
+          "title": "Unjustified Enrichment in South African Law",
+          "authors": "Sonnekus",
+          "edition": "1st/earlier",
+          "isbn13": "9780409023923",
+          "status": null
+        },
+        {
+          "title": "Unjustified Enrichment in South African Law",
+          "authors": "Sonnekus",
+          "edition": "2nd",
+          "isbn13": "9780409121971",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 110",
+      "textbooks": [
+        {
+          "title": "The New Testament: Its Background and Message",
+          "authors": "Thomas D. Lea & David Alan Black",
+          "edition": "2nd, 2003",
+          "isbn13": "9780805426328",
+          "status": null
+        },
+        {
+          "title": "The Historical Jesus of the Gospels",
+          "authors": "Craig S. Keener",
+          "edition": "2009",
+          "isbn13": "9780801039316",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 111",
+      "textbooks": [
+        {
+          "title": "The New Testament: Its Background and Message",
+          "authors": "Thomas D. Lea & David Alan Black",
+          "edition": "2nd, 2003",
+          "isbn13": "9780805426328",
+          "status": null
+        },
+        {
+          "title": "The Historical Jesus of the Gospels",
+          "authors": "Craig S. Keener",
+          "edition": "2009",
+          "isbn13": "9780801039316",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 112",
+      "textbooks": [
+        {
+          "title": "The New Testament: Its Background and Message",
+          "authors": "Thomas D. Lea & David Alan Black",
+          "edition": "2nd, 2003",
+          "isbn13": "9780805426328",
+          "status": null
+        },
+        {
+          "title": "The Historical Jesus of the Gospels",
+          "authors": "Craig S. Keener",
+          "edition": "2009",
+          "isbn13": "9780801039316",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 120",
+      "textbooks": [
+        {
+          "title": "The Gospel of Matthew",
+          "authors": "R. T. France",
+          "edition": "2007",
+          "isbn13": "9780802825017",
+          "status": null
+        },
+        {
+          "title": "The Gospel of Mark",
+          "authors": "R. T. France",
+          "edition": "2002",
+          "isbn13": "9780851113389",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 121",
+      "textbooks": [
+        {
+          "title": "The Gospel of Matthew",
+          "authors": "R. T. France",
+          "edition": "2007",
+          "isbn13": "9780802825017",
+          "status": null
+        },
+        {
+          "title": "The Gospel of Mark",
+          "authors": "R. T. France",
+          "edition": "2002",
+          "isbn13": "9780851113389",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 122",
+      "textbooks": [
+        {
+          "title": "The Gospel of Matthew",
+          "authors": "R. T. France",
+          "edition": "2007",
+          "isbn13": "9780802825017",
+          "status": null
+        },
+        {
+          "title": "The Gospel of Mark",
+          "authors": "R. T. France",
+          "edition": "2002",
+          "isbn13": "9780851113389",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 210",
+      "textbooks": [
+        {
+          "title": "A Theology of the New Testament",
+          "authors": "George Eldon Ladd",
+          "edition": "Rev. ed., 1993",
+          "isbn13": "9780802806802",
+          "status": null
+        },
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "D. A. Carson & Douglas J. Moo",
+          "edition": "2nd, 2005",
+          "isbn13": "9780310238591",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 222",
+      "textbooks": [
+        {
+          "title": "A Theology of the New Testament",
+          "authors": "George Eldon Ladd",
+          "edition": "Rev. ed., 1993",
+          "isbn13": "9780802806802",
+          "status": null
+        },
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "D. A. Carson & Douglas J. Moo",
+          "edition": "2nd, 2005",
+          "isbn13": "9780310238591",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 310",
+      "textbooks": [
+        {
+          "title": "Paul: A Biography",
+          "authors": "N. T. Wright",
+          "edition": "2018",
+          "isbn13": "9780062084392",
+          "status": null
+        },
+        {
+          "title": "The Letter of Paul to the Romans",
+          "authors": "Douglas J. Moo",
+          "edition": "1996",
+          "isbn13": "9780802823175",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 312",
+      "textbooks": [
+        {
+          "title": "Paul: A Biography",
+          "authors": "N. T. Wright",
+          "edition": "2018",
+          "isbn13": "9780062084392",
+          "status": null
+        },
+        {
+          "title": "The Letter of Paul to the Romans",
+          "authors": "Douglas J. Moo",
+          "edition": "1996",
+          "isbn13": "9780802823175",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 320",
+      "textbooks": [
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "Raymond E. Brown",
+          "edition": "1997",
+          "isbn13": "9780385247672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 322",
+      "textbooks": [
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "Raymond E. Brown",
+          "edition": "1997",
+          "isbn13": "9780385247672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 400",
+      "textbooks": [
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "Raymond E. Brown",
+          "edition": "1997",
+          "isbn13": "9780385247672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "NTL 412",
+      "textbooks": [
+        {
+          "title": "An Introduction to the New Testament",
+          "authors": "Raymond E. Brown",
+          "edition": "1997",
+          "isbn13": "9780385247672",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 110",
+      "textbooks": [
+        {
+          "title": "An Introduction to the Old Testament",
+          "authors": "Tremper Longman III & Raymond B. Dillard",
+          "edition": "2nd, 2006",
+          "isbn13": "9780310263418",
+          "status": null
+        },
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 112",
+      "textbooks": [
+        {
+          "title": "An Introduction to the Old Testament",
+          "authors": "Tremper Longman III & Raymond B. Dillard",
+          "edition": "2nd, 2006",
+          "isbn13": "9780310263418",
+          "status": null
+        },
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 120",
+      "textbooks": [
+        {
+          "title": "Old Testament Survey",
+          "authors": "Paul R. House & Eric Mitchell",
+          "edition": "3rd, 2023",
+          "isbn13": "9781087749259",
+          "status": null
+        },
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 122",
+      "textbooks": [
+        {
+          "title": "Old Testament Survey",
+          "authors": "Paul R. House & Eric Mitchell",
+          "edition": "3rd, 2023",
+          "isbn13": "9781087749259",
+          "status": null
+        },
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 210",
+      "textbooks": [
+        {
+          "title": "Theology of the Old Testament",
+          "authors": "Walter Brueggemann",
+          "edition": "1997",
+          "isbn13": "9780687057841",
+          "status": null
+        },
+        {
+          "title": "Old Testament Ethics for the People of God",
+          "authors": "Christopher J. H. Wright",
+          "edition": "2004",
+          "isbn13": "9780830825714",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 222",
+      "textbooks": [
+        {
+          "title": "Theology of the Old Testament",
+          "authors": "Walter Brueggemann",
+          "edition": "1997",
+          "isbn13": "9780687057841",
+          "status": null
+        },
+        {
+          "title": "Old Testament Ethics for the People of God",
+          "authors": "Christopher J. H. Wright",
+          "edition": "2004",
+          "isbn13": "9780830825714",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 310",
+      "textbooks": [
+        {
+          "title": "Genesis 1–15",
+          "authors": "Gordon J. Wenham",
+          "edition": "1987",
+          "isbn13": "9780849902003",
+          "status": null
+        },
+        {
+          "title": "Genesis 16–50",
+          "authors": "Gordon J. Wenham",
+          "edition": "1994",
+          "isbn13": "9780849902072",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 312",
+      "textbooks": [
+        {
+          "title": "Genesis 1–15",
+          "authors": "Gordon J. Wenham",
+          "edition": "1987",
+          "isbn13": "9780849902003",
+          "status": null
+        },
+        {
+          "title": "Genesis 16–50",
+          "authors": "Gordon J. Wenham",
+          "edition": "1994",
+          "isbn13": "9780849902072",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 320",
+      "textbooks": [
+        {
+          "title": "The Prophetic Imagination",
+          "authors": "Walter Brueggemann",
+          "edition": "2nd, 2001",
+          "isbn13": "9780800632861",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 322",
+      "textbooks": [
+        {
+          "title": "The Prophetic Imagination",
+          "authors": "Walter Brueggemann",
+          "edition": "2nd, 2001",
+          "isbn13": "9780800632861",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 400",
+      "textbooks": [
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "OTL 412",
+      "textbooks": [
+        {
+          "title": "Introduction to the Hebrew Bible",
+          "authors": "John J. Collins",
+          "edition": "2nd, 2014",
+          "isbn13": "9781451469233",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 110",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        },
+        {
+          "title": "Christian Theology in Practice",
+          "authors": "Bonnie J. Miller-McLemore",
+          "edition": "2012",
+          "isbn13": "9780801039309",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 112",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        },
+        {
+          "title": "Christian Theology in Practice",
+          "authors": "Bonnie J. Miller-McLemore",
+          "edition": "2012",
+          "isbn13": "9780801039309",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 210",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        },
+        {
+          "title": "A Fundamental Practical Theology",
+          "authors": "Don S. Browning",
+          "edition": "1991",
+          "isbn13": "9780802806089",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 212",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        },
+        {
+          "title": "A Fundamental Practical Theology",
+          "authors": "Don S. Browning",
+          "edition": "1991",
+          "isbn13": "9780802806089",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 220",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 222",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 310",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 312",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 320",
+      "textbooks": [
+        {
+          "title": "An Introduction to Pastoral Care",
+          "authors": "Charles V. Gerkin",
+          "edition": "1997",
+          "isbn13": "9780687096871",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 322",
+      "textbooks": [
+        {
+          "title": "An Introduction to Pastoral Care",
+          "authors": "Charles V. Gerkin",
+          "edition": "1997",
+          "isbn13": "9780687096871",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 400",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "PRT 422",
+      "textbooks": [
+        {
+          "title": "Practical Theology: An Introduction",
+          "authors": "Richard R. Osmer",
+          "edition": "2008",
+          "isbn13": "9780802817655",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 110",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        },
+        {
+          "title": "Theology: The Basics",
+          "authors": "Alister E. McGrath",
+          "edition": "4th, 2017",
+          "isbn13": "9781119158080",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 112",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        },
+        {
+          "title": "Theology: The Basics",
+          "authors": "Alister E. McGrath",
+          "edition": "4th, 2017",
+          "isbn13": "9781119158080",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 120",
+      "textbooks": [
+        {
+          "title": "A History of Christianity in Africa",
+          "authors": "Elizabeth Isichei",
+          "edition": "1995",
+          "isbn13": "9780281047642",
+          "status": null
+        },
+        {
+          "title": "The Story of Christianity",
+          "authors": "Justo L. González",
+          "edition": "2010",
+          "isbn13": "9780061855887",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 122",
+      "textbooks": [
+        {
+          "title": "A History of Christianity in Africa",
+          "authors": "Elizabeth Isichei",
+          "edition": "1995",
+          "isbn13": "9780281047642",
+          "status": null
+        },
+        {
+          "title": "The Story of Christianity",
+          "authors": "Justo L. González",
+          "edition": "2010",
+          "isbn13": "9780061855887",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 210",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 212",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 220",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        },
+        {
+          "title": "The Christian Theology Reader",
+          "authors": "Alister E. McGrath",
+          "edition": "5th, 2016",
+          "isbn13": "9781118874387",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 225",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        },
+        {
+          "title": "The Christian Theology Reader",
+          "authors": "Alister E. McGrath",
+          "edition": "5th, 2016",
+          "isbn13": "9781118874387",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 310",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        },
+        {
+          "title": "Reformation Thought: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "5th, 2021",
+          "isbn13": "9781119756583",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 315",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        },
+        {
+          "title": "Reformation Thought: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "5th, 2021",
+          "isbn13": "9781119756583",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 320",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 322",
+      "textbooks": [
+        {
+          "title": "Christian Theology: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "6th, 2016",
+          "isbn13": "9781118869574",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 400",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SHT 412",
+      "textbooks": [
+        {
+          "title": "Historical Theology",
+          "authors": "Alister E. McGrath",
+          "edition": "3rd, 2022",
+          "isbn13": "9781119870340",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 110",
+      "textbooks": [
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        },
+        {
+          "title": "A Short Introduction to World Religions",
+          "authors": "Christopher Partridge",
+          "edition": "3rd, 2018",
+          "isbn13": "9781506445953",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 120",
+      "textbooks": [
+        {
+          "title": "A Short Introduction to World Religions",
+          "authors": "Christopher Partridge",
+          "edition": "3rd, 2018",
+          "isbn13": "9781506445953",
+          "status": null
+        },
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 210",
+      "textbooks": [
+        {
+          "title": "Dimensions of the Sacred",
+          "authors": "Ninian Smart",
+          "edition": "1996",
+          "isbn13": "9780521568777",
+          "status": null
+        },
+        {
+          "title": "The Routledge Companion to the Study of Religion",
+          "authors": "John R. Hinnells",
+          "edition": "2nd, 2010",
+          "isbn13": "9780415473281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 221",
+      "textbooks": [
+        {
+          "title": "Dimensions of the Sacred",
+          "authors": "Ninian Smart",
+          "edition": "1996",
+          "isbn13": "9780521568777",
+          "status": null
+        },
+        {
+          "title": "The Routledge Companion to the Study of Religion",
+          "authors": "John R. Hinnells",
+          "edition": "2nd, 2010",
+          "isbn13": "9780415473281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 310",
+      "textbooks": [
+        {
+          "title": "The Routledge Companion to the Study of Religion",
+          "authors": "John R. Hinnells",
+          "edition": "2nd, 2010",
+          "isbn13": "9780415473281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 320",
+      "textbooks": [
+        {
+          "title": "The Routledge Companion to the Study of Religion",
+          "authors": "John R. Hinnells",
+          "edition": "2nd, 2010",
+          "isbn13": "9780415473281",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 400",
+      "textbooks": [
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "REL 420",
+      "textbooks": [
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 120",
+      "textbooks": [
+        {
+          "title": "A Short Introduction to World Religions",
+          "authors": "Christopher Partridge",
+          "edition": "3rd, 2018",
+          "isbn13": "9781506445953",
+          "status": null
+        },
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 122",
+      "textbooks": [
+        {
+          "title": "A Short Introduction to World Religions",
+          "authors": "Christopher Partridge",
+          "edition": "3rd, 2018",
+          "isbn13": "9781506445953",
+          "status": null
+        },
+        {
+          "title": "The World's Religions",
+          "authors": "Ninian Smart",
+          "edition": "1992",
+          "isbn13": "9780521429061",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 210",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        },
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991 / reprints",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 212",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        },
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991 / reprints",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 220",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        },
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 222",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        },
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 310",
+      "textbooks": [
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 312",
+      "textbooks": [
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 320",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 322",
+      "textbooks": [
+        {
+          "title": "Introducing Christian Mission Today",
+          "authors": "Michael W. Goheen",
+          "edition": "2014",
+          "isbn13": "9780830840472",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "RSM 422",
+      "textbooks": [
+        {
+          "title": "Transforming Mission",
+          "authors": "David J. Bosch",
+          "edition": "1991",
+          "isbn13": "9780281054343",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 110",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "The Spirit of the Disciplines",
+          "authors": "Dallas Willard",
+          "edition": "1991",
+          "isbn13": "9780062500786",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 120",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "The Spirit of the Disciplines",
+          "authors": "Dallas Willard",
+          "edition": "1991",
+          "isbn13": "9780062500786",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 210",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "Spirituality: A Brief History",
+          "authors": "Philip Sheldrake",
+          "edition": "2013",
+          "isbn13": "9781118478392",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 220",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "Spirituality: A Brief History",
+          "authors": "Philip Sheldrake",
+          "edition": "2013",
+          "isbn13": "9781118478392",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 310",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "Spirituality: A Brief History",
+          "authors": "Philip Sheldrake",
+          "edition": "2013",
+          "isbn13": "9781118478392",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "SRY 320",
+      "textbooks": [
+        {
+          "title": "Christian Spirituality: An Introduction",
+          "authors": "Alister E. McGrath",
+          "edition": "1999",
+          "isbn13": "9780631212812",
+          "status": null
+        },
+        {
+          "title": "Spirituality: A Brief History",
+          "authors": "Philip Sheldrake",
+          "edition": "2013",
+          "isbn13": "9781118478392",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 110",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        },
+        {
+          "title": "Community Development: Community-based Alternatives in an Age of Globalisation",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2002",
+          "isbn13": "9780733999017",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 120",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        },
+        {
+          "title": "Community Development: Community-based Alternatives in an Age of Globalisation",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2002",
+          "isbn13": "9780733999017",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 212",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 222",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 300",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 302",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 301",
+      "textbooks": [
+        {
+          "title": "Community Development: A Critical Approach",
+          "authors": "Ledwith",
+          "edition": "2nd",
+          "isbn13": "9781848600424",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 312",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    },
+    {
+      "module": "CYE 322",
+      "textbooks": [
+        {
+          "title": "Community Development in an Uncertain World",
+          "authors": "Jim Ife",
+          "edition": "2nd, 2016",
+          "isbn13": "9781316869765",
+          "status": null
+        }
+      ]
+    }
+  ]
+}

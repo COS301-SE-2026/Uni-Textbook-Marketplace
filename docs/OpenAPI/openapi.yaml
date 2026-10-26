@@ -21,22 +21,30 @@ servers:
     description: Local development
 
 tags:
-- name: Auth
-- name: Listings
-- name: Admin
-- name: Modules
-- name: SavedSearches
-- name: Wishlist
-- name: Images
-- name: Conversations
-- name: Notifications
-  description: "Sprint 5 / UC9, UC9.1, UC9.2. Owner: Gift."
-- name: Reports
-  description: "Sprint 5 / UC10. Owner: Josh."
-- name: Cases
-  description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
-- name: Profile
-  description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+  - name: Health
+  - name: Auth
+  - name: Listings
+  - name: Admin
+  - name: Auctions
+  - name: Books
+  - name: Bundles
+  - name: Modules
+  - name: SavedSearches
+  - name: Wishlist
+  - name: Images
+  - name: Conversations
+  - name: Notifications
+    description: "Sprint 5 / UC9, UC9.1, UC9.2. Owner: Gift."
+  - name: Reports
+    description: "Sprint 5 / UC10. Owner: Josh."
+  - name: Cases
+    description: "Sprint 5 / UC10 appeal flow. Owner: Neo."
+  - name: Profile
+    description: "Test week / Profile-Settings. Owner: Tiego + whoever has capacity."
+  - name: Vision
+    description: "Sprint 6 / Wow Factor 1, AI-Assisted Listing Creation. Owner: Tiego."
+  - name: Bundles
+    description: Bundle optimisation for purchasing textbooks across multiple modules.
 
 components:
   securitySchemes:
@@ -83,7 +91,16 @@ components:
           format: float
         status:
           type: string
-          enum: [PENDING, APPROVED, REJECTED, RESERVED, SOLD, WITHDRAWN, SOFT_DELETED]
+          enum:
+            [
+              PENDING,
+              APPROVED,
+              REJECTED,
+              RESERVED,
+              SOLD,
+              WITHDRAWN,
+              SOFT_DELETED,
+            ]
         moduleId:
           type: string
           format: uuid
@@ -98,7 +115,6 @@ components:
           type: string
           format: date-time
 
-    # (Gift): confirm this matches the final notifications table shape
     Notification:
       type: object
       properties:
@@ -134,8 +150,6 @@ components:
           type: string
           format: date-time
 
-    # (Josh): confirm field names against the actual reports table
-    # migration once committed.
     Report:
       type: object
       properties:
@@ -145,20 +159,23 @@ components:
         reporterId:
           type: string
           format: uuid
+          description: The ID of the user who submitted the report
         listingId:
           type: string
           format: uuid
+          description: The ID of the listing being reported
         reason:
           type: string
+          description: The reason for the report
         status:
           type: string
           enum: [PENDING, REVIEWED]
+          description: The current status of the report
         createdAt:
           type: string
           format: date-time
+          description: Timestamp of report creation
 
-    # (Neo): confirm field names against the actual cases table
-    # migration once committed.
     Case:
       type: object
       properties:
@@ -167,8 +184,8 @@ components:
           format: uuid
         userId:
           type: string
-          format: uui
-      #ban_id foreign key removed as there is no ban table to reference 
+          format: uuid
+        
         appeal_message:
           type: string
         status:
@@ -183,7 +200,7 @@ components:
         created_at: #added column for case date ordering + keeping track of stale cases
           type: string
           format: date-time
-        updated_at: #added column for keeping track of updates in cases 
+        updated_at: #added column for keeping track of updates in cases
           type: string
           format: date-time
         deleted_at: #added column for keeping track of case removals
@@ -261,6 +278,41 @@ components:
               type: integer
               description: Total number of pages
 
+    MatchedBook:
+      type: object
+      description: >
+        The Book record the OCR text was fuzzy-matched against. Absent
+        (matchedBook is null on the parent response) when no confident
+        match was found.
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        edition:
+          type: integer
+        confidence:
+          type: number
+          format: float
+          description: Fuzzy-match confidence score (0 to 1) between the OCR text and this Book record.
+
+    ExtractTextResponse:
+      type: object
+      properties:
+        rawText:
+          type: string
+          description: Raw text lines returned by Azure AI Vision's Read API (Image Analysis 4.0), before fuzzy matching.
+        matchedBook:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/MatchedBook"
+          description: Best fuzzy match against the Book table, or null if nothing matched with enough confidence.
 
   responses:
     Unauthorized:
@@ -281,18 +333,57 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-
-security:
-  - bearerAuth: []
+    BadRequest:
+      description: The request is invalid or could not be processed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
 
 paths:
+  /:
+    get:
+      operationId: getHealth
+      tags: [Health]
+      summary: Returns the API welcome message.
+      security: []
+      responses:
+        "200":
+          description: API is responding
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
-  # Demo 3: Whoever owns each section, fill it in as you go and code
+  /notifications/stream:
+    get:
+      operationId: streamNotifications
+      tags: [Notifications]
+      summary: Streams live notifications for the authenticated user.
+      responses:
+        "200":
+          description: Server-sent notification events
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /notifications/mine:
     get:
+      operationId: getMyNotifications
       tags: [Notifications]
       summary: Returns the logged-in user's notifications, paginated.
-      # (Gift): confirm query params (page, limit, unreadOnly?) once built.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
       responses:
         "200":
           description: Paginated list of notifications
@@ -301,17 +392,27 @@ paths:
               schema:
                 type: object
                 properties:
-                  items:
+                  data:
                     type: array
                     items:
                       $ref: "#/components/schemas/Notification"
+                  pagination:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                      page: { type: integer }
+                      limit: { type: integer }
+                      pages: { type: integer }
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No notification found
 
   /notifications/{id}/read:
     patch:
+      operationId: markNotificationRead
       tags: [Notifications]
-      summary: Marks a single notification as read. Ownership-checked.
+      summary: Marks a single notification as read.
       parameters:
         - in: path
           name: id
@@ -319,27 +420,1125 @@ paths:
           schema: { type: string, format: uuid }
       responses:
         "200":
-          description: Notification marked read
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+          description: Number of rows updated, but 0 if not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /notifications/read-all:
     patch:
+      operationId: markAllNotificationsRead
       tags: [Notifications]
       summary: Marks all of the logged-in user's notifications as read.
       responses:
         "200":
-          description: All notifications marked read
+          description: Number of rows updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
-  # (Josh): UC10 report submission + admin review.
+  /notifications/{id}/delete:
+    delete:
+      operationId: deleteNotification
+      tags: [Notifications]
+      summary: Deletes a notification belonging to the logged-in user.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Notification deleted
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Notification successfully deleted"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auth/register:
+    post:
+      operationId: registerStudent
+      tags: [Auth]
+      summary: Starts student registration. Checks the email domain and sends the OTP.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, surname, university, email]
+              properties:
+                fullName:
+                  type: string
+                surname:
+                  type: string
+                university:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "201":
+          description: Registration successful, OTP sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+        "400":
+          description: Missing required field, or email domain not in allowlist
+        "409":
+          description: Email address is already registered
+
+  /auth/verify-email:
+    post:
+      operationId: verifyEmail
+      tags: [Auth]
+      summary: Verifies the 6-digit code sent to the student's email.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              properties:
+                email:
+                  type: string
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  verified:
+                    type: boolean
+        "400":
+          description: OTP is incorrect or has expired
+        "404":
+          description: No pending OTP found for this email
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [Auth]
+      summary: Logs in a verified student and hands back a signed JWT (cookie).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid email or password
+        "403":
+          description: Account exists but email is not verified
+
+  /auth/resend-otp:
+    post:
+      operationId: resendOtp
+      tags: [Auth]
+      summary: Resends the email verification code.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Verification code resent
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auth/forgot-password:
+    post:
+      operationId: requestPasswordReset
+      tags: [Auth]
+      summary: Starts the password recovery flow.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Password recovery request accepted
+        "400":
+          description: Invalid request
+
+  /auth/me:
+    get:
+      operationId: getMyProfile
+      tags: [Auth]
+      summary: Returns the logged-in user's profile.
+      responses:
+        "200":
+          description: The current user's profile
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    patch:
+      operationId: updateMyProfile
+      tags: [Auth]
+      summary: Updates the logged-in user's profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                last_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        "200":
+          description: Profile updated
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    delete:
+      operationId: deactivateMyAccount
+      tags: [Auth]
+      summary: Deactivates the logged-in user's account and clears session cookies.
+      responses:
+        "200":
+          description: Account deactivated
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/me/password:
+    patch:
+      operationId: changeMyPassword
+      tags: [Auth]
+      summary: Changes the logged-in user's password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password, confirm_password]
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+                confirm_password:
+                  type: string
+      responses:
+        "200":
+          description: Password changed
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [Auth]
+      summary: Clears the session cookie.
+      responses:
+        "200":
+          description: Logged out
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auth/universities:
+    get:
+      operationId: getUniversities
+      tags: [Auth]
+      summary: Lists supported universities, for the registration dropdown.
+      security: []
+      responses:
+        "200":
+          description: List of universities
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auth/refresh:
+    post:
+      operationId: refreshSession
+      tags: [Auth]
+      summary: Gets a new access token using a refresh token.
+      security: []
+      responses:
+        "200":
+          description: New access token issued
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /listings:
+    post:
+      operationId: createListing
+      tags: [Listings]
+      summary: Creates a new textbook listing. Created with status = PENDING.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: CreateListingDto fields for the listing to submit.
+      responses:
+        "201":
+          description: Listing created
+        "400":
+          description: Validation error
+    get:
+      operationId: listApprovedListings
+      tags: [Listings]
+      summary: Returns all APPROVED listings, with pagination and filters.
+      parameters:
+        - in: query
+          name: university
+          schema: { type: string }
+        - in: query
+          name: moduleCode
+          schema: { type: string }
+        - in: query
+          name: faculty
+          schema: { type: string }
+        - in: query
+          name: condition
+          schema: { type: string }
+        - in: query
+          name: annotationLevel
+          schema: { type: string }
+        - in: query
+          name: priceMin
+          schema: { type: number }
+        - in: query
+          name: priceMax
+          schema: { type: number }
+        - in: query
+          name: edition
+          schema: { type: integer }
+        - in: query
+          name: search
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paginated approved listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Listing"
+                  total:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /listings/mine:
+    get:
+      operationId: getMyListings
+      tags: [Listings]
+      summary: Returns all of the logged-in student's own listings (PENDING, APPROVED, REJECTED).
+      responses:
+        "200":
+          description: The student's own listings
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /listings/{id}:
+    get:
+      operationId: getListingById
+      tags: [Listings]
+      summary: Returns the full detail object for one listing.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/editlist:
+    patch:
+      operationId: editListing
+      tags: [Listings]
+      summary: Edits an existing listing owned by the student. Only PENDING/REJECTED.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string, format: uuid }
+                title: { type: string }
+                condition: { type: string, enum: [new, good, fair, poor] }
+                annotation_level: { type: string, enum: [none, light, heavy] }
+                price: { type: number }
+                has_notes: { type: boolean }
+                description: { type: string }
+      responses:
+        "200":
+          description: Listing updated
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /listings/{id}/status:
+    patch:
+      operationId: updateListingStatus
+      tags: [Listings]
+      summary: >
+        Updates a listing's status. Extended in Sprint 5 to accept RESERVED
+        in addition to the existing SOLD/WITHDRAWN values. Callable by the
+        listing's seller from the messaging thread (ChatHeader) once a sale
+        is agreed, or from My Listings.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listing_status]
+              properties:
+                listing_status:
+                  type: string
+                  enum: [AVAILABLE, RESERVED, SOLD, WITHDRAWN]
+      responses:
+        "200":
+          description: Status updated, audit_log entry written
+        "403":
+          description: Not the listing's seller, or an invalid status transition
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /listings/admin/all:
+    get:
+      operationId: getAllListingsForAdmin
+      tags: [Admin]
+      summary: Returns all listings, admin only.
+      responses:
+        "200":
+          description: All listings
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/{id}/approve:
+    patch:
+      operationId: approveListing
+      tags: [Admin]
+      summary: Approves a pending listing. Sets status APPROVED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Listing approved
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/{id}/reject:
+    patch:
+      operationId: rejectListing
+      tags: [Admin]
+      summary: Rejects a pending listing. Sets status REJECTED, writes audit log.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Listing rejected
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /modules:
+    post:
+      operationId: createModule
+      tags: [Modules]
+      summary: Creates a module linked to the textbook being sold.
+      responses:
+        "201":
+          description: Module created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: searchModules
+      tags: [Modules]
+      summary: Search-as-you-type module code lookup, extended with smart filters.
+      parameters:
+        - in: query
+          name: search
+          required: true
+          schema: { type: string }
+        - in: query
+          name: university
+          schema: { type: string }
+      responses:
+        "200":
+          description: Matching modules
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /modules/faculties:
+    get:
+      operationId: listFaculties
+      tags: [Modules]
+      summary: Returns faculty names and ids.
+      responses:
+        "200":
+          description: Faculties
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /saved-searches:
+    post:
+      operationId: createSavedSearch
+      tags: [SavedSearches]
+      summary: Saves a search as JSON filter_json.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter_json:
+                  type: object
+      responses:
+        "201":
+          description: Saved search created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    get:
+      operationId: getAllSavedSearches
+      tags: [SavedSearches]
+      summary: Returns all saved searches (admin only).
+      responses:
+        "200":
+          description: All saved searches
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /saved-searches/mine:
+    get:
+      operationId: getMySavedSearches
+      tags: [SavedSearches]
+      summary: Returns the saved searches belonging to the logged-in student.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        "200":
+          description: The student's saved searches
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /saved-searches/{id}:
+    get:
+      operationId: getSavedSearchById
+      tags: [SavedSearches]
+      summary: Returns one saved search by id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: The saved search
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteSavedSearch
+      tags: [SavedSearches]
+      summary: Deletes a saved search by id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /saved-searches/me:
+    get:
+      operationId: getSavedSearchUserInfo
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's basic identity details.
+      responses:
+        "200":
+          description: User ID, email, role, and name
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /saved-searches/me/email:
+    get:
+      operationId: getSavedSearchUserEmail
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's email address.
+      responses:
+        "200":
+          description: User email
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /saved-searches/me/role:
+    get:
+      operationId: getSavedSearchUserRole
+      tags: [SavedSearches]
+      summary: Returns the logged-in user's role.
+      responses:
+        "200":
+          description: User role
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /wishlist/{listingId}:
+    post:
+      operationId: addListingToWishlist
+      tags: [Wishlist]
+      summary: Adds a listing to the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Added to wishlist
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    delete:
+      operationId: removeListingFromWishlist
+      tags: [Wishlist]
+      summary: Removes a listing from the logged-in student's wishlist.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Removed from wishlist
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /wishlist/mine:
+    get:
+      operationId: getMyWishlist
+      tags: [Wishlist]
+      summary: Returns the logged-in student's wishlisted listings.
+      responses:
+        "200":
+          description: Wishlisted listings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /wishlist/mywishlist:
+    get:
+      operationId: getMyWishlistLegacy
+      tags: [Wishlist]
+      summary: Returns the logged-in student's wishlist using the legacy response shape.
+      responses:
+        "200":
+          description: Wishlisted listings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /books:
+    post:
+      operationId: createBook
+      tags: [Books]
+      summary: Creates a book record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                isbn:
+                  type: string
+                edition:
+                  type: integer
+      responses:
+        "201":
+          description: Book created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /bundles/optimize:
+    post:
+      operationId: optimizeBundle
+      tags: [Bundles]
+      summary: Optimizes a bundle for the supplied module IDs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [moduleIds]
+              properties:
+                moduleIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        "200":
+          description: Optimized bundle result
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auction:
+    get:
+      operationId: getAuctions
+      tags: [Auctions]
+      summary: Returns available auctions.
+      responses:
+        "200":
+          description: Auctions
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createAuction
+      tags: [Auctions]
+      summary: Creates an auction for an approved listing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listing_id, starting_price, end_time]
+              properties:
+                listing_id:
+                  type: string
+                  format: uuid
+                starting_price:
+                  type: number
+                  minimum: 0
+                reserve_price:
+                  type: number
+                  minimum: 0
+                start_time:
+                  type: string
+                  format: date-time
+                end_time:
+                  type: string
+                  format: date-time
+      responses:
+        "201":
+          description: Auction created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auction/listing/{listingId}:
+    get:
+      operationId: getAuctionForListing
+      tags: [Auctions]
+      summary: Gets the active or scheduled auction for a listing.
+      parameters:
+        - in: path
+          name: listingId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Auction for the listing
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auction/{id}:
+    get:
+      operationId: getAuctionById
+      tags: [Auctions]
+      summary: Returns the current state of one auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Auction details
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auction/{id}/bids:
+    get:
+      operationId: getAuctionBidHistory
+      tags: [Auctions]
+      summary: Returns paginated bid history for an auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Paginated bid history
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /auction/{id}/bid:
+    post:
+      operationId: placeAuctionBid
+      tags: [Auctions]
+      summary: Places a bid on an auction.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount:
+                  type: number
+                  minimum: 0
+                  exclusiveMinimum: true
+      responses:
+        "201":
+          description: Bid placed
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /images/test:
+    get:
+      operationId: testImageService
+      tags: [Images]
+      summary: Checks whether the image controller is online.
+      responses:
+        "200":
+          description: Image service status
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /admin/audit-log:
+    get:
+      operationId: getAuditLog
+      tags: [Admin]
+      summary: Returns audit log entries for admin review.
+      parameters:
+        - in: query
+          name: performedBy
+          schema: { type: string }
+        - in: query
+          name: action
+          schema: { type: string }
+        - in: query
+          name: entityType
+          schema: { type: string }
+        - in: query
+          name: entityId
+          schema: { type: string }
+        - in: query
+          name: startDate
+          schema: { type: string }
+        - in: query
+          name: endDate
+          schema: { type: string }
+      responses:
+        "200":
+          description: Audit log entries
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/emails:
+    get:
+      operationId: getAdminEmails
+      tags: [Admin]
+      summary: Returns a list of admin emails, used for filters.
+      responses:
+        "200":
+          description: Admin emails
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /images/upload:
+    post:
+      operationId: uploadListingImages
+      tags: [Images]
+      summary: Uploads a listing image to Azure Blob Storage through the backend.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [images]
+              properties:
+                images:
+                  type: array
+                  maxItems: 5
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "201":
+          description: Image uploaded
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /images/list:
+    get:
+      operationId: listImages
+      tags: [Images]
+      summary: Lists uploaded images for a listing.
+      responses:
+        "200":
+          description: Image list
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /images/delete:
+    delete:
+      operationId: deleteImage
+      tags: [Images]
+      summary: Deletes an uploaded listing image from Blob Storage.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
+      responses:
+        "200":
+          description: Deleted
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /vision/extract-text:
+    post:
+      operationId: extractTextFromImage
+      tags: [Vision]
+      summary: >
+        Runs Azure AI Vision OCR (Image Analysis 4.0 Read API) on a listing
+        photo already uploaded to Blob Storage via the existing /images/upload
+        flow, then fuzzy-matches the extracted text against the Book table.
+        Pre-fills CreateListingDto fields for the seller to review and edit,
+        never auto-submits a listing. Backend-mediated: the Azure Vision
+        endpoint and key are never exposed to the client. Background removal
+        and corner-crop detection are not part of this endpoint - they run
+        entirely client-side (frontend/src/utils/removeUniformBackground.ts).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [imageUrl]
+              properties:
+                imageUrl:
+                  type: string
+                  description: URL of the photo already uploaded via the existing /images/upload flow.
+      responses:
+        "200":
+          description: >
+            OCR text extracted. matchedBook is null if no confident match
+            was found - the frontend falls back to manual entry with the
+            photo kept and every field still editable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtractTextResponse"
+        "400":
+          description: Missing or invalid imageUrl
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /conversations:
+    post:
+      operationId: createConversation
+      tags: [Conversations]
+      summary: Creates or fetches a conversation for a listing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId:
+                  type: string
+                  format: uuid
+      responses:
+        "201":
+          description: Conversation created or fetched
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /conversations/mine:
+    get:
+      operationId: getMyConversations
+      tags: [Conversations]
+      summary: Gets all conversations for the logged-in user.
+      responses:
+        "200":
+          description: The user's conversations
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /conversations/{id}/messages:
+    get:
+      operationId: getConversationMessages
+      tags: [Conversations]
+      summary: Gets all messages in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Messages in the conversation
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: sendConversationMessage
+      tags: [Conversations]
+      summary: Sends a message in a conversation.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        "201":
+          description: Message sent
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /reports:
     post:
+      operationId: createReport
       tags: [Reports]
       summary: A student submits a report against a listing.
-      # TODO (Josh): confirm request body against reports.dto.ts.
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -349,18 +1548,29 @@ paths:
                 listingId:
                   type: string
                   format: uuid
+                  description: The ID of the listing being reported
                 reason:
                   type: string
+                  description: The reason for the report
       responses:
         "201":
-          description: Report submitted
+          description: Report submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /admin/reports:
     get:
+      operationId: getReportsForAdmin
       tags: [Reports]
-      summary: Returns reports for admin review, paginated, filterable by status.
+      summary: Returns reports for admin review, paginated, filterable by status. 
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: status
@@ -368,19 +1578,36 @@ paths:
         - in: query
           name: page
           schema: { type: integer }
+          description: Page number
         - in: query
           name: limit
-          schema: { type: integer }
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+          description: Number of reports returned per page.
       responses:
         "200":
-          description: Paginated reports
+          description: List of reports for admin review
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /admin/reports/{id}/dismiss:
-    patch:
+  /admin/reports/{id}:
+    get:
+      operationId: getReportById
       tags: [Reports]
-      summary: Dismisses a report without banning the reported user.
+      summary: Returns one report for admin review.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -388,243 +1615,319 @@ paths:
           schema: { type: string, format: uuid }
       responses:
         "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/reports/{id}/dismiss:
+    patch:
+      operationId: dismissReport
+      tags: [Reports]
+      summary: Dismisses a report without banning the reported user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+          description: The ID of the report to dismiss
+      responses:
+        "200":
           description: Report dismissed
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
-  # (Josh): confirm the actual route/verb for the ban action once
-  # # committed - sprint-5.md item 6 describes the effect (is_banned, banned_at,
-  # banned_by, ban_reason set on the reported listing's seller) but not yet
-  # a confirmed endpoint path. Likely PATCH /admin/users/{id}/ban or similar.
-  /admin/users/{id}/ban:
+  /admin/{id}/ban:
     patch:
+      operationId: banUser
       tags: [Reports]
       summary: >
         Bans the user who owns the reported listing. Writes an audit_log
         entry (action = BANNED) and triggers a ban-notice notification with
         appeal instructions via NotificationService.emit().
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                ban_reason:
+                reason:
                   type: string
+                  description: Reason for banning the user
       responses:
         "200":
           description: User banned
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
-  # (Neo): UC10 appeal/case flow. Target Mon 17 Aug for POST,
-  # the admin review + decide endpoint.
-
-  
-  # Neo: UC10 appeal/case flow
-# Updated to match CasesController implementation
-
-/cases:
-  post:
-    tags: [Cases]
-    summary: Submit an appeal as a banned user
-    description: Only users with is_banned = true can submit appeals. Users cannot have multiple pending appeals.
-    security:
-      - bearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [appeal_message]
-            properties:
-              appeal_message:
-                type: string
-                minLength: 10
-                maxLength: 5000
-                description: The appeal message from the banned user
-    responses:
-      "201":
-        description: Appeal submitted successfully
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CaseResponse"
-      "400":
-        description: User is not banned or already has a pending appeal
-      "401":
-        description: Unauthorized - user not logged in
-      "403":
-        description: Forbidden - only banned users may submit an appeal
-
-/cases/mine:
-  get:
-    tags: [Cases]
-    summary: Get all cases for the authenticated user
-    description: Returns all cases submitted by the current user
-    security:
-      - bearerAuth: []
-    responses:
-      "200":
-        description: List of cases
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/CaseResponse"
-      "401":
-        description: Unauthorized - user not logged in
-
-/cases/{id}:
-  get:
-    tags: [Cases]
-    summary: Get a specific case by ID
-    description: Users can only access their own cases
-    security:
-      - bearerAuth: []
-    parameters:
-      - in: path
-        name: id
+  /cases:
+    post:
+      operationId: createAppeal
+      tags: [Cases]
+      summary: Submit an appeal as a banned user
+      description: Only users with is_banned = true can submit appeals. Users cannot have multiple pending appeals.
+      security:
+        - bearerAuth: []
+      requestBody:
         required: true
-        schema:
-          type: string
-          format: uuid
-        description: The ID of the case to retrieve
-    responses:
-      "200":
-        description: Case found
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CaseResponse"
-      "401":
-        description: Unauthorized - user not logged in
-      "404":
-        description: Case not found
-
-/cases/admin/pending:
-  get:
-    tags: [Cases]
-    summary: ADMIN ONLY - Get all pending cases
-    description: Returns all cases with status = pending for admin review
-    security:
-      - bearerAuth: []
-    responses:
-      "200":
-        description: List of pending cases
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
+              type: object
+              required: [appeal_message]
+              properties:
+                appeal_message:
+                  type: string
+                  minLength: 10
+                  maxLength: 5000
+                  description: The appeal message from the banned user
+      responses:
+        "201":
+          description: Appeal submitted successfully
+          content:
+            application/json:
+              schema:
                 $ref: "#/components/schemas/CaseResponse"
-      "401":
-        description: Unauthorized - user not logged in
-      "403":
-        description: Forbidden - admin access required
+        "400":
+          description: User is not banned or already has a pending appeal
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - only banned users may submit an appeal
 
-/cases/admin:
-  get:
-    tags: [Cases]
-    summary: ADMIN ONLY - Get all cases with pagination
-    description: Returns all cases with pagination for admin dashboard
-    security:
-      - bearerAuth: []
-    parameters:
-      - in: query
-        name: page
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
-        description: Page number (default: 1)
-      - in: query
-        name: limit
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 20
-        description: Items per page (default: 20, max: 100)
-      - in: query
-        name: status
-        schema:
-          type: string
-          enum: [pending, upheld, reversed]
-        description: Filter by status (pending, upheld, reversed)
-      - in: query
-        name: search
-        schema:
-          type: string
-        description: Search in appeal message
-    responses:
-      "200":
-        description: Paginated list of cases
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PaginatedCasesResponse"
-      "401":
-        description: Unauthorized - user not logged in
-      "403":
-        description: Forbidden - admin access required
+  /cases/mine:
+    get:
+      operationId: getMyCases
+      tags: [Cases]
+      summary: Get all cases for the authenticated user
+      description: Returns all cases submitted by the current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
 
-/cases/{id}/review:
-  patch:
-    tags: [Cases]
-    summary: ADMIN ONLY - Review a case (decide endpoint)
-    description: >
-      Admin upholds the ban or reinstates the account (reverses the ban).
-      Writes to audit_log and triggers a case-decision notification via emit().
-      - "upheld": User remains banned (ban is maintained)
-      - "reversed": User is reinstated (ban is lifted)
-    security:
-      - bearerAuth: []
-    parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: The ID of the case to review
-    requestBody:
-      required: true
-      content:
-        application/json:
+  /cases/{id}:
+    get:
+      operationId: getCaseById
+      tags: [Cases]
+      summary: Get a specific case by ID
+      description: Users can only access their own cases
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
           schema:
-            type: object
-            required: [decision]
-            properties:
-              decision:
-                type: string
-                enum: [upheld, reversed]
-                description: |
-                  - "upheld": Maintain the ban (user stays banned)
-                  - "reversed": Reinstate the user (lift the ban)
-              adminNotes:
-                type: string
-                maxLength: 1000
-                description: Optional notes from the admin about the decision
-    responses:
-      "200":
-        description: Case reviewed successfully (decision applied)
+            type: string
+            format: uuid
+          description: The ID of the case to retrieve
+      responses:
+        "200":
+          description: Case found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "404":
+          description: Case not found
+
+  /cases/admin/pending:
+    get:
+      operationId: getPendingCases
+      tags: [Cases]
+      summary: ADMIN ONLY - Get all pending cases
+      description: Returns all cases with status = pending for admin review
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of pending cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+
+  /cases/admin:
+    get:
+      operationId: getAllCases
+      tags: [Cases]
+      summary: ADMIN ONLY - Get all cases with pagination
+      description: Returns all cases with pagination for admin dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: "Page number (default : 1)"
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: "Items per page (default: 20, max: 100)"
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, upheld, reversed]
+          description: Filter by status (pending, upheld, reversed)
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search in appeal message
+      responses:
+        "200":
+          description: Paginated list of cases
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCasesResponse"
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+
+  /cases/{id}/review:
+    patch:
+      operationId: reviewCase
+      tags: [Cases]
+      summary: ADMIN ONLY - Review a case (decide endpoint)
+      description: >
+        Admin upholds the ban or reinstates the account (reverses the ban).
+        Writes to audit_log and triggers a case-decision notification via emit().
+        - "upheld": User remains banned (ban is maintained)
+        - "reversed": User is reinstated (ban is lifted)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The ID of the case to review
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CaseResponse"
-      "400":
-        description: Case already reviewed or invalid decision
-      "401":
-        description: Unauthorized - user not logged in
-      "403":
-        description: Forbidden - admin access required
-      "404":
-        description: Case not found
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [upheld, reversed]
+                  description: |
+                    - "upheld": Maintain the ban (user stays banned)
+                    - "reversed": Reinstate the user (lift the ban)
+                adminNotes:
+                  type: string
+                  maxLength: 1000
+                  description: Optional notes from the admin about the decision
+      responses:
+        "200":
+          description: Case reviewed successfully (decision applied)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseResponse"
+        "400":
+          description: Case already reviewed or invalid decision
+        "401":
+          description: Unauthorized - user not logged in
+        "403":
+          description: Forbidden - admin access required
+        "404":
+          description: Case not found
+
+  /bundles/optimize:
+    post:
+      tags: [Bundles]
+      summary: Optimizes textbook purchases across multiple modules.
+      description: >
+        Finds an optimized combination of listings for the supplied modules,
+        grouping listings by seller and comparing the result against purchasing
+        the cheapest individual option for each module.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - moduleIds
+              properties:
+                moduleIds:
+                  type: array
+                  description: UUIDs of the modules to include in the bundle.
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+
+      responses:
+        "200":
+          description: Optimized bundle and comparison with individual purchases.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BundleOptimizationResponse"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "500":
+          description: Bundle optimization failed.
+
+security:
+  - bearerAuth: []

@@ -7,7 +7,6 @@ import { MailtrapEmailProvider } from './mailtrap-email.provider';
 @Module({
   imports: [ConfigModule],
   providers: [
-    MailtrapEmailProvider,
     {
       provide: EMAIL_SERVICE,
       useClass: MailtrapEmailProvider,

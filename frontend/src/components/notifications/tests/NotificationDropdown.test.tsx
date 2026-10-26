@@ -27,6 +27,8 @@ jest.mock('lucide-react', () => ({
 
 
       <title>Check Check</title>
+
+
     </svg>
   ),
   Bell: () => <svg data-testid="bell-icon" />,
@@ -147,6 +149,8 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText('Notification 1')).toBeInTheDocument();
+
+
       expect(screen.getByText('Notification 2')).toBeInTheDocument();
 
 
@@ -233,6 +237,8 @@ describe('NotificationDropdown', () => {
 
 
       const links = screen.getAllByTestId('mock-link');
+
+
       const viewAllLink = links[links.length - 1];
 
 
@@ -499,6 +505,8 @@ describe('NotificationDropdown', () => {
     });
 
     it('applies hover styles to notification items', () => {
+
+
       const notifications = createNotifications(1);
 
       render(
@@ -512,6 +520,8 @@ describe('NotificationDropdown', () => {
       );
 
       const links = screen.getAllByTestId('mock-link');
+
+
       expect(links[0]).toHaveClass('hover:bg-[#F5F5F5]');
 
 
@@ -673,6 +683,8 @@ describe('NotificationDropdown', () => {
 
 
       const longMessage = 'A'.repeat(200);
+
+
       const notifications = [
         { ...baseNotification, message_info: longMessage },
       ];
@@ -692,6 +704,8 @@ describe('NotificationDropdown', () => {
       );
 
       expect(screen.getByText(longMessage)).toBeInTheDocument();
+
+      
     });
   });
 });

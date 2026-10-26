@@ -12,6 +12,7 @@ import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ReportFiltersDto } from 'src/reports/dto/report-filters.dto';
 
 describe('Reports and admin controllers', () => {
     let controller: ReportsController;
@@ -122,10 +123,15 @@ describe('Reports and admin controllers', () => {
 
             service.findAll.mockResolvedValue(reports);
 
-            const result = await admin.findAll();
+            const result = await admin.findAll({
+                page: 1,
+                limit: 20,
+            });
 
-            expect(service.findAll).toHaveBeenCalled();
-            expect(result).toBe(reports);
+            expect(service.findAll).toHaveBeenCalledWith({
+                page: 1,
+                limit: 20,
+            });
         });
     });
 

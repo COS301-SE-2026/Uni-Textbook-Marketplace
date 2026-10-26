@@ -16,39 +16,64 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const PUBLIC_ROUTES = ['/', '/auth/login','/auth/register','/auth/resetpassword', '/help', '/brand']
+const PUBLIC_ROUTES = [
+  '/',
+  '/auth/login',
+  '/auth/register',
+  '/auth/resetpassword',
+  '/help',
+  '/brand',
+  '/appeal',
+  '/terms',
+  '/privacy',
+];
 
 function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some(route => route === '/' ? pathname === '/' : pathname.startsWith(route));
+  return PUBLIC_ROUTES.some((route) =>
+    route === '/' ? pathname === '/' : pathname.startsWith(route),
+  );
 }
 
 function getStoredUser(): AuthUser | null {
   try {
     const stored = sessionStorage.getItem('auth_user');
+
     if (stored && stored !== 'undefined') {
       return JSON.parse(stored) as AuthUser;
     }
   } catch {
-
+    // Ignore
   }
+
   return null;
 }
 
-export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-
-  const initialUser = getStoredUser();
-  const [user, setUser] = useState<AuthUser | null>(initialUser);
-  const [isLoading, setIsLoading] = useState(initialUser === null);
-
+export function AuthProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
+  const initialUser = getStoredUser();
 
-    if (user) {
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+
+  const [isLoading, setIsLoading] = useState(
+    initialUser === null && !isPublicRoute(pathname),
+  );
+
+  // Only fetch getMe on protected routes
+  useEffect(() => {
+    if (user?.university?.id) {
       return;
     }
 
+    // If on a public route, skip the API call
+    if (isPublicRoute(pathname)) {
+      return;
+    }
+
+    // Only fetch on protected routes
     getMe()
       .then((me) => {
         setUser(me);
@@ -56,25 +81,30 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       })
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
-  }, [user]);
+  }, [user, pathname]);
 
+  // Redirect to login if not authenticated on protected routes
   useEffect(() => {
-    if(isLoading) return;
-    if(!user && !isPublicRoute(pathname)){
+    if (isLoading) return;
+
+    if (!user && !isPublicRoute(pathname)) {
       router.push('/auth/login');
     }
-  },[isLoading,user,pathname,router]);
+  }, [isLoading, user, pathname, router]);
 
+  // Handle unauthorized responses
   useEffect(() => {
     setUnauthorizedHandle(() => {
       setUser(null);
       sessionStorage.removeItem('auth_user');
     });
-  },[])
+  }, []);
 
   const login = (userData: AuthUser) => {
     if (!userData) return;
+
     setUser(userData);
+
     try {
       sessionStorage.setItem('auth_user', JSON.stringify(userData));
     } catch {
@@ -86,9 +116,9 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     try {
       await logoutUser();
     } catch {
-
+      // Ignore
     } finally {
-      // setUser(null);
+
       sessionStorage.removeItem('auth_user');
       router.push('/auth/login');
     }
@@ -111,8 +141,13 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error('useAuth must be used inside AuthProvider check your layout.tsx');
+    throw new Error(
+      'useAuth must be used inside AuthProvider check your layout.tsx',
+    );
   }
+
   return context;
 }
+

@@ -28,6 +28,9 @@ import { Wishlist } from '../src/database/entities/wishlist.entity';
 import { Report } from '../src/database/entities/report.entity';
 import { CasesModule } from '../src/cases/cases.module';
 import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-search-match.listener';
+import { ModuleBook } from '../src/database/entities/module-book.entity';
+import { Auction } from '../src/database/entities/auction.entity';
+import { Bid } from '../src/database/entities/bid.entity';
 
 @Module({
     imports: [
@@ -50,7 +53,7 @@ import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-s
                     dropSchema: true,
                     migrationsRun: false,
                     entities: [
-                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,Case
+                        User, Listing, Book, ModuleEntity, University, OTP, AuditLog, Faculty, SavedSearch,Notifications, Wishlist,Report,Case,ModuleBook,Auction,Bid
                     ],
                     logging: false,
                 };
@@ -64,7 +67,7 @@ import { SavedSearchMatchListener } from '../src/notifications/listeners/saved-s
         SavedSearchesModule,
         MessagingModule,
         CasesModule,
-         NotificationsModule,
+        NotificationsModule,
     ],
     providers: [SavedSearchMatchListener],
 })

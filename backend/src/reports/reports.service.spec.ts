@@ -28,6 +28,7 @@ describe('ReportsService', () => {
                     save: jest.fn(),
                     find: jest.fn(),
                     findOne: jest.fn(),
+                    findAndCount: jest.fn(),
                 },
             },
 
@@ -86,12 +87,14 @@ describe('ReportsService', () => {
             status: ReportStatus.PENDING,
         } as Report;
 
-        it('should create a report successfully', async () => {
+        beforeEach(() => {
             listingsRepository.findOne.mockResolvedValue(listing);
             usersRepository.findOne.mockResolvedValue(user);
             reportsRepository.create.mockReturnValue(report);
             reportsRepository.save.mockResolvedValue(report);
+        });
 
+        it('should create a report successfully', async () => {
             const result = await service.create(
                 userId,
                 createReportDto,
@@ -109,10 +112,6 @@ describe('ReportsService', () => {
                 },
             });
 
-            expect(
-                    reportsRepository.save,
-                ).toHaveBeenCalledWith(report);
-
             expect(reportsRepository.save).toHaveBeenCalledWith(
                 report,
             );
@@ -121,22 +120,6 @@ describe('ReportsService', () => {
         });
 
         it('should set the report status to PENDING', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             const result = await service.create(
                 userId,
                 createReportDto,
@@ -148,22 +131,6 @@ describe('ReportsService', () => {
         });
 
         it('should assign the correct reporter', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -179,22 +146,6 @@ describe('ReportsService', () => {
         });
 
         it('should assign the correct listing', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -210,22 +161,6 @@ describe('ReportsService', () => {
         });
 
         it('should save the provided reason', async () => {
-            listingsRepository.findOne.mockResolvedValue(
-                listing,
-            );
-
-            usersRepository.findOne.mockResolvedValue(
-                user,
-            );
-
-            reportsRepository.create.mockReturnValue(
-                report,
-            );
-
-            reportsRepository.save.mockResolvedValue(
-                report,
-            );
-
             await service.create(
                 userId,
                 createReportDto,
@@ -298,59 +233,44 @@ describe('ReportsService', () => {
             ).not.toHaveBeenCalled();
         });
 
-
     });
 
     describe('findAll', () => {
         it('should return all reports', async () => {
             const reports = [
-                    {
-                        id: 'report-1',
-                        reporter: {
-                            id: 'user-1',
-                        },
-                        listing: {
-                            id: 'listing-1',
-                        },
-                        reason: 'Fraudulent listing',
-                        status: ReportStatus.PENDING,
+                {
+                    id: 'report-123',
+                    reporter: {
+                        id: 'user-123',
                     },
-                    {
-                        id: 'report-2',
-                        reporter: {
-                            id: 'user-2',
-                        },
-                        listing: {
-                            id: 'listing-2',
-                        },
-                        reason: 'Duplicate listing',
-                        status: ReportStatus.REVIEWED,
+                    listing: {
+                        id: 'listing-123',
                     },
-                ] as Report[];
-
-            reportsRepository.find.mockResolvedValue(reports);
-
-            const result = await service.findAll();
-
-            expect(
-                reportsRepository.find,
-            ).toHaveBeenCalledWith({
-                relations: {
-                    reporter: true,
-                    listing: true,
+                    reason: 'Fraudulent listing',
+                    status: ReportStatus.PENDING,
                 },
-                order: {
-                    created_at: 'DESC',
-                },
+            ] as Report[];
+
+            reportsRepository.findAndCount.mockResolvedValue([
+                reports,
+                reports.length,
+            ]);
+
+            const result = await service.findAll({
+                page: 1,
+                limit: 10,
             });
 
-             expect(result).toBe(reports);
+            expect(result.data).toEqual(reports);
         });
 
         it('should return an empty array when there are no reports', async () => {
-            reportsRepository.find.mockResolvedValue([]);
-            const result = await service.findAll();
-            expect(result).toEqual([]);
+            reportsRepository.findAndCount.mockResolvedValue([[],0]);
+            const result = await service.findAll({
+                page: 1,
+                limit: 10,
+            });
+            expect(result.data).toEqual([]);
         });
     });
 
@@ -375,24 +295,25 @@ describe('ReportsService', () => {
                 where: {
                     id: 'report-123',
                 },
-                    relations: {
-                    // user: true,
-                    reporter:true,
-                    listing: true,
+                relations: {
+                    reporter: true,
+                    listing: {
+                        seller: true,
+                    },
                 },
             });
 
-        expect(result).toBe(report);
+            expect(result).toBe(report);
         });
 
         it('should throw NotFoundException when report does not exist', async () => {
-        reportsRepository.findOne.mockResolvedValue(null);
+            reportsRepository.findOne.mockResolvedValue(null);
 
-        await expect(
-            service.findOne('does-not-exist'),
-        ).rejects.toThrow(
-            new NotFoundException('Report not found'),
-        );
+            await expect(
+                service.findOne('does-not-exist'),
+            ).rejects.toThrow(
+                new NotFoundException('Report not found'),
+            );
         });
     });
 
@@ -429,7 +350,9 @@ describe('ReportsService', () => {
                 },
                 relations: {
                     reporter: true,
-                    listing: true,
+                    listing: {
+                        seller: true,
+                    },
                 },
             });
 

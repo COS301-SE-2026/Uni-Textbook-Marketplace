@@ -71,19 +71,13 @@ export default function LogsComponent() {
                 
                 <div className="relative z-10 px-6 py-8 md:px-8 lg:px-12 max-w-7xl mx-auto">
                     <div className="flex items-center gap-4">
-
-
                         <div className="p-3 rounded-2xl" style={{
                             background: 'rgba(0, 180, 216, 0.08)',
                             backdropFilter: 'blur(10px)',
                             border: '1px solid rgba(0, 180, 216, 0.1)',
                         }}>
-
-
                             <FileText size={28} className="text-[#00B4D8]" />
                         </div>
-
-
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold text-[#000f2b] tracking-tight">
                                 Audit Logs
@@ -91,11 +85,8 @@ export default function LogsComponent() {
                             <p className="text-gray-500 text-sm md:text-base mt-0.5">
                                 Complete history of all admin actions
                             </p>
-
                         </div>
                     </div>
-
-
                 </div>
                 
                 <div className="absolute bottom-0 left-0 right-0 h-px" style={{
@@ -105,11 +96,9 @@ export default function LogsComponent() {
 
             <div className="container-content py-8">
                 <Card variant='default'
-                    className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-300'
+                    className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 dark:bg-[#0f172a] dark:border-gray-700'
                 >
                     <div>
-
-
                         <Select
                             label='Action'
                             name='action'
@@ -125,7 +114,6 @@ export default function LogsComponent() {
                             <option value='REJECT_LISTING'>Rejected</option>
                         </Select>
                     </div>
-
 
                     <div className='flex flex-row gap-4'>
                         <Input
@@ -151,9 +139,7 @@ export default function LogsComponent() {
                                 page: 1,
                             }))}
                         />
-
                     </div>
-
 
                     <div>
                         <Select
@@ -168,40 +154,31 @@ export default function LogsComponent() {
                         >
                             <option value=''>All</option>
                             {emails.map(email => (
-
                                 <option key={email.id} value={email.id}>{email.email}</option>
-
                             ))}
                         </Select>
-
-
                     </div>
-
                 </Card>
                 {error && (
                     <div className='mt-2'><ErrorText>{error}</ErrorText></div>
                 )}
 
                 <div className='flex flex-row justify-between mt-4 gap-5'>
-                    <Button variant='secondary' disabled={true} className='flex-1 cursor-default opacity-75'>
+                    <Button variant='secondary' disabled={true} className='flex-1 cursor-default opacity-75 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'>
                         Total Logs: {total}
                     </Button>
-
                     
                     <Button variant='primary' onClick={() => setFilters({ page: 1, limit: 20 })} className='flex-1 cursor-pointer'>
                         Clear filters
                     </Button>
-
-
                 </div>
 
-                <Card className='mt-6 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-0'>
+                <Card className='mt-6 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-0 dark:bg-[#0f172a] dark:border-gray-700'>
                     <AuditLogTable
                         logs={logs}
                         loading={loading}
                     />
                 </Card>
-                
             </div>
         </>
     )

@@ -76,7 +76,7 @@ export class SavedSearchesService {
     limit: number;
     totalPages: number;
   }> {
-    const { page = 1, limit = 5 } = query;
+    const { page = 1, limit = 20 } = query;
 
     const [data, total] = await this.savedSearchRepository.findAndCount({
       where: { user_id: userId },
@@ -262,6 +262,17 @@ export class SavedSearchesService {
       }
     }
 
+    const universityId = filter.university_id ?? filter.university;
+
+    if (isProvided(universityId)) {
+      if (!listing.module?.university?.id) {
+        return false;
+      }
+      if (listing.module.university.id !== universityId) {
+        return false;
+      }
+    }
+
     if (isProvided(filter.faculty_id)) {
       if (!listing.module?.faculty?.id) {
         return false;
@@ -314,6 +325,33 @@ export class SavedSearchesService {
     errors?: string[];
   } {
     const errors: string[] = [];
+
+    const allowedFields = [
+      'faculty',
+      'moduleCode',
+      'edition',
+      'priceMin',
+      'priceMax',
+      'condition',
+      'annotationLevel',
+      'search',
+      'book_title',
+      'author',
+      'isbn',
+      'university_id',
+      'university',
+      'faculty_id',
+      'modules',
+    ];
+
+    const providedFields = Object.keys(filter);
+    const invalidFields = providedFields.filter(
+      (f) => !allowedFields.includes(f),
+    );
+
+    if (invalidFields.length > 0) {
+      errors.push(`Invalid fields: ${invalidFields.join(', ')}`);
+    }
 
     // Check priceMin
     if (

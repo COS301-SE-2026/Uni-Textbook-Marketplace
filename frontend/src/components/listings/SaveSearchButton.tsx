@@ -38,9 +38,11 @@ export default function SaveSearchButton({
     if (isFilterSaved) {
       return 'bg-green-100 text-green-700 border border-green-300'
     }
+
     if (filterFound) {
       return 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100'
     }
+    
     return 'bg-gray-100 text-gray-400 cursor-not-allowed'
   }
 

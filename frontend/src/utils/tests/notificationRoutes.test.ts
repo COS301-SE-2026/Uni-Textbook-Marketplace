@@ -6,10 +6,11 @@ import {
 import { CheckCircle2, XCircle, MessageSquare, SquarePen, Bookmark as BellIcon } from 'lucide-react';
 import type { Notification } from '@/types/notification';
 
-//correct
+
 jest.mock('lucide-react', () => ({
 
   CheckCircle2: jest.fn(() => 'CheckCircle2'),
+
   XCircle: jest.fn(() => 'XCircle'),
 
 
@@ -27,6 +28,8 @@ describe('notificationRoutes', () => {
     id: 'notif-1',
     entity_type: 'APPROVE_LISTING',
     message_info: 'Test notification',
+
+
     is_read: false,
     created_at: new Date().toISOString(),
     entity_id: { id: 'listing-123' } as any,
@@ -48,6 +51,7 @@ describe('notificationRoutes', () => {
 
 
       it(`returns "${expected}" for "${input}"`, () => {
+
         expect(getNotificationHeading(input)).toBe(expected);
       });
     });
@@ -96,6 +100,7 @@ describe('notificationRoutes', () => {
       ['REJECTED_LISTING', '/listings/listing-123'],
       ['Edited listing', '/listings/listing-123'],
       ['message', '/messages'],
+      ['AUCTION_ENDED', '/listings/listing-123'],
       ['UNKNOWN', '/notifications'],
     ];
 
@@ -117,6 +122,7 @@ describe('notificationRoutes', () => {
 
         entity_type: 'APPROVED_LISTING' as any,
 
+
         entity_id: { id: 'listing-123' } as any,
       };
       expect(getNotificationRoute(notification)).toBe('/listings/listing-123');
@@ -128,10 +134,23 @@ describe('notificationRoutes', () => {
       const notification = { 
         ...baseNotification, 
 
+
         entity_type: 'APPROVED_LISTING' as any,
         entity_id: null as any ,
     };
       expect(getNotificationRoute(notification)).toBe('/listings/undefined');
+    });
+
+    it('routes auction notifications with a contact to the matching message thread', () => {
+      const notification = {
+        ...baseNotification,
+        entity_type: 'AUCTION_ENDED',
+        notification_from: { id: 'seller-456' },
+      };
+
+      expect(getNotificationRoute(notification)).toBe(
+        '/messages?listingId=listing-123&contactId=seller-456',
+      );
     });
   });
 
@@ -142,6 +161,7 @@ describe('notificationRoutes', () => {
 
       const notifications: Notification[] = [
         { ...baseNotification, entity_type: 'APPROVED_LISTING', entity_id: '123' },
+         
         { ...baseNotification, entity_type: 'message', entity_id: '456' },
         { ...baseNotification, entity_type: 'REJECTED_LISTING', entity_id: '789' },
       ];
@@ -154,6 +174,8 @@ describe('notificationRoutes', () => {
 
 
         expect(getNotificationHeading(n.entity_type)).toBeDefined();
+
+        
       });
     });
 

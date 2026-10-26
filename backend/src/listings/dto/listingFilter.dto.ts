@@ -4,6 +4,10 @@ import { IsOptional, IsString, IsNumber } from 'class-validator';
 export class ListingFiltersDto {
   @IsOptional()
   @IsString()
+  university?: string;
+
+  @IsOptional()
+  @IsString()
   moduleCode?: string;
 
   @IsOptional()

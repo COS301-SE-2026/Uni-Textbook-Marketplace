@@ -92,21 +92,24 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const tokens = await this.authService.login(dto);
+    const result = await this.authService.login(dto);
 
     res.cookie(
       'access_token',
-      tokens.accessToken,
+      result.accessToken,
       this.getCookieOptions(15 * 60 * 1000),
     );
 
     res.cookie(
       'refresh_token',
-      tokens.refreshToken,
+      result.refreshToken,
       this.getCookieOptions(7 * 24 * 60 * 60 * 1000),
     );
 
-    return { message: 'Login successful.' };
+    return {
+      message: 'Login successful.',
+      user: result.user,
+    };
   }
 
   @Get('universities')
