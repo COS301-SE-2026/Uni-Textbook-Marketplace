@@ -88,7 +88,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     } catch {
 
     } finally {
-      setUser(null);
+      // setUser(null);
       sessionStorage.removeItem('auth_user');
       router.push('/auth/login');
     }
