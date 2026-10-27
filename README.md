@@ -85,7 +85,6 @@
 [![NestJS](https://img.shields.io/badge/backend-NestJS-00B4D8?style=for-the-badge&logo=nestjs&logoColor=white)]()
 [![Next.js](https://img.shields.io/badge/frontend-Next.js-00B4D8?style=for-the-badge&logo=nextdotjs&logoColor=white)]()
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-00B4D8?style=for-the-badge&logo=postgresql&logoColor=white)]()
-[![License](https://img.shields.io/badge/license-MIT-00B4D8?style=for-the-badge)](./LICENSE)
 </div>
 
 <p align="center">
