@@ -30,6 +30,10 @@
   <a href="#meet-the-team-nexusdev"><img src="https://img.shields.io/badge/TEAM-NexusDev-1F497D?style=for-the-badge&logo=github&logoColor=white" alt="Team"/></a>
 </p>
 
+<p align="center">
+  <a href="https://youtu.be/4Y2gHTDhFwg"><img src="https://img.shields.io/badge/WATCH%20THE%20FULL%20DEMO-Click%20To%20Play-8A2BE2?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the full demo video on YouTube" width="400"/></a>
+</p>
+
 </div>
 
 <p align="center">

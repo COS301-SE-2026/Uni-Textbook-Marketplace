@@ -26,6 +26,7 @@ const PUBLIC_ROUTES = [
   '/appeal',
   '/terms',
   '/privacy',
+  '/demo',
 ];
 
 function isPublicRoute(pathname: string): boolean {
