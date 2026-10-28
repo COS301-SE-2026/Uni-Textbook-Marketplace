@@ -103,7 +103,7 @@ describe('AdminService', () => {
         {
           provide : SavedSearchesService,
           useValue: {
-            findMatchingSavedSearches: jest.fn(),
+            findMatchingSavedSearches: jest.fn().mockResolvedValue([]),
             matchesFilter: jest.fn(),
           }
         },
@@ -124,13 +124,14 @@ describe('AdminService', () => {
     it('should approve a listing successfully', async () => {
       const listingId = 'listing-123';
       const userId = 'user-123';
+      const findOne = jest.fn()
+        .mockResolvedValueOnce(mockUser as User)
+        .mockResolvedValueOnce(mockListing as Listing);
 
       mockEntityManager.transaction.mockImplementation(async (callback) => {
         const manager = {
           getRepository: jest.fn().mockReturnValue({
-            findOne: jest.fn()
-              .mockResolvedValueOnce(mockUser as User)
-              .mockResolvedValueOnce(mockListing as Listing),
+            findOne,
             save: jest.fn().mockResolvedValue({
               ...mockListing,
               status: ListingStatus.APPROVED,
@@ -148,6 +149,16 @@ describe('AdminService', () => {
       expect(result.status).toBe(ListingStatus.APPROVED);
       expect(result.reviewer).toEqual(mockUser);
       expect(result.reviewed_at).toBeDefined();
+      expect(findOne).toHaveBeenNthCalledWith(2, {
+        where: { id: listingId },
+        relations: [
+          'seller',
+          'book',
+          'module',
+          'module.faculty',
+          'module.university',
+        ],
+      });
     });
 
     it('should throw NotFoundException if admin not found', async () => {

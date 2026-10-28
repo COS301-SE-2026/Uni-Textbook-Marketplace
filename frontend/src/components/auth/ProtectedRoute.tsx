@@ -16,7 +16,8 @@ const PUBLIC_ROUTES = [
     '/brand',
     '/help',
     '/terms',
-    '/privacy', 
+    '/privacy',
+    '/demo', 
 ];
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {

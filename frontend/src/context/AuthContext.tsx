@@ -26,6 +26,7 @@ const PUBLIC_ROUTES = [
   '/appeal',
   '/terms',
   '/privacy',
+  '/demo',
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -118,7 +119,7 @@ export function AuthProvider({
     } catch {
       // Ignore
     } finally {
-
+      setUser(null);
       sessionStorage.removeItem('auth_user');
       router.push('/auth/login');
     }
