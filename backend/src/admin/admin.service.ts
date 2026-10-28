@@ -58,7 +58,13 @@ export class AdminService {
 
         const listing = await listingRepository.findOne({
           where: { id },
-          relations: ['seller'],
+          relations: [
+            'seller',
+            'book',
+            'module',
+            'module.faculty',
+            'module.university',
+          ],
         });
 
         if (!listing) {
